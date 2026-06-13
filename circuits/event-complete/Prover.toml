@@ -1,0 +1,4 @@
+event_commitment_pub   = "0x269e01e45c619a5eca306e7ab674227ec38aed8cf084e752994b47462414ea0e"
+journal_commitment_pub = "0x214bf58a30820ae090fde82e19b13ae6819be98a9b70b6a3a3b39b3ea898980e"
+usd_cents     = "10000"
+fabric_meters = "50"

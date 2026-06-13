@@ -1,0 +1,7 @@
+[package]
+name = "event_complete"
+type = "bin"
+authors = [""]
+[dependencies]
+pacioli = { path = "../pacioli" }
+rulebook = { path = "../rulebook" }

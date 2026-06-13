@@ -28,14 +28,14 @@ global FABRIC: u32 = 1;
 /// A typed commercial event: a buyer receives goods from a supplier under an
 /// invoice. The private quantities `q` of `Phi_R(E, q, ...)`.
 pub struct GoodsReceiptInvoice {
-    pub usd_cents: u64, // the invoice amount (USD dimension)
-    pub fabric_meters: u64, // the goods received (fabric dimension)
+    usd_cents: u64, // the invoice amount (USD dimension)
+    fabric_meters: u64, // the goods received (fabric dimension)
 }
 
 /// The compiled vector journal: per-row debit and credit vectors over the basis.
 pub struct CompiledJournal {
-    pub debits: [[u64; N_BASIS]; N_ROWS],
-    pub credits: [[u64; N_BASIS]; N_ROWS],
+    debits: [[u64; N_BASIS]; N_ROWS],
+    credits: [[u64; N_BASIS]; N_ROWS],
 }
 
 /// Phi_R for the goods-receipt-invoice schema. Deterministic: the journal is a

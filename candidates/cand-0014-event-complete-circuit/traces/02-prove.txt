@@ -1,0 +1,1 @@
+nargo test OK (4 tests passed); sample witness solved

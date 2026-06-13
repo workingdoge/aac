@@ -1,0 +1,3 @@
+[workspace]
+members = ["pacioli", "rulebook", "transition"]
+default-member = "transition"

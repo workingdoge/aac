@@ -1,0 +1,6 @@
+[event_complete] Running 4 test functions
+[event_complete] Testing rejects_journal_commitment_from_a_different_event ... [0m[32mok[0m
+[event_complete] Testing rejects_tampered_event_commitment ... [0m[32mok[0m
+[event_complete] Testing accepts_the_schema_image ... [0m[32mok[0m
+[event_complete] Testing print_public_inputs ... [0m[32mok[0m
+[event_complete] [0m[32m4 tests passed[0m
