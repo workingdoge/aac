@@ -1,0 +1,5 @@
+candidate_id: cand-0022-world-stack-strategy
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T18:58:47Z
+intent: Land Design Note 0002 (non-normative): the World stack (World ID / Mini Apps / World Chain) + AgentKit + ProveKit strategy for AAC -- a human-backed clearing copilot Mini App where proof-of-human gates scarce access (free proof-gen, quote/matching trials, financing/settlement slots), an AgentKit x402 gateway meters per-human, ProveKit generates a narrow client-side receipt proof (a right-sized EVENT-COMPLETE/1 BVR), and human-in-the-loop binds irreversible actions (receipt:<nullifier>, settlement:<batch>) to a World ID approval. Flags the toolchain constraint: ProveKit pins Noir v1.0.0-beta.11 vs AAC's beta.14 -- isolate a separate ProveKit circuit, do not migrate the workspace. + a QUEUE roadmap entry pointing to it.
+status: landed

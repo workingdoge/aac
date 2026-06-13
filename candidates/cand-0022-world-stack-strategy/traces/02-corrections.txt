@@ -1,0 +1,1 @@
+research corrections present: beta.19 (not beta.11); AgentBook World Chain eip155:480 (Base refuted); Skyscraper; v4 verify; requestHumanAuthorization; PBH; perf unverified

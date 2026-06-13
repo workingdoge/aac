@@ -1,0 +1,1 @@
+non-normative design note, all sections present, listed in the design README

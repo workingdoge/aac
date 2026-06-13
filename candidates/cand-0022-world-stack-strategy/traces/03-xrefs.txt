@@ -1,0 +1,1 @@
+cross-references resolve (EVENT-COMPLETE/1 + 4/REG; the spec + sibling note 0001 exist on disk)
