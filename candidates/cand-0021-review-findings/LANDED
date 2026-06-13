@@ -4,3 +4,4 @@ cargo/sites/ledger/specs/applications/EVENT-COMPLETE-1.md	sites/ledger/specs/app
 cargo/candidates/cand-0017-nullify-nonmembership/README.md	candidates/cand-0017-nullify-nonmembership/README.md	yes
 # landed_at: 2026-06-13T18:47:52Z
 # toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1 unavailable(not-in-devshell)
+git_commit	5ea93b0
