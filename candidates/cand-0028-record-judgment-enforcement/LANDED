@@ -10,3 +10,4 @@ fixtures/record-vocab-atom-fail-v0.md	sites/premath/fixtures/record-vocab-atom-f
 export-manifest.tsv	tools/schemas/export-manifest.tsv	yes
 # landed_at: 2026-06-13T21:19:38Z
 # toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1 unavailable(not-in-devshell)
+git_commit	52859de
