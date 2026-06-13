@@ -1,0 +1,5 @@
+candidate_id: cand-0019-registry-deployable
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T18:06:47Z
+intent: Make the 4/REG registry actually deployable: the bb HonkVerifier is 24,644B runtime (68 over EIP-170) at optimizer_runs=200 — drop to 50 (23,782B, 794 under) so it deploys on a real EVM, correctness unchanged (forge test still green). Add registry/script/Deploy.s.sol (deploys the verifier + auto-links its ZKTranscriptLib + the Registry pinned to it); verified deploying to live anvil under EIP-170 (ONCHAIN EXECUTION SUCCESSFUL).
+status: landed

@@ -43,26 +43,3 @@ bb write_solidity_verifier -s ultra_honk -k /tmp/r/vk -o ../registry/src/HonkVer
 cp /tmp/r/proof ../registry/test/fixtures/transition.proof
 cp /tmp/r/public_inputs ../registry/test/fixtures/transition.pub
 ```
-
-## Deploy
-
-`optimizer_runs` is tuned **low** (50): at 200 the bb HonkVerifier is 24,644 B
-runtime — **over the EIP-170 limit** (24,576 B) and undeployable; at 50 it is
-23,782 B (794 B under). Correctness is unchanged (`forge test` stays green).
-
-`script/Deploy.s.sol` deploys the verifier (forge auto-deploys + links its
-`ZKTranscriptLib`) and the `Registry` pinned to it:
-
-```sh
-# local EVM
-anvil &
-forge script script/Deploy.s.sol:Deploy --rpc-url http://127.0.0.1:8545 \
-  --sender 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --unlocked --broadcast \
-  --use "$(command -v solc)"
-
-# a testnet: --rpc-url $SEPOLIA_RPC --private-key $KEY --broadcast
-```
-
-Verified deploying to live anvil under EIP-170 enforcement (ONCHAIN EXECUTION
-SUCCESSFUL). A `forge script … :Deploy` simulation (no `--broadcast`, no node)
-deploys + links in-EVM as a self-contained check.

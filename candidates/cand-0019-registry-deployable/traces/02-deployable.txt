@@ -1,0 +1,3 @@
+  HonkVerifier   runtime 23782 B (EIP-170 limit 24576)
+  Registry       runtime 2042 B (EIP-170 limit 24576)
+deployable: HonkVerifier under EIP-170, forge test green, Deploy script runs (verifier+library+registry)
