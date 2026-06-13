@@ -1,0 +1,10 @@
+record-judgment-check.sh tools/record-judgment-check.sh
+fixtures/record-meta-telescope-pass-v0.md sites/premath/fixtures/record-meta-telescope-pass-v0.md
+fixtures/record-meta-telescope-fail-v0.md sites/premath/fixtures/record-meta-telescope-fail-v0.md
+fixtures/record-scores-sigma-pass-v0.md sites/premath/fixtures/record-scores-sigma-pass-v0.md
+fixtures/record-scores-sigma-fail-v0.md sites/premath/fixtures/record-scores-sigma-fail-v0.md
+fixtures/record-queue-checking-mode-pass-v0.md sites/premath/fixtures/record-queue-checking-mode-pass-v0.md
+fixtures/record-queue-checking-mode-fail-v0.md sites/premath/fixtures/record-queue-checking-mode-fail-v0.md
+fixtures/record-landing-receipt-pass-v0.md sites/premath/fixtures/record-landing-receipt-pass-v0.md
+fixtures/record-vocab-atom-fail-v0.md sites/premath/fixtures/record-vocab-atom-fail-v0.md
+export-manifest.tsv tools/schemas/export-manifest.tsv

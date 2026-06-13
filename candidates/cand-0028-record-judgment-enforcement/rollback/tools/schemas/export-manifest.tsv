@@ -13,7 +13,6 @@ file	tools/queue-lib.sh
 file	tools/queue-lint.sh
 file	tools/cross-surface-check.sh
 file	tools/verdict-tripwire.sh
-file	tools/record-judgment-check.sh
 file	tools/route.sh
 file	tools/loop-model.py
 file	tools/loop-model-diff.sh
@@ -47,12 +46,4 @@ file	sites/premath/statements/queue-judgments-v0.md
 file	sites/premath/fixtures/queue-clean-pass.md
 file	sites/premath/fixtures/queue-bad-status-fail.md
 file	sites/premath/fixtures/queue-misfiled-report.md
-file	sites/premath/fixtures/record-meta-telescope-pass-v0.md
-file	sites/premath/fixtures/record-meta-telescope-fail-v0.md
-file	sites/premath/fixtures/record-scores-sigma-pass-v0.md
-file	sites/premath/fixtures/record-scores-sigma-fail-v0.md
-file	sites/premath/fixtures/record-queue-checking-mode-pass-v0.md
-file	sites/premath/fixtures/record-queue-checking-mode-fail-v0.md
-file	sites/premath/fixtures/record-landing-receipt-pass-v0.md
-file	sites/premath/fixtures/record-vocab-atom-fail-v0.md
 dir	sites/premath/fixtures/loop-model

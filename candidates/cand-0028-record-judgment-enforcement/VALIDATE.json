@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0028-record-judgment-enforcement",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "cdc921c60e4e305784fb0594270d2ab3d02e18181022004788a3bf80034c1192",
+    "LANDING": "020ad739da70ae03e5b76ef8698fa724f58ff119b9fed68e62c1e1f1abc90a8b",
+    "META": "df103db3abd0c82cb3c7f65f8c322c2e1e97715e874f390cb80f1ba625f6abc7"
+  }
+}
