@@ -1,0 +1,36 @@
+# Reflection: cand-0026-web-poseidon-roots
+
+Intent: Cascade part 2 (cand-0024): update the web components' hard-coded TRANSITION/1 roots from the old pedersen values to the new Poseidon2 values, so /circuit and /registry display the live proof. aac-transition.ts (prev/next account roots, next nullifier root, journal_commitment, fact_fold, ACIR opcodes 775->673) + aac-row.ts (prev/next account, next nullifier) + circuit.mdx (~775->~673 opcodes). astro build green; new values present, no stale pedersen roots remain.
+Status at reflection: landed
+Reflected at: 2026-06-13T20:24:23Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0026-web-poseidon-roots",
+  "evaluated_at": "2026-06-13T20:24:21Z",
+  "task": "update the web components hard-coded TRANSITION/1 roots from the pre-poseidon values to the cand-0024 Poseidon2 values (aac-transition + aac-row + circuit.mdx opcodes 775->673); astro build green, the new roots bundled, no stale pedersen values anywhere in dist",
+  "checks": {
+    "values": "pass",
+    "build": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "40a047c72ceb93a6d1255e27c6e6d3cb045219c790a7cb673316ede7086dceb0",
+    "traces_sha256": "10628be53cea0b36bc7216f2c00cb89238b8dfe29e67228501091b581f0212d9",
+    "body_sha256": "2f5bab1a3f1cd4299321ea936408a94e64c8f9a56ab7de41b88d1667f5b4cb62",
+    "attestation": "b26b4de523e597fd870debb3a83d74d40482ac61d046f073928d6e55d1084b79"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.
