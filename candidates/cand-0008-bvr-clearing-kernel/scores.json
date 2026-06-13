@@ -1,0 +1,19 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0008-bvr-clearing-kernel",
+  "evaluated_at": "2026-06-13T16:22:44Z",
+  "task": "BVR / P^n clearing-kernel design note (non-normative) — states the BVR object, Phi_R-as-application-target doctrine, VNET/1-vs-5/NET split, the completeness-not-truth boundary, and the Poseidon2/Pedersen hash split; all cross-references resolve",
+  "checks": {
+    "present": "pass",
+    "doctrine": "pass",
+    "crossrefs": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "34af6ff663e76b59d0890995a4bf561b4c23a8b83386b5b04e71eed2b9e2c173",
+    "traces_sha256": "c4e2d6722dba467edaabd84acbecb9d7a137eda2ab92b5ba2c9d4b51c031a11f",
+    "body_sha256": "8ab9f6a5c7988912452f09382999ab80c6594eb1ac9b9021dedc62e90ba7f3d4",
+    "attestation": "5654b69818e4fa74a671ff07740199f4e464fc298cdc175a2a49226b6466ca96"
+  }
+}

@@ -1,0 +1,1 @@
+doctrine stated: BVR object + Phi_R app-target + VNET/5NET split + security boundary + hash split
