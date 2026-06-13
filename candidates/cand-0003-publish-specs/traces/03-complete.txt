@@ -1,0 +1,2 @@
+doc ids: ['DATA', 'FACT', 'NAME', 'NET', 'OTC', 'PACI', 'PROOF', 'R1', 'REG', 'SESS', 'index']
+all 11 documents present

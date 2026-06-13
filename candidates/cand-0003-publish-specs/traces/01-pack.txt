@@ -1,0 +1,6 @@
+✓ Spec pack written: /var/folders/x_/n75jlksx4m70cw9pcbwp_68h0000gn/T/tmp.rRzxQkq6EY/dist-spec/spec.pack.json (index: /var/folders/x_/n75jlksx4m70cw9pcbwp_68h0000gn/T/tmp.rRzxQkq6EY/dist-spec/spec.index.json, documents=11)
+packed -> /var/folders/x_/n75jlksx4m70cw9pcbwp_68h0000gn/T/tmp.rRzxQkq6EY/dist-spec
+inputs
+sources
+spec.index.json
+spec.pack.json

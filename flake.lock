@@ -1,5 +1,34 @@
 {
   "nodes": {
+    "bb-bin": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1764156800,
+        "narHash": "sha256-agqc8aTeldG83bDs0MQy0C0UzRP0MthABsg6ey9SJIk=",
+        "type": "tarball",
+        "url": "https://github.com/AztecProtocol/aztec-packages/releases/download/v2.1.8/barretenberg-amd64-linux.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://github.com/AztecProtocol/aztec-packages/releases/download/v2.1.8/barretenberg-amd64-linux.tar.gz"
+      }
+    },
+    "bignum-paramgen-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1770038569,
+        "narHash": "sha256-EtwLdhyXnHBnDlD0lR4wiDK2UgXZZ51EfbxmBUumQI4=",
+        "owner": "noir-lang",
+        "repo": "noir-bignum-paramgen",
+        "rev": "e5cfb26ce4330bd95557b962440fbb20aec763e5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "noir-lang",
+        "repo": "noir-bignum-paramgen",
+        "type": "github"
+      }
+    },
     "blueprint": {
       "inputs": {
         "nixpkgs": [
@@ -205,6 +234,23 @@
         "owner": "cachix",
         "ref": "latest",
         "repo": "cachix",
+        "type": "github"
+      }
+    },
+    "co-snarks-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1762428139,
+        "narHash": "sha256-WosnzXpip9Wig0OIseIW21GIp3jj2Qhe+oRFwLGUBdY=",
+        "owner": "TaceoLabs",
+        "repo": "co-snarks",
+        "rev": "97adcc06afc0d506c2d6aa9f81b2e342fd8108c0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "TaceoLabs",
+        "ref": "co-noir-v0.7.0",
+        "repo": "co-snarks",
         "type": "github"
       }
     },
@@ -1169,16 +1215,16 @@
     },
     "nixpkgs_8": {
       "locked": {
-        "lastModified": 1767313136,
-        "narHash": "sha256-16KkgfdYqjaeRGBaYsNrhPRRENs0qzkQVUooNHtoy2w=",
+        "lastModified": 1781074563,
+        "narHash": "sha256-md8WlXOlfnIeHeOScMTTHFyf2d6iaTwPl2apR5EQ3P4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "ac62194c3917d5f474c1a844b6fd6da2db95077d",
+        "rev": "9ae611a455b90cf061d8f332b977e387bda8e1ca",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-25.05",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -1196,6 +1242,23 @@
         "owner": "NixOS",
         "ref": "nixpkgs-unstable",
         "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "noir-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1759827905,
+        "narHash": "sha256-Wi3C5G45gTfYLdMuQVLPf42RL2z+kKCrJyPtSuaL5Ss=",
+        "owner": "noir-lang",
+        "repo": "noir",
+        "rev": "60ccd48e18ad8ce50d5ecda9baf813b712145051",
+        "type": "github"
+      },
+      "original": {
+        "owner": "noir-lang",
+        "ref": "v1.0.0-beta.14",
+        "repo": "noir",
         "type": "github"
       }
     },
@@ -1406,9 +1469,13 @@
     },
     "root": {
       "inputs": {
+        "bb-bin": "bb-bin",
+        "bignum-paramgen-src": "bignum-paramgen-src",
         "boat": "boat",
+        "co-snarks-src": "co-snarks-src",
         "flake-utils": "flake-utils_2",
         "nixpkgs": "nixpkgs_8",
+        "noir-src": "noir-src",
         "paintgun": "paintgun"
       }
     },
