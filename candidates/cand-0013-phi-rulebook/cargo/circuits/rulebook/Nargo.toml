@@ -1,0 +1,7 @@
+[package]
+name = "rulebook"
+type = "lib"
+authors = ["American Accounting Company"]
+
+[dependencies]
+pacioli = { path = "../pacioli" }

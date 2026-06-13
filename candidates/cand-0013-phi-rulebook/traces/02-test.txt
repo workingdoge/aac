@@ -1,0 +1,1 @@
+nargo test OK (2 tests passed); workspace compiles with rulebook

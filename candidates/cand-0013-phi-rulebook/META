@@ -1,0 +1,5 @@
+candidate_id: cand-0013-phi-rulebook
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T16:50:06Z
+intent: A Phi_R event-to-journal compiler for the goods-receipt-invoice schema, landed as circuits/rulebook (lib crate, depends on pacioli): compile_goods_receipt_invoice(event) deterministically emits the vector journal, closing 'fraud can balance' — the journal is the schema's image, not arbitrary entries. Proven: it reproduces the cand-0009 conformance vector exactly, and compiles to a P^n zero-account for ALL quantities (each posted once Dr, once Cr). Realizes EVENT-COMPLETE/1 obligations 4 (canonical compilation) + 5 (zero-account) for one schema.
+status: landed

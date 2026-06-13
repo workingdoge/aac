@@ -1,0 +1,4 @@
+[rulebook] Running 2 test functions
+[rulebook] Testing phi_reproduces_the_conformance_vector ... [0m[32mok[0m
+[rulebook] Testing phi_is_balanced_for_all_quantities ... [0m[32mok[0m
+[rulebook] [0m[32m2 tests passed[0m

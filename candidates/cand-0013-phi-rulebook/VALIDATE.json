@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0013-phi-rulebook",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "844f3d74c59c62f10b7f79b6b0bc9b54999b5a4ac3a6685495fc0b0abe7bf1f9",
+    "LANDING": "66ff9fd2a0e2ddfb4a7ab20df5cd98113ac48ddf7eed2c6ee6ff492db5b92ebe",
+    "META": "701761fdf28ae95335abc068a2ece5259fa052c85ffe5f7077466bc4e590631d"
+  }
+}

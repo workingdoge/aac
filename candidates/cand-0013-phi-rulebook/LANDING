@@ -1,0 +1,3 @@
+cargo/circuits/Nargo.toml circuits/Nargo.toml
+cargo/circuits/rulebook/Nargo.toml circuits/rulebook/Nargo.toml
+cargo/circuits/rulebook/src/lib.nr circuits/rulebook/src/lib.nr
