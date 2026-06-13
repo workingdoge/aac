@@ -1,0 +1,1 @@
+P1 (obligation-9 narrowing) + P2 (zero-sentinel guards) + P3 (before-first accept + cand-0017 correction) present

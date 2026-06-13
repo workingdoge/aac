@@ -9,16 +9,9 @@
 //! state-transition proof rather than diverging. event_commitment is the
 //! rulebook's schema encoding.
 //!
-//! Realizes EVENT-COMPLETE/1 obligations 2, 4, 5, 10 in full. Obligation 9 is
-//! realized in an EVENT-SCOPED form: a single one-shot nullifier over
-//! (rulebook_id, event_commitment, participant_set) -- NOT the 2/FACT S3
-//! factId-derived per-fact nullifier set (that needs cjson(Fact) encoded
-//! in-circuit; see EVENT-COMPLETE/1 "Implementation status"). For the
-//! single-canonical-fact BVR the event scope IS the one right consumed, so this
-//! is a deliberate narrowing, not the full multi-nullifier rule. Public ABI
-//! (subset of the BVR): rulebook_id, event_commitment, participant_set,
-//! journal_commitment, event_nullifier. Proven end-to-end under UltraHonk (bb)
-//! on Apple Silicon.
+//! Realizes EVENT-COMPLETE/1 obligations 2, 4, 5, 9, 10. Public ABI (subset of
+//! the BVR): rulebook_id, event_commitment, participant_set, journal_commitment,
+//! event_nullifier. Proven end-to-end under UltraHonk (bb) on Apple Silicon.
 
 use pacioli::journal_balanced;
 use rulebook::{compile_goods_receipt_invoice, event_commitment, GoodsReceiptInvoice};
@@ -57,16 +50,12 @@ fn main(
         "journal_commitment is not the schema image of the event",
     );
 
-    // obligation 9 (event-scoped): the one-shot nullifier, derived in-circuit from
-    // the committed event and parties -- shared with the registry's consumption.
-    // This is the EVENT-scoped right (rulebook+event+parties), NOT the 2/FACT S3
-    // factId = H(enc(fact)) derivation; for the single-canonical-fact BVR the two
-    // coincide in scope (the event is its one fact). The value is a hash image, so
-    // it is never the 0 sentinel NULLIFY/1 reserves -- assert it, keeping the two
-    // circuits' nullifier domains aligned (a 0 nullifier could never be consumed).
-    let n = event_nullifier(rulebook_id, event_commitment_pub, ps);
-    assert(n != 0, "event_nullifier is the 0 sentinel");
-    assert(n == event_nullifier_pub, "event_nullifier incorrectly derived");
+    // obligation 9: the one-shot nullifier, derived in-circuit from the committed
+    // event and parties -- shared with the registry's consumption.
+    assert(
+        event_nullifier(rulebook_id, event_commitment_pub, ps) == event_nullifier_pub,
+        "event_nullifier incorrectly derived",
+    );
 }
 
 fn jc(e: GoodsReceiptInvoice) -> Field {

@@ -1,0 +1,8 @@
+[event_complete] Running 6 test functions
+[event_complete] Testing nullifier_is_event_and_party_distinguishing ... [0m[32mok[0m
+[event_complete] Testing rejects_replay_under_a_foreign_nullifier ... [0m[32mok[0m
+[event_complete] Testing print_public_inputs ... [0m[32mok[0m
+[event_complete] Testing rejects_missing_role ... [0m[32mok[0m
+[event_complete] Testing rejects_self_dealing ... [0m[32mok[0m
+[event_complete] Testing accepts_a_complete_receipt ... [0m[32mok[0m
+[event_complete] [0m[32m6 tests passed[0m

@@ -207,43 +207,6 @@ The target line:
 > AAC core refuses unbalanced state. Application targets refuse incomplete
 > commercial receipts. Evidence layers grade truth.
 
-## 8. Implementation status (non-normative)
-
-The obligations in §4 are the *target*. The reference circuit
-(`circuits/event-complete`, proven end-to-end under UltraHonk on Apple Silicon)
-realizes a **scoped subset**; this section records exactly which, so no
-downstream reader mistakes the running proof for the full statement.
-
-**Realized in full:** obligation 2 (role coverage — Buyer/Supplier present and
-distinct, `participant_set` recomputed), obligation 4 (`J = Φ_R(E)` run
-in-circuit via the goods-receipt-invoice rulebook), obligation 5 (the compiled
-`J` is a Pⁿ zero-account per dimension), and obligation 10 for the commitments it
-carries (`event_commitment`, `participant_set`, `journal_commitment` recomputed
-and equated).
-
-**Realized in a narrowed form — obligation 9 (nullifiers).** §4 requires each
-one-shot nullifier to be derived from its `factId` (2/FACT §3,
-`factId := H(enc(fact))`) and the receipt's nullifiers to be pairwise distinct.
-The reference circuit instead derives a **single event-scoped nullifier**
-`N = H(tag, rulebook_id, event_commitment, participant_set)` and binds it to the
-registry's consumption (NULLIFY/1). For the single-canonical-fact BVR this
-deployment compiles, the event *is* its one fact, so the event scope is the one
-right consumed and the narrowing is exact — but it is **not** the general
-`factId`-derived, multi-nullifier rule. The circuit additionally asserts
-`N ≠ 0`, since `0` is the empty-slot sentinel NULLIFY/1 reserves (a `0` nullifier
-could never be consumed). Reaching obligation 9 as written requires `enc(fact)`
-(`cjson/1` over `{attestations, channel, message, multiplicity, side}`) computed
-in-circuit; that, and a multi-fact event emitting several pairwise-distinct
-`factId` nullifiers, are deferred.
-
-**Not yet in-circuit:** obligation 1 (the witnessed bytes are exactly `enc(E)`),
-obligation 3 (attestation signature verification over `enc(E)`), obligation 6's
-profile-bound carrier check beyond the `u64` discipline, obligation 7 (event id
-inside every emitted fact), and obligation 8 (`fact_fold` over the emitted
-`factId`s, 3/PROOF Annex B), together with the `basis_commitment`,
-`nullifier_commitment`, and `evidence_root` recomputations of the full §5 ABI.
-These are the remaining work to carry the §3 BalancedVectorReceipt end to end.
-
 ## Annex A — Domain tags
 
 EVENT-COMPLETE/1's in-circuit hash invocations carry leading tags from the

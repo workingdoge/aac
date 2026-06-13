@@ -1,0 +1,6 @@
+[package]
+name = "pacioli"
+type = "lib"
+authors = ["American Accounting Company"]
+
+[dependencies]

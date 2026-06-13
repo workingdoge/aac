@@ -1,0 +1,4 @@
+cargo/circuits/nullify/src/main.nr circuits/nullify/src/main.nr
+cargo/circuits/event-complete/src/main.nr circuits/event-complete/src/main.nr
+cargo/sites/ledger/specs/applications/EVENT-COMPLETE-1.md sites/ledger/specs/applications/EVENT-COMPLETE-1.md
+cargo/candidates/cand-0017-nullify-nonmembership/README.md candidates/cand-0017-nullify-nonmembership/README.md

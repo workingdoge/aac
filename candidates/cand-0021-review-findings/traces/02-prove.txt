@@ -1,0 +1,1 @@
+nargo test OK (nullify 10 tests passed; event_complete 6 tests passed); both witnesses solved; workspace compiles

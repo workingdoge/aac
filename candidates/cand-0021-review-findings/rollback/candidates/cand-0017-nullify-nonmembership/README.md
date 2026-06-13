@@ -32,12 +32,3 @@ chains single insertions — the non-membership logic is identical.
   workspace compiles with the new crate.
 
 Status: open (pre-threshold).
-
-## Correction (cand-0021-review-findings, 2026-06-13)
-
-A post-landing review found the evidence above claimed accept coverage for
-"before-first" while the landed tests only witnessed middle + after-last
-insertion. cand-0021 closes the gap by adding an explicit before-first
-(`low_index = 0`) accept test, so the claim is now witnessed rather than
-asserted. cand-0021 also hardens NULLIFY/1 to refuse `new_value == 0` (the
-empty-slot sentinel TRANSITION/1 reserves), which this candidate did not guard.

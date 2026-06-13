@@ -1,0 +1,5 @@
+candidate_id: cand-0021-review-findings
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T18:42:14Z
+intent: Remediate the post-compaction review findings (P1/P2/P3). P2: NULLIFY/1 must refuse new_value==0 (the empty-slot sentinel TRANSITION/1 reserves) with a negative test; also assert the EVENT-COMPLETE/1 nullifier is nonzero. P3: add a before-first (low_index=0) ACCEPT test so cand-0017's before-first evidence claim is witnessed, plus a correction note on cand-0017. P1: narrow EVENT-COMPLETE/1's obligation-9 claim to an event-scoped one-shot nullifier (H over rulebook+event+parties), NOT the 2/FACT S3 factId-derived nullifier set (cjson-in-circuit unimplemented) -- in the circuit comments and the EVENT-COMPLETE-1.md spec.
+status: landed

@@ -10,12 +10,6 @@
 // TRANSITION/1. Nullifier values are full Field elements, ordered as 254-bit
 // integers via std::field::bn254::lt.
 //
-// The value 0 is reserved: it is the empty-slot sentinel TRANSITION/1 reads as
-// "no nullifier consumed" (transition/src/main.nr). A real nullifier is a hash
-// image and is never 0, so NULLIFY/1 REFUSES to consume 0 -- otherwise the
-// before-first bracket (0 < every member) would vacuously "spend" the sentinel
-// as if it were a right, desynchronizing the two circuits' nullifier domains.
-//
 // Bound (honest): one insertion (count = 1) into a fixed set of N_OLD members,
 // the root a Pedersen fold over the sorted members. A production NULLIFY/1 uses
 // a binary indexed Merkle tree with succinct low-leaf path proofs (Aztec, depth
@@ -59,12 +53,6 @@ fn main(
 ) {
     assert(count == 1, "this NULLIFY/1 bound proves a single insertion");
     assert(low_index <= N_OLD, "low_index out of range");
-
-    // (a0) reserved-sentinel guard: 0 is TRANSITION/1's empty-slot value (its
-    //      absent nullifier reads as 0); a genuine nullifier is a hash image and
-    //      never 0. Refuse to consume it -- without this, the before-first bracket
-    //      (0 < old_values[0]) would vacuously accept the sentinel as a spend.
-    assert(new_value != 0, "nullifier 0 is the empty-slot sentinel, not consumable");
 
     // (a) the indexed-set invariant: strictly ascending (so the low-leaf is unique).
     for i in 0..N_OLD - 1 {
@@ -133,29 +121,11 @@ fn accepts_a_non_member_insertion() {
 }
 
 #[test]
-fn accepts_insert_before_first() {
-    let s = [10, 20, 30, 40];
-    let v = 5; // before the first member -> low_index 0 (the before-first bracket)
-    let (lr, sc) = lr_sc(s, v, 0);
-    main(fr(s), lr, sc, 1, s, v, 0);
-}
-
-#[test]
 fn accepts_insert_after_last() {
     let s = [10, 20, 30, 40];
     let v = 99; // beyond the last -> low_index 4
     let (lr, sc) = lr_sc(s, v, 4);
     main(fr(s), lr, sc, 1, s, v, 4);
-}
-
-#[test(should_fail_with = "nullifier 0 is the empty-slot sentinel")]
-fn rejects_inserting_the_zero_sentinel() {
-    // 0 = TRANSITION/1's empty-slot sentinel. It brackets cleanly below the first
-    // member (low_index 0), so without the reserved-sentinel guard NULLIFY/1 would
-    // "consume" it as a right. The guard refuses it.
-    let s = [10, 20, 30, 40];
-    let (lr, sc) = lr_sc(s, 0, 0);
-    main(fr(s), lr, sc, 1, s, 0, 0);
 }
 
 #[test(should_fail_with = "low-leaf does not bracket above")]
