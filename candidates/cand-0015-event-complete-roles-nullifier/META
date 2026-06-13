@@ -1,0 +1,5 @@
+candidate_id: cand-0015-event-complete-roles-nullifier
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T17:08:43Z
+intent: Grow the EVENT-COMPLETE/1 circuit toward a complete BVR: add role coverage (obligation 2 — Buyer and Supplier present + distinct, participant_set commitment) and the event_nullifier (obligation 9 — one-shot identity H(rulebook, event, parties) derived in-circuit so a replay cannot use a fresh nullifier). Negative tests reject self-dealing, a missing role, and a foreign nullifier; the nullifier is shown event/party/rulebook-distinguishing. Proven end-to-end on macOS (bb verify ok).
+status: landed

@@ -1,0 +1,1 @@
+nargo test OK (6 tests passed); sample receipt witness solved

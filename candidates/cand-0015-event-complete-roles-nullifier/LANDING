@@ -1,0 +1,2 @@
+cargo/circuits/event-complete/src/main.nr circuits/event-complete/src/main.nr
+cargo/circuits/event-complete/Prover.toml circuits/event-complete/Prover.toml
