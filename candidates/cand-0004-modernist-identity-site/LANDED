@@ -16,3 +16,4 @@ cargo/web/src/styles/custom.css	web/src/styles/custom.css	yes
 cargo/web/tsconfig.json	web/tsconfig.json	yes
 # landed_at: 2026-06-13T06:30:11Z
 # toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=e656d083e825bd60e35c27316fa623f45d838fedecc699a1725b2e9089cb075a unavailable(not-in-devshell)
+git_commit	9b0d2b6
