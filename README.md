@@ -12,10 +12,14 @@ and the governance loop through which the implementation lands.
 
 ## What's here
 
+The AAC domain is a boat **site**, [`sites/ledger/`](sites/ledger/README.md)
+— a category of ledger contexts whose covers decompose global state into
+local books, with the root registry as the descent glue. Its layers:
+
 | Path | What it is |
 |------|------------|
-| [`rfc/`](rfc/README.md) | The specification suite — RFCs 1–8 (PACI, FACT, PROOF, REG, NET, NAME, DATA, SESS) + 12/OTC, the root registry, and registers. Prescriptive: implementations conform to the specs, not the other way round. |
-| [`verification/`](verification/README.md) | The formal core. [`Core.lean`](verification/Core.lean) formalizes the K(M) semantics and **machine-checks against mathlib (Lean v4.28.0) with zero `sorry`**. (A differential property harness — 7,488 checks against an independent K(M) reference model — lives with the implementation tree.) |
+| [`sites/ledger/specs/`](sites/ledger/specs/README.md) | The specification suite — RFCs 1–8 (PACI, FACT, PROOF, REG, NET, NAME, DATA, SESS) + 12/OTC, the root registry, and registers. Prescriptive: implementations conform to the specs, not the other way round. |
+| [`sites/ledger/statements/`](sites/ledger/statements/README.md) | The formal core (the `pacioli` judgment layer). [`Core.lean`](sites/ledger/statements/Core.lean) formalizes the K(M) semantics and **machine-checks against mathlib (Lean v4.28.0) with zero `sorry`**. (A differential property harness — 7,488 checks against an independent K(M) reference model — lives with the implementation tree.) |
 
 The keystone result is `pacioli_equal_field_sound` (and its N-row
 generalization): under u64 amount bounds, BN254 field-equality of cross-sums
@@ -29,13 +33,13 @@ Requires [Nix](https://nixos.org). From this directory:
 
 ```sh
 nix develop                    # provides elan (the Lean toolchain manager)
-cd verification
+cd sites/ledger/statements
 lake exe cache get             # downloads prebuilt mathlib oleans (minutes, no source build)
 lake build                     # elaborates Core.lean — success ⟺ zero open obligations
 ```
 
-See [verification/README.md](verification/README.md) for the full
-lemma-to-RFC map and reproducibility notes.
+See [sites/ledger/statements/README.md](sites/ledger/statements/README.md)
+for the full lemma-to-RFC map and reproducibility notes.
 
 ## Status
 
@@ -43,9 +47,9 @@ All RFCs are **Raw** (the suite's earliest lifecycle stage). The core
 *semantics* (1/PACI §2–§5) are machine-checked; the **Noir circuit
 implementation** and the constraint-level Lean binding (Clean `FormalCircuit`)
 are in progress. The lifecycle gates are defined in
-[rfc/README.md](rfc/README.md): Raw→Draft requires executable conformance for
-every MUST; Draft→Stable requires a formal companion for every
-soundness-bearing MUST with no open obligation.
+[sites/ledger/specs/README.md](sites/ledger/specs/README.md): Raw→Draft
+requires executable conformance for every MUST; Draft→Stable requires a
+formal companion for every soundness-bearing MUST with no open obligation.
 
 ## Governance (boat)
 
@@ -55,7 +59,8 @@ briefed, reviewed where it touches the verifier set, and gated before it
 lands. Acceptance is *discharge-determined, never proposal-determined*: what a
 proposer claims carries no authority; what the verifiers discharge does. The
 project's own source — RFCs, circuits, proofs — lands through candidates like
-everything else; what survives the gates is what the project IS.
+everything else; what survives the gates is what the project IS. (The `ledger`
+site itself landed this way — `cand-0001-establish-ledger-site`.)
 
 The instance was born here (see [`EXPORT-RECEIPT.md`](EXPORT-RECEIPT.md)) with
 the loop-model conformance differential **green inside this repo** — the proof
@@ -66,11 +71,11 @@ that the transported loop still is the loop.
 cat WORKER.md
 
 # One iteration of the loop:
-bash tools/loop open cand-0001-name "intent"
+bash tools/loop open cand-NNNN-name "intent"
 # build cargo + eval-self.sh in the candidate dir; attest evidence
-bash tools/loop validate cand-0001-name
-bash tools/loop brief cand-0001-name
-bash tools/loop auto cand-0001-name --agent your-name
+bash tools/loop validate cand-NNNN-name
+bash tools/loop brief cand-NNNN-name
+bash tools/loop auto cand-NNNN-name --agent your-name
 
 # Or dispatch a bounded worker at the queue top:
 bash tools/loop dispatch --agent your-name
@@ -83,6 +88,6 @@ bash tools/loop dispatch --agent your-name
 
 ## License
 
-Specification text (`rfc/`) is licensed **GPL-3.0-or-later**; implementation
-code is licensed independently. Process: 1/C4 and 2/COSS of
+Specification text (`sites/ledger/specs/`) is licensed **GPL-3.0-or-later**;
+implementation code is licensed independently. Process: 1/C4 and 2/COSS of
 <https://rfc.unprotocols.org> are adopted by reference.

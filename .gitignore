@@ -4,8 +4,8 @@ result-*
 .DS_Store
 
 # Lean / Lake build artifacts (oleans come from `lake exe cache get`)
+# matches .lake/ at any depth, incl. sites/ledger/statements/.lake/
 .lake/
-verification/.lake/
 
 # Local harness state
 .claude/settings.local.json

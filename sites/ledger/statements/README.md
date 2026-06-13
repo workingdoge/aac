@@ -37,7 +37,7 @@ Requires [Nix](https://nixos.org). From the repo root:
 
 ```sh
 nix develop                    # provides elan (the Lean toolchain manager)
-cd verification
+cd sites/ledger/statements
 lake exe cache get             # downloads prebuilt mathlib oleans (minutes)
 lake build                     # elaborates Core.lean — success ⟺ zero sorries
 ```

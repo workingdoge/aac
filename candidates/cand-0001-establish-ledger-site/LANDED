@@ -18,3 +18,4 @@ cargo/statements/lakefile.toml	sites/ledger/statements/lakefile.toml	no
 cargo/statements/lean-toolchain	sites/ledger/statements/lean-toolchain	no
 # landed_at: 2026-06-13T03:03:09Z
 # toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=50a970057427e8d240542dd425e051e3fc1e968eb56b6a4908a98e8c4091b8e3 unavailable(not-in-devshell)
+git_commit	dd5f362

@@ -51,10 +51,10 @@
             pkgs.git
             pkgs.jq
             pkgs.shellcheck
-            # Lean toolchain manager for the verification/ proof. elan reads
-            # verification/lean-toolchain and provisions Lean v4.28.0 on first
-            # use; mathlib oleans come from `lake exe cache get`, never a
-            # from-source rebuild. See verification/README.md.
+            # Lean toolchain manager for the ledger site's proof. elan reads
+            # sites/ledger/statements/lean-toolchain and provisions Lean
+            # v4.28.0 on first use; mathlib oleans come from `lake exe cache
+            # get`, never a from-source rebuild. See sites/ledger/statements/.
             pkgs.elan
           ];
           shellHook = ''
@@ -68,7 +68,7 @@
               echo "  runner:   tools/loop"
             fi
             echo "verify the Lean spec (machine-checked, zero sorries):"
-            echo "  (cd verification && lake exe cache get && lake build)"
+            echo "  (cd sites/ledger/statements && lake exe cache get && lake build)"
           '';
         };
       }
