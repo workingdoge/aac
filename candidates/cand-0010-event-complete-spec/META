@@ -1,0 +1,5 @@
+candidate_id: cand-0010-event-complete-spec
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T16:32:25Z
+intent: Promote EVENT-COMPLETE/1 from Design Note 0001 sketch to an application-target spec at sites/ledger/specs/applications/: a non-enshrined proof target that J = Phi_R(E,q,evidence,roles) — a typed attested 2/FACT event compiles canonically to a P^n vector zero-account — with the 10-point obligation list, the BVR public ABI, and the completeness-not-truth boundary. Composes with TRANSITION/1; registry MUST NOT require it by default; deployments/policy/admissibility MAY.
+status: landed

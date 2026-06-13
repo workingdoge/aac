@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0010-event-complete-spec",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "844f3d74c59c62f10b7f79b6b0bc9b54999b5a4ac3a6685495fc0b0abe7bf1f9",
+    "LANDING": "11e707be120f4f68a31784a8ab0213f3e3052b5b2db3850bc1214d2c4b3313e7",
+    "META": "982f1d6d92bf0d90a66a67bfdd196504f958e65ace89ddd276959fa89e4440bf"
+  }
+}
