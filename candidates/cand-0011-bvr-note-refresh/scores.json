@@ -1,0 +1,18 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0011-bvr-note-refresh",
+  "evaluated_at": "2026-06-13T16:37:46Z",
+  "task": "Refresh Design Note 0001 — point to the landed EVENT-COMPLETE/1 spec, add the coSNARK not-a-universal-mode nuance and the vector-commitment zero-opening requirement; stays non-normative",
+  "checks": {
+    "deltas": "pass",
+    "pointer": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "87da233bab83e7b5425de09a13ffcfa6656b0e689cd95d6b469377fa790510e8",
+    "traces_sha256": "9cc068e4736bf1e00e4a4e8d76a61a0e65f85c245f7afb0e7e9d6fd6e02f351d",
+    "body_sha256": "520b4262042be765c89f0fe6525692f656d21536b45658d0898d403b61b0f2fa",
+    "attestation": "1327cf40a6884d35b593dad7fa69f72fc77b0f2352c4731c596b0de5db1b4f72"
+  }
+}

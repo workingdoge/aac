@@ -1,0 +1,1 @@
+deltas folded: spec pointer + coSNARK pragmatism + zero-opening; still non-normative

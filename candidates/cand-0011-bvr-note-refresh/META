@@ -1,0 +1,5 @@
+candidate_id: cand-0011-bvr-note-refresh
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T16:36:11Z
+intent: Refresh Design Note 0001 to fold in the user's sketch deltas: point §4/§5 to the now-landed EVENT-COMPLETE/1 application-target spec; add the coSNARK-pragmatism nuance (coSNARK only for genuinely distributed witnesses, not a universal proving mode); add the vector-commitment 'require a zero-opening proof, not inspect an arbitrary point' requirement and the fuller BVR object fields.
+status: landed

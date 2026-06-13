@@ -115,12 +115,6 @@ legs per party, mutual attestations over the whole event), §5 adapters
 `factId` as the nullifier preimage. The projection model is literally 2/FACT
 §6: *adapters derive each participant's facts from the event's legs.*
 
-> **Now drafted.** The target sketched here is written up as an
-> application-target specification —
-> [EVENT-COMPLETE/1](../specs/applications/EVENT-COMPLETE-1.md) — with the full
-> obligation list, the BVR public ABI, and the composition rules. This note
-> remains the design rationale; the spec is the (still-Raw) normative text.
-
 ## 5. Layered architecture and the proof separation
 
 ```
@@ -227,17 +221,6 @@ across receipts/epochs, which is precisely the VNET job. Whether
 `pedersen-vector/1` later becomes an admitted 5/NET accumulator for
 receipt-aware epochs is deferred.
 
-A future vector-commitment profile MUST: bind generator derivation and basis
-order to `basis_commitment` and `profileId` (e.g. `Gⱼ = hash_to_curve(tag,
-profileId, basisTypeIdⱼ)`); admit no known discrete-log relation among `H` and
-any `Gⱼ`; enforce amount ranges before or inside the receipt proof; represent
-signed amounts as non-negative debit/credit vectors, never negative field
-elements; forbid mixing basis declarations or profile versions in one receipt;
-and — the load-bearing one — **require a zero-opening (aggregate-blinding) proof,
-not merely inspect that the aggregate is some group point.** A bare group
-element proves nothing; the verifier must check it opens to zero in every
-dimension.
-
 ## 8. The hash-primitive split (folds in the measured tradeoff)
 
 Two different jobs, two primitives:
@@ -288,16 +271,12 @@ relation — expressed as event legs consumed by nullifiers, never a quotient).
    (like a 2/FACT TypeDecl). Who governs the schema set, and how is a deployed
    `rulebook_id` registered (cf. 4/REG §4 target governance, the Deployment
    Register R1)?
-3. **coSNARK fit — and when *not* to.** A collaborative SNARK (co-noir, already
-   in the toolchain) is the natural prover *when the witness is genuinely
-   distributed and private* — multilateral events, confidential cross-ledger
-   equality, private exposures. It is **not a universal proving mode**: a
-   bilateral event whose terms both parties already know MAY instead use
-   signatures over the receipt commitments plus an ordinary single-prover proof.
-   Where MPC is warranted, co-noir's default is 3-party honest-majority —
-   bilateral (N=2) 8/SESS sessions have no honest majority, needing either
-   dishonest-majority 2PC (~2×) or an external non-counterparty helper node.
-   Confirm co-noir v0.7.0 can compile the u64/blackbox circuit before committing.
+3. **coSNARK fit.** BVR/1's witness is distributed across counterparties; a
+   collaborative SNARK (co-noir, already in the toolchain) is the natural prover.
+   But co-noir's default is 3-party honest-majority — bilateral (N=2) 8/SESS
+   sessions have no honest majority, needing either dishonest-majority 2PC (~2×)
+   or an external non-counterparty helper node. Confirm co-noir v0.7.0 can
+   compile the u64/blackbox circuit before committing.
 4. **VNET/1 vs 5/NET admission.** Whether `pedersen-vector/1` becomes an admitted
    5/NET accumulator, or stays a separate receipt-level target.
 5. **12/OTC interaction.** Collateral is a posting, not a promise (12/OTC);
