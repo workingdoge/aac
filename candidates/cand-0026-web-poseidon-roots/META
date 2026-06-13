@@ -1,0 +1,5 @@
+candidate_id: cand-0026-web-poseidon-roots
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T20:21:27Z
+intent: Cascade part 2 (cand-0024): update the web components' hard-coded TRANSITION/1 roots from the old pedersen values to the new Poseidon2 values, so /circuit and /registry display the live proof. aac-transition.ts (prev/next account roots, next nullifier root, journal_commitment, fact_fold, ACIR opcodes 775->673) + aac-row.ts (prev/next account, next nullifier) + circuit.mdx (~775->~673 opcodes). astro build green; new values present, no stale pedersen roots remain.
+status: landed
