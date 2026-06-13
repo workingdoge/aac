@@ -1,0 +1,5 @@
+candidate_id: cand-0012-receipt-renderer
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T16:43:03Z
+intent: An aac-receipt Lit web component rendering a BalancedVectorReceipt (Design Note 0001 / EVENT-COMPLETE/1): the multi-dimensional vector journal from the shipped P^n conformance vector, balancing per incommensurable dimension (USD/fabric/garment, Dr=Cr per column, no numeraire), with role coverage and proof status. Registered in elements.ts and shown in a new 'The receipt' section of /components.
+status: landed

@@ -1,0 +1,1 @@
+/components embeds aac-receipt and names the BalancedVectorReceipt
