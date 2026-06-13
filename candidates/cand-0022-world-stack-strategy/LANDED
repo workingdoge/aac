@@ -2,3 +2,4 @@ cargo/sites/ledger/design/0002-world-stack-agentkit-provekit.md	sites/ledger/des
 cargo/sites/ledger/design/README.md	sites/ledger/design/README.md	yes
 # landed_at: 2026-06-13T19:37:42Z
 # toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1 unavailable(not-in-devshell)
+git_commit	1db62a6
