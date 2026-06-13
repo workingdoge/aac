@@ -15,10 +15,9 @@
     # Noir workspace toolchain.
     # Adapted from the flake fragment supplied in this 2026-06-13 change
     # request; the upstream source pins are the canonical releases/tags below.
-    bb-bin = {
-      url = "https://github.com/AztecProtocol/aztec-packages/releases/download/v2.1.8/barretenberg-amd64-linux.tar.gz";
-      flake = false;
-    };
+    # NB: bb (Barretenberg) and nargo are fetched per-system via pkgs.fetchurl
+    # from their pinned release tags (see below), not as flake inputs — the
+    # prebuilt binaries ship natively for darwin-arm64/x64 and linux-arm64/x64.
     noir-src = {
       url = "github:noir-lang/noir/v1.0.0-beta.14";
       flake = false;
@@ -40,7 +39,6 @@
       flake-utils,
       boat,
       paintgun,
-      bb-bin,
       noir-src,
       co-snarks-src,
       bignum-paramgen-src,
@@ -52,28 +50,58 @@
         pkgs = import nixpkgs { inherit system; };
         lib = pkgs.lib;
 
-        isX86Linux = system == "x86_64-linux";
-
-        bb = pkgs.stdenv.mkDerivation rec {
+        # bb (Barretenberg) — the UltraHonk prover/verifier, fetched as the
+        # pinned PREBUILT release binary, per-system. bb ships NATIVE binaries
+        # for darwin-arm64/x64 and linux-arm64/x64 (verified: v2.1.8 attaches
+        # barretenberg-arm64-darwin.tar.gz, a Mach-O arm64 bb), so `bb prove`/
+        # `bb verify` run on Apple Silicon with no Linux/VM/Rosetta — the old
+        # amd64-linux-only pin was a packaging choice, not a platform limit.
+        # Same selection logic as bbup's installer. Hashes via prefetch-file.
+        bbRelease = "v2.1.8";
+        bbSystems = {
+          "aarch64-darwin" = {
+            asset = "arm64-darwin";
+            hash = "sha256-4x2XvR60zVRfFMrg+vhiEeP601y+sWTqJdQcUzHyons=";
+          };
+          "x86_64-darwin" = {
+            asset = "amd64-darwin";
+            hash = "sha256-5TFazO7rihU3MFELRGTTtNiphPhajN3k9wplwm29tSs=";
+          };
+          "x86_64-linux" = {
+            asset = "amd64-linux";
+            hash = "sha256-8FpNEWO0iUsGqtm+8wvJrOPOroCH8TsYGxT/K+kJwNA=";
+          };
+          "aarch64-linux" = {
+            asset = "arm64-linux";
+            hash = "sha256-uXA9pBlFMPpdRHioLbURsCxvYy0z+xdKO5LNBpGv5v0=";
+          };
+        };
+        bbSupported = builtins.hasAttr system bbSystems;
+        bbEntry = bbSystems.${system} or (throw "bb: no pinned release for ${system}");
+        bb = pkgs.stdenv.mkDerivation {
           pname = "barretenberg";
-          version = "v2.1.8";
-          src = bb-bin;
-          nativeBuildInputs = with pkgs; [
-            autoPatchelfHook
-            stdenv.cc.cc
-          ];
+          version = bbRelease;
+          src = pkgs.fetchurl {
+            url = "https://github.com/AztecProtocol/aztec-packages/releases/download/${bbRelease}/barretenberg-${bbEntry.asset}.tar.gz";
+            hash = bbEntry.hash;
+          };
+          # The release tarball is a bare `bb` binary (no top-level dir).
+          sourceRoot = ".";
+          dontConfigure = true;
+          dontBuild = true;
+          nativeBuildInputs = lib.optionals pkgs.stdenv.isLinux [ pkgs.autoPatchelfHook ];
+          buildInputs = lib.optionals pkgs.stdenv.isLinux [ pkgs.stdenv.cc.cc.lib ];
           installPhase = ''
             runHook preInstall
-            mkdir -p $out/bin
-            cp bb $out/bin
+            install -Dm755 bb $out/bin/bb
             runHook postInstall
           '';
           meta = {
-            description = "Barretenberg (or bb for short) is an optimized elliptic curve library for the bn128 curve, and a PLONK SNARK prover.";
+            description = "Barretenberg (bb) -- UltraHonk prover/verifier (pinned prebuilt release binary).";
             homepage = "https://barretenberg.aztec.network/docs/";
             license = lib.licenses.asl20;
-            platforms = [ "x86_64-linux" ];
-            maintainers = [ ];
+            platforms = builtins.attrNames bbSystems;
+            mainProgram = "bb";
           };
         };
 
@@ -258,9 +286,7 @@
           ++ lib.optionals pkgs.stdenv.isLinux [
             co-snarks
           ]
-          ++ lib.optionals isX86Linux [
-            bb
-          ];
+          ++ lib.optional bbSupported bb;
       in
       {
         packages =
@@ -271,7 +297,7 @@
           // lib.optionalAttrs pkgs.stdenv.isLinux {
             inherit co-snarks;
           }
-          // lib.optionalAttrs isX86Linux {
+          // lib.optionalAttrs bbSupported {
             inherit bb;
           };
 

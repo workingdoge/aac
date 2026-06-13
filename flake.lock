@@ -1,18 +1,5 @@
 {
   "nodes": {
-    "bb-bin": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1764156800,
-        "narHash": "sha256-agqc8aTeldG83bDs0MQy0C0UzRP0MthABsg6ey9SJIk=",
-        "type": "tarball",
-        "url": "https://github.com/AztecProtocol/aztec-packages/releases/download/v2.1.8/barretenberg-amd64-linux.tar.gz"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://github.com/AztecProtocol/aztec-packages/releases/download/v2.1.8/barretenberg-amd64-linux.tar.gz"
-      }
-    },
     "bignum-paramgen-src": {
       "flake": false,
       "locked": {
@@ -1469,7 +1456,6 @@
     },
     "root": {
       "inputs": {
-        "bb-bin": "bb-bin",
         "bignum-paramgen-src": "bignum-paramgen-src",
         "boat": "boat",
         "co-snarks-src": "co-snarks-src",
