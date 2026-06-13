@@ -1,0 +1,5 @@
+candidate_id: cand-0016-ledger-composition
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T17:22:31Z
+intent: Lift a shared circuits/ledger lib (canonical journal_commitment + participant_set + event_nullifier) so EVENT-COMPLETE/1 and TRANSITION/1 COMPOSE on one commitment: TRANSITION/1's journal_commitment is unchanged (byte-identical, lifted verbatim), EVENT-COMPLETE/1 adopts the canonical form, and a composition test shows TRANSITION/1 posts exactly the journal_commitment the BVR certifies (0x014292…) and consumes the BVR's event_nullifier. rulebook gains account indices + the schema event_commitment. Proven end-to-end on macOS.
+status: landed

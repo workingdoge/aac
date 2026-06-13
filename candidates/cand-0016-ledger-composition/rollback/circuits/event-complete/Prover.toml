@@ -1,7 +1,7 @@
 rulebook_id            = "7"
 event_commitment_pub   = "0x269e01e45c619a5eca306e7ab674227ec38aed8cf084e752994b47462414ea0e"
 participant_set_pub    = "0x2b55fa539ce44e44e27269fee59df2f993a63e2ebda491a6dea7f116c63535a3"
-journal_commitment_pub = "0x014292c12bdd738083bf827ce66d390c1ff99841ceba8af563a65e3a29183e"
+journal_commitment_pub = "0x214bf58a30820ae090fde82e19b13ae6819be98a9b70b6a3a3b39b3ea898980e"
 event_nullifier_pub    = "0x2b87ca9fbaa73e36788f567f698405a35a024f704d8465f138e89dcab7417c86"
 usd_cents     = "10000"
 fabric_meters = "50"

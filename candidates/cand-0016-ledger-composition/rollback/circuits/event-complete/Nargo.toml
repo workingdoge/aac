@@ -1,8 +1,7 @@
 [package]
 name = "event_complete"
 type = "bin"
-authors = ["American Accounting Company"]
+authors = [""]
 [dependencies]
 pacioli = { path = "../pacioli" }
 rulebook = { path = "../rulebook" }
-ledger = { path = "../ledger" }

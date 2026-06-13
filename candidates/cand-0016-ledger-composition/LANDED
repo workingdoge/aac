@@ -1,0 +1,11 @@
+cargo/circuits/Nargo.toml	circuits/Nargo.toml	yes
+cargo/circuits/ledger/Nargo.toml	circuits/ledger/Nargo.toml	no
+cargo/circuits/ledger/src/lib.nr	circuits/ledger/src/lib.nr	no
+cargo/circuits/rulebook/src/lib.nr	circuits/rulebook/src/lib.nr	yes
+cargo/circuits/transition/Nargo.toml	circuits/transition/Nargo.toml	yes
+cargo/circuits/transition/src/main.nr	circuits/transition/src/main.nr	yes
+cargo/circuits/event-complete/Nargo.toml	circuits/event-complete/Nargo.toml	yes
+cargo/circuits/event-complete/src/main.nr	circuits/event-complete/src/main.nr	yes
+cargo/circuits/event-complete/Prover.toml	circuits/event-complete/Prover.toml	yes
+# landed_at: 2026-06-13T17:24:38Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1 unavailable(not-in-devshell)

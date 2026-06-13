@@ -1,0 +1,9 @@
+cargo/circuits/Nargo.toml circuits/Nargo.toml
+cargo/circuits/ledger/Nargo.toml circuits/ledger/Nargo.toml
+cargo/circuits/ledger/src/lib.nr circuits/ledger/src/lib.nr
+cargo/circuits/rulebook/src/lib.nr circuits/rulebook/src/lib.nr
+cargo/circuits/transition/Nargo.toml circuits/transition/Nargo.toml
+cargo/circuits/transition/src/main.nr circuits/transition/src/main.nr
+cargo/circuits/event-complete/Nargo.toml circuits/event-complete/Nargo.toml
+cargo/circuits/event-complete/src/main.nr circuits/event-complete/src/main.nr
+cargo/circuits/event-complete/Prover.toml circuits/event-complete/Prover.toml

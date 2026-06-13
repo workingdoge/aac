@@ -15,7 +15,6 @@
 //! sites/ledger/statements/Core.lean.
 
 use pacioli::{assert_u64, journal_balanced};
-use rulebook::{compile_goods_receipt_invoice, event_commitment, GoodsReceiptInvoice};
 
 // ---- profile shape (a deployment fixes these; recorded in Register R1) ----
 global N_BASIS: u32 = 3; // basis dimension B (atomic-unit coordinates)
@@ -159,19 +158,21 @@ fn fact_fold_of(facts: [Fact; N_FACT], count: u32) -> Field {
     fold
 }
 
-/// journal_commitment: the canonical order-binding fold, via the shared ledger
-/// lib -- so EVENT-COMPLETE/1 produces the SAME commitment for the journal it
-/// certifies as Phi_R(event). (Construction unchanged; value byte-identical.)
+/// journal_commitment: an order-binding fold over the journal rows.
 fn journal_commitment_of(journal: [Posting; N_ROWS]) -> Field {
-    let mut accounts: [u32; N_ROWS] = [0; N_ROWS];
-    let mut debits: [[u64; N_BASIS]; N_ROWS] = [[0; N_BASIS]; N_ROWS];
-    let mut credits: [[u64; N_BASIS]; N_ROWS] = [[0; N_BASIS]; N_ROWS];
+    let mut jc = std::hash::pedersen_hash([TAG_JOURNAL, 0]);
     for r in 0..N_ROWS {
-        accounts[r] = journal[r].account;
-        debits[r] = journal[r].debit;
-        credits[r] = journal[r].credit;
+        let mut buf: [Field; 3 + 2 * N_BASIS] = [0; 3 + 2 * N_BASIS];
+        buf[0] = TAG_JOURNAL;
+        buf[1] = jc;
+        buf[2] = journal[r].account as Field;
+        for b in 0..N_BASIS {
+            buf[3 + b] = journal[r].debit[b] as Field;
+            buf[3 + N_BASIS + b] = journal[r].credit[b] as Field;
+        }
+        jc = std::hash::pedersen_hash(buf);
     }
-    ledger::journal_commitment(accounts, debits, credits)
+    jc
 }
 
 /// The honest prover: derive the public ABI vector from the private witness and
@@ -323,37 +324,4 @@ fn nullifier_root_unchanged_when_no_right_consumed() {
     // ABI #2 (prev) and #3 (next) nullifier roots must coincide.
     assert(p[2] == p[3], "nullifier root moved with no consumption");
     main(p[0], p[1], p[2], p[3], p[4], p[5], p[6], 1, w);
-}
-
-// -- composition: the BVR journal is what TRANSITION/1 posts ----------------
-#[test]
-fn composition_transition_posts_the_bvr_journal() {
-    // EVENT-COMPLETE/1 certifies journal_commitment = ledger::journal_commitment(
-    // Phi_R(event)) and event_nullifier = ledger::event_nullifier(...). Build the
-    // matching TRANSITION/1 transition: post the compiled journal to a fresh state
-    // and consume that nullifier. TRANSITION/1 accepts; the journal_commitment it
-    // posts equals the BVR's, and it consumes the BVR's nullifier -- they compose.
-    let e = GoodsReceiptInvoice { usd_cents: 10000, fabric_meters: 50 };
-    let cj = compile_goods_receipt_invoice(e);
-    let journal = [
-        Posting { account: cj.accounts[0], debit: cj.debits[0], credit: cj.credits[0] },
-        Posting { account: cj.accounts[1], debit: cj.debits[1], credit: cj.credits[1] },
-        Posting { account: cj.accounts[2], debit: cj.debits[2], credit: cj.credits[2] },
-        Posting { account: cj.accounts[3], debit: cj.debits[3], credit: cj.credits[3] },
-    ];
-    let ps = ledger::participant_set(111, 222);
-    let n = ledger::event_nullifier(7, event_commitment(e), ps);
-    let w = Witness {
-        journal,
-        prev_state: AcctState { debit: [[0; N_BASIS]; N_ACCT], credit: [[0; N_BASIS]; N_ACCT] },
-        nullifiers: [n, 0],
-        facts: [
-            Fact { fact_id: 0, side: 0, multiplicity: 0 },
-            Fact { fact_id: 0, side: 0, multiplicity: 0 },
-        ],
-    };
-    let p = public_inputs(w, 100, 42, 0);
-    main(p[0], p[1], p[2], p[3], p[4], p[5], p[6], 0, w);
-    assert(p[4] == ledger::journal_commitment(cj.accounts, cj.debits, cj.credits), "journal commitments diverge");
-    assert(p[2] != p[3], "nullifier root did not advance");
 }

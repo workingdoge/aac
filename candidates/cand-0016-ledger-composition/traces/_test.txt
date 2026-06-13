@@ -1,0 +1,17 @@
+warning: unused global TAG_JOURNAL
+   ┌─ transition/src/main.nr:30:8
+   │
+30 │ global TAG_JOURNAL: Field = 3;
+   │        ----------- unused global
+   │
+
+[transition] Running 8 test functions
+[transition] Testing unbalanced_journal_rejects ... [0m[32mok[0m
+[transition] Testing tampered_next_root_rejects ... [0m[32mok[0m
+[transition] Testing print_public_inputs ... [0m[32mok[0m
+[transition] Testing nullifier_root_unchanged_when_no_right_consumed ... [0m[32mok[0m
+[transition] Testing double_spend_rejects ... [0m[32mok[0m
+[transition] Testing composition_transition_posts_the_bvr_journal ... [0m[32mok[0m
+[transition] Testing balanced_transition_accepts ... [0m[32mok[0m
+[transition] Testing zero_multiplicity_fact_rejects ... [0m[32mok[0m
+[transition] [0m[32m8 tests passed[0m

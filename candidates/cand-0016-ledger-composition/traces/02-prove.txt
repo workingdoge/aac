@@ -1,0 +1,1 @@
+nargo test OK (8 tests passed); transition byte-identical (landed Prover.toml solves); event-complete solves
