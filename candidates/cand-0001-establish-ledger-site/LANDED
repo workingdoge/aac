@@ -1,0 +1,20 @@
+cargo/README.md	sites/ledger/README.md	no
+cargo/specs/1/README.md	sites/ledger/specs/1/README.md	no
+cargo/specs/12/README.md	sites/ledger/specs/12/README.md	no
+cargo/specs/2/README.md	sites/ledger/specs/2/README.md	no
+cargo/specs/3/README.md	sites/ledger/specs/3/README.md	no
+cargo/specs/4/README.md	sites/ledger/specs/4/README.md	no
+cargo/specs/5/README.md	sites/ledger/specs/5/README.md	no
+cargo/specs/6/README.md	sites/ledger/specs/6/README.md	no
+cargo/specs/7/README.md	sites/ledger/specs/7/README.md	no
+cargo/specs/8/README.md	sites/ledger/specs/8/README.md	no
+cargo/specs/README.md	sites/ledger/specs/README.md	no
+cargo/specs/registers/R1.md	sites/ledger/specs/registers/R1.md	no
+cargo/statements/Core.lean	sites/ledger/statements/Core.lean	no
+cargo/statements/README.md	sites/ledger/statements/README.md	no
+cargo/statements/README_TONIGHT.md	sites/ledger/statements/README_TONIGHT.md	no
+cargo/statements/lake-manifest.json	sites/ledger/statements/lake-manifest.json	no
+cargo/statements/lakefile.toml	sites/ledger/statements/lakefile.toml	no
+cargo/statements/lean-toolchain	sites/ledger/statements/lean-toolchain	no
+# landed_at: 2026-06-13T03:03:09Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=50a970057427e8d240542dd425e051e3fc1e968eb56b6a4908a98e8c4091b8e3 unavailable(not-in-devshell)

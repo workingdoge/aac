@@ -1,0 +1,16 @@
+spec 1 present
+spec 2 present
+spec 3 present
+spec 4 present
+spec 5 present
+spec 6 present
+spec 7 present
+spec 8 present
+spec 12 present
+specs/README.md present
+specs/registers/R1.md present
+statements/Core.lean present
+statements/lakefile.toml present
+statements/lean-toolchain present
+statements/lake-manifest.json present
+--- completeness: missing=0

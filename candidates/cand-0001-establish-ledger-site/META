@@ -1,0 +1,5 @@
+candidate_id: cand-0001-establish-ledger-site
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T02:51:11Z
+intent: Establish the ledger site: relocate the RFC suite and the machine-checked Pacioli/K(M) statements into sites/ledger/ (specs/ + statements/), making AAC a first-class boat site parallel to premath; the Pacioli group is its judgment layer.
+status: landed

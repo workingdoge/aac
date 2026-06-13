@@ -1,0 +1,19 @@
+NEW   sites/ledger/README.md                       (no predecessor; site artifact)
+IDENT sites/ledger/specs/1/README.md               == rfc/1/README.md  ed2774efbba8
+IDENT sites/ledger/specs/12/README.md              == rfc/12/README.md  f5c1bb386f4b
+IDENT sites/ledger/specs/2/README.md               == rfc/2/README.md  0f3e13bd9bee
+IDENT sites/ledger/specs/3/README.md               == rfc/3/README.md  c65e3ed77c5f
+IDENT sites/ledger/specs/4/README.md               == rfc/4/README.md  df70bfd6fbc5
+IDENT sites/ledger/specs/5/README.md               == rfc/5/README.md  39210d60d2c2
+IDENT sites/ledger/specs/6/README.md               == rfc/6/README.md  a4ac65c7f3f0
+IDENT sites/ledger/specs/7/README.md               == rfc/7/README.md  968c204de6f2
+IDENT sites/ledger/specs/8/README.md               == rfc/8/README.md  2f19333af919
+IDENT sites/ledger/specs/README.md                 == rfc/README.md  a986bf81e247
+IDENT sites/ledger/specs/registers/R1.md           == rfc/registers/R1.md  6b69cd384dda
+IDENT sites/ledger/statements/Core.lean            == verification/Core.lean  48bab4d05446
+IDENT sites/ledger/statements/README.md            == verification/README.md  a1e224b53409
+IDENT sites/ledger/statements/README_TONIGHT.md    == verification/README_TONIGHT.md  5e6b433006bf
+IDENT sites/ledger/statements/lake-manifest.json   == verification/lake-manifest.json  dff52c7cb587
+IDENT sites/ledger/statements/lakefile.toml        == verification/lakefile.toml  5c3061c78463
+IDENT sites/ledger/statements/lean-toolchain       == verification/lean-toolchain  db7bb24b756d
+--- byte-identity: relocations=17 new=1 bad=0

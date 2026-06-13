@@ -1,0 +1,3 @@
+lake env lean (cargo/statements/Core.lean) exit=0
+<no diagnostics>
+--- elaboration: clean (zero diagnostics ⇒ zero sorry)

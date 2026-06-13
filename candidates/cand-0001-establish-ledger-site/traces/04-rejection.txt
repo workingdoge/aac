@@ -1,0 +1,2 @@
+corrupted copy d732f064274f vs origin 48bab4d05446
+--- rejection probe: corruption correctly diverges (test discriminates)

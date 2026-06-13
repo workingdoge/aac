@@ -15,7 +15,7 @@ and the governance loop through which the implementation lands.
 | Path | What it is |
 |------|------------|
 | [`rfc/`](rfc/README.md) | The specification suite — RFCs 1–8 (PACI, FACT, PROOF, REG, NET, NAME, DATA, SESS) + 12/OTC, the root registry, and registers. Prescriptive: implementations conform to the specs, not the other way round. |
-| [`verification/`](verification/README.md) | The formal core. [`Core.lean`](verification/Core.lean) formalizes the K(M) semantics and **machine-checks against mathlib (Lean v4.28.0) with zero `sorry`**; [`k-properties.ts`](verification/k-properties.ts) is the differential property harness (7,488 checks against an independent reference model). |
+| [`verification/`](verification/README.md) | The formal core. [`Core.lean`](verification/Core.lean) formalizes the K(M) semantics and **machine-checks against mathlib (Lean v4.28.0) with zero `sorry`**. (A differential property harness — 7,488 checks against an independent K(M) reference model — lives with the implementation tree.) |
 
 The keystone result is `pacioli_equal_field_sound` (and its N-row
 generalization): under u64 amount bounds, BN254 field-equality of cross-sums
