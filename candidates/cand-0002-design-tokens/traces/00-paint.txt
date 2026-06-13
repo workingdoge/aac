@@ -1,0 +1,1 @@
+paint: /Users/arj/irai/blackhole/fish-2026-05-16/tools/paintgun/target/release/paint (paint 0.1.0)

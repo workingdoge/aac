@@ -1,0 +1,15 @@
+✓ Built pack: /var/folders/x_/n75jlksx4m70cw9pcbwp_68h0000gn/T/tmp.Hql2Z8ly7o
+built into /var/folders/x_/n75jlksx4m70cw9pcbwp_68h0000gn/T/tmp.Hql2Z8ly7o
+authored.json
+backend-emission.witnesses.json
+components.css
+ctc.manifest.json
+ctc.witnesses.json
+diagnostics.pack.json
+inputs
+manifest.json
+resolved.json
+tokens.css
+tokens.d.ts
+tokens.vars.css
+validation.txt

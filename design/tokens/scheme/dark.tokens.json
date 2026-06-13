@@ -1,0 +1,238 @@
+{
+  "color": {
+    "$type": "color",
+    "cream": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.082353,
+          0.070588,
+          0.05098
+        ],
+        "hex": "#15120d"
+      }
+    },
+    "bond": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.117647,
+          0.101961,
+          0.07451
+        ],
+        "hex": "#1e1a13"
+      }
+    },
+    "field": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.098039,
+          0.082353,
+          0.062745
+        ],
+        "hex": "#191510"
+      }
+    },
+    "ink": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.941176,
+          0.913725,
+          0.847059
+        ],
+        "hex": "#f0e9d8"
+      }
+    },
+    "ink2": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.772549,
+          0.737255,
+          0.65098
+        ],
+        "hex": "#c5bca6"
+      }
+    },
+    "navy": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.576471,
+          0.662745,
+          0.807843
+        ],
+        "hex": "#93a9ce"
+      }
+    },
+    "oxblood": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.678431,
+          0.290196,
+          0.2
+        ],
+        "hex": "#ad4a33"
+      }
+    },
+    "steel": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.607843,
+          0.627451,
+          0.658824
+        ],
+        "hex": "#9ba0a8"
+      }
+    },
+    "steel2": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.443137,
+          0.458824,
+          0.490196
+        ],
+        "hex": "#71757d"
+      }
+    },
+    "gold": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.776471,
+          0.643137,
+          0.352941
+        ],
+        "hex": "#c6a45a"
+      }
+    },
+    "rule": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.196078,
+          0.168627,
+          0.121569
+        ],
+        "hex": "#322b1f"
+      }
+    },
+    "rule2": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.290196,
+          0.254902,
+          0.188235
+        ],
+        "hex": "#4a4130"
+      }
+    },
+    "paperOnInk": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.929412,
+          0.905882,
+          0.839216
+        ],
+        "hex": "#ede7d6"
+      }
+    },
+    "verified": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.498039,
+          0.690196,
+          0.541176
+        ],
+        "hex": "#7fb08a"
+      }
+    },
+    "goldLit": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.788235,
+          0.658824,
+          0.360784
+        ],
+        "hex": "#c9a85c"
+      }
+    },
+    "dim": {
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.54902,
+          0.52549,
+          0.470588
+        ],
+        "hex": "#8c8678"
+      }
+    },
+    "status": {
+      "recorded": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.576471,
+            0.662745,
+            0.807843
+          ],
+          "hex": "#93a9ce"
+        }
+      },
+      "reconciled": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.776471,
+            0.643137,
+            0.352941
+          ],
+          "hex": "#c6a45a"
+        }
+      },
+      "sealed": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.678431,
+            0.290196,
+            0.2
+          ],
+          "hex": "#ad4a33"
+        }
+      },
+      "pending": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.607843,
+            0.627451,
+            0.658824
+          ],
+          "hex": "#9ba0a8"
+        }
+      },
+      "exception": {
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.678431,
+            0.290196,
+            0.2
+          ],
+          "hex": "#ad4a33"
+        }
+      }
+    }
+  }
+}

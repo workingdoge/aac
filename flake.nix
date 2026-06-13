@@ -8,6 +8,10 @@
     # Local-path pin (hackathon-speed); swap for a published ref when
     # boat publishes beyond this host.
     boat.url = "git+file:///Users/arj/irai/boat";
+    # paintgun: DTCG 2025.10 design-token compiler/verifier (the `paint`
+    # CLI) for the AAC design system + spec-publication packs. Published,
+    # reproducible pin.
+    paintgun.url = "github:workingdoge/paintgun/v0.1.0";
   };
 
   outputs =
@@ -16,6 +20,7 @@
       nixpkgs,
       flake-utils,
       boat,
+      paintgun,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
@@ -56,6 +61,8 @@
             # v4.28.0 on first use; mathlib oleans come from `lake exe cache
             # get`, never a from-source rebuild. See sites/ledger/statements/.
             pkgs.elan
+            # paint: DTCG token-pack compiler/verifier for the design system.
+            paintgun.packages.${system}.default
           ];
           shellHook = ''
             if [ ! -f tools/loop ]; then

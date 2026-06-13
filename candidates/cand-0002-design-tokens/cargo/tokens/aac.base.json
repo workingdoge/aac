@@ -1,0 +1,179 @@
+{
+  "font": {
+    "$type": "fontFamily",
+    "serif": {
+      "$value": "\"Libre Caslon Text\",\"Iowan Old Style\",Georgia,\"Times New Roman\",serif"
+    },
+    "display": {
+      "$value": "\"Libre Caslon Display\",\"Libre Caslon Text\",Georgia,serif"
+    },
+    "sans": {
+      "$value": "\"Public Sans\",system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif"
+    },
+    "mono": {
+      "$value": "\"IBM Plex Mono\",ui-monospace,\"SFMono-Regular\",Menlo,monospace"
+    }
+  },
+  "weight": {
+    "$type": "fontWeight",
+    "regular": {
+      "$value": 400
+    },
+    "medium": {
+      "$value": 500
+    },
+    "semibold": {
+      "$value": 600
+    },
+    "bold": {
+      "$value": 700
+    }
+  },
+  "space": {
+    "$type": "dimension",
+    "s1": {
+      "$value": {
+        "value": 4,
+        "unit": "px"
+      }
+    },
+    "s2": {
+      "$value": {
+        "value": 8,
+        "unit": "px"
+      }
+    },
+    "s3": {
+      "$value": {
+        "value": 12,
+        "unit": "px"
+      }
+    },
+    "s4": {
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      }
+    },
+    "s5": {
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      }
+    },
+    "s6": {
+      "$value": {
+        "value": 32,
+        "unit": "px"
+      }
+    },
+    "s7": {
+      "$value": {
+        "value": 48,
+        "unit": "px"
+      }
+    },
+    "s8": {
+      "$value": {
+        "value": 64,
+        "unit": "px"
+      }
+    },
+    "s9": {
+      "$value": {
+        "value": 88,
+        "unit": "px"
+      }
+    }
+  },
+  "radius": {
+    "$type": "dimension",
+    "r": {
+      "$value": {
+        "value": 2,
+        "unit": "px"
+      }
+    }
+  },
+  "rule": {
+    "$type": "dimension",
+    "hair": {
+      "$value": {
+        "value": 1,
+        "unit": "px"
+      }
+    }
+  },
+  "text": {
+    "$type": "dimension",
+    "micro": {
+      "$value": {
+        "value": 10,
+        "unit": "px"
+      }
+    },
+    "xs": {
+      "$value": {
+        "value": 11,
+        "unit": "px"
+      }
+    },
+    "sm": {
+      "$value": {
+        "value": 13,
+        "unit": "px"
+      }
+    },
+    "base": {
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      }
+    },
+    "md": {
+      "$value": {
+        "value": 19,
+        "unit": "px"
+      }
+    },
+    "lg": {
+      "$value": {
+        "value": 23,
+        "unit": "px"
+      }
+    },
+    "xl": {
+      "$value": {
+        "value": 30,
+        "unit": "px"
+      }
+    },
+    "xxl": {
+      "$value": {
+        "value": 40,
+        "unit": "px"
+      }
+    },
+    "xxxl": {
+      "$value": {
+        "value": 46,
+        "unit": "px"
+      }
+    }
+  },
+  "measure": {
+    "$type": "dimension",
+    "sheet": {
+      "$value": {
+        "value": 1140,
+        "unit": "px"
+      }
+    },
+    "prose": {
+      "$value": {
+        "value": 34,
+        "unit": "rem"
+      }
+    }
+  }
+}

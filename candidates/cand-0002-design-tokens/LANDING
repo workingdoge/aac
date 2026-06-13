@@ -1,0 +1,6 @@
+cargo/README.md design/README.md
+cargo/aac.resolver.json design/aac.resolver.json
+cargo/component-contracts.json design/component-contracts.json
+cargo/tokens/aac.base.json design/tokens/aac.base.json
+cargo/tokens/scheme/dark.tokens.json design/tokens/scheme/dark.tokens.json
+cargo/tokens/scheme/light.tokens.json design/tokens/scheme/light.tokens.json

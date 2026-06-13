@@ -1183,6 +1183,22 @@
         "type": "github"
       }
     },
+    "nixpkgs_9": {
+      "locked": {
+        "lastModified": 1777918403,
+        "narHash": "sha256-7QiZv0LcW1yIOLo2LNuCQjWon1Z1r99FwK24hbtBOF4=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "afc5551119aae6eab73a95c1960891cfe63204f6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "npm-lockfile-fix": {
       "inputs": {
         "nixpkgs": [
@@ -1203,6 +1219,26 @@
       "original": {
         "owner": "jeslie0",
         "repo": "npm-lockfile-fix",
+        "type": "github"
+      }
+    },
+    "paintgun": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_9",
+        "systems": "systems_5"
+      },
+      "locked": {
+        "lastModified": 1781293341,
+        "narHash": "sha256-wdZXy5Hu7JCz7wSiqAGegWO3nmvrabHDgdZ2Rq6IWds=",
+        "owner": "workingdoge",
+        "repo": "paintgun",
+        "rev": "b681019c30e4341683a8ecce902473bcf4adfcda",
+        "type": "github"
+      },
+      "original": {
+        "owner": "workingdoge",
+        "ref": "v0.1.0",
+        "repo": "paintgun",
         "type": "github"
       }
     },
@@ -1372,7 +1408,8 @@
       "inputs": {
         "boat": "boat",
         "flake-utils": "flake-utils_2",
-        "nixpkgs": "nixpkgs_8"
+        "nixpkgs": "nixpkgs_8",
+        "paintgun": "paintgun"
       }
     },
     "rust-analyzer-src": {
@@ -1511,6 +1548,21 @@
       }
     },
     "systems_4": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_5": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
