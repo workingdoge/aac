@@ -1,0 +1,36 @@
+# Reflection: cand-0009-pn-conformance
+
+Intent: P^n conformance vectors in circuits/pacioli (Design Note 0001 §11.2; advances 1/PACI Raw->Draft 'executable conformance for every MUST'): a multi-dimensional buyer/supplier event over basis [USD,fabric,garment] is accepted as a vector zero-account, and a 'dollars balance but fabric vanishes' journal is rejected — the incommensurability thesis baked into the shipped test suite.
+Status at reflection: landed
+Reflected at: 2026-06-13T16:28:45Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0009-pn-conformance",
+  "evaluated_at": "2026-06-13T16:28:38Z",
+  "task": "P^n conformance vectors in pacioli: a multi-dimensional vector event is accepted as a zero-account; a numeraire-collapse journal (dollars net, fabric vanishes) is rejected. nargo test green.",
+  "checks": {
+    "present": "pass",
+    "test": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "72532c40ebb60f2b2343542ffc213663a9a398b502f070933ea8442f330b9c98",
+    "traces_sha256": "4d0160ea54e87364393a9b76644fef8c7303216cf218dc287ffd5f5025a8bc01",
+    "body_sha256": "bce89fc12db74bf8a38cb866f26d18e2b83afdc004aa77d249bb32913cd116c0",
+    "attestation": "6127b6dd84e7f52abf6abdcf751a9a5990d6c9efe8319049e3e81eca2736c3ff"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.
