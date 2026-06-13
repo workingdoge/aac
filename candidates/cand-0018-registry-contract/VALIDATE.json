@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0018-registry-contract",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "844f3d74c59c62f10b7f79b6b0bc9b54999b5a4ac3a6685495fc0b0abe7bf1f9",
+    "LANDING": "0291b661a43c7c84d5ae44dfcb71a181dedcde2992ba5758ec0417def5f0b21b",
+    "META": "60fbf2cc4388389c1fd29b4c9becf102c5c442638fee1297e8c279307ebeacb4"
+  }
+}

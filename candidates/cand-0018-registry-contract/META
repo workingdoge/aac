@@ -1,0 +1,5 @@
+candidate_id: cand-0018-registry-contract
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T17:53:12Z
+intent: The 4/REG root registry as a deployable Solidity contract at registry/ (Foundry): Registry.sol implements the TRANSITION/1 update rule -- old-root equality (the concurrency rule), context pin, proof discharge via the bb-generated UltraHonk verifier, atomic root advance + fact_fold chaining + nonce. Verifies the REAL TRANSITION/1 proof on-chain (keccak oracle). forge test green: valid proof advances the row; stale/tampered/context-mismatch refused. Closes the pipeline circuit -> bb proof -> solidity verifier -> registry.
+status: landed

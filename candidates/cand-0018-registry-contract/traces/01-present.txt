@@ -1,0 +1,1 @@
+registry + bb verifier + real proof fixture present; refusals wired

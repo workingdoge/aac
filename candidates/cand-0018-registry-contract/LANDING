@@ -1,0 +1,7 @@
+cargo/registry/foundry.toml registry/foundry.toml
+cargo/registry/README.md registry/README.md
+cargo/registry/src/Registry.sol registry/src/Registry.sol
+cargo/registry/src/HonkVerifier.sol registry/src/HonkVerifier.sol
+cargo/registry/test/Registry.t.sol registry/test/Registry.t.sol
+cargo/registry/test/fixtures/transition.proof registry/test/fixtures/transition.proof
+cargo/registry/test/fixtures/transition.pub registry/test/fixtures/transition.pub

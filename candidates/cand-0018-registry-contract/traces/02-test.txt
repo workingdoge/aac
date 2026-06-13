@@ -1,0 +1,13 @@
+Compiling 3 files with Solc 0.8.33
+Solc 0.8.33 finished in 576.78ms
+Compiler run successful!
+
+Ran 4 tests for test/Registry.t.sol:RegistryTest
+[PASS] test_ContextMismatchReverts() (gas: 744546)
+[PASS] test_StaleUpdateReverts() (gas: 3309445)
+[PASS] test_TamperedProofReverts() (gas: 1204525)
+[PASS] test_ValidProofUpdatesRow() (gas: 3254703)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 25.52ms (40.27ms CPU time)
+
+Ran 1 test suite in 33.04ms (25.52ms CPU time): 4 tests passed, 0 failed, 0 skipped (4 total tests)
+forge test OK: the real TRANSITION/1 proof verifies on-chain + refusals enforced

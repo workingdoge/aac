@@ -25,6 +25,10 @@ target/
 .cache/
 coverage/
 
+# Foundry (registry/) build artifacts
+out/
+cache/
+
 # paintgun spec-publication pack output (regenerate: paint spec-pack)
 dist-spec/
 

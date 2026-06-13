@@ -1,0 +1,9 @@
+cargo/registry/foundry.toml	registry/foundry.toml	no
+cargo/registry/README.md	registry/README.md	no
+cargo/registry/src/Registry.sol	registry/src/Registry.sol	no
+cargo/registry/src/HonkVerifier.sol	registry/src/HonkVerifier.sol	no
+cargo/registry/test/Registry.t.sol	registry/test/Registry.t.sol	no
+cargo/registry/test/fixtures/transition.proof	registry/test/fixtures/transition.proof	no
+cargo/registry/test/fixtures/transition.pub	registry/test/fixtures/transition.pub	no
+# landed_at: 2026-06-13T17:55:09Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1 unavailable(not-in-devshell)
