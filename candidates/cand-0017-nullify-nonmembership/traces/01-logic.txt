@@ -1,0 +1,1 @@
+sorted invariant + low-leaf bracket + already-spent rejection + anti-replay composition present

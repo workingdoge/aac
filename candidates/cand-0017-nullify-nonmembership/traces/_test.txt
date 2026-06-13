@@ -1,0 +1,10 @@
+[nullify] Running 8 test functions
+[nullify] Testing accepts_a_non_member_insertion ... [0m[32mok[0m
+[nullify] Testing accepts_insert_after_last ... [0m[32mok[0m
+[nullify] Testing rejects_replaying_a_spent_event_nullifier ... [0m[32mok[0m
+[nullify] Testing rejects_tampered_last_root ... [0m[32mok[0m
+[nullify] Testing rejects_already_spent_nullifier ... [0m[32mok[0m
+[nullify] Testing rejects_wrong_low_index ... [0m[32mok[0m
+[nullify] Testing consumes_a_fresh_event_nullifier ... [0m[32mok[0m
+[nullify] Testing print_public_inputs ... [0m[32mok[0m
+[nullify] [0m[32m8 tests passed[0m

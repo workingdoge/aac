@@ -1,0 +1,5 @@
+candidate_id: cand-0017-nullify-nonmembership
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T17:41:38Z
+intent: NULLIFY/1 (3/PROOF S4.2) at circuits/nullify: prove non-membership + insertion into the consumed-nullifier set via the indexed low-leaf range bracket over a strictly-sorted invariant (Field ordering by bn254::lt) — the historical-set anti-replay guard. ABI [first_root,last_root,sequence_commitment,count]. Composition: consumes a fresh EVENT-COMPLETE/1 event_nullifier and REJECTS replaying a spent one. Proven end-to-end on macOS (bb verify ok). Bound: one insertion, sorted-array fold root; production = binary indexed Merkle with succinct path proofs.
+status: landed

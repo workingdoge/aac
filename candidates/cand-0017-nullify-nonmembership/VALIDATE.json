@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0017-nullify-nonmembership",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "844f3d74c59c62f10b7f79b6b0bc9b54999b5a4ac3a6685495fc0b0abe7bf1f9",
+    "LANDING": "c4739144cdbb36801b8f7f3a35e4d3694d4f32986a20e505749a32c1dc957b01",
+    "META": "8fa4898ff849aa69ec6a3bab6fbc1b353c2c2b75415e36e656e5670fa957a71e"
+  }
+}

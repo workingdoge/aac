@@ -1,0 +1,7 @@
+warning: unused global TAG_JOURNAL
+   ┌─ transition/src/main.nr:30:8
+   │
+30 │ global TAG_JOURNAL: Field = 3;
+   │        ----------- unused global
+   │
+

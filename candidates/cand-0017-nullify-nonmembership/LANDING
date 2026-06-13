@@ -1,0 +1,4 @@
+cargo/circuits/Nargo.toml circuits/Nargo.toml
+cargo/circuits/nullify/Nargo.toml circuits/nullify/Nargo.toml
+cargo/circuits/nullify/Prover.toml circuits/nullify/Prover.toml
+cargo/circuits/nullify/src/main.nr circuits/nullify/src/main.nr
