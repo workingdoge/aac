@@ -1,0 +1,1 @@
+all 5 pre-landing fixes present (numeraire test, prod guard, .env.example, opt-in fallback, ASCII circuit)

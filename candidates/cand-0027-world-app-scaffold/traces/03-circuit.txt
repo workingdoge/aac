@@ -1,0 +1,1 @@
+Pn conformance holds: numeraire collapse rejected + vector zero-account balanced (2 tests passed, beta.14 standalone)

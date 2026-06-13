@@ -1,0 +1,12 @@
+node_modules/
+dist/
+target/
+*.log
+.DS_Store
+# ProveKit prepared keys (large; regenerate with `provekit prepare`)
+**/public/keys/*.pk
+**/public/keys/*.vk
+# circuit witness/proof artifacts
+provekit-circuit/Prover.toml
+provekit-circuit/proof.bin
+provekit-circuit/public.json

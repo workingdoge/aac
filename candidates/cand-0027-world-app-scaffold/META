@@ -1,0 +1,5 @@
+candidate_id: cand-0027-world-app-scaffold
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T20:43:29Z
+intent: Land the World-stack MVP scaffold (Design Note 0002) onto main as a clearly-labeled prototype: world-app/ = a MiniKit Mini App (walletAuth + World ID uniqueness -> one-per-human starter credits + AgentBook + client-side ProveKit proof + HITL approval) + an AgentKit x402 gateway (per-human SHARED counter, free/free-trial/discount, persistent-storage interface, replay nonces) + a beta.19 ProveKit receipt circuit (a right-sized EVENT-COMPLETE/1 BVR). Reviewed by a 4-lens adversarial panel (no critical/soundness findings; honest stubs). Applies 4 pre-landing fixes: (1) add the numeraire-collapse rejection test to the provekit circuit; (2) production guard on the dev-only in-memory gateway storage; (3) a .env.example; (4) make the provekit server-fallback party-ID-leak caveat loud. External SDKs are stubbed (verify-at-integration); the beta.19 circuit does not compile in this beta.14 env (documented).
+status: landed

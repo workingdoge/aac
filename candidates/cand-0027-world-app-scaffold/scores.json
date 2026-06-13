@@ -1,0 +1,19 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0027-world-app-scaffold",
+  "evaluated_at": "2026-06-13T20:50:34Z",
+  "task": "land the World-stack MVP scaffold (Design Note 0002) onto main as a labeled prototype after a 4-lens review + 5 fixes (numeraire-collapse test, in-memory storage production guard, .env.example, opt-in+loud server-fallback, ASCII circuit); honest stubs + caveats; node_modules uncommitted; the Pn no-numeraire-collapse property executes green on beta.14",
+  "checks": {
+    "fixes": "pass",
+    "honesty": "pass",
+    "circuit": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "b26a1d7a1609df685fffef8dd51ca2c69b292c634b4b8038fd146b62186f6401",
+    "traces_sha256": "81a618cb13fc8e9a29297e78cc205c0bbeac005a50af633d0f70a6e8bdfc9059",
+    "body_sha256": "9e4fcdfd2b819a8d953f8f6ce3f868381209b9f266e7ff2ef1ce6e177e33a5ae",
+    "attestation": "86fe1f4e67668a438d1ec74852fe6cb02701b714805d17bcf346224e3c74fe3b"
+  }
+}

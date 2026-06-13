@@ -1,0 +1,4 @@
+[pk] Running 2 test functions
+[pk] Testing pn_vector_zero_account_balances ... [0m[32mok[0m
+[pk] Testing pn_numeraire_collapse_is_rejected ... [0m[32mok[0m
+[pk] [0m[32m2 tests passed[0m

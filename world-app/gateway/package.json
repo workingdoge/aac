@@ -1,0 +1,30 @@
+{
+  "name": "@aac/world-gateway",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AgentKit x402 gateway in front of abuse-prone AAC endpoints — per-human shared quota, replay nonces, framework-agnostic core with a Hono example. PROTOTYPE SCAFFOLD (Design Note 0002).",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "_integrationDeps": "PIN AT INTEGRATION — the AgentKit SDK package name/version is unverified (Beta). Add it to dependencies when wiring core/agentkit.ts. Candidate name '@worldcoin/agentkit' is UNVERIFIED.",
+  "dependencies": {},
+  "peerDependencies": {
+    "hono": "^4"
+  },
+  "peerDependenciesMeta": {
+    "hono": { "optional": true }
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^20.0.0",
+    "hono": "^4.0.0"
+  }
+}

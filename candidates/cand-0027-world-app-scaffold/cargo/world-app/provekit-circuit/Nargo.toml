@@ -1,0 +1,25 @@
+# ProveKit receipt circuit -- a right-sized EVENT-COMPLETE/1 BalancedVectorReceipt.
+#
+# TOOLCHAIN PIN -- Noir v1.0.0-beta.19 (ProveKit's pin, per Design Note 0002 S2.1).
+# This is DELIBERATELY a different toolchain from AAC's main `circuits/` workspace,
+# which is on beta.14 (bb/UltraHonk). The two coexist as separate packages until a
+# deliberate workspace bump (Design Note 0002 S9). Do NOT add this package to the
+# `circuits/` workspace.
+#
+# This package is SELF-CONTAINED: it vendors the minimal pacioli / ledger / rulebook
+# math it needs (see src/) rather than depending on ../../circuits/*, because those
+# are beta.14 crates and this is beta.19. Keeping it standalone is what lets the two
+# Noir versions coexist without a workspace conflict.
+
+[package]
+name = "aac_receipt_provekit"
+type = "bin"
+authors = ["American Accounting Company"]
+# compiler_version is the ProveKit pin. If your local `nargo --version` differs,
+# this package will refuse to compile -- that is the intended guard. Install the
+# matching toolchain with: `noirup --version 1.0.0-beta.19`
+compiler_version = ">=1.0.0-beta.19"
+
+[dependencies]
+# No path/git deps: standalone for the beta.14/beta.19 split. If ProveKit ships a
+# Skyscraper stdlib helper as an external crate at integration time, add it here.
