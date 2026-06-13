@@ -36,3 +36,6 @@ dist-spec/
 web/src/styles/tokens.css
 web/src/content/docs/specs/
 .claude/launch.json
+
+# transient agent worktrees (boat dispatch / background agents)
+.claude/worktrees/
