@@ -335,6 +335,11 @@
             pkgs.elan
             # paint: DTCG token-pack compiler/verifier for the design system.
             paintgun.packages.${system}.default
+            # foundry (forge/cast/anvil) + solc: the 4/REG registry contract,
+            # `cd registry && forge test --use "$(command -v solc)"` (the bb
+            # Solidity UltraHonk verifier needs solc, no auto-download).
+            pkgs.foundry
+            pkgs.solc
           ] ++ noirToolchainPackages;
           shellHook = ''
             if [ ! -f tools/loop ]; then
