@@ -1,0 +1,4 @@
+  HonkVerifier         runtime 23782 B (EIP-170 limit 24576)
+  NullifyHonkVerifier  runtime 23779 B (EIP-170 limit 24576)
+  Registry             runtime 2824 B (EIP-170 limit 24576)
+on-chain: real NULLIFY/1 proof verifies + advances the set root; refusals hold; both verifiers + Registry under EIP-170; Deploy runs

@@ -1,0 +1,7 @@
+cargo/registry/src/Registry.sol registry/src/Registry.sol
+cargo/registry/src/NullifyHonkVerifier.sol registry/src/NullifyHonkVerifier.sol
+cargo/registry/test/Registry.t.sol registry/test/Registry.t.sol
+cargo/registry/test/fixtures/nullify.proof registry/test/fixtures/nullify.proof
+cargo/registry/test/fixtures/nullify.pub registry/test/fixtures/nullify.pub
+cargo/registry/script/Deploy.s.sol registry/script/Deploy.s.sol
+cargo/registry/README.md registry/README.md

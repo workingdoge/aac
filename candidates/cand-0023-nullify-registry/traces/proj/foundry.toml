@@ -1,0 +1,11 @@
+[profile.default]
+src = "src"
+test = "test"
+out = "out"
+# optimizer_runs is tuned LOW: the bb UltraHonk HonkVerifier is large, and lower
+# runs minimise deployed bytecode. At 200 it is 24,644B (over the EIP-170 24,576B
+# limit); at 50 it is 23,782B (deployable). Correctness is unchanged.
+optimizer = true
+optimizer_runs = 50
+evm_version = "cancun"
+fs_permissions = [{ access = "read", path = "./test/fixtures" }]

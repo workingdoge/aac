@@ -1,0 +1,1 @@
+advanceNullifier + pinned nullifyVerifier + historical set root + refusals + 4/REG S5 boundary + tests + fixtures present

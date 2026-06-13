@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0023-nullify-registry",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "844f3d74c59c62f10b7f79b6b0bc9b54999b5a4ac3a6685495fc0b0abe7bf1f9",
+    "LANDING": "914ef12ba3e5454d234fa0488579da76b31800156fc726cdc366fd6bb0f49186",
+    "META": "94bf98c1e3cadbbd212e13eeb1fceda695838f1321203a9bb88810542109a61b"
+  }
+}

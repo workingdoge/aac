@@ -1,0 +1,18 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0023-nullify-registry",
+  "evaluated_at": "2026-06-13T19:56:31Z",
+  "task": "wire the enshrined NULLIFY/1 target into 4/REG: a per-row historical nullifier-set root advanced by advanceNullifier, discharging a second pinned bb verifier (NullifyHonkVerifier) over a real keccak-oracle NULLIFY/1 proof on-chain; stale set root / tampered proof / count!=1 refused; EVENT-COMPLETE/1 NOT enshrined (4/REG S5); both verifiers + Registry under EIP-170; forge test green (8); Deploy runs",
+  "checks": {
+    "present": "pass",
+    "onchain": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "fc412e01dec8d88f568ab5761860d9a96f76648903a5c8132d508aa1cbc7b83a",
+    "traces_sha256": "22e163d467dba877ba55bfbd79872a42c05261db0265573ba8cb867aa6632993",
+    "body_sha256": "198b1ce9d0f4e677b2919ba28dc3c39c38fef3bd70bf033ff9c2c28b32460f59",
+    "attestation": "263f4bbc10a275c92c5d4579c8c543b40de323f16b3541314f52ee8afba02387"
+  }
+}
