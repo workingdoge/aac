@@ -16,3 +16,6 @@ result-*
 
 # paintgun build output (regenerate: paint build in design/)
 design/dist/
+
+# paintgun spec-publication pack output (regenerate: paint spec-pack)
+dist-spec/

@@ -1,0 +1,38 @@
+# Reflection: cand-0003-publish-specs
+
+Intent: Publish the AAC RFC suite as a verified Paintgun spec-publication pack — an atlas.spec-publication.v1 manifest over sites/ledger/specs (11 documents), built and verified by paint spec-pack / verify-spec-pack. Even the spec publication is an attested pack.
+Status at reflection: landed
+Reflected at: 2026-06-13T05:07:36Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0003-publish-specs",
+  "evaluated_at": "2026-06-13T05:07:34Z",
+  "task": "spec-pack + verify-spec-pack the AAC RFC suite over sites/ledger/specs (11 documents), completeness + broken-manifest rejection",
+  "checks": {
+    "pack": "pass",
+    "verify": "pass",
+    "complete": "pass",
+    "rejection": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "45e50e9978dab7e1639341a4e3d1828dd5d0545298652355826e5384e264ff40",
+    "traces_sha256": "9c1484554c4e9be2340eafde2ee733fe9e8c5204e7be100f0205ce802b0a82b1",
+    "body_sha256": "d0a79c1a8ff0e95f5c0fd3512b847ad490cf85bed85e256ef02ab62edfa6a030",
+    "attestation": "5ce0b2d6c796c4ea3bcdc708ae4ae48d77f086c3e482d08ae24dc8bfc1af0380"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.

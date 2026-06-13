@@ -1,3 +1,4 @@
 cargo/publication.json	sites/ledger/publication.json	no
 # landed_at: 2026-06-13T05:07:35Z
 # toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=e656d083e825bd60e35c27316fa623f45d838fedecc699a1725b2e9089cb075a unavailable(not-in-devshell)
+git_commit	600905c
