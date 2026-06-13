@@ -1,0 +1,4 @@
+cargo/web/src/components/aac-row.ts web/src/components/aac-row.ts
+cargo/web/src/components/elements.ts web/src/components/elements.ts
+cargo/web/src/content/docs/registry.mdx web/src/content/docs/registry.mdx
+cargo/web/astro.config.mjs web/astro.config.mjs

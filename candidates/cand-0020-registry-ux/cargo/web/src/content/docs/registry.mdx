@@ -1,0 +1,63 @@
+---
+title: The registry
+description: 4/REG — the on-chain root registry that consumes the proofs and refuses unbalanced or stale state.
+editUrl: false
+sidebar:
+  label: The registry
+  order: 3
+---
+
+import Loader from '../../components/Loader.astro';
+
+<Loader />
+
+The registry is the system's only shared infrastructure. It **holds books, not
+funds**: its state is commitments, its update rule is proof, and **its refusals
+are the entire trust model** (4/REG). No sequencer — rows self-sequence; no
+bridge — no assets; no DA committee — books are self-custodied. Each absence is
+structural.
+
+It runs as a deployable Solidity contract that *consumes* a [TRANSITION/1
+proof](/circuit/): `Registry.update(namehash, proof, publicInputs)` discharges
+the verifier contract (3/PROOF §5) — old-root equality, the context pin, and the
+proof itself via a `bb`-generated UltraHonk verifier — then atomically advances
+the row.
+
+<aac-row></aac-row>
+
+## The update rule (4/REG §2)
+
+A conforming `update` MUST:
+
+1. **Discharge the verifier contract.** The pinned context is this row:
+   `prev_account_root` and `prev_nullifier_root` MUST equal storage;
+   `context_commitment` MUST equal `row.context`. Verify the proof against the
+   pinned verification key — **never** a value the prover supplied.
+2. **Old-root equality is the concurrency rule.** Each row is its own sequencer;
+   a stale update fails harmlessly and is resubmitted against the new roots.
+3. **Atomically** write the next roots, chain `fact_fold`, add `fact_count`,
+   increment `nonce`, and emit `Updated`.
+
+What it **refuses** is the whole point: a proof it cannot verify, a stale root, a
+context mismatch — all revert. The registry verifies *consistency, not truth*
+(2/FACT §8): a row commits to whatever its owner proved, no more.
+
+## On a real chain
+
+The pipeline runs end to end:
+
+```
+circuits/transition (Noir)
+  → bb prove --oracle_hash keccak            # keccak Fiat–Shamir, for the EVM
+  → bb write_solidity_verifier               # the on-chain HonkVerifier
+  → Registry.update(namehash, proof, publics)
+```
+
+The verifier is tuned to fit **EIP-170** (the 24,576-byte contract limit) and
+**deploys on a live EVM** — the `Registry` and verifier go on-chain via
+`registry/script/Deploy.s.sol`, which deploys and links the verifier's library.
+The real TRANSITION/1 proof verifies on-chain (~3.25M gas) in `forge test`.
+
+> **Checkpoints, not payments.** Registry touches are checkpoints, never
+> per-payment events — 8/SESS keeps micropayments off-chain, so throughput is
+> independent of the verification cost (4/REG Annex C).

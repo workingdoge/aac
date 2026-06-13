@@ -1,0 +1,5 @@
+candidate_id: cand-0020-registry-ux
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T18:16:19Z
+intent: A /registry page + aac-row Lit component surfacing 4/REG: the proof-native ledger Row advancing from a TRANSITION/1 proof (real roots prev->next, nonce 0->1, the verifier-contract discharge checklist, the Updated event), tying the on-chain registry to the /circuit proof. Registered in elements.ts, sidebar-linked, verified live in the preview.
+status: landed

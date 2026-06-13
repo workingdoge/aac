@@ -1,0 +1,6 @@
+cargo/web/src/components/aac-row.ts	web/src/components/aac-row.ts	yes
+cargo/web/src/components/elements.ts	web/src/components/elements.ts	yes
+cargo/web/src/content/docs/registry.mdx	web/src/content/docs/registry.mdx	yes
+cargo/web/astro.config.mjs	web/astro.config.mjs	yes
+# landed_at: 2026-06-13T18:17:14Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1 unavailable(not-in-devshell)
