@@ -1,0 +1,12 @@
+# Candidate status vocabulary (RJ-1.5 atomic predicate StatusVocab,
+# premath.record-judgments.v0; compiled artifact per RJ-1.6 — the
+# statement is the type, this file is data its consumers parse).
+# Consumers: tools/loop validate (status-vocabulary check).
+# One status per line; comments and blanks ignored.
+open
+validated
+evaluated
+admitted
+denied
+landed
+rolled-back

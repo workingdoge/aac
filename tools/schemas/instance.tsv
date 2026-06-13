@@ -1,0 +1,5 @@
+# Instance identity registry (boat.instance.v0): the per-instance
+# soul binding, written by boat-init at export. RJ-1.6 compiled
+# artifact. Consumers: tools/loop, tools/boat-init.sh.
+cycle_id	aac-2026-06-13
+instance	aac

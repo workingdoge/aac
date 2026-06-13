@@ -1,0 +1,20 @@
+# DissolutionReceipt schema (reachability-lapse dissolution)
+# Record-judgment reading (premath.record-judgments.v0): this schema
+# file is a COMPILED ARTIFACT per RJ-1.6 — the statement is the type,
+# this file is data, never executable authority. Directive law map:
+# require = telescope extension premise (RJ-1.1 shape);
+# enum / literal / enum_prefix = atomic-predicate membership (RJ-1.5).
+header DissolutionReceipt
+require receipt_id
+require cycle_id
+require cargo
+require prior_admission_receipt_ref
+require reachability_criterion
+require lapse_evidence
+require authority_surface
+require predicate
+require threshold_outcome
+require recorder
+require receipt_ref
+literal threshold_outcome admit
+enum reachability_criterion compact-expiry purpose-detachment source-withdrawal successor-replacement

@@ -1,0 +1,5 @@
+candidate_id: fix-tier-guard
+cycle_id: boat-2026-05-17
+opened: 2026-06-12T00:00:00Z
+intent: tools/ dest without independent REVIEW.md
+status: open

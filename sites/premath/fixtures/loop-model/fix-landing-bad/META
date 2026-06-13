@@ -1,0 +1,5 @@
+candidate_id: fix-landing-bad
+cycle_id: boat-2026-05-17
+opened: 2026-06-12T00:00:00Z
+intent: LANDING source/dest pathologies
+status: open

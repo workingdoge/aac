@@ -1,0 +1,15 @@
+result
+result-*
+.direnv/
+.DS_Store
+
+# Lean / Lake build artifacts (oleans come from `lake exe cache get`)
+.lake/
+verification/.lake/
+
+# Local harness state
+.claude/settings.local.json
+.claude/*.lock
+
+# Boat birth: transient conformance differential log (durable receipt is EXPORT-RECEIPT.md)
+.boat-init-conformance.log

@@ -1,0 +1,16 @@
+{
+  "evaluated_at": "2026-06-12T00:00:00Z",
+  "task": "recall fixture",
+  "search": {
+    "admit_recall": 1.0,
+    "deny_recall": 0.5
+  },
+  "baseline_constant_admit": {"admit_recall": 1.0, "deny_recall": 0.0}
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "15358da61786ee3b30df58491dbdae2e7d0aa673152661c21fa67670f485e1e8",
+    "traces_sha256": "b9711b49e3dda5cb8688680d130c5afbedfb85dd3498ee2a1c5427bbc9ebd8bd",
+    "body_sha256": "3fffb3133dd34477e72e56b6abd190f9f43e3fd67d25d1617671692a8654d354",
+    "attestation": "74f15f24cd95a7587f4590b1215a1f275ed5df8e70148590c6460e476955dee1"
+  }
+}

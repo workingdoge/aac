@@ -1,0 +1,1 @@
+frozen fixture trace (fix-scores-dup-attested)

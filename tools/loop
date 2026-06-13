@@ -1,0 +1,1220 @@
+#!/usr/bin/env bash
+set -u
+
+# tools/loop v0 — mechanical outer loop over the candidate store.
+# No judgment lives here: `admit`/`deny` only record an operator decision
+# explicitly given on the command line; nothing advances on its own.
+#
+# Usage:
+#   loop open ID "INTENT"
+#   loop validate ID
+#   loop evaluate ID [--split-date YYYY-MM-DD] -- CLASSIFIER...
+#   loop brief ID                        (semantic diff: what would I admit?)
+#   loop review ID                       (convene an independent reviewer session)
+#   loop admit ID --operator NAME --ack-latest      (brief-bound decision)
+#   loop deny ID --operator NAME --reason "..."
+#   loop auto ID --agent NAME            (agent-held: brief+admit+land+record)
+#   loop dispatch --agent NAME [--goal G] [--worker claude|codex|auto] [--context C] [--isolation microvm] [--max-attempts N] [--budget-usd X]
+#                                        (headless worker runs one iteration;
+#                                         DOCT-9.4 bounded, escalates to QUEUE)
+#   loop land ID                         (apply cargo; git snapshot + rollback map)
+#   loop rollback ID                     (withdraw landed cargo; evidence kept)
+#   loop record ID                       (machine-draft a CycleReceipt)
+#   loop reflect ID
+#   loop status [ID]
+
+TOOLS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd "$TOOLS_DIR/.." && pwd)"
+STORE="$ROOT/candidates"
+# Instance identity (boat.instance.v0, export course): the cycle binding
+# comes from the instance registry so an exported instance carries its
+# own soul; an absent or row-less registry falls back to the boat
+# literal — byte-identical legacy behavior (RJ-1.6: the registry is
+# data, never executable authority).
+CYCLE_ID="$(awk -F'\t' '!/^#/ && $1 == "cycle_id" { print $2; exit }' "$TOOLS_DIR/schemas/instance.tsv" 2>/dev/null)"
+[[ -n "$CYCLE_ID" ]] || CYCLE_ID="boat-2026-05-17"
+
+die() { printf 'loop: %s\n' "$*" >&2; exit 1; }
+
+sha256_of() {
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "$1" | awk '{print $1}'
+  else
+    sha256sum "$1" | awk '{print $1}'
+  fi
+}
+
+# Toolchain provenance (DOCT-9.1: packageRef/expectedDigest/boundDigest).
+# pinned_toolchain  — decision-stable: derived from flake.lock only, safe to
+#                     render in briefs (no runtime-dependent values; brief
+#                     hashes must not vary across environments).
+# bound_toolchain   — land-time record: the devshell profile actually bound
+#                     when the landing executed (DEVENV_PROFILE inside
+#                     `nix develop`); honest unavailable() otherwise.
+pinned_toolchain() {
+  if [[ -f "$ROOT/flake.lock" ]]; then
+    local rev
+    rev="$(python3 -c '
+import json,re,sys
+try:
+    d=json.load(open(sys.argv[1]))
+    r=d["nodes"]["nixpkgs"]["locked"].get("rev","")
+    # Sanitize before it reaches brief/LANDED single-line formats: a git
+    # rev is lowercase hex, nothing else. Anything off-format (newlines,
+    # "Generated:" smuggling, spaces) is recorded as unparseable.
+    print(r[:12] if isinstance(r,str) and re.fullmatch(r"[0-9a-f]{12,40}",r) else "unparseable")
+except Exception:
+    print("unparseable")
+' "$ROOT/flake.lock" 2>/dev/null || printf 'unparseable')"
+    case "$rev" in
+      *[!0-9a-f]*) [[ "$rev" == "unparseable" ]] || rev="unparseable" ;;
+    esac
+    printf 'nixpkgs_rev=%s flake_lock_sha256=%s' "$rev" "$(sha256_of "$ROOT/flake.lock")"
+  else
+    printf 'unavailable(no-flake-lock)'
+  fi
+}
+bound_toolchain() {
+  if [[ -n "${DEVENV_PROFILE:-}" ]]; then
+    # Format guard (cand-0014 review R2): env values must not smuggle
+    # newlines/tabs/spaces into single-line evidence formats.
+    local p="${DEVENV_PROFILE//[$'\n\t ']/}"
+    printf 'shell_profile=%s' "$p"
+  else
+    printf 'unavailable(not-in-devshell)'
+  fi
+}
+
+# Verdict extraction (cand-0025; lineage cand-0022/0023): the only trusted
+# reading of scores.json is a real JSON parse of the TOP-LEVEL "verdict"
+# key. Line-scans (sed/grep) are fooled by an unescaped '"verdict": "pass"'
+# substring smuggled onto an earlier line; json.load alone is fooled by
+# duplicate keys (last-wins: a fail-then-pass duplicate reads as pass) and
+# shell $() consumers are fooled by trailing newlines inside the value
+# ("pass\n" prints, then command substitution strips it back to "pass").
+# Output contract:
+#   pass                 — verdict is EXACTLY the string "pass" (equality
+#                          decided in python; this is the only output that
+#                          can bless)
+#   ""                   — key absent (or not a string)
+#   "MALFORMED-JSON"     — not parseable JSON, python3 unavailable, or a
+#                          DUPLICATE KEY at any object level; callers MUST
+#                          fail closed on this.
+#   "<json-quoted>"      — any other string value, printed JSON-encoded
+#                          WITH its quotes, so no value can alias a bare
+#                          contract token after shell newline-stripping.
+# (python3 is already a loop dependency via pinned_toolchain.)
+scores_verdict() {
+  python3 -c '
+import json,sys
+
+def no_dupes(pairs):
+    d = {}
+    for k, v in pairs:
+        if k in d:
+            raise ValueError("duplicate key")
+        d[k] = v
+    return d
+
+try:
+    with open(sys.argv[1]) as f:
+        d = json.load(f, object_pairs_hook=no_dupes)
+except Exception:
+    print("MALFORMED-JSON"); sys.exit(0)
+v = d.get("verdict") if isinstance(d, dict) else None
+if not isinstance(v, str):
+    print("")
+elif v == "pass":
+    print("pass")
+else:
+    print(json.dumps(v))
+' "$1" 2>/dev/null || printf 'MALFORMED-JSON\n'
+}
+
+meta_get() {
+  local dir="$1" key="$2"
+  awk -F': ' -v key="$key" '$1 == key { sub($1 ": ", ""); print; exit }' "$dir/META"
+}
+
+# Queue-entry sanitizer (STONE S3): machine-built entries pass through
+# awk -v, which interprets C escape sequences — a goal carrying literal
+# backslashes (or embedded CR/LF) forges additional queue lines (the
+# verified line-forgery channel). Flatten line breaks to spaces and
+# double backslashes so awk -v renders them literally.
+queue_entry_sanitize() {
+  local e="$1"
+  e="${e//$'\r'/ }"
+  e="${e//$'\n'/ }"
+  e="${e//\\/\\\\}"
+  printf '%s' "$e"
+}
+
+meta_set_status() {
+  local dir="$1" status="$2"
+  local tmp="$dir/META.tmp"
+  awk -F': ' -v s="$status" '$1 == "status" { print "status: " s; next } { print }' \
+    "$dir/META" > "$tmp" && mv "$tmp" "$dir/META"
+  printf 'loop: %s -> %s\n' "$(basename "$dir")" "$status"
+}
+
+require_candidate() {
+  local id="$1"
+  CAND="$STORE/$id"
+  [[ -d "$CAND" ]] || die "no such candidate: $id"
+  [[ -f "$CAND/META" ]] || die "$id has no META (created before the spec? add one)"
+}
+
+cmd="${1:-}"
+shift || { die "usage: loop open|validate|evaluate|admit|deny|record|reflect|status ..."; }
+
+case "$cmd" in
+
+open)
+  id="${1:-}"; intent="${2:-}"
+  [[ -n "$id" && -n "$intent" ]] || die "usage: loop open ID \"INTENT\""
+  [[ ! -e "$STORE/$id" ]] || die "candidate already exists: $id"
+  mkdir -p "$STORE/$id/drafts" "$STORE/$id/traces"
+  {
+    printf 'candidate_id: %s\n' "$id"
+    printf 'cycle_id: %s\n' "$CYCLE_ID"
+    printf 'opened: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    printf 'intent: %s\n' "$intent"
+    printf 'status: open\n'
+  } > "$STORE/$id/META"
+  printf '# %s\n\nIntent: %s\n\nStatus: open (pre-threshold).\n' "$id" "$intent" \
+    > "$STORE/$id/README.md"
+  {
+    printf 'layer: TODO (doctrine | theory | model | evidence-tooling | artifact)\n'
+    printf 'implements: TODO (theory surfaces, or none)\n'
+    printf 'preserves: TODO (dm.* list, or none, or unknown(reason))\n'
+    printf 'compares_to: none\n'
+  } > "$STORE/$id/DECLARATION"
+  printf 'loop: opened %s (complete DECLARATION before validate)\n' "$id"
+  ;;
+
+validate)
+  id="${1:-}"; [[ -n "$id" ]] || die "usage: loop validate ID"
+  require_candidate "$id"
+  failures=0
+  rm -f "$CAND/VALIDATE.json"
+  vfail_classes=(); vfail_tokens=(); vfail_reasons=()
+  vfail() { # CLASS TOKEN_PATH message...
+    local vclass="$1" vtok="$2"; shift 2
+    printf 'loop: validate %s: [%s @ %s] %s\n' "$id" "$vclass" "$vtok" "$*" >&2
+    failures=$((failures+1))
+    vfail_classes+=("$vclass"); vfail_tokens+=("$vtok"); vfail_reasons+=("$*")
+  }
+  # Typed verdict document (check-sigpi-judgment-v0 boundary brought to
+  # the candidate-record surface; STONE S1). Emitted via python3 — JSON
+  # is never assembled by string interpolation; absent python3, the
+  # verdict stays exit-code + stderr and the absence is printed.
+  emit_validate_doc() { # admitted|rejected
+    local vresult="$1" vpy vtmp vctx i
+    vpy="$(command -v python3 || true)"
+    if [[ -z "$vpy" ]]; then
+      printf 'loop: validate %s: python3 unavailable; VALIDATE.json not written\n' "$id" >&2
+      return 0
+    fi
+    vctx="$("$vpy" -c 'import json,sys; print(json.dumps({"candidate": sys.argv[1]}))' "$id")"
+    vtmp="$(mktemp)"
+    for ((i=0; i<${#vfail_classes[@]}; i++)); do
+      bash "$TOOLS_DIR/eval/emit-refusal.sh" "${vfail_classes[$i]}" "${vfail_tokens[$i]}" \
+        "candidate-record validation" "${vfail_reasons[$i]}" "$vctx" >> "$vtmp" \
+        || printf 'loop: validate %s: refusal emission degraded for class %s\n' "$id" "${vfail_classes[$i]}" >&2
+    done
+    "$vpy" - "$id" "$CAND" "$vresult" "$vtmp" > "$CAND/VALIDATE.json" <<'VPYEOF'
+import hashlib, json, os, sys
+cand_id, cand_dir, result, failures_path = sys.argv[1:5]
+doc = {"schema": "boat.validate.v0", "candidate": cand_id, "result": result}
+if result == "admitted":
+    refs = {}
+    for name in ("META", "DECLARATION", "LANDING"):
+        p = os.path.join(cand_dir, name)
+        if os.path.isfile(p):
+            refs[name] = hashlib.sha256(open(p, "rb").read()).hexdigest()
+    doc["judgment"] = "candidate-record formation checks (premath.record-judgments.v0 shaped)"
+    doc["normal_form_ref"] = None
+    doc["witness_refs"] = refs
+else:
+    doc["failures"] = [json.loads(ln) for ln in open(failures_path) if ln.strip()]
+print(json.dumps(doc, indent=2, sort_keys=True))
+VPYEOF
+    rm -f "$vtmp"
+  }
+
+  [[ -f "$CAND/README.md" ]] || vfail record-formation-incomplete README.md "missing README.md"
+
+  for key in candidate_id cycle_id opened intent status; do
+    [[ -n "$(meta_get "$CAND" "$key")" ]] || vfail record-formation-incomplete "META.$key" "META missing key: $key"
+  done
+  [[ "$(meta_get "$CAND" candidate_id)" == "$id" ]] \
+    || vfail record-formation-incomplete META.candidate_id "META candidate_id does not match directory name"
+
+  # Status vocabulary (RJ-1.5 atom, data-driven from tools/schemas/
+  # status.vocab; declared strengthening closing the cand-0010 silent
+  # out-of-vocab defect). Registry absent => check skipped, never a new
+  # hard dependency.
+  vstatus="$(meta_get "$CAND" status)"
+  if [[ -n "$vstatus" && -f "$TOOLS_DIR/schemas/status.vocab" ]]; then
+    grep -vE '^#|^[[:space:]]*$' "$TOOLS_DIR/schemas/status.vocab" | grep -qxF "$vstatus" \
+      || vfail vocabulary-atom-failure META.status "status out of vocabulary: $vstatus"
+  fi
+
+  if [[ -f "$CAND/LANDING" ]]; then
+    while read -r src dest; do
+      [[ -n "$src" && "$src" != \#* ]] || continue
+      [[ -f "$CAND/$src" ]] || vfail record-formation-incomplete LANDING "LANDING source missing: $src"
+      [[ -n "$dest" ]] || vfail record-formation-incomplete LANDING "LANDING entry for $src has no destination"
+      case "$dest" in
+        /*|*..*) vfail verifier_contract_violation LANDING "LANDING destination must be root-relative without ..: $dest" ;;
+      esac
+    done < "$CAND/LANDING"
+  fi
+
+  # Doctrine preservation declaration (PREMATH-0003 DOCT-2.1/4.1/8.1):
+  # every candidate states its tower position and preservation claims;
+  # missing or incomplete declarations fail closed.
+  if [[ -f "$CAND/DECLARATION" ]]; then
+    grep -q 'TODO' "$CAND/DECLARATION" && vfail record-formation-incomplete DECLARATION "DECLARATION incomplete (TODO present)"
+    for dkey in layer implements preserves; do
+      grep -qE "^$dkey: " "$CAND/DECLARATION" || vfail record-formation-incomplete "DECLARATION.$dkey" "DECLARATION missing key: $dkey"
+    done
+    for dkey in layer implements preserves; do
+      [[ -n "$(awk -F': ' -v k="$dkey" '$1 == k { print $2; exit }' "$CAND/DECLARATION")" ]] \
+        || vfail record-formation-incomplete "DECLARATION.$dkey" "DECLARATION key has empty value: $dkey"
+    done
+    dlayer="$(awk -F': ' '$1 == "layer" { print $2; exit }' "$CAND/DECLARATION")"
+    case "$dlayer" in
+      doctrine|theory|model|evidence-tooling|artifact) ;;
+      *) vfail vocabulary-atom-failure DECLARATION.layer "DECLARATION layer out of vocabulary: $dlayer" ;;
+    esac
+    dpres="$(awk -F': ' '$1 == "preserves" { print $2; exit }' "$CAND/DECLARATION")"
+    if [[ "$dpres" =~ ^unknown\([^\)]+\)$ ]]; then
+      : # anchored unknown(reason): whole-value, closing paren required (DOCT-6.1)
+    elif [[ -n "$dpres" && "$dpres" != "none" ]]; then
+      for tok in ${dpres//,/ }; do
+        case "$tok" in
+          dm.identity|dm.refine.context|dm.refine.cover|dm.transport.world|dm.transport.location|dm.profile.execution|dm.profile.evidence|dm.policy.rebind|dm.presentation.projection|dm.commitment.attest) ;;
+          *) vfail vocabulary-atom-failure DECLARATION.preserves "DECLARATION preserves token out of registry: $tok" ;;
+        esac
+      done
+    fi
+  else
+    vfail record-formation-incomplete DECLARATION "missing DECLARATION (required since PREMATH-0003)"
+  fi
+
+  if [[ -f "$CAND/scores.json" ]]; then
+    grep -q '"evaluated_at"' "$CAND/scores.json" || vfail record-formation-incomplete scores.json.evaluated_at "scores.json missing evaluated_at"
+    grep -q '"task"' "$CAND/scores.json" || vfail record-formation-incomplete scores.json.task "scores.json missing task"
+    if grep -q '"provenance"' "$CAND/scores.json"; then
+      bash "$TOOLS_DIR/eval/attest.sh" verify "$CAND/scores.json" "$CAND" "$ROOT" >/dev/null 2>&1 \
+        || vfail sigma-missing-witness scores.json.provenance "scores.json provenance verification FAILED"
+    fi
+  fi
+
+  if compgen -G "$CAND/drafts/*.md" > /dev/null; then
+    bash "$TOOLS_DIR/receipt-schema-check.sh" "$CAND"/drafts/*.md \
+      || vfail record-formation-incomplete drafts "drafts/*.md failed receipt-schema-check"
+  fi
+
+  if [[ "$failures" -gt 0 ]]; then
+    emit_validate_doc rejected
+    die "$id failed validation ($failures issue(s))"
+  fi
+  # Status machine guard: a pure check never regresses a post-decision
+  # state. Only open candidates advance to validated.
+  cur_status="$(meta_get "$CAND" status)"
+  if [[ "$cur_status" == "open" ]]; then
+    meta_set_status "$CAND" validated
+  else
+    printf 'loop: %s checks pass (status preserved: %s)\n' "$id" "$cur_status"
+  fi
+  # Admitted doc AFTER the status mutation: witness_refs must hash the
+  # post-validate on-disk state (review round-1 finding: hashing before
+  # meta_set_status emitted a stale META witness by construction).
+  emit_validate_doc admitted
+  ;;
+
+evaluate)
+  id="${1:-}"; [[ -n "$id" ]] || die "usage: loop evaluate ID [--split-date D] -- CLASSIFIER..."
+  require_candidate "$id"
+  shift
+  bash "$TOOLS_DIR/eval/evaluate-candidate.sh" --out "$CAND" "$@" || die "$id evaluation failed"
+  meta_set_status "$CAND" evaluated
+  ;;
+
+brief)
+  id="${1:-}"; [[ -n "$id" ]] || die "usage: loop brief ID"
+  require_candidate "$id"
+  intent="$(meta_get "$CAND" intent)"
+  status="$(meta_get "$CAND" status)"
+  BRIEF="$CAND/BRIEF.md"
+  {
+    printf '# Threshold Brief: %s\n\n' "$id"
+    printf 'Generated: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    printf 'Status: %s\n' "$status"
+    printf 'Intent: %s\n' "$intent"
+    # Decision-stable only (flake.lock-derived): runtime values like the
+    # active devshell profile must NOT appear here or brief hashes would
+    # differ across environments and break ack freshness.
+    printf 'Toolchain (pinned): %s\n\n' "$(pinned_toolchain)"
+
+    printf '## Cargo (what lands if admitted)\n\n'
+    found_cargo=0
+    # Cargo enumeration follows the LANDING map when present (the brief must
+    # show everything that lands, not just shell scripts); falls back to the
+    # default *.sh -> tools/ rule otherwise.
+    if [[ -f "$CAND/LANDING" ]]; then
+      while read -r src dest; do
+        [[ -n "$src" && "$src" != \#* ]] || continue
+        [[ -f "$CAND/$src" ]] || { printf -- '- MISSING SOURCE: `%s`\n' "$src"; continue; }
+        found_cargo=1
+        if [[ -f "$ROOT/$dest" ]]; then
+          added="$(diff "$ROOT/$dest" "$CAND/$src" | grep -c '^>')"
+          removed="$(diff "$ROOT/$dest" "$CAND/$src" | grep -c '^<')"
+          printf -- '- `%s` replaces `%s`: +%s/-%s lines vs live\n' "$src" "$dest" "$added" "$removed"
+        else
+          printf -- '- `%s` is NEW at `%s`: %s lines\n' "$src" "$dest" "$(wc -l < "$CAND/$src")"
+        fi
+      done < "$CAND/LANDING"
+    else
+      for f in "$CAND"/*.sh; do
+        [[ -f "$f" ]] || continue
+        base="$(basename "$f")"
+        [[ "$base" == "eval-self.sh" ]] && continue
+        found_cargo=1
+        live="$ROOT/tools/$base"
+        if [[ -f "$live" ]]; then
+          added="$(diff "$live" "$f" | grep -c '^>')"
+          removed="$(diff "$live" "$f" | grep -c '^<')"
+          printf -- '- `%s` replaces `tools/%s`: +%s/-%s lines vs live\n' \
+            "$base" "$base" "$added" "$removed"
+        else
+          printf -- '- `%s` is NEW (no live counterpart): %s lines\n' \
+            "$base" "$(wc -l < "$f")"
+        fi
+      done
+    fi
+    [[ "$found_cargo" -eq 1 ]] || printf -- '- no cargo found (no LANDING map, no top-level *.sh)\n'
+    printf '\n'
+
+    if [[ -f "$CAND/scores.json" ]]; then
+      task="$(sed -n 's/.*"task": "\([^"]*\)".*/\1/p' "$CAND/scores.json" | head -n 1)"
+      printf '## Witnessed behavioral delta (task: %s)\n\n' "$task"
+      if grep -q '"provenance"' "$CAND/scores.json"; then
+        if bash "$TOOLS_DIR/eval/attest.sh" verify "$CAND/scores.json" "$CAND" "$ROOT" >/dev/null 2>&1; then
+          printf 'Evidence: ATTESTED (hash chain over scores, traces, harness verifies)\n\n'
+        else
+          printf 'Evidence: ATTESTATION INVALID — do not trust scores.json\n\n'
+        fi
+      else
+        printf 'Evidence: UNATTESTED — scores.json is not bound to an evaluator run\n\n'
+      fi
+      if grep -q '"agree": false' "$CAND/scores.json"; then
+        printf 'Cases where candidate behavior DIFFERS from live:\n\n'
+        grep '"agree": false' "$CAND/scores.json" | while IFS= read -r line; do
+          c="$(printf '%s' "$line" | sed -n 's/.*"case": "\([^"]*\)".*/\1/p')"
+          s="$(printf '%s' "$line" | sed -n 's/.*"script": "\([^"]*\)".*/\1/p')"
+          lf="$(printf '%s' "$line" | sed -n 's/.*"live_failures": \([0-9]*\).*/\1/p')"
+          cf="$(printf '%s' "$line" | sed -n 's/.*"cand_failures": \([0-9]*\).*/\1/p')"
+          if [[ -n "$lf" && -n "$cf" && "$cf" -gt "$lf" ]]; then
+            printf -- '- `%s` on case `%s`: candidate is STRICTER (%s vs %s failures) — receipts like this, previously passing, will now be rejected\n' "$s" "$c" "$cf" "$lf"
+          elif [[ -n "$lf" && -n "$cf" ]]; then
+            printf -- '- `%s` on case `%s`: candidate reports FEWER failures (%s vs %s) — check this is the documented de-duplication, not a lost check\n' "$s" "$c" "$cf" "$lf"
+          else
+            printf -- '- `%s` on case `%s`: differs (see traces)\n' "$s" "$c"
+          fi
+        done
+        printf '\n'
+      fi
+      agree_n="$(grep -c '"agree": true' "$CAND/scores.json" || true)"
+      # cand-0025: the decision surface renders the PARSED verdict (same
+      # strict reader as the auto/reflect gates), not a sed line-scan a
+      # smuggled or duplicate-key file can fool.
+      verdict="$(scores_verdict "$CAND/scores.json")"
+      [[ -n "$verdict" ]] && printf 'Evaluator verdict: **%s**' "$verdict"
+      [[ "$agree_n" != "0" ]] && printf ' (identical behavior on %s case/script pairs)' "$agree_n"
+      printf '\n\n'
+      # Classifier-task scores: render recall numbers so non-differential
+      # candidates get a quantitative brief, not just a task name.
+      if grep -q '_recall' "$CAND/scores.json"; then
+        printf 'Recall scores (vs constant-admit baseline 1.0 admit / 0.0 deny):\n\n```\n'
+        grep -E '"(search|heldout|genuine|mutants|admit_recall|deny_recall)"' "$CAND/scores.json" \
+          | sed 's/^[[:space:]]*//; s/[",]//g'
+        printf '```\n\n'
+      fi
+      printf '## Coverage honesty\n\n'
+      printf 'The delta above is witnessed only over the evaluated cases. Behavior\n'
+      printf 'changes outside that coverage are NOT excluded by this brief; the line\n'
+      printf 'diff above bounds where they could hide. Raw evidence: `traces/`.\n\n'
+    else
+      printf '## Witnessed behavioral delta\n\nNONE — candidate has not been evaluated. Admitting now is admitting blind.\n\n'
+    fi
+
+    printf '## What admit means\n\n'
+    printf 'Admit records your threshold decision bound to this brief (sha256 in\n'
+    printf 'DECISION). It does not land cargo: landing takes the receipted path.\n'
+  } > "$BRIEF.new"
+  # Idempotent: if nothing but the timestamp changed, keep the existing
+  # brief so its hash (and any ack the operator already typed) stays valid.
+  if [[ -f "$BRIEF" ]] && diff -q \
+       <(grep -v '^Generated:' "$BRIEF") \
+       <(grep -v '^Generated:' "$BRIEF.new") >/dev/null 2>&1; then
+    rm -f "$BRIEF.new"
+  else
+    mv "$BRIEF.new" "$BRIEF"
+  fi
+  cat "$BRIEF"
+  printf '\nloop: brief sha256 %s\n' "$(sha256_of "$BRIEF")"
+  printf 'loop: to admit: loop admit %s --operator NAME --ack-latest\n' "$id"
+  ;;
+
+review)
+  id="${1:-}"; [[ -n "$id" ]] || die "usage: loop review ID"
+  require_candidate "$id"
+  [[ -f "$CAND/BRIEF.md" ]] || die "generate the brief first: loop brief $id"
+  PROMPT="$CAND/REVIEW-PROMPT.md"
+  {
+    printf '# Reviewer instructions: %s\n\n' "$id"
+    printf 'You are an INDEPENDENT REVIEWER for a candidate change. You did not\n'
+    printf 'author it; the session proposing it is not you; do not trust its\n'
+    printf 'claims — verify them against the artifacts in this directory:\n\n'
+    printf -- '- BRIEF.md (the proposer-side semantic diff: audit it)\n'
+    printf -- '- README.md, META (claims and intent)\n'
+    printf -- '- scores.json and traces/ (raw evaluation evidence)\n'
+    printf -- '- the cargo files themselves, diffed against live tools/\n'
+    printf -- '- to RE-RUN the evidence safely: bash tools/eval/eval-check.sh\n'
+    printf -- '  <this candidate dir> <repo root> — verifies the attestation,\n'
+    printf -- '  snapshots, re-runs, restores byte-exact, re-verifies (cand-0025).\n'
+    printf -- '  Never run eval-self.sh directly here: it clobbers attested evidence.\n\n'
+    printf 'Constraints:\n\n'
+    printf -- '- READ ONLY with one exception: write your findings to REVIEW.md here.\n'
+    printf -- '- Do not modify cargo, traces, scores, META, BRIEF.md, or live tools.\n'
+    printf -- '  A reviewer who edits cargo becomes a proposer and is disqualified.\n'
+    printf -- '- Answer the operator'\''s questions conversationally; ground every\n'
+    printf -- '  answer in a file you actually read, cited by path.\n\n'
+    printf 'When the operator says the review is done, write REVIEW.md with:\n\n'
+    printf '```text\n'
+    printf 'ReviewNote:\n'
+    printf '  candidate_id: %s\n' "$id"
+    printf '  reviewed_at: <UTC timestamp>\n'
+    printf '  brief_audited: <agree | disagree, with specifics>\n'
+    printf '  claims_verified: <list: claim -> evidence path -> verdict>\n'
+    printf '  concerns: <list, or none>\n'
+    printf '  questions_asked: <operator questions and your grounded answers, summarized>\n'
+    printf '  recommendation: admit | deny | transform | needs-more-evidence\n'
+    printf '```\n'
+  } > "$PROMPT"
+  printf 'loop: reviewer prompt written to %s\n' "$PROMPT"
+  # Convening ledger (STONE S6, DOCT-9.4 evidence channel): append-only,
+  # DECISIONS idiom. WARN-ONLY at the bound — round-counting semantics
+  # (a round = implement findings + reconvene, per WORKER.md) are not yet
+  # law; a convening counter that refused would false-refuse the
+  # contract-compliant initial-review + post-transform-verify path.
+  printf '%s convening\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$CAND/REVIEWS"
+  convenings="$(grep -c ' convening$' "$CAND/REVIEWS")"
+  if [[ "$convenings" -ge 3 ]]; then
+    printf 'loop: WARNING convening #%s for %s — WORKER.md bounds TRANSFORM ROUNDS at 2 (a verify reconvene is not a round); if this is a third transform round, STOP: queue the impasse and leave the candidate unlanded (DOCT-9.4)\n' "$convenings" "$id" >&2
+  fi
+  if command -v claude >/dev/null 2>&1 && [[ -t 0 ]]; then
+    printf 'loop: launching independent reviewer session (fresh context)...\n'
+    ( cd "$CAND" && claude "$(cat "$PROMPT")" )
+  elif command -v claude >/dev/null 2>&1; then
+    printf 'loop: stdin is not a TTY; an interactive reviewer session would die\n'
+    printf 'loop: waiting for operator input. Convene the reviewer headlessly:\n'
+    printf 'loop:   pipe REVIEW-PROMPT.md plus a "complete the review NOW, write\n'
+    printf 'loop:   REVIEW.md yourself, no interactive operator is present"\n'
+    printf 'loop:   instruction into: claude -p --add-dir %s\n' "$ROOT"
+  else
+    printf 'loop: claude CLI not found; open a FRESH agent session in %s\n' "$CAND"
+    printf 'loop: and paste REVIEW-PROMPT.md as its first message\n'
+  fi
+  if [[ -f "$CAND/REVIEW.md" ]]; then
+    printf 'loop: REVIEW.md present; sha256 %s\n' "$(sha256_of "$CAND/REVIEW.md")"
+  fi
+  ;;
+
+admit|deny)
+  id="${1:-}"; [[ -n "$id" ]] || die "usage: loop $cmd ID --operator NAME --ack-brief HASH [--reason ...]"
+  require_candidate "$id"
+  shift
+  operator=""; reason=""; ack=""
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      --operator) operator="${2:-}"; shift 2 ;;
+      --reason) reason="${2:-}"; shift 2 ;;
+      --ack-brief) ack="${2:-}"; shift 2 ;;
+      --ack-latest) ack="latest"; shift ;;
+      *) die "unknown flag: $1" ;;
+    esac
+  done
+  [[ -n "$operator" ]] || die "the $cmd step is human-held: pass --operator NAME yourself"
+  [[ "$cmd" == "admit" || -n "$reason" ]] || die "deny requires --reason"
+  brief_sha=""
+  if [[ "$cmd" == "admit" ]]; then
+    [[ -f "$CAND/BRIEF.md" ]] || die "no BRIEF.md — run 'loop brief $id' and read it before admitting"
+    brief_sha="$(sha256_of "$CAND/BRIEF.md")"
+    if [[ "$ack" == "latest" ]]; then
+      ack="$brief_sha"
+    fi
+    [[ -n "$ack" && "${#ack}" -ge 8 ]] || die "admit requires --ack-latest (acks the current brief) or --ack-brief HASH"
+    [[ "$brief_sha" == "$ack"* ]] || die "--ack-brief does not match current BRIEF.md ($brief_sha); the brief may be stale — regenerate and re-read"
+  fi
+  review_sha=""
+  if [[ -f "$CAND/REVIEW.md" ]]; then
+    review_sha="$(sha256_of "$CAND/REVIEW.md")"
+  elif [[ "$cmd" == "admit" ]]; then
+    printf 'loop: NOTE: no REVIEW.md — admitting on the brief alone. An independent\n'
+    printf 'loop: reviewer session is available via: loop review %s\n' "$id"
+  fi
+  # Preserve exactly what was approved: archive the acked brief by hash,
+  # and append every decision to DECISIONS (DECISION stays = latest).
+  if [[ -n "$brief_sha" ]]; then
+    cp "$CAND/BRIEF.md" "$CAND/BRIEF.acked.${brief_sha:0:12}.md" 2>/dev/null || true
+  fi
+  {
+    printf 'decision: %s\n' "$cmd"
+    printf 'operator: %s\n' "$operator"
+    printf 'decided_at: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    [[ -n "$brief_sha" ]] && printf 'brief_sha256: %s\n' "$brief_sha"
+    [[ -n "$review_sha" ]] && printf 'review_sha256: %s\n' "$review_sha"
+    [[ -n "$reason" ]] && printf 'reason: %s\n' "$reason"
+    printf 'note: this records the threshold decision; the chartered record is the Tusk receipt\n'
+  } > "$CAND/DECISION"
+  { cat "$CAND/DECISION"; printf -- '---\n'; } >> "$CAND/DECISIONS"
+  if [[ "$cmd" == "admit" ]]; then meta_set_status "$CAND" admitted; else meta_set_status "$CAND" denied; fi
+  ;;
+
+land)
+  id="${1:-}"; [[ -n "$id" ]] || die "usage: loop land ID"
+  require_candidate "$id"
+  [[ -f "$CAND/DECISION" ]] && grep -q '^decision: admit' "$CAND/DECISION" \
+    || die "land requires an admit DECISION (loop admit $id ...)"
+  [[ ! -f "$CAND/LANDED" ]] || die "$id is already landed (loop rollback $id to undo)"
+
+  # Freshness: the decision must bind the brief as it exists NOW. If the
+  # evidence changed after the admit, the approval is stale — re-decide.
+  if [[ -f "$CAND/BRIEF.md" ]]; then
+    decided_sha="$(awk -F': ' '/^brief_sha256:/ { print $2; exit }' "$CAND/DECISION")"
+    current_sha="$(sha256_of "$CAND/BRIEF.md")"
+    [[ -z "$decided_sha" || "$decided_sha" == "$current_sha" ]] \
+      || die "stale approval: DECISION binds brief ${decided_sha:0:12} but current brief is ${current_sha:0:12} — re-admit against current evidence"
+  fi
+
+  # Landing map: $CAND/LANDING lines of "SRC DEST" (relative to candidate
+  # and root). Default: top-level *.sh -> tools/, excluding eval-self.sh.
+  pairs=()
+  if [[ -f "$CAND/LANDING" ]]; then
+    while read -r src dest; do
+      [[ -n "$src" && "$src" != \#* ]] || continue
+      # Normalize and reject path tricks BEFORE the tier guard sees the dest:
+      # "./tools/x" must not evade the tools/ check, and nothing escapes ROOT.
+      dest="${dest#./}"
+      case "$dest" in
+        ""|/*|*..*) die "LANDING destination invalid (must be root-relative, no ..): '$dest'" ;;
+      esac
+      pairs+=("$src $dest")
+    done < "$CAND/LANDING"
+  else
+    for f in "$CAND"/*.sh; do
+      [[ -f "$f" ]] || continue
+      base="$(basename "$f")"
+      [[ "$base" == "eval-self.sh" ]] && continue
+      pairs+=("$base tools/$base")
+    done
+  fi
+  [[ "${#pairs[@]}" -gt 0 ]] || die "nothing to land (add a LANDING map to $id)"
+
+  # Tier guard (mechanical): cargo landing into the verifier set (tools/),
+  # the reconstruction machinery, OR the law spine (sites/premath specs +
+  # statements) requires an independent REVIEW.md. "We can always
+  # reconstruct" is circular if the cargo IS the reconstructor; and a
+  # worker that can amend the law it is governed by, unreviewed, is the
+  # same circularity at the spec layer (STONE S5: the guard now matches
+  # WORKER.md's "tools/ or specs" prose). .agents/* (skill projections)
+  # are deliberately OUTSIDE the guard — presentation, not law.
+  tier_sensitive=0
+  tier_dest=""
+  for pair in "${pairs[@]}"; do
+    dest="${pair#* }"
+    case "$dest" in
+      tools/*|sites/premath/specs/*|sites/premath/statements/*)
+        tier_sensitive=1; tier_dest="$dest" ;;
+    esac
+  done
+  if [[ "$tier_sensitive" -eq 1 && ! -f "$CAND/REVIEW.md" ]]; then
+    die "$id lands into the verifier set or law spine ($tier_dest) — an independent REVIEW.md is required (loop review $id)"
+  fi
+
+  : > "$CAND/LANDED.tmp"
+  for pair in "${pairs[@]}"; do
+    src="${pair%% *}"; dest="${pair#* }"
+    [[ -f "$CAND/$src" ]] || die "landing source missing: $src"
+    if [[ -e "$ROOT/$dest" ]]; then
+      mkdir -p "$CAND/rollback/$(dirname "$dest")"
+      cp "$ROOT/$dest" "$CAND/rollback/$dest"
+      replaced=yes
+    else
+      replaced=no
+    fi
+    mkdir -p "$ROOT/$(dirname "$dest")"
+    # Atomic replace (tmp + mv): a running instance of a landed script keeps
+    # its old inode — required when the cargo is tools/loop itself. On copy
+    # failure, salvage the partial manifest so completed pairs stay
+    # rollback-able, clean the tmp, and abort loudly.
+    if ! { cp "$CAND/$src" "$ROOT/$dest.landing.tmp" \
+           && mv "$ROOT/$dest.landing.tmp" "$ROOT/$dest"; }; then
+      rm -f "$ROOT/$dest.landing.tmp"
+      mv "$CAND/LANDED.tmp" "$CAND/LANDED" 2>/dev/null || true
+      die "landing copy failed for $src -> $dest; partial manifest saved (loop rollback $id undoes completed pairs)"
+    fi
+    printf '%s\t%s\t%s\n' "$src" "$dest" "$replaced" >> "$CAND/LANDED.tmp"
+    printf 'loop: landed %s -> %s (replaced=%s)\n' "$src" "$dest" "$replaced"
+  done
+  printf '# landed_at: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$CAND/LANDED.tmp"
+  printf '# toolchain: %s %s\n' "$(pinned_toolchain)" "$(bound_toolchain)" >> "$CAND/LANDED.tmp"
+  mv "$CAND/LANDED.tmp" "$CAND/LANDED"
+  meta_set_status "$CAND" landed
+
+  # Reconstruction point: snapshot the whole tree. Soft-fails if git is
+  # unavailable; the LANDED manifest + rollback/ remain the fallback.
+  if git -C "$ROOT" rev-parse --git-dir >/dev/null 2>&1; then
+    git -C "$ROOT" add -A >/dev/null 2>&1 \
+      && git -C "$ROOT" -c user.name="boat-loop" -c user.email="loop@boat.local" \
+           commit -q -m "loop: land $id" >/dev/null 2>&1 \
+      && printf 'git_commit\t%s\n' "$(git -C "$ROOT" rev-parse --short HEAD)" >> "$CAND/LANDED" \
+      && printf 'loop: snapshot commit %s\n' "$(git -C "$ROOT" rev-parse --short HEAD)" \
+      || printf 'loop: WARNING: git snapshot failed; rollback/ manifest is the only undo\n'
+  fi
+  # Chain writer (STONE S2): append the landing record at land time —
+  # the RJ-1.4 receipt pair (LANDED manifest + chain record) is
+  # maintained by construction. Body shape is byte-identical to
+  # memory.sh import-loop (idempotent dedup). Failure degrades honestly:
+  # a loud warning, never an unwound landing — cross-surface-check.sh is
+  # the backstop that flags the drift.
+  if [[ -f "$TOOLS_DIR/memory.sh" ]] && command -v python3 >/dev/null 2>&1; then
+    s2_snap="$(awk -F'\t' '$1 == "git_commit" { print $2; exit }' "$CAND/LANDED")"
+    s2_at="$(awk '/^# landed_at:/ { sub(/^# landed_at: */, ""); print; exit }' "$CAND/LANDED")"
+    if [[ -n "$s2_snap" && -n "$s2_at" ]] \
+      && s2_body="$(python3 -c 'import json,sys; print(json.dumps({"candidate": sys.argv[1], "snapshot": sys.argv[2], "landed_at": sys.argv[3]}, sort_keys=True, separators=(",", ":")))' "$id" "$s2_snap" "$s2_at" 2>/dev/null)" \
+      && printf '%s' "$s2_body" | bash "$TOOLS_DIR/memory.sh" append landing scripted >/dev/null 2>&1; then
+      printf 'loop: landing record appended to the memory chain\n'
+    else
+      printf 'loop: WARNING %s landed but the chain record was NOT appended — run: bash tools/memory.sh import-loop (cross-surface-check will flag the drift)\n' "$id" >&2
+    fi
+  else
+    printf 'loop: WARNING %s landed without a chain record (memory.sh or python3 unavailable) — cross-surface-check will flag the drift\n' "$id" >&2
+  fi
+  printf 'loop: rollback available: loop rollback %s\n' "$id"
+  printf 'loop: receipts still owed: take drafts/ through the receipted path\n'
+  ;;
+
+rollback)
+  id="${1:-}"; [[ -n "$id" ]] || die "usage: loop rollback ID"
+  require_candidate "$id"
+  [[ -f "$CAND/LANDED" ]] || die "$id is not landed"
+  while IFS=$'\t' read -r src dest replaced; do
+    [[ -n "$src" && "$src" != \#* && "$src" != "git_commit" ]] || continue
+    if [[ "$replaced" == "yes" ]]; then
+      cp "$CAND/rollback/$dest" "$ROOT/$dest.restore.tmp" \
+        && mv "$ROOT/$dest.restore.tmp" "$ROOT/$dest"
+      printf 'loop: restored %s\n' "$dest"
+    else
+      rm -f "$ROOT/$dest"
+      printf 'loop: removed %s (was new)\n' "$dest"
+    fi
+  done < "$CAND/LANDED"
+  mv "$CAND/LANDED" "$CAND/LANDED.rolled-back.$(date -u +%Y%m%dT%H%M%SZ)"
+  meta_set_status "$CAND" rolled-back
+  printf 'loop: %s cargo withdrawn; DECISION and evidence retained\n' "$id"
+  ;;
+
+auto)
+  # Autonomous path: agent-held threshold for reversible cargo.
+  # Reconstruction-first regime: every land is git-snapshotted and
+  # rollback-mapped; the tier guard in `land` still requires an independent
+  # REVIEW.md for verifier-set cargo. The decision is labeled as the
+  # agent's — no impersonation of a human operator.
+  id="${1:-}"; [[ -n "$id" ]] || die "usage: loop auto ID --agent NAME"
+  require_candidate "$id"
+  shift
+  agent=""
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      --agent) agent="${2:-}"; shift 2 ;;
+      *) die "unknown flag: $1" ;;
+    esac
+  done
+  [[ -n "$agent" ]] || die "auto requires --agent NAME (the deciding agent is named, always)"
+  [[ -f "$CAND/scores.json" ]] || die "auto refuses unevaluated candidates: evaluate $id first"
+  # Verdict gate (cand-0021 incident; hardened by cand-0023): auto once
+  # landed a candidate whose attested evidence said verdict:fail — reflect
+  # caught it post-hoc, one stage too late. Fail closed here: only an
+  # explicit top-level pass proceeds. The previous sed line-scan was fooled
+  # by an unescaped '"verdict": "pass"' substring on an earlier line of
+  # scores.json; scores_verdict is a real JSON parse, and malformed JSON
+  # (which is exactly what such smuggling produces) refuses outright.
+  verdict="$(scores_verdict "$CAND/scores.json")"
+  [[ "$verdict" != "MALFORMED-JSON" ]] \
+    || die "auto refuses malformed evidence: scores.json is not parseable JSON (fail closed — a verdict that cannot be read cannot be blessed; re-run the evaluator)"
+  [[ "$verdict" == "pass" ]] \
+    || die "auto refuses non-pass evidence: scores.json verdict is '${verdict:-absent}' (an agent-held threshold cannot bless failing evidence; fix the evaluator or take the operator path)"
+  # Attestation gate (cand-0022 review item): validate verifies provenance
+  # only WHEN a block exists, so an unattested verdict:pass would auto-land
+  # and be flagged post-hoc by reflect — the same one-stage-too-late shape.
+  # The agent-held threshold requires attested, verifying evidence outright.
+  # The operator path (manual admit/land) is deliberately ungated.
+  grep -q '"provenance"' "$CAND/scores.json" \
+    || die "auto refuses unattested evidence: scores.json has no provenance block (attest via tools/eval/attest.sh write)"
+  bash "$TOOLS_DIR/eval/attest.sh" verify "$CAND/scores.json" "$CAND" "$ROOT" >/dev/null 2>&1 \
+    || die "auto refuses unattested evidence: attestation verification FAILED (scores, traces, or harness do not match the recorded chain)"
+
+  bash "$0" validate "$id" || die "auto refuses invalid candidates (incl. DECLARATION fail-closed)"
+  bash "$0" brief "$id" >/dev/null || die "brief generation failed"
+  bash "$0" admit "$id" --operator "agent:$agent" --ack-latest || exit 1
+  bash "$0" land "$id" || {
+    printf 'loop: auto stopped at land (decision recorded; cargo NOT landed)\n' >&2
+    exit 1
+  }
+  bash "$0" record "$id" >/dev/null 2>&1 || true
+  bash "$0" reflect "$id" || true
+  printf 'loop: auto complete for %s — rollback: loop rollback %s\n' "$id" "$id"
+  ;;
+
+dispatch)
+  # Dispatch one full loop iteration to a headless worker session.
+  # DOCT-9.4 (claimed profile: profile.doctrine_inf_governance.v0):
+  #   bounded retry: --max-attempts (default 2) + --budget-usd per attempt
+  #   terminal escalation: failure appends an obstruction to QUEUE.md
+  #   rollback path: every landing remains loop-rollback-able with lineage
+  # BIDIR-4.4: the worker is a proposer; success is discharge-determined —
+  # a claimed landing is verified against the store, never trusted.
+  agent=""; goal=""; max_attempts=2; budget="10"; worker="claude"; ctx=""; iso=""
+  dispatch_t0=$SECONDS
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      --agent) agent="${2:-}"; shift 2 ;;
+      --goal) goal="${2:-}"; shift 2 ;;
+      --worker) worker="${2:-}"; shift 2 ;;
+      --context) ctx="${2:-}"; shift 2 ;;
+      --isolation) iso="${2:-}"; shift 2 ;;
+      --max-attempts) max_attempts="${2:-}"; shift 2 ;;
+      --budget-usd) budget="${2:-}"; shift 2 ;;
+      *) die "unknown flag: $1" ;;
+    esac
+  done
+  [[ -n "$agent" ]] || die "dispatch requires --agent NAME (decisions are labeled, always)"
+  [[ "$max_attempts" =~ ^[1-9][0-9]*$ ]] || die "dispatch --max-attempts must be a positive integer"
+  [[ "$budget" =~ ^[0-9]+(\.[0-9]+)?$ ]] || die "dispatch --budget-usd must be numeric"
+  # Worker profiles (ROUTE-1.4): substrate-declarative; default claude path
+  # is byte-identical to the single-worker behavior. "auto" defers to the
+  # router (ROUTE-1.3), which remains overridable by explicit --worker.
+  if [[ "$worker" == "auto" ]]; then
+    worker="$(bash "$TOOLS_DIR/route.sh" pick)" || die "router failed to pick a worker"
+    [[ -n "$worker" ]] || die "router returned no worker"
+    printf 'loop: router selected worker: %s\n' "$worker"
+  fi
+  case "$worker" in
+    claude) WORKER_BIN="${CLAUDE_BIN:-claude}" ;;
+    codex|gpt*) WORKER_BIN="${CODEX_BIN:-codex}" ;;
+    *) die "unknown worker: $worker (profiles: claude, codex)" ;;
+  esac
+  # Context admission (CTX-1.1): contexts come from the admitted base, fail
+  # closed BEFORE any worker launches or any ledger row is written. The
+  # section binding (CTX-1.2) is honest about substrate availability.
+  ctx_section=""
+  if [[ -n "$ctx" ]]; then
+    case "$ctx" in
+      *[!a-z0-9-]*) die "unknown context: $ctx (CTX-1.1: contexts come from the admitted base)" ;;
+    esac
+    BASE_TSV="$ROOT/nix/contexts/base.tsv"
+    [[ -f "$BASE_TSV" ]] || die "dispatch --context requires the admitted base (nix/contexts/base.tsv missing)"
+    awk -F'\t' -v c="$ctx" '!/^#/ && $1 == c { found = 1 } END { exit !found }' "$BASE_TSV" \
+      || die "unknown context: $ctx (CTX-1.1: contexts come from the admitted base)"
+    if command -v nix >/dev/null 2>&1 && [[ -f "$ROOT/flake.nix" ]]; then
+      ctx_section="nix-develop(.#ctx-$ctx)"
+    else
+      ctx_section="unavailable(no-nix)"
+      printf 'loop: WARNING: context %s admitted but nix unavailable — worker runs on the host environment (section recorded honestly)\n' "$ctx"
+    fi
+  fi
+  # Isolation admission (ISO-1.1, sites/eval/isolation-v0.md): fail closed
+  # BEFORE worker launch and before any ledger write. The microvm envelope
+  # is provisional pending the host boot witness (isolation-v0 §3).
+  MICROVM_EXEC=""
+  case "$iso" in
+    ""|none) iso="" ;;
+    microvm)
+      MICROVM_EXEC="${BOAT_MICROVM_EXECUTOR:-tusk-hermes-microvm-executor}"
+      command -v "$MICROVM_EXEC" >/dev/null 2>&1 \
+        || die "isolation microvm requested but executor not found: $MICROVM_EXEC (set BOAT_MICROVM_EXECUTOR; boot witness queued — see sites/eval/isolation-v0.md)"
+      ;;
+    *) die "unknown isolation: $iso (admitted: none, microvm)" ;;
+  esac
+  route_log() {
+    # route_log OUTCOME ATTEMPTS  (ROUTE-1.1/1.2: discharge outcomes only).
+    # CTX-1.2: context + section are APPENDED as trailing columns (8, 9);
+    # rows without them are legacy and carry evidence only at the terminal
+    # context. Section column: the wrap binding when a context was given,
+    # else the ambient devshell profile, else honest unavailable().
+    local section
+    if [[ -n "$iso" ]]; then
+      section="microvm(.#ctx-${ctx:-any})"
+    elif [[ -n "$ctx" ]]; then
+      section="$ctx_section"
+    elif [[ -n "${DEVENV_PROFILE:-}" ]]; then
+      section="${DEVENV_PROFILE//[$'\n\t ']/}"
+    else
+      section="unavailable(not-in-devshell)"
+    fi
+    # Goal is no longer the terminal column: embedded tabs/newlines would
+    # shift the context/section reads — flatten them.
+    local g="${goal:0:100}"
+    g="${g//[$'\t\n']/ }"
+    mkdir -p "$STORE/.dispatch"
+    [[ -f "$STORE/.dispatch/ROUTING.tsv" ]] \
+      || printf '# ts\tworker\toutcome\tattempts\tbudget\twall_secs\tgoal\tcontext\tsection\n' > "$STORE/.dispatch/ROUTING.tsv"
+    printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+      "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$worker" "$1" "$2" "$budget" \
+      "$((SECONDS - dispatch_t0))" "$g" "${ctx:-any}" "$section" >> "$STORE/.dispatch/ROUTING.tsv"
+  }
+  if ! command -v "$WORKER_BIN" >/dev/null 2>&1; then
+    route_log no-binary 0
+    die "worker binary not found: $WORKER_BIN"
+  fi
+
+  if [[ -z "$goal" ]]; then
+    # Full-block extraction (STONE S3): a queue entry is its "- [open]"
+    # line THROUGH the next entry/section boundary — the old first-line
+    # read handed workers content-free goals from multi-line entries.
+    goal="$(awk '
+      /^- \[open\]/ && !found { found = 1; sub(/^- \[open\] /, ""); print; next }
+      found && (/^- \[/ || /^## /) { exit }
+      found && /^[[:space:]]*$/ { next }
+      found { print }
+    ' "$STORE/QUEUE.md")"
+    [[ -n "$goal" ]] || die "no --goal given and no open queue entries"
+    # Origin gate (STONE S3, declared strengthening; RJ-1.3): queue-top
+    # text flows verbatim into the worker prompt — anything that can
+    # append to the queue programs the next worker. Unattended (no
+    # --goal) dispatch consumes only entries whose (origin, ...) prefix
+    # is operator-allowlisted; everything else needs an explicit --goal.
+    g_origin="$(printf '%s' "$goal" | head -n 1 | sed -n 's/^(\([^)]*\)).*/\1/p')"
+    g_origin="${g_origin%,*}"
+    allow_file="$TOOLS_DIR/schemas/dispatch-origins.allow"
+    origin_ok=no
+    if [[ -f "$allow_file" && -n "$g_origin" ]]; then
+      while IFS= read -r pfx; do
+        [[ -n "$pfx" && "$pfx" != \#* ]] || continue
+        [[ "$g_origin" == "$pfx"* ]] && { origin_ok=yes; break; }
+      done < "$allow_file"
+    fi
+    if [[ "$origin_ok" != yes ]]; then
+      bash "$TOOLS_DIR/eval/emit-refusal.sh" verifier_contract_violation QUEUE.entry.origin \
+        "dispatch goal selection" \
+        "queue-top origin '${g_origin:-unparseable}' is not operator-allowlisted for unattended dispatch" \
+        'null' >&2 || true
+      die "queue-top origin '${g_origin:-unparseable}' not allowlisted for no-goal dispatch (pass --goal explicitly, or land an allowlist entry: tools/schemas/dispatch-origins.allow)"
+    fi
+    printf 'loop: dispatching queue-top goal (origin: %s)\n' "$g_origin"
+  fi
+
+  DDIR="$STORE/.dispatch"
+  mkdir -p "$DDIR/logs"
+  ts="$(date -u +%Y%m%dT%H%M%SZ)"
+  before_landed="$(grep -l '^status: landed' "$STORE"/cand-*/META 2>/dev/null | sort)"
+  head_before="$(git -C "$ROOT" rev-parse HEAD 2>/dev/null || echo none)"
+
+  attempt=1
+  while [[ "$attempt" -le "$max_attempts" ]]; do
+    prompt="$DDIR/DISPATCH-$ts-attempt-$attempt.md"
+    log="$DDIR/logs/DISPATCH-$ts-attempt-$attempt.log"
+    {
+      printf '# Dispatch worker brief (attempt %s of %s)\n\n' "$attempt" "$max_attempts"
+      printf 'You are an autonomous PROPOSER session for the boat development loop,\n'
+      printf 'working in %s. Decisions you make are labeled agent:%s.\n\n' "$ROOT" "$agent"
+      printf '## Goal\n\n%s\n\n' "$goal"
+      if [[ -n "$ctx" ]]; then
+        printf '## Context (worker-contexts v0, CTX-1.4)\n\n'
+        printf 'You run in admitted context `%s` (section: %s). Your dependencies\n' "$ctx" "$ctx_section"
+        printf 'come from that section, nothing ambient: a package you need that the\n'
+        printf 'section lacks is an OBSTRUCTION — queue it, do not install around it.\n\n'
+      fi
+      printf '## Procedure (the loop is law; follow it exactly)\n\n'
+      printf '1. Read WORKER.md first — it is your BINDING contract; where this brief\n'
+      printf '   and WORKER.md disagree, WORKER.md controls. Then candidates/QUEUE.md,\n'
+      printf '   candidates/README.md, and sites/premath/specs/\n'
+      printf '   (especially PREMATH-0002 BIDIR-4.4 and PREMATH-0003 DOCT-9.4; they bind you).\n'
+      printf '2. tools/loop open cand-NNNN-<slug> "<intent>" (next free number); complete\n'
+      printf '   DECLARATION honestly (layer/implements/preserves per the dm.* registry).\n'
+      printf '3. Build the cargo and an eval-self.sh whose scores.json is attested via\n'
+      printf '   tools/eval/attest.sh. Raw traces stay in traces/, never summarized.\n'
+      printf '4. Write README.md (cargo, evaluation, tier) and a LANDING map.\n'
+      printf '5. If any LANDING destination is under tools/, an independent REVIEW.md is\n'
+      printf '   required: convene a FRESH reviewer via a separate "%s" worker session\n' "$WORKER_BIN"
+      printf '   (read-only, writes only REVIEW.md). Implement transform findings and\n'
+      printf '   reconvene to verify — AT MOST 2 transform rounds (DOCT-9.4; this bound\n'
+      printf '   is CONTROLLING). If the reviewer still says transform after round 2,\n'
+      printf '   STOP: queue the impasse, leave the candidate unlanded, and report\n'
+      printf '   DISPATCH-RESULT: failed — that outcome is the system working, not a\n'
+      printf '   failure of yours. You may not review your own cargo.\n'
+      printf '6. tools/loop auto <id> --agent %s\n' "$agent"
+      printf '7. Print exactly one line: DISPATCH-RESULT: landed <id>\n'
+      printf '   or, on failure: DISPATCH-RESULT: failed <one-line reason>\n\n'
+      printf '## Constraints\n\n'
+      printf -- '- Acceptance is discharge-determined, never proposal-determined (BIDIR-4.4):\n'
+      printf '  your claims compile to obligations; the evaluators and tier guard decide.\n'
+      printf -- '- Do not modify verifier-set tools except as declared LANDING cargo.\n'
+      printf -- '- Do not edit QUEUE.md Resolved entries; reflect appends obstructions for you.\n'
+      printf -- '- Bounded run (DOCT-9.4): attempt %s of %s, budget %s USD; if you cannot\n' "$attempt" "$max_attempts" "$budget"
+      printf '  finish cleanly, prefer an honest DISPATCH-RESULT: failed over a forced landing.\n'
+    } > "$prompt"
+
+    printf 'loop: dispatch attempt %s/%s (log: %s)\n' "$attempt" "$max_attempts" "$log"
+    # Worker bash permissions (cand-0018 escalation, DISPATCH-NOTE): a
+    # headless proposer MUST be able to run the loop's own command surface
+    # (validate, eval-self, attest, auto) or every dispatch dies on
+    # interactive approval. Defaults allow exactly that surface; the
+    # operator overrides with BOAT_CLAUDE_FLAGS (word-split, like
+    # BOAT_CODEX_FLAGS). Codex profile untouched.
+    if [[ -n "${BOAT_CLAUDE_FLAGS:-}" ]]; then
+      read -r -a CLAUDE_EXTRA <<< "$BOAT_CLAUDE_FLAGS"
+    else
+      # STONE S5 (operator decision: dispatch host IS the sandbox, a
+      # worker may spawn READ-ONLY reviewer sessions). The scoped
+      # Bash(claude -p *) grant lets a dispatched worker convene the
+      # headless reviewer its spec/statement cargo now requires (the
+      # widened tier guard) — without it, the guard makes such candidates
+      # un-landable and burns the budget. Discharges the cand-0019
+      # reviewer-convening gap; codex profile (BOAT_CODEX_FLAGS) untouched.
+      CLAUDE_EXTRA=(--allowedTools 'Bash(bash tools/*)' 'Bash(bash candidates/*)' 'Bash(git *)' 'Bash(claude -p *)')
+    fi
+    # Section wrap (CTX-1.2/1.4): with an admitted context and nix present,
+    # the worker runs inside the generated shell — its dependencies are the
+    # section's, pinned and attestable. Without a context the invocations
+    # below are byte-identical to the pre-context arm.
+    if [[ -n "$iso" ]]; then
+      # ISO-1.3: the executor runs the proposal side; discharge verification
+      # below is unchanged. Provisional envelope (isolation-v0 §3).
+      ( cd "$ROOT" && BOAT_DISPATCH_PROMPT="$prompt" BOAT_DISPATCH_ROOT="$ROOT" \
+          BOAT_DISPATCH_CONTEXT="${ctx:-any}" "$MICROVM_EXEC" run ) > "$log" 2>&1
+    elif [[ -n "$ctx" && "$ctx_section" == nix-develop* ]]; then
+      case "$worker" in
+        claude)
+          ( cd "$ROOT" && nix develop --impure ".#ctx-$ctx" --command \
+              "$WORKER_BIN" -p "$(cat "$prompt")" \
+              --permission-mode acceptEdits --max-budget-usd "$budget" \
+              "${CLAUDE_EXTRA[@]}" ) > "$log" 2>&1 ;;
+        *)
+          ( cd "$ROOT" && nix develop --impure ".#ctx-$ctx" --command \
+              "$WORKER_BIN" exec ${BOAT_CODEX_FLAGS:-} "$(cat "$prompt")" ) > "$log" 2>&1 ;;
+      esac
+    else
+      case "$worker" in
+        claude)
+          ( cd "$ROOT" && "$WORKER_BIN" -p "$(cat "$prompt")" \
+              --permission-mode acceptEdits --max-budget-usd "$budget" \
+              "${CLAUDE_EXTRA[@]}" ) > "$log" 2>&1 ;;
+        *)
+          # codex/gpt profile; flags operator-tunable via BOAT_CODEX_FLAGS
+          ( cd "$ROOT" && "$WORKER_BIN" exec ${BOAT_CODEX_FLAGS:-} "$(cat "$prompt")" ) > "$log" 2>&1 ;;
+      esac
+    fi
+    worker_rc=$?
+
+    # Discharge-determined success: the claim must be backed by lineage no
+    # META hand-write can forge — a LANDED manifest whose git snapshot is a
+    # real commit, and an append-only DECISIONS entry labeled to this agent.
+    claimed="$(grep -oE 'DISPATCH-RESULT: landed cand-[a-z0-9-]+' "$log" | tail -n 1 | awk '{print $3}')"
+    snap=""
+    [[ -n "$claimed" && -f "$STORE/$claimed/LANDED" ]] \
+      && snap="$(awk -F'\t' '$1 == "git_commit" { print $2; exit }' "$STORE/$claimed/LANDED")"
+    if [[ -n "$claimed" && -f "$STORE/$claimed/META" ]] \
+      && [[ "$(awk -F': ' '$1 == "status" { print $2; exit }' "$STORE/$claimed/META")" == "landed" ]] \
+      && ! grep -qFx "$STORE/$claimed/META" <<< "$before_landed" \
+      && [[ -n "$snap" ]] \
+      && git -C "$ROOT" cat-file -e "$snap^{commit}" 2>/dev/null \
+      && { [[ "$head_before" == "none" ]] || git -C "$ROOT" merge-base --is-ancestor "$head_before" "$snap" 2>/dev/null; } \
+      && [[ "$(git -C "$ROOT" rev-parse "$snap" 2>/dev/null)" != "$(git -C "$ROOT" rev-parse "$head_before" 2>/dev/null)" ]] \
+      && grep -q "operator: agent:$agent" "$STORE/$claimed/DECISIONS" 2>/dev/null; then
+      printf 'loop: dispatch succeeded: %s landed (lineage verified: snapshot %s, agent-labeled decision; worker rc=%s)\n' "$claimed" "$snap" "$worker_rc"
+      route_log landed "$attempt"
+      printf 'loop: rollback remains available: loop rollback %s\n' "$claimed"
+      exit 0
+    fi
+
+    printf 'loop: attempt %s did not produce a verified landing (claimed: %s)\n' \
+      "$attempt" "${claimed:-none}" >&2
+    attempt=$((attempt + 1))
+  done
+
+  # Terminal escalation (DOCT-9.4): the failure becomes queue material.
+  entry="$(queue_entry_sanitize "- [open] (dispatch escalation, $(date -u +%Y-%m-%d)) Dispatch failed after $max_attempts attempt(s): ${goal:0:140} — see candidates/.dispatch/logs/DISPATCH-$ts-*")"
+  if ! grep -Fq -- "$entry" "$STORE/QUEUE.md"; then
+    awk -v e="$entry" '
+      /^## Open$/ { print; print ""; print e; inserted = 1; next }
+      { print }
+      END { if (!inserted) { print ""; print "## Open"; print ""; print e } }
+    ' "$STORE/QUEUE.md" > "$STORE/QUEUE.md.tmp" && mv "$STORE/QUEUE.md.tmp" "$STORE/QUEUE.md"
+  fi
+  route_log escalated "$max_attempts"
+  die "dispatch exhausted $max_attempts attempt(s); escalated to QUEUE.md"
+  ;;
+
+
+record)
+  id="${1:-}"; [[ -n "$id" ]] || die "usage: loop record ID"
+  require_candidate "$id"
+  intent="$(meta_get "$CAND" intent)"
+  today="$(date -u +%Y-%m-%d)"
+  upper_id="$(printf '%s' "$id" | tr '[:lower:]' '[:upper:]')"
+  mkdir -p "$CAND/drafts"
+  draft="$CAND/drafts/${upper_id}-${today}.md"
+  cat > "$draft" <<EOF
+# ${id} (machine-drafted, DRAFT — pre-threshold)
+
+\`\`\`text
+CycleReceipt:
+  receipt_id: CR-${id}-${CYCLE_ID}-0001
+  cycle_id: ${CYCLE_ID}
+  cargo: ${intent}
+  source: candidates/${id}/ (META, scores.json, traces/)
+  selected_material: TODO-review
+  left_behind: TODO-review
+  owner: TODO-review
+  authority_surface: cycle.operating-surface.v0
+  predicate: premath.seed-selection-boundary.v0
+  predicate_absence_reason: none
+  projection_surface: candidates/${id}/
+  verification_boundary: TODO-review
+  shore_commitment: landed
+  threshold_outcome: admit
+  disposition: TODO-review
+  recorder: Tusk
+  receipt_ref: cycles/${CYCLE_ID}/receipts/${upper_id}-${today}.md
+\`\`\`
+EOF
+  bash "$TOOLS_DIR/receipt-schema-check.sh" "$draft" || true
+  printf 'loop: drafted %s (TODO-review fields need a human pass)\n' "$draft"
+  ;;
+
+reflect)
+  id="${1:-}"; [[ -n "$id" ]] || die "usage: loop reflect ID"
+  require_candidate "$id"
+  intent="$(meta_get "$CAND" intent)"
+  status="$(meta_get "$CAND" status)"
+
+  # Agent-drafted assessment from the evidence on disk; the operator may
+  # override by editing REFLECT.md. Obstruction-proposals feed QUEUE.md.
+  # Provenance gate: witness requires evidence attested by a known harness
+  # and intact on disk. INVALID (failed verification) is worse than absent.
+  prov="unattested"
+  if [[ -f "$CAND/scores.json" ]] && grep -q '"provenance"' "$CAND/scores.json"; then
+    if bash "$TOOLS_DIR/eval/attest.sh" verify "$CAND/scores.json" "$CAND" "$ROOT" >/dev/null 2>&1; then
+      prov="verified"
+    else
+      prov="INVALID"
+    fi
+  fi
+
+  # Verdict via real JSON parse (cand-0023): reflect's old grep was fooled
+  # by the same smuggled '"verdict": "pass"' substring as the auto gate.
+  # MALFORMED-JSON is treated as not-pass: unreadable evidence cannot witness.
+  verdict=""
+  [[ -f "$CAND/scores.json" ]] && verdict="$(scores_verdict "$CAND/scores.json")"
+
+  assessment=""
+  detail=""
+  if [[ ! -f "$CAND/scores.json" ]]; then
+    assessment="obstruction-proposal"
+    detail="no evaluation evidence exists; the loop ran without Evaluate()"
+  elif [[ "$prov" == "INVALID" ]]; then
+    assessment="obstruction-proposal"
+    detail="attestation verification FAILED — scores, traces, or harness do not match the recorded chain; evidence may be edited or stale"
+  elif [[ "$prov" == "unattested" ]]; then
+    assessment="obstruction-proposal"
+    detail="evidence is unattested (no provenance block); re-run the evaluator so reflect can trust scores.json"
+  elif [[ "$verdict" == "MALFORMED-JSON" ]]; then
+    assessment="obstruction-proposal"
+    detail="scores.json is not parseable JSON — fail closed: an unreadable (or substring-smuggled) verdict cannot witness; re-run the evaluator"
+  elif [[ "$verdict" == "pass" ]]; then
+    assessment="witness"
+    detail="verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)"
+  elif [[ -n "$verdict" ]]; then
+    assessment="obstruction-proposal"
+    detail="recorded verdict is not pass; see scores.json and traces/"
+  elif grep -q '"verdict"' "$CAND/scores.json"; then
+    # No string-valued TOP-LEVEL verdict, yet the bytes mention one
+    # (nested, smuggled, or non-string). Old behavior refused these by
+    # substring; keep refusing — the recall fallback is reserved for
+    # classifier scores that carry no verdict vocabulary at all.
+    assessment="obstruction-proposal"
+    detail="scores.json mentions a verdict but has no top-level string verdict key; refusing to witness by substring — see scores.json"
+  else
+    # Per-class recalls, excluding the baseline reference line. Witness only
+    # if every parsed recall is exactly 1 (1.0, 1.0000, ...).
+    recalls="$(grep -v 'baseline_constant_admit' "$CAND/scores.json" \
+      | grep -oE '"(admit|deny)_recall": *[0-9.]+' \
+      | grep -oE '[0-9.]+$')"
+    if [[ -n "$recalls" ]] && ! printf '%s\n' "$recalls" | grep -Eqv '^1(\.0*)?$'; then
+      assessment="witness"
+      detail="all per-class recalls are 1.0 across slices (vs constant-admit baseline); evidence attested"
+    else
+      assessment="obstruction-proposal"
+      detail="recall below 1.0, missing, or unparseable on at least one class/slice; see scores.json"
+    fi
+  fi
+  if [[ "$status" == "rolled-back" ]]; then
+    assessment="obstruction-proposal"
+    detail="cargo was rolled back after landing; the gap that forced withdrawal is the proposal"
+  fi
+
+  {
+    printf '# Reflection: %s\n\n' "$id"
+    printf 'Intent: %s\n' "$intent"
+    printf 'Status at reflection: %s\n' "$status"
+    printf 'Reflected at: %s\n\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    if [[ -f "$CAND/scores.json" ]]; then
+      printf '## Scores\n\n```json\n'
+      cat "$CAND/scores.json"
+      printf '```\n\n'
+    fi
+    printf '## Comparison (intended vs realized)\n\n'
+    printf 'Assessment (agent-drafted): %s\n' "$assessment"
+    printf 'Basis: %s\n\n' "$detail"
+    printf 'Operator may override by editing this file; obstruction receipts proper\n'
+    printf 'remain Tusk-recorded threshold denials per the charter.\n'
+  } > "$CAND/REFLECT.md"
+  printf 'loop: wrote %s (assessment: %s)\n' "$CAND/REFLECT.md" "$assessment"
+
+  if [[ "$assessment" != "witness" && -f "$STORE/QUEUE.md" ]]; then
+    entry="$(queue_entry_sanitize "- [open] (reflect $id, $(date -u +%Y-%m-%d)) $detail")"
+    if ! grep -Fq -- "$entry" "$STORE/QUEUE.md"; then
+      awk -v e="$entry" '
+        /^## Open$/ { print; print ""; print e; inserted = 1; next }
+        { print }
+        END { if (!inserted) { print ""; print "## Open"; print ""; print e } }
+      ' "$STORE/QUEUE.md" > "$STORE/QUEUE.md.tmp" && mv "$STORE/QUEUE.md.tmp" "$STORE/QUEUE.md"
+      printf 'loop: queued obstruction proposal in candidates/QUEUE.md\n'
+    fi
+  fi
+  ;;
+
+status)
+  id="${1:-}"
+  if [[ -n "$id" ]]; then
+    require_candidate "$id"
+    cat "$CAND/META"
+  else
+    for dir in "$STORE"/cand-*/; do
+      [[ -f "$dir/META" ]] || { printf '%s\t(no META)\n' "$(basename "$dir")"; continue; }
+      printf '%s\t%s\t%s\n' "$(basename "$dir")" \
+        "$(meta_get "$dir" status)" "$(meta_get "$dir" intent)"
+    done
+  fi
+  ;;
+
+*)
+  die "unknown command: $cmd (open|validate|evaluate|brief|review|admit|deny|land|rollback|record|reflect|status)"
+  ;;
+esac

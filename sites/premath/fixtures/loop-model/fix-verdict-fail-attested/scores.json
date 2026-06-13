@@ -1,0 +1,12 @@
+{
+  "evaluated_at": "2026-06-12T00:00:00Z",
+  "task": "attested non-pass verdict",
+  "verdict": "fail"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "15358da61786ee3b30df58491dbdae2e7d0aa673152661c21fa67670f485e1e8",
+    "traces_sha256": "231d1a4ae88bd1a0e805ab961e8b069e6d6d6c09f4573766a1582688d1073109",
+    "body_sha256": "1c2a13cc6d50bd5af6c3218be1d346b720e6e7c099d9f08e0a8a79c88c418770",
+    "attestation": "9154dfc7d5eb6a3fcf810fcfab1afaebdc9dc589a0c63758fee6abca6802fea0"
+  }
+}

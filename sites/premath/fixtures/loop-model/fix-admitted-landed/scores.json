@@ -1,0 +1,14 @@
+{
+  "evaluated_at": "2026-06-12T00:00:00Z",
+  "task": "loop-model fixture frozen evidence (fix-admitted-landed)",
+  "cases": 1,
+  "passed": 1,
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "15358da61786ee3b30df58491dbdae2e7d0aa673152661c21fa67670f485e1e8",
+    "traces_sha256": "2501bb151940f4af16b2de1761cffb48f4dd3a4062a77db6f45e35d30a2ef875",
+    "body_sha256": "66ece7c055c4e858aa56ffa69b592b31399bfe5c2b099040f5616054cb6e7ac0",
+    "attestation": "ee08e0465964f6aca138dd44974cc0bcc03a5735a337ac43ec7840872c538189"
+  }
+}

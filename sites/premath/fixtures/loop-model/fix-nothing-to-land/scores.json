@@ -1,0 +1,14 @@
+{
+  "evaluated_at": "2026-06-12T00:00:00Z",
+  "task": "loop-model fixture frozen evidence (fix-nothing-to-land)",
+  "cases": 1,
+  "passed": 1,
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "15358da61786ee3b30df58491dbdae2e7d0aa673152661c21fa67670f485e1e8",
+    "traces_sha256": "02d744bc0ba8575e9c7cb0f32c36c1fbe9c31b85d8c780d4c8607f06db16adfc",
+    "body_sha256": "0e788a3b814904454741fbcaa0177f394da4be7d5442391a7eb3e195414d5777",
+    "attestation": "5e348beaa2fc2fb94bf032d1824102403e6240b01900f3be8d8578f59f596e84"
+  }
+}
