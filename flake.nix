@@ -101,24 +101,60 @@
           };
         };
 
-        noir = pkgs.rustPlatform.buildRustPackage (finalAttrs: {
-          pname = "noir";
-          version = "v1.0.0-beta.14";
-          src = noir-src-patched;
-          cargoHash = "sha256-ZIW54tBlqjMb/Je8+4vpUMOGL8BEimMf24GrVTbB76g=";
-          preBuild = ''
-            export GIT_COMMIT=60ccd48e18ad8ce50d5ecda9baf813b712145051
-            export GIT_DIRTY=false
+        # nargo — the Noir CLI, fetched as the pinned PREBUILT release binary
+        # (exactly what `noirup --version 1.0.0-beta.14` installs), per-system.
+        # This is the fast, reproducible path: a hash-pinned tarball fetch +
+        # (on Linux) autoPatchelf, instead of compiling the whole Noir compiler
+        # from source on every fresh `nix develop`. The standard library ships
+        # inside the binary, so `nargo compile/test/execute` need nothing else;
+        # proof generation still uses `bb` (x86_64-linux). Hashes were pinned
+        # via `nix store prefetch-file <url>`.
+        nargoRelease = "v1.0.0-beta.14";
+        nargoSystems = {
+          "aarch64-darwin" = {
+            triple = "aarch64-apple-darwin";
+            hash = "sha256-K7hWqG6eB66U4FJpnr05FCZTTTD+Q3g71oc/Yoo6aZs=";
+          };
+          "x86_64-darwin" = {
+            triple = "x86_64-apple-darwin";
+            hash = "sha256-b8vBYEvwEaYNA/5VbQRVRm32Sh4bH0Ck6KojvBQpJyo=";
+          };
+          "x86_64-linux" = {
+            triple = "x86_64-unknown-linux-gnu";
+            hash = "sha256-eFSjQLXOOfRxA2AxqpQIenzDKNICnR45du6t4v5Km7E=";
+          };
+          "aarch64-linux" = {
+            triple = "aarch64-unknown-linux-gnu";
+            hash = "sha256-hjs820/grAXXgxbdxMxuKaqqaeFF7ASwiSgibfi7ifw=";
+          };
+        };
+        nargoEntry = nargoSystems.${system} or (throw "nargo: no pinned release for ${system}");
+        nargo = pkgs.stdenv.mkDerivation {
+          pname = "nargo";
+          version = nargoRelease;
+          src = pkgs.fetchurl {
+            url = "https://github.com/noir-lang/noir/releases/download/${nargoRelease}/nargo-${nargoEntry.triple}.tar.gz";
+            hash = nargoEntry.hash;
+          };
+          # The release tarball is a bare `nargo` binary (no top-level dir).
+          sourceRoot = ".";
+          dontConfigure = true;
+          dontBuild = true;
+          nativeBuildInputs = lib.optionals pkgs.stdenv.isLinux [ pkgs.autoPatchelfHook ];
+          buildInputs = lib.optionals pkgs.stdenv.isLinux [ pkgs.stdenv.cc.cc.lib ];
+          installPhase = ''
+            runHook preInstall
+            install -Dm755 nargo $out/bin/nargo
+            runHook postInstall
           '';
-          doCheck = false;
           meta = {
-            description = "Noir is a domain specific language for zero knowledge proofs (patched source).";
+            description = "Nargo -- the Noir CLI (pinned prebuilt release binary).";
             homepage = "https://noir-lang.org/";
             license = lib.licenses.mit;
-            platforms = lib.platforms.unix;
-            maintainers = [ ];
+            platforms = builtins.attrNames nargoSystems;
+            mainProgram = "nargo";
           };
-        });
+        };
 
         co-snarks = pkgs.rustPlatform.buildRustPackage (finalAttrs: {
           pname = "co-snarks";
@@ -210,7 +246,7 @@
 
         noirToolchainPackages =
           [
-            noir
+            nargo
             bignum-paramgen
             pkgs.clang
             pkgs.llvmPackages.bintools
@@ -229,8 +265,8 @@
       {
         packages =
           {
-            default = noir;
-            inherit noir bignum-paramgen;
+            default = nargo;
+            inherit nargo bignum-paramgen;
           }
           // lib.optionalAttrs pkgs.stdenv.isLinux {
             inherit co-snarks;
