@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0007-circuit-ux",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "844f3d74c59c62f10b7f79b6b0bc9b54999b5a4ac3a6685495fc0b0abe7bf1f9",
+    "LANDING": "365b1e54bef591bab5eca887a91edbdcc7dcc5723cc037455d69e570d640dbca",
+    "META": "0faa28219f17e6df55321f4ab4c91756d134c66934f278a4c2232356839e3f31"
+  }
+}

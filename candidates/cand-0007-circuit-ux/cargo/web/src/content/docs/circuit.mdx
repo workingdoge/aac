@@ -1,0 +1,85 @@
+---
+title: The circuit
+description: TRANSITION/1 in Noir — the trusted state-transition surface of the registry, with soundness pinned to the machine-checked balance bound.
+editUrl: false
+sidebar:
+  label: The circuit
+  order: 2
+---
+
+import Loader from '../../components/Loader.astro';
+
+<Loader />
+
+The registry holds books, not funds: **its state is commitments, its update rule
+is proof, and its refusals are the entire trust model** (4/REG). The proof it
+accepts is **TRANSITION/1** — one of the three targets the system enshrines
+(3/PROOF §4.1), written in [Noir](https://noir-lang.org) and living at
+`circuits/` in the repository.
+
+Below is the public-input vector of a real transition, exactly as the registry
+reads it — produced by `nargo execute` over the sample witness.
+
+<aac-transition></aac-transition>
+
+## What the proof says
+
+> A private journal, balanced per the deployment's locality option, applied to a
+> committed private account state, yields the committed next state; consumed
+> rights chain the nullifier root; emitted channel facts fold into `fact_fold`
+> in journal order.
+
+Nothing about the books is disclosed. The verifier never sees a posting, an
+amount, or a counterparty — only that the eight public inputs are mutually
+consistent under the circuit, and (4/REG §2) that the *prev* roots match the
+registry's stored state. A proof conveys nothing in isolation: the unit of
+meaning is **(proof, public inputs, pinned context)** (3/PROOF).
+
+## The public ABI
+
+The order is normative — any change is a new target, a new instance, a new
+registry entry (3/PROOF §2).
+
+| # | input | role |
+|--:|-------|------|
+| 0 | `prev_account_root` | recomputed from `prev_state`, equated to the trusted root |
+| 1 | `next_account_root` | recomputed from `begin + posted` |
+| 2 | `prev_nullifier_root` | trusted context |
+| 3 | `next_nullifier_root` | chained; unchanged unless a right is consumed |
+| 4 | `journal_commitment` | order-binding fold over the journal rows |
+| 5 | `context_commitment` | **unconstrained** — bound by the 4/REG row, not the circuit |
+| 6 | `fact_fold` | Annex B fold over emitted facts, in journal order |
+| 7 | `fact_count` | number of emitted facts |
+
+## Why it is sound
+
+The Pacioli relation is decided by **carrier equality of cross-sums** — debits
+equal credits when their field sums are equal. That is only honest if no sum
+wraps the field. So every amount is a `u64`, range-constrained on entry (the
+`Field → u64 → Field` roundtrip), which keeps every partial and total sum far
+below the BN254 scalar order.
+
+That this discipline is *sufficient* is not asserted — it is **machine-checked**.
+The theorem `journal_sum_field_sound` in
+[`Core.lean`](https://github.com/workingdoge/aac/blob/main/sites/ledger/statements/Core.lean)
+proves: if each summand is a `u64` and the row count keeps `n · 2⁶⁴` below the
+modulus, then field equality of the debit and credit columns implies integer
+equality — no wraparound, ever. The circuit's `pacioli` library is the
+in-circuit face of that proof, function for function.
+
+## Run it
+
+```sh
+cd circuits
+nargo test       # accept a valid transition; reject unbalanced /
+                 # tampered-root / double-spend / zero-multiplicity
+nargo execute    # solve the sample witness (the vector above)
+nargo info       # ~775 ACIR opcodes for main
+```
+
+`nargo` (pinned `v1.0.0-beta.14` in `flake.nix`) compiles, tests, and executes
+on any platform. Generating the UltraHonk proof and verification key uses
+Barretenberg (`bb`), whose pinned build targets `x86_64-linux`; the constraint
+system that soundness depends on is fully exercised by the commands above.
+Provers are never the source of the `(circuit_hash, vk_hash)` the registry pins
+(3/PROOF §2).

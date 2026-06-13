@@ -1,0 +1,5 @@
+candidate_id: cand-0007-circuit-ux
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T07:06:43Z
+intent: A /circuit page on the AAC site surfacing the landed TRANSITION/1 Noir circuit (cand-0006): an aac-transition Lit web component rendering the real proven public-input ABI vector (prev/next account+nullifier roots, journal_commitment, fact_fold, context) as a proof receipt with the constraints-discharged checklist, plus prose tying it to 3/PROOF S4.1 and the Core.lean journal_sum_field_sound bound; registered in elements.ts and linked in the sidebar.
+status: landed

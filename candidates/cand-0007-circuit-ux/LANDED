@@ -1,0 +1,6 @@
+cargo/web/src/components/aac-transition.ts	web/src/components/aac-transition.ts	yes
+cargo/web/src/components/elements.ts	web/src/components/elements.ts	yes
+cargo/web/src/content/docs/circuit.mdx	web/src/content/docs/circuit.mdx	yes
+cargo/web/astro.config.mjs	web/astro.config.mjs	yes
+# landed_at: 2026-06-13T07:12:59Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=e656d083e825bd60e35c27316fa623f45d838fedecc699a1725b2e9089cb075a unavailable(not-in-devshell)
