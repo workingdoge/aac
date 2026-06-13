@@ -1,0 +1,40 @@
+{
+  "name": "AAC Tokens",
+  "version": "2025.10",
+  "description": "American Accounting Company design standard \u2014 recorded colors, three hands, the measure. Light ledger-paper + dark ledger schemes.",
+  "sets": {
+    "base": {
+      "description": "Scheme-independent: three hands, weights, measure, type scale",
+      "sources": [
+        {
+          "$ref": "tokens/aac.base.json"
+        }
+      ]
+    }
+  },
+  "modifiers": {
+    "scheme": {
+      "description": "Ledger identity \u2014 light (paper) and dark (ink ground); paper becomes ink",
+      "contexts": {
+        "light": [
+          {
+            "$ref": "tokens/scheme/light.tokens.json"
+          }
+        ],
+        "dark": [
+          {
+            "$ref": "tokens/scheme/dark.tokens.json"
+          }
+        ]
+      }
+    }
+  },
+  "resolutionOrder": [
+    {
+      "$ref": "#/sets/base"
+    },
+    {
+      "$ref": "#/modifiers/scheme"
+    }
+  ]
+}

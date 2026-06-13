@@ -1,0 +1,44 @@
+---
+title: American Accounting Company
+description: Proof-native double-entry accounting — records that balance, trust that endures.
+template: splash
+editUrl: false
+hero:
+  tagline: Instruments for network capital.
+  actions:
+    - text: Read the RFC suite
+      link: /specs/rfc/index/
+      variant: primary
+    - text: The proof
+      link: /specs/rfc/proof/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+Balance is a proof, not a promise. Entities keep private books, publish provable
+balanced-claim roots at names, and anchor ledger roots in a registry that
+**refuses unbalanced state**. The core identity is algebraic: double-entry
+bookkeeping *is* the Grothendieck group K(M) of amount vectors — which is what
+lets a ledger's integrity be checked in zero knowledge.
+
+<CardGrid>
+  <Card title="The record">
+    The core object is a signed record — a journal voucher — not a screen. Who
+    signed, what moved, which ledger changed, what proof exists. The seal is the
+    attestation.
+  </Card>
+  <Card title="Proven, not promised">
+    The core semantics are machine-checked in Lean against mathlib, zero open
+    obligations. Field soundness — the obligation a circuit's range checks must
+    discharge — is proved.
+  </Card>
+  <Card title="The RFC suite">
+    Eight core specs plus OTC, prescriptive and permanently numbered. Published
+    here from a verified, content-addressed spec pack.
+  </Card>
+  <Card title="Records that balance">
+    The ledger is the institution. Every transfer, every claim, every receipt —
+    proven. Precision, integrity, persistence.
+  </Card>
+</CardGrid>

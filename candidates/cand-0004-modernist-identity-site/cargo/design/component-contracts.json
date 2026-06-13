@@ -1,0 +1,59 @@
+{
+  "$description": "AAC component contracts \u2014 record-first design system",
+  "aac-page": {
+    "component": "aac-page",
+    "slots": {
+      "bg": {
+        "token": "color.cream",
+        "property": "background"
+      },
+      "text": {
+        "token": "color.ink2",
+        "property": "color"
+      }
+    }
+  },
+  "aac-record": {
+    "component": "aac-record",
+    "slots": {
+      "bg": {
+        "token": "color.bond",
+        "property": "background"
+      },
+      "border": {
+        "token": "color.ink",
+        "property": "border-color"
+      },
+      "text": {
+        "token": "color.ink2",
+        "property": "color"
+      }
+    }
+  },
+  "aac-seal": {
+    "component": "aac-seal",
+    "slots": {
+      "accent": {
+        "token": "color.oxblood",
+        "property": "border-color"
+      },
+      "text": {
+        "token": "color.oxblood",
+        "property": "color"
+      }
+    }
+  },
+  "aac-stamp": {
+    "component": "aac-stamp",
+    "slots": {
+      "accent": {
+        "token": "color.status.recorded",
+        "property": "border-color"
+      },
+      "text": {
+        "token": "color.status.recorded",
+        "property": "color"
+      }
+    }
+  }
+}

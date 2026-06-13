@@ -1,0 +1,16 @@
+cargo/design/README.md design/README.md
+cargo/design/brand/aac-mark.svg design/brand/aac-mark.svg
+cargo/design/tokens/aac.base.json design/tokens/aac.base.json
+cargo/design/tokens/scheme/dark.tokens.json design/tokens/scheme/dark.tokens.json
+cargo/design/tokens/scheme/light.tokens.json design/tokens/scheme/light.tokens.json
+cargo/web/astro.config.mjs web/astro.config.mjs
+cargo/web/bun.lock web/bun.lock
+cargo/web/package.json web/package.json
+cargo/web/public/favicon.svg web/public/favicon.svg
+cargo/web/public/logo.svg web/public/logo.svg
+cargo/web/scripts/sync-specs.mjs web/scripts/sync-specs.mjs
+cargo/web/src/assets/logo.svg web/src/assets/logo.svg
+cargo/web/src/content.config.ts web/src/content.config.ts
+cargo/web/src/content/docs/index.mdx web/src/content/docs/index.mdx
+cargo/web/src/styles/custom.css web/src/styles/custom.css
+cargo/web/tsconfig.json web/tsconfig.json

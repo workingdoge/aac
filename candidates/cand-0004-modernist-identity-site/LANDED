@@ -1,0 +1,18 @@
+cargo/design/README.md	design/README.md	yes
+cargo/design/brand/aac-mark.svg	design/brand/aac-mark.svg	yes
+cargo/design/tokens/aac.base.json	design/tokens/aac.base.json	yes
+cargo/design/tokens/scheme/dark.tokens.json	design/tokens/scheme/dark.tokens.json	yes
+cargo/design/tokens/scheme/light.tokens.json	design/tokens/scheme/light.tokens.json	yes
+cargo/web/astro.config.mjs	web/astro.config.mjs	yes
+cargo/web/bun.lock	web/bun.lock	yes
+cargo/web/package.json	web/package.json	yes
+cargo/web/public/favicon.svg	web/public/favicon.svg	yes
+cargo/web/public/logo.svg	web/public/logo.svg	yes
+cargo/web/scripts/sync-specs.mjs	web/scripts/sync-specs.mjs	yes
+cargo/web/src/assets/logo.svg	web/src/assets/logo.svg	yes
+cargo/web/src/content.config.ts	web/src/content.config.ts	yes
+cargo/web/src/content/docs/index.mdx	web/src/content/docs/index.mdx	yes
+cargo/web/src/styles/custom.css	web/src/styles/custom.css	yes
+cargo/web/tsconfig.json	web/tsconfig.json	yes
+# landed_at: 2026-06-13T06:30:11Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=e656d083e825bd60e35c27316fa623f45d838fedecc699a1725b2e9089cb075a unavailable(not-in-devshell)

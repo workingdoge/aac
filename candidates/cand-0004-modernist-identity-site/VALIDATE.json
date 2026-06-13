@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0004-modernist-identity-site",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "844f3d74c59c62f10b7f79b6b0bc9b54999b5a4ac3a6685495fc0b0abe7bf1f9",
+    "LANDING": "d770190a7fa91851e344e60bfee5cae40dee6495f989dfa3fe7894a676aaedab",
+    "META": "be683dafca84166b2c6f01f7fbeb33504722431539711666bb10e932d8367536"
+  }
+}

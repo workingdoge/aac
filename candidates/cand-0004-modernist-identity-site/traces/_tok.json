@@ -1,0 +1,15 @@
+{
+  "kind": "verify",
+  "manifest": "/var/folders/x_/n75jlksx4m70cw9pcbwp_68h0000gn/T/tmp.9ChNzYmriX/ctc.manifest.json",
+  "ok": true,
+  "semantics": {
+    "errors": [],
+    "ok": true
+  },
+  "verify": {
+    "errorDetails": [],
+    "errors": [],
+    "notes": [],
+    "ok": true
+  }
+}

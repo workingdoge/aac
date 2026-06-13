@@ -1,0 +1,5 @@
+candidate_id: cand-0004-modernist-identity-site
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T06:28:10Z
+intent: Pivot the AAC identity and site to the Swiss-modernist direction (the user's brand board): retone the design tokens to the two-colour navy/red palette + Inter, the ledger-cell mark, and a fresh Astro+Starlight site that renders the verified spec pack in the new livery.
+status: landed

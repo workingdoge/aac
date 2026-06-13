@@ -1,0 +1,132 @@
+/* American Accounting Company — modernist identity over Starlight.
+   Colours/measure come from design/ via tokens.css (--aac-*), flipping by
+   data-scheme (synced to Starlight's data-theme in astro.config head).
+   Type: Inter (the licensed face is Neue Haas Grotesk). Precision, integrity,
+   persistence — clean, letterspaced, navy + a single red rule. */
+
+:root {
+  /* fonts set literally — paintgun's web-css-vars double-quotes fontFamily
+     stacks, so we don't route --sl-font through the token var. Licensed face
+     is Neue Haas Grotesk; Inter is the web substitute. */
+  --aac-grotesk: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --aac-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --sl-font: var(--aac-grotesk);
+  --sl-font-mono: var(--aac-mono);
+
+  --sl-color-bg: var(--aac-color-cream);
+  --sl-color-bg-nav: var(--aac-color-cream);
+  --sl-color-bg-sidebar: var(--aac-color-cream);
+  --sl-color-bg-inline-code: color-mix(in srgb, var(--aac-color-rule) 36%, var(--aac-color-cream));
+  --sl-color-text: var(--aac-color-ink2);
+  --sl-color-white: var(--aac-color-ink);
+  --sl-color-black: var(--aac-color-cream);
+
+  --sl-color-gray-1: var(--aac-color-ink);
+  --sl-color-gray-2: var(--aac-color-ink2);
+  --sl-color-gray-3: var(--aac-color-steel);
+  --sl-color-gray-4: var(--aac-color-steel2);
+  --sl-color-gray-5: var(--aac-color-rule2);
+  --sl-color-gray-6: var(--aac-color-rule);
+  --sl-color-gray-7: color-mix(in srgb, var(--aac-color-rule) 40%, var(--aac-color-cream));
+
+  /* navy is the institutional accent; red is the rule */
+  --sl-color-accent-low: color-mix(in srgb, var(--aac-color-navy) 13%, var(--aac-color-cream));
+  --sl-color-accent: var(--aac-color-navy);
+  --sl-color-accent-high: var(--aac-color-ink);
+  --sl-color-text-accent: var(--aac-color-navy);
+
+  --sl-color-hairline: var(--aac-color-rule);
+  --sl-color-hairline-light: var(--aac-color-rule);
+  --sl-color-hairline-shade: var(--aac-color-rule2);
+
+  --sl-content-width: 50rem;
+  --sl-shadow-sm: none;
+  --sl-shadow-md: none;
+  --sl-shadow-lg: none;
+}
+
+/* identity hand: Inter, weight 600, tight — modernist, not ornamental */
+:is(h1, h2, h3, h4) {
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--aac-color-ink);
+}
+
+/* the wordmark — letterspaced grotesk caps */
+.site-title {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: var(--sl-text-sm);
+  color: var(--aac-color-navy);
+}
+header .site-title { white-space: nowrap; }
+
+/* evidentiary content stays mono */
+code, pre, kbd, .sl-markdown-content code { font-family: var(--aac-mono); }
+
+/* the published-record note reads as a stamped block with the red rule */
+.sl-markdown-content .starlight-aside {
+  border-radius: 0;
+  border: 1px solid var(--aac-color-rule2);
+  border-inline-start: 3px solid var(--aac-color-oxblood);
+  background: color-mix(in srgb, var(--aac-color-oxblood) 5%, var(--aac-color-cream));
+}
+.starlight-aside__title { color: var(--aac-color-navy); letter-spacing: 0.04em; }
+
+/* ledgers: tabular figures, uppercase steel column heads, hairline rules */
+.sl-markdown-content table { font-variant-numeric: tabular-nums; }
+.sl-markdown-content th {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--aac-color-steel);
+}
+
+/* hero / splash — clean grotesk masthead, a single red rule.
+   collapse the 2-col (text|image) grid: no hero image, so go full width. */
+.hero { grid-template-columns: 1fr; gap: 0; }
+.hero > .sl-flex:last-child:empty { display: none; }
+main .sl-markdown-content { margin-top: 1.5rem; }
+.hero h1 {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.06;
+  font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+  max-width: 16ch;
+}
+.hero .tagline {
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--aac-color-ink2);
+  border-top: 2px solid var(--aac-color-oxblood);
+  padding-top: 0.8rem;
+  margin-top: 1rem;
+  display: inline-block;
+}
+
+/* cards — no rainbow icons, square, navy titles, hairline rules */
+.card {
+  border: 1px solid var(--aac-color-rule2);
+  border-radius: 2px;
+  background: var(--aac-color-bond);
+}
+.card .icon { display: none; }
+.card .title { color: var(--aac-color-navy); font-weight: 600; letter-spacing: -0.005em; }
+.card-grid { gap: 1px; background: var(--aac-color-rule2); border: 1px solid var(--aac-color-rule2); }
+.card-grid .card { border: none; border-radius: 0; }
+
+/* the call-to-action: solid navy, square, letterspaced */
+.sl-link-button.primary {
+  background: var(--aac-color-navy);
+  border-color: var(--aac-color-navy);
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.8rem;
+}
+
+/* header logo sizing */
+.site-title img { height: 2rem; width: auto; }

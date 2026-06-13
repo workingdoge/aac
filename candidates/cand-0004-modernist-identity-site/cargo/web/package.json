@@ -1,0 +1,16 @@
+{
+  "name": "aac-web",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "sync-specs": "node scripts/sync-specs.mjs",
+    "dev": "node scripts/sync-specs.mjs && astro dev",
+    "build": "node scripts/sync-specs.mjs && astro build",
+    "preview": "astro preview --host"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "0.37.7",
+    "astro": "5.18.0",
+    "sharp": "0.33.5"
+  }
+}
