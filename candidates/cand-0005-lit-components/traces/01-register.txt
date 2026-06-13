@@ -1,0 +1,3 @@
+define aac-record OK
+define aac-stamp OK
+define aac-proof OK

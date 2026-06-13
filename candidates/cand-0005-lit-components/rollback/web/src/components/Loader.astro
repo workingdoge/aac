@@ -1,0 +1,8 @@
+---
+// Registers the AAC custom elements client-side. The hoisted script in an
+// .astro component is bundled by Astro (an MDX <script> is not), so the Lit
+// elements are defined on load and the <aac-*> tags upgrade.
+---
+<script>
+  import './elements.ts';
+</script>

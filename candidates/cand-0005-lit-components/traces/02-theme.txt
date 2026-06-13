@@ -1,0 +1,1 @@
+all components reference --aac-* tokens; record composes aac-stamp

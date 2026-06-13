@@ -1,0 +1,11 @@
+cargo/web/astro.config.mjs	web/astro.config.mjs	yes
+cargo/web/bun.lock	web/bun.lock	yes
+cargo/web/package.json	web/package.json	yes
+cargo/web/src/components/Loader.astro	web/src/components/Loader.astro	yes
+cargo/web/src/components/aac-proof.ts	web/src/components/aac-proof.ts	yes
+cargo/web/src/components/aac-record.ts	web/src/components/aac-record.ts	yes
+cargo/web/src/components/aac-stamp.ts	web/src/components/aac-stamp.ts	yes
+cargo/web/src/components/elements.ts	web/src/components/elements.ts	yes
+cargo/web/src/content/docs/components.mdx	web/src/content/docs/components.mdx	yes
+# landed_at: 2026-06-13T06:42:03Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=e656d083e825bd60e35c27316fa623f45d838fedecc699a1725b2e9089cb075a unavailable(not-in-devshell)

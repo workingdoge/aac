@@ -1,0 +1,45 @@
+---
+title: Components
+description: The AAC web components — the record, the stamp, the proof terminal.
+editUrl: false
+sidebar:
+  label: Components
+  order: 1
+---
+
+import Loader from '../../components/Loader.astro';
+
+<Loader />
+
+The design system ships as **web components** — custom elements themed by the
+verified paintgun tokens. Three carry the institution.
+
+## The record
+
+The core object is a signed record — a journal voucher — not a screen. Every
+record states who signed, what moved, which ledger changed, and what proof
+exists. Debits equal credits; the class is zero; `pacioli_equal` holds.
+
+<aac-record></aac-record>
+
+```html
+<aac-record no="AAC·000148213" date="14 Jun 2026" status="recorded"></aac-record>
+```
+
+## The stamp
+
+Status is **stamped, not badged** — a letterspaced keyline, coloured by state.
+
+<p style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+  <aac-stamp status="recorded">Recorded</aac-stamp>
+  <aac-stamp status="sealed">Sealed</aac-stamp>
+  <aac-stamp status="pending">Pending</aac-stamp>
+  <aac-stamp status="exception">Exception</aac-stamp>
+</p>
+
+## The proof terminal
+
+Identical in light and dark — **proofs are invariant**. The proof surface
+records what the verifiers discharged, never what a proposer claims.
+
+<aac-proof></aac-proof>

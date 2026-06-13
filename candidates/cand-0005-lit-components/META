@@ -1,0 +1,5 @@
+candidate_id: cand-0005-lit-components
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T06:40:58Z
+intent: The AAC design system as Lit web components — aac-record (journal voucher), aac-stamp (status), aac-proof (the invariant proof terminal) — themed by the verified design tokens and shown on a /components page in the site.
+status: landed
