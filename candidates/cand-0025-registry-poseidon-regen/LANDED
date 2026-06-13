@@ -1,0 +1,8 @@
+cargo/registry/src/HonkVerifier.sol	registry/src/HonkVerifier.sol	yes
+cargo/registry/src/NullifyHonkVerifier.sol	registry/src/NullifyHonkVerifier.sol	yes
+cargo/registry/test/fixtures/transition.proof	registry/test/fixtures/transition.proof	yes
+cargo/registry/test/fixtures/transition.pub	registry/test/fixtures/transition.pub	yes
+cargo/registry/test/fixtures/nullify.proof	registry/test/fixtures/nullify.proof	yes
+cargo/registry/test/fixtures/nullify.pub	registry/test/fixtures/nullify.pub	yes
+# landed_at: 2026-06-13T20:19:26Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1 unavailable(not-in-devshell)

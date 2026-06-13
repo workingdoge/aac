@@ -1,0 +1,5 @@
+candidate_id: cand-0025-registry-poseidon-regen
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T20:17:45Z
+intent: Regenerate the registry's bb verifiers + proof fixtures from the now-Poseidon2 circuits (cand-0024 cascade), restoring circuit<->verifier coherence: new HonkVerifier.sol (TRANSITION/1 vk) + NullifyHonkVerifier.sol (NULLIFY/1 vk, public contract renamed) + the four keccak-oracle fixtures (transition/nullify .proof/.pub) carrying the new poseidon commitment values. Registry.sol/test/Deploy/foundry unchanged (the test reads roots from the fixtures, no hardcoded values). forge test green (8, the real poseidon proofs verify on-chain); both verifiers + Registry under EIP-170.
+status: landed

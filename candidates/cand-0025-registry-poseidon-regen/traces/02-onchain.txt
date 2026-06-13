@@ -1,0 +1,4 @@
+  HonkVerifier         runtime 23782 B (EIP-170 limit 24576)
+  NullifyHonkVerifier  runtime 23780 B (EIP-170 limit 24576)
+  Registry             runtime 2824 B (EIP-170 limit 24576)
+on-chain: both REAL poseidon proofs verify against the regenerated verifiers; 8 tests green; all under EIP-170; Deploy runs

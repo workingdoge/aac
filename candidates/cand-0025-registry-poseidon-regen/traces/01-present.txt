@@ -1,0 +1,1 @@
+regenerated verifiers (new vks) + 4 keccak fixtures present (transition 8 / nullify 4)

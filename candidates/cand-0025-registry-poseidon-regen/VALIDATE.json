@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0025-registry-poseidon-regen",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "844f3d74c59c62f10b7f79b6b0bc9b54999b5a4ac3a6685495fc0b0abe7bf1f9",
+    "LANDING": "9a062e829a2533dee181079beca9605e4e6d5974c2cdabbffbd5705230b6af2a",
+    "META": "3b6650243368c38c1ef993a229bac850f7b01bdd05d6a92941aae95ed6052e8a"
+  }
+}

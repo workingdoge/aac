@@ -1,0 +1,6 @@
+cargo/registry/src/HonkVerifier.sol registry/src/HonkVerifier.sol
+cargo/registry/src/NullifyHonkVerifier.sol registry/src/NullifyHonkVerifier.sol
+cargo/registry/test/fixtures/transition.proof registry/test/fixtures/transition.proof
+cargo/registry/test/fixtures/transition.pub registry/test/fixtures/transition.pub
+cargo/registry/test/fixtures/nullify.proof registry/test/fixtures/nullify.proof
+cargo/registry/test/fixtures/nullify.pub registry/test/fixtures/nullify.pub
