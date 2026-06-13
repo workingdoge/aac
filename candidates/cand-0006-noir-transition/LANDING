@@ -1,0 +1,7 @@
+cargo/circuits/Nargo.toml circuits/Nargo.toml
+cargo/circuits/README.md circuits/README.md
+cargo/circuits/pacioli/Nargo.toml circuits/pacioli/Nargo.toml
+cargo/circuits/pacioli/src/lib.nr circuits/pacioli/src/lib.nr
+cargo/circuits/transition/Nargo.toml circuits/transition/Nargo.toml
+cargo/circuits/transition/Prover.toml circuits/transition/Prover.toml
+cargo/circuits/transition/src/main.nr circuits/transition/src/main.nr

@@ -14,6 +14,10 @@ result-*
 # Boat birth: transient conformance differential log (durable receipt is EXPORT-RECEIPT.md)
 .boat-init-conformance.log
 
+# Noir circuits (regenerate: nargo compile / execute in circuits/)
+circuits/**/target/
+circuits/target/
+
 # paintgun build output (regenerate: paint build in design/)
 design/dist/
 

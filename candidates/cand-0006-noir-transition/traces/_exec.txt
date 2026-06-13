@@ -1,0 +1,2 @@
+[transition] Circuit witness successfully solved
+[transition] Witness saved to target/transition.gz

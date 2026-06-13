@@ -1,0 +1,9 @@
+cargo/circuits/Nargo.toml	circuits/Nargo.toml	no
+cargo/circuits/README.md	circuits/README.md	no
+cargo/circuits/pacioli/Nargo.toml	circuits/pacioli/Nargo.toml	no
+cargo/circuits/pacioli/src/lib.nr	circuits/pacioli/src/lib.nr	no
+cargo/circuits/transition/Nargo.toml	circuits/transition/Nargo.toml	no
+cargo/circuits/transition/Prover.toml	circuits/transition/Prover.toml	no
+cargo/circuits/transition/src/main.nr	circuits/transition/src/main.nr	no
+# landed_at: 2026-06-13T07:05:21Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=e656d083e825bd60e35c27316fa623f45d838fedecc699a1725b2e9089cb075a unavailable(not-in-devshell)

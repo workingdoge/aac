@@ -1,0 +1,5 @@
+candidate_id: cand-0006-noir-transition
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T06:56:11Z
+intent: The TRANSITION/1 Noir circuit (3/PROOF §4.1) for the default journal-balance profile: bounded amounts (Field→u64→Field, the journal_sum_field_sound discipline), per-basis journal balance, begin+posted=end state arithmetic, recomputed account/nullifier roots, nullifier distinctness with root-unchanged-absent-consumption, fact_fold per Annex B with domain tags, recomputed journal_commitment, unconstrained context_commitment — with a pacioli library crate mirroring Core.lean and a nargo test suite (accept valid, reject unbalanced/tampered/double-spend) as the eval gate.
+status: landed

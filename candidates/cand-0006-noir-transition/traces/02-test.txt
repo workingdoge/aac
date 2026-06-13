@@ -1,0 +1,18 @@
+[transition] Running 7 test functions
+[transition] Testing print_public_inputs ... [0m[32mok[0m
+[transition] Testing nullifier_root_unchanged_when_no_right_consumed ... [0m[32mok[0m
+[transition] Testing balanced_transition_accepts ... [0m[32mok[0m
+[transition] Testing unbalanced_journal_rejects ... [0m[32mok[0m
+[transition] Testing double_spend_rejects ... [0m[32mok[0m
+[transition] Testing tampered_next_root_rejects ... [0m[32mok[0m
+[transition] Testing zero_multiplicity_fact_rejects ... [0m[32mok[0m
+[transition] [0m[32m7 tests passed[0m
+--- pacioli ---
+[pacioli] Running 5 test functions
+[pacioli] Testing balanced_term_is_pacioli_equal_to_zero ... [0m[32mok[0m
+[pacioli] Testing u64_roundtrip_accepts_bounded ... [0m[32mok[0m
+[pacioli] Testing cross_addition_decides_equality ... [0m[32mok[0m
+[pacioli] Testing journal_balances_when_columns_agree ... [0m[32mok[0m
+[pacioli] Testing u64_roundtrip_rejects_overflow ... [0m[32mok[0m
+[pacioli] [0m[32m5 tests passed[0m
+nargo test OK (transition accept+reject suite, pacioli laws)
