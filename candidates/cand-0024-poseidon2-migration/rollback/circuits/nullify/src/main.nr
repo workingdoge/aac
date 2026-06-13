@@ -33,16 +33,16 @@ global TAG_SET: Field = 64; // NULLIFY family (3/PROOF Annex A, 64-95)
 global TAG_SEQ: Field = 65;
 
 fn set_root(values: [Field; N_OLD]) -> Field {
-    let mut acc = hash::poseidon_hash([TAG_SET, 0]);
+    let mut acc = std::hash::pedersen_hash([TAG_SET, 0]);
     for i in 0..N_OLD {
-        acc = hash::poseidon_hash([TAG_SET, acc, values[i]]);
+        acc = std::hash::pedersen_hash([TAG_SET, acc, values[i]]);
     }
     acc
 }
 fn set_root_new(values: [Field; N_NEW]) -> Field {
-    let mut acc = hash::poseidon_hash([TAG_SET, 0]);
+    let mut acc = std::hash::pedersen_hash([TAG_SET, 0]);
     for i in 0..N_NEW {
-        acc = hash::poseidon_hash([TAG_SET, acc, values[i]]);
+        acc = std::hash::pedersen_hash([TAG_SET, acc, values[i]]);
     }
     acc
 }
@@ -101,7 +101,7 @@ fn main(
     assert(set_root(old_values) == first_root, "first_root does not commit the set");
     let lr = set_root_new(new_values);
     assert(lr == last_root, "last_root does not commit the post-insertion set");
-    let sc = hash::poseidon_hash([TAG_SEQ, lr]);
+    let sc = std::hash::pedersen_hash([TAG_SEQ, lr]);
     assert(sc == sequence_commitment, "sequence_commitment mismatch");
 }
 
@@ -121,7 +121,7 @@ fn lr_sc(old_values: [Field; N_OLD], v: Field, low: u32) -> (Field, Field) {
         }
     }
     let r = set_root_new(nv);
-    (r, hash::poseidon_hash([TAG_SEQ, r]))
+    (r, std::hash::pedersen_hash([TAG_SEQ, r]))
 }
 
 #[test]

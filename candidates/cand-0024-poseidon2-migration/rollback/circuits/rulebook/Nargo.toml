@@ -1,7 +1,7 @@
 [package]
-name = "ledger"
+name = "rulebook"
 type = "lib"
 authors = ["American Accounting Company"]
 
 [dependencies]
-hash = { path = "../hash" }
+pacioli = { path = "../pacioli" }

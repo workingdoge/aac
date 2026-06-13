@@ -1,0 +1,16 @@
+cargo/circuits/Nargo.toml	circuits/Nargo.toml	yes
+cargo/circuits/hash/Nargo.toml	circuits/hash/Nargo.toml	no
+cargo/circuits/hash/src/lib.nr	circuits/hash/src/lib.nr	no
+cargo/circuits/ledger/Nargo.toml	circuits/ledger/Nargo.toml	yes
+cargo/circuits/ledger/src/lib.nr	circuits/ledger/src/lib.nr	yes
+cargo/circuits/rulebook/Nargo.toml	circuits/rulebook/Nargo.toml	yes
+cargo/circuits/rulebook/src/lib.nr	circuits/rulebook/src/lib.nr	yes
+cargo/circuits/transition/Nargo.toml	circuits/transition/Nargo.toml	yes
+cargo/circuits/transition/src/main.nr	circuits/transition/src/main.nr	yes
+cargo/circuits/transition/Prover.toml	circuits/transition/Prover.toml	yes
+cargo/circuits/nullify/Nargo.toml	circuits/nullify/Nargo.toml	yes
+cargo/circuits/nullify/src/main.nr	circuits/nullify/src/main.nr	yes
+cargo/circuits/nullify/Prover.toml	circuits/nullify/Prover.toml	yes
+cargo/circuits/event-complete/Prover.toml	circuits/event-complete/Prover.toml	yes
+# landed_at: 2026-06-13T20:15:33Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1 unavailable(not-in-devshell)

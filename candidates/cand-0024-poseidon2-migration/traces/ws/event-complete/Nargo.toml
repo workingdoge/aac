@@ -1,10 +1,8 @@
 [package]
-name = "transition"
+name = "event_complete"
 type = "bin"
 authors = ["American Accounting Company"]
-
 [dependencies]
 pacioli = { path = "../pacioli" }
-ledger = { path = "../ledger" }
 rulebook = { path = "../rulebook" }
-hash = { path = "../hash" }
+ledger = { path = "../ledger" }

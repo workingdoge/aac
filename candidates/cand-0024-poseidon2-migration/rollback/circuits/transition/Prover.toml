@@ -1,13 +1,12 @@
 # A balanced sample transition (matches `sample()` in src/main.nr).
 # Public ABI vector (3/PROOF S4.1), reproduced by `nargo execute`.
-# Commitments are Poseidon2 (cand-0024); the witness is unchanged.
-prev_account_root   = "0x285d0a920649ed8d73b49ff24228dee78fe8dfb3e7e2c1de0ea625d9220bc13a"
-next_account_root   = "0x2de709dc001606623858291789247bd43b45e82a57b816298e620777f81f3ab8"
+prev_account_root   = "0x2d49369e0148879f1c8901250c5b803e8afb0109d6391678ec07a35e55e2cb74"
+next_account_root   = "0x1515c1ab700685b3f2ea99e8e512906c3b4be583a7d3cde2c382297301e7b374"
 prev_nullifier_root = "100"
-next_nullifier_root = "0x1ad0978e0eb29b63e52cee7b479dcc5648b74c8863f793e6594ab09757ec53c7"
-journal_commitment  = "0x2b3b2f90e4f8d2b00f20380de846810c1427a8600816fe4b5cb0fc321d02b33b"
+next_nullifier_root = "0x147f6950b70c67867c87782724a483f114952bc5f64b9cf5b273270cd766928f"
+journal_commitment  = "0x2d80c14eeee16908c4146b45a82a6908c38fbcf3a9c8d5bce4c28e64cae569a3"
 context_commitment  = "42"
-fact_fold           = "0x2f4c45bb0955be9c27b54fdd6ec63dc9d146eb15ad0f3e1d5ed0b70c1e0a1e41"
+fact_fold           = "0x10ecbdda60f760fbb230822d95b335c7f85ec7edef68259200ecca36027220dc"
 fact_count          = "1"
 
 [w]

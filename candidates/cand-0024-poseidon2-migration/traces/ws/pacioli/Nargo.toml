@@ -1,7 +1,6 @@
 [package]
-name = "ledger"
+name = "pacioli"
 type = "lib"
 authors = ["American Accounting Company"]
 
 [dependencies]
-hash = { path = "../hash" }

@@ -17,7 +17,7 @@ pub fn journal_commitment<let R: u32, let B: u32>(
     debits: [[u64; B]; R],
     credits: [[u64; B]; R],
 ) -> Field {
-    let mut jc = hash::poseidon_hash([TAG_JOURNAL, 0]);
+    let mut jc = std::hash::pedersen_hash([TAG_JOURNAL, 0]);
     for r in 0..R {
         let mut buf: [Field; 3 + 2 * B] = [0; 3 + 2 * B];
         buf[0] = TAG_JOURNAL;
@@ -27,19 +27,19 @@ pub fn journal_commitment<let R: u32, let B: u32>(
             buf[3 + b] = debits[r][b] as Field;
             buf[3 + B + b] = credits[r][b] as Field;
         }
-        jc = hash::poseidon_hash(buf);
+        jc = std::hash::pedersen_hash(buf);
     }
     jc
 }
 
 /// Commit the parties filling a schema's roles.
 pub fn participant_set(buyer: Field, supplier: Field) -> Field {
-    hash::poseidon_hash([TAG_PARTY, buyer, supplier])
+    std::hash::pedersen_hash([TAG_PARTY, buyer, supplier])
 }
 
 /// The one-shot event identity, scoped to rulebook + event + parties (2/FACT S8).
 pub fn event_nullifier(rulebook_id: Field, event_commitment: Field, participant_set: Field) -> Field {
-    hash::poseidon_hash([TAG_NULL, rulebook_id, event_commitment, participant_set])
+    std::hash::pedersen_hash([TAG_NULL, rulebook_id, event_commitment, participant_set])
 }
 
 #[test]

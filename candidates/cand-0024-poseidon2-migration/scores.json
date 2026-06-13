@@ -1,0 +1,18 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0024-poseidon2-migration",
+  "evaluated_at": "2026-06-13T20:15:19Z",
+  "task": "migrate the circuits commitment hash from pedersen_hash to a Poseidon2 sponge (new shared hash crate over std::hash::poseidon2_permutation); swap all 18 sites across ledger/rulebook/transition/nullify; regenerate the transition/nullify/event-complete Prover.tomls; nargo test green across the workspace, all sample witnesses solve, and the transition gate count collapses from 40,511",
+  "checks": {
+    "logic": "pass",
+    "prove": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "b5d7791e9c0e3a820a58538d7ad00f97290f3e9196dc534f9cd9eed0fb152268",
+    "traces_sha256": "3f058862cd029d78cd818bc7cd0fc4a1ee9bf1fa2ef086b80125d973e0ca9e3c",
+    "body_sha256": "4ede262a4b9639f3bb076f2547f203f5f508abbeeb8ba69ce657cf0c17a92ecc",
+    "attestation": "fab86025be6db539ad763265b73f5306d8c65426355de1f83984f884ae1aee68"
+  }
+}

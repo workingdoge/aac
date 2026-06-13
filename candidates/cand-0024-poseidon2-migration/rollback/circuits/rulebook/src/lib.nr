@@ -39,7 +39,7 @@ pub struct CompiledJournal {
 
 /// The schema's canonical event commitment over the typed quantities.
 pub fn event_commitment(e: GoodsReceiptInvoice) -> Field {
-    hash::poseidon_hash([TAG_EVENT, e.usd_cents as Field, e.fabric_meters as Field])
+    std::hash::pedersen_hash([TAG_EVENT, e.usd_cents as Field, e.fabric_meters as Field])
 }
 
 /// Phi_R for the goods-receipt-invoice schema. Each quantity is posted once Dr

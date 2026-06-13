@@ -77,15 +77,15 @@ fn account_leaf(idx: u32, debit: [u64; N_BASIS], credit: [u64; N_BASIS]) -> Fiel
         buf[2 + b] = debit[b] as Field;
         buf[2 + N_BASIS + b] = credit[b] as Field;
     }
-    hash::poseidon_hash(buf)
+    std::hash::pedersen_hash(buf)
 }
 
 /// Depth-2 binary Merkle root over the N_ACCT account leaves (N_ACCT == 4).
 /// Every node carries the TAG_ACCOUNT domain tag.
 fn root_of_leaves(leaves: [Field; N_ACCT]) -> Field {
-    let l = hash::poseidon_hash([TAG_ACCOUNT, leaves[0], leaves[1]]);
-    let r = hash::poseidon_hash([TAG_ACCOUNT, leaves[2], leaves[3]]);
-    hash::poseidon_hash([TAG_ACCOUNT, l, r])
+    let l = std::hash::pedersen_hash([TAG_ACCOUNT, leaves[0], leaves[1]]);
+    let r = std::hash::pedersen_hash([TAG_ACCOUNT, leaves[2], leaves[3]]);
+    std::hash::pedersen_hash([TAG_ACCOUNT, l, r])
 }
 
 /// The account root of a state: commit every account, then Merkleize.
@@ -134,7 +134,7 @@ fn next_nullifier_root(prev_root: Field, nullifiers: [Field; N_NULL]) -> Field {
     let mut acc = prev_root;
     for i in 0..N_NULL {
         let active = (nullifiers[i] != 0) as Field;
-        let step = hash::poseidon_hash([TAG_NULLIFIER, acc, nullifiers[i]]);
+        let step = std::hash::pedersen_hash([TAG_NULLIFIER, acc, nullifiers[i]]);
         acc = active * step + (1 - active) * acc;
     }
     acc
@@ -145,13 +145,13 @@ fn next_nullifier_root(prev_root: Field, nullifiers: [Field; N_NULL]) -> Field {
 /// multiplicity must be >= 1 (1/PACI S4).
 fn fact_fold_of(facts: [Fact; N_FACT], count: u32) -> Field {
     assert(count <= N_FACT, "fact_count exceeds the emitted-fact slots");
-    let mut fold = hash::poseidon_hash([TAG_FACT_FOLD, FACT_FOLD_LABEL]);
+    let mut fold = std::hash::pedersen_hash([TAG_FACT_FOLD, FACT_FOLD_LABEL]);
     for i in 0..N_FACT {
         let f = facts[i];
         assert(f.side * (f.side - 1) == 0, "fact side is not binary");
         let active = (i < count) as Field;
         assert(active * ((f.multiplicity == 0) as Field) == 0, "active fact has multiplicity 0");
-        let step = hash::poseidon_hash(
+        let step = std::hash::pedersen_hash(
             [TAG_FACT_FOLD, fold, f.fact_id, f.side, f.multiplicity as Field],
         );
         fold = active * step + (1 - active) * fold;

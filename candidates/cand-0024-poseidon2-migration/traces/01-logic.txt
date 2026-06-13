@@ -1,0 +1,1 @@
+poseidon2 sponge in hash crate; all 4 crates swapped off pedersen; workspace + deps wired

@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0024-poseidon2-migration",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "844f3d74c59c62f10b7f79b6b0bc9b54999b5a4ac3a6685495fc0b0abe7bf1f9",
+    "LANDING": "571a06585c5f980bdaa15d75a6e20ddb1662f16fe4a6850f0457328f3de2c7c4",
+    "META": "81e3866c317e827c205f64948fb28a745682daa9125a810618c282ad33dbedf3"
+  }
+}

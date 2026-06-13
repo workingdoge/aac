@@ -1,0 +1,1 @@
+nargo test green (workspace, poseidon2); transition+nullify+event_complete witnesses solve; transition gates=7535 (was 40,511 pedersen)
