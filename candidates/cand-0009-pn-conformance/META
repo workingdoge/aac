@@ -1,0 +1,5 @@
+candidate_id: cand-0009-pn-conformance
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T16:27:16Z
+intent: P^n conformance vectors in circuits/pacioli (Design Note 0001 §11.2; advances 1/PACI Raw->Draft 'executable conformance for every MUST'): a multi-dimensional buyer/supplier event over basis [USD,fabric,garment] is accepted as a vector zero-account, and a 'dollars balance but fabric vanishes' journal is rejected — the incommensurability thesis baked into the shipped test suite.
+status: landed

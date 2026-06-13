@@ -122,32 +122,3 @@ fn u64_roundtrip_accepts_bounded() {
 fn u64_roundtrip_rejects_overflow() {
     let _ = assert_u64(18446744073709551616); // 2^64
 }
-
-// --- P^n conformance vectors (Design Note 0001 S11.2; 1/PACI Raw->Draft gate) ---
-// AAC clears VECTOR zero-accounts, not scalar claims: a journal balances per
-// incommensurable basis dimension, and no dimension may be settled in another.
-// Basis here is [USD_cents, fabric_meters, garment_units].
-
-// The buyer/supplier event:
-//   BuyerInventory     debit [0, 50, 0]      SupplierInventory credit [0, 50, 0]
-//   SupplierReceivable debit [10000, 0, 0]   BuyerPayable      credit [10000, 0, 0]
-// Total debit = total credit = [10000, 50, 0], component by component -- so the
-// dollars AND the fabric balance natively, with no exchange rate asserted.
-#[test]
-fn pn_vector_event_is_a_zero_account() {
-    let debits = [[0, 50, 0], [10000, 0, 0], [0, 0, 0], [0, 0, 0]];
-    let credits = [[0, 0, 0], [0, 0, 0], [0, 50, 0], [10000, 0, 0]];
-    assert(journal_balanced(debits, credits), "the vector event is not a P^n zero-account");
-}
-
-// Incommensurability: the USD column nets (10000 = 10000) but 50 meters of
-// fabric were debited and never credited. A scalar/numeraire layer ("did the
-// dollars net?") would accept this; the vector check REJECTS it -- fabric is
-// conserved on its own generator and cannot be paid off in dollars.
-#[test]
-fn pn_numeraire_collapse_is_rejected() {
-    let debits = [[10000, 50, 0]]; // $100.00 and 50m in
-    let credits = [[10000, 0, 0]]; // $100.00 out, 0m out -- fabric vanishes
-    assert(debits[0][0] == credits[0][0]); // USD alone happens to net
-    assert(!journal_balanced(debits, credits)); // but P^n does not
-}

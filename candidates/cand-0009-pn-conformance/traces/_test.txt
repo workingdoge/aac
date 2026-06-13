@@ -1,0 +1,9 @@
+[pacioli] Running 7 test functions
+[pacioli] Testing pn_vector_event_is_a_zero_account ... [0m[32mok[0m
+[pacioli] Testing journal_balances_when_columns_agree ... [0m[32mok[0m
+[pacioli] Testing pn_numeraire_collapse_is_rejected ... [0m[32mok[0m
+[pacioli] Testing u64_roundtrip_accepts_bounded ... [0m[32mok[0m
+[pacioli] Testing u64_roundtrip_rejects_overflow ... [0m[32mok[0m
+[pacioli] Testing cross_addition_decides_equality ... [0m[32mok[0m
+[pacioli] Testing balanced_term_is_pacioli_equal_to_zero ... [0m[32mok[0m
+[pacioli] [0m[32m7 tests passed[0m
