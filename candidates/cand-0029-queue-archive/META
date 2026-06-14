@@ -1,5 +1,0 @@
-candidate_id: cand-0029-queue-archive
-cycle_id: aac-2026-06-13
-opened: 2026-06-13T21:24:44Z
-intent: ship tools/queue-archive.sh so aac can bound its queue as working memory (resolved entries archive out, check warns over a soft open bound) — boat cand-0053/0054 kernel hygiene; aac already carries the queue-lib.sh dependency
-status: validated

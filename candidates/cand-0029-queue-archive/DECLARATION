@@ -1,4 +1,0 @@
-layer: evidence-tooling
-implements: none
-preserves: dm.identity, dm.presentation.projection
-compares_to: aac's queue before/after archiving, and tools/schemas/export-manifest.tsv (+1: tools/queue-archive.sh; its only dep tools/queue-lib.sh already travels). queue-archive.sh is boat kernel hygiene (cand-0053/0054, attested+reviewed upstream): `archive` moves resolved entries verbatim to candidates/QUEUE-archive.md (content-preserving — open entries + preamble byte-untouched, idempotent, self-checking with line-multiset conservation + refuse-rather-than-fragment), `check` warns over a soft open bound (advisory, exit 0 always). Witnessed by an archive content-preservation differential on a synthetic queue (resolved move, open stay, no line lost, both lint-clean, idempotent rerun), check running on aac's live queue, manifest additive, tools/loop untouched. The candidate store is never touched.

@@ -1,2 +1,0 @@
-queue-archive.sh tools/queue-archive.sh
-export-manifest.tsv tools/schemas/export-manifest.tsv
