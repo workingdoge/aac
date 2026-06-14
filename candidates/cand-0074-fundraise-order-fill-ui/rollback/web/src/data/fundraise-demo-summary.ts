@@ -61,8 +61,8 @@ export const fundraiseDemoSummary = {
     ],
   },
   claims: [
-    'ProveKit accepted the VNET proof for the private order fill.',
-    'The workflow authorized an EVM mint bound to the order-fill receipt and recipient set.',
+    'ProveKit accepted the VNET proof for the fundraise packet.',
+    'The workflow authorized an EVM mint bound to the proof receipt and recipient set.',
     'A local settlement contract minted receipt tokens and refused replay.',
   ],
   caveats: [

@@ -5,10 +5,9 @@ type FundraiseSummary = typeof fundraiseDemoSummary;
 type RunState = 'idle' | 'running' | 'proved' | 'error';
 
 /** aac-fundraise-demo — presentation console for the ProveKit fundraise path:
- *  a private SAFE order receives fills -> VNET proof/workflow authorization ->
- *  receipt-token settlement. The component owns the live runner controls,
- *  starts from a ready-to-fill state, and can replace it with a fresh localhost
- *  response. */
+ *  private issuer roots -> VNET proof/workflow authorization -> local receipt
+ *  token settlement. The component owns the live runner controls, starts from a
+ *  ready-to-run state, and can replace it with a fresh localhost response. */
 export class AacFundraiseDemo extends LitElement {
   static properties = {
     summary: { state: true },
@@ -33,7 +32,7 @@ export class AacFundraiseDemo extends LitElement {
     this.runState = 'idle';
     this.liveError = '';
     this.liveElapsedMs = null;
-    this.sourceLabel = 'ready: order not filled';
+    this.sourceLabel = 'ready: no proof run yet';
   }
 
   private readySummary(): FundraiseSummary {
@@ -78,9 +77,9 @@ export class AacFundraiseDemo extends LitElement {
         total_supply: null,
         balances: [],
       },
-      claims: ['No order fill has been proven in this browser session yet.'],
+      claims: ['No proof has been run in this browser session yet.'],
       caveats: [
-        'Press Fill order live to call the localhost ProveKit runner.',
+        'Press Run live proof to call the localhost ProveKit runner.',
         fundraiseDemoSummary.caveats[1],
       ],
     } as unknown as FundraiseSummary;
@@ -258,103 +257,6 @@ export class AacFundraiseDemo extends LitElement {
       font-size: 10px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-    }
-
-    .order-ticket {
-      display: grid;
-      grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
-      border-bottom: 1px solid var(--aac-color-rule2, #c9be9e);
-      background:
-        repeating-linear-gradient(
-          90deg,
-          color-mix(in srgb, var(--aac-color-rule, #e2dac4) 36%, transparent) 0 1px,
-          transparent 1px 34px
-        ),
-        var(--aac-color-field, #fcf9f0);
-    }
-
-    .order-main,
-    .fill-main {
-      padding: 16px 20px;
-      min-width: 0;
-    }
-
-    .order-main {
-      border-right: 1px solid var(--aac-color-rule2, #c9be9e);
-    }
-
-    .ticket-label {
-      color: var(--aac-color-oxblood, #93302c);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    .order-line {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 12px;
-      align-items: end;
-      margin-top: 9px;
-    }
-
-    .order-line b {
-      color: var(--aac-color-navy, #21324f);
-      font-size: 24px;
-      line-height: 1.05;
-    }
-
-    .price-stamp {
-      border: 1px solid var(--aac-color-navy, #21324f);
-      background: var(--aac-color-bond, #fff);
-      color: var(--aac-color-navy, #21324f);
-      font-family: var(--aac-mono, "IBM Plex Mono", monospace);
-      font-size: 11px;
-      padding: 7px 9px;
-      white-space: nowrap;
-    }
-
-    .order-meta {
-      margin-top: 10px;
-      color: var(--aac-color-steel, #6b6b64);
-      font-family: var(--aac-mono, "IBM Plex Mono", monospace);
-      font-size: 11px;
-      overflow-wrap: anywhere;
-    }
-
-    .fill-main {
-      display: grid;
-      gap: 10px;
-    }
-
-    .fill-row {
-      display: grid;
-      grid-template-columns: minmax(8.5em, 0.72fr) minmax(0, 1fr) auto;
-      gap: 10px;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--aac-color-rule, #e2dac4);
-      min-width: 0;
-    }
-
-    .fill-row:last-child { border-bottom: 0; }
-
-    .fill-party,
-    .fill-amount,
-    .fill-units {
-      min-width: 0;
-      font-family: var(--aac-mono, "IBM Plex Mono", monospace);
-      font-size: 11.5px;
-      overflow-wrap: anywhere;
-    }
-
-    .fill-party { color: var(--aac-color-ink, #1a1a1a); }
-    .fill-amount { color: var(--aac-color-steel, #6b6b64); }
-    .fill-units {
-      color: var(--aac-color-navy, #21324f);
-      font-weight: 600;
-      white-space: nowrap;
     }
 
     .flow {
@@ -624,12 +526,6 @@ export class AacFundraiseDemo extends LitElement {
       .numbers { grid-template-columns: 1fr; }
       .num { border-right: 0; border-bottom: 1px solid var(--aac-color-rule, #e2dac4); }
       .num:last-child { border-bottom: 0; }
-      .order-ticket { grid-template-columns: 1fr; }
-      .order-main { border-right: 0; border-bottom: 1px solid var(--aac-color-rule2, #c9be9e); }
-      .order-line { grid-template-columns: 1fr; align-items: start; }
-      .price-stamp { justify-self: start; }
-      .fill-row { grid-template-columns: 1fr; gap: 4px; }
-      .fill-units { white-space: normal; }
       .flow { grid-template-columns: 1fr; min-height: 0; }
       .lane { border-right: 0; border-bottom: 1px solid var(--aac-color-rule2, #c9be9e); }
       .lane:last-child { border-bottom: 0; }
@@ -731,7 +627,7 @@ export class AacFundraiseDemo extends LitElement {
       this.runControl.setAttribute('aria-disabled', this.runState === 'running' ? 'true' : 'false');
     }
     if (this.captureControl) {
-      this.captureControl.textContent = 'Show captured fill';
+      this.captureControl.textContent = 'Show capture';
       this.captureControl.href = this.fallbackHref('show-capture');
       this.captureControl.setAttribute('aria-disabled', this.runState === 'running' ? 'true' : 'false');
     }
@@ -803,14 +699,14 @@ export class AacFundraiseDemo extends LitElement {
   }
 
   private runButtonText(): string {
-    if (this.runState === 'running') return 'Filling order';
-    if (this.runState === 'proved') return 'Fill again';
-    return 'Fill order live';
+    if (this.runState === 'running') return 'Running proof';
+    if (this.runState === 'proved') return 'Run again';
+    return 'Run live proof';
   }
 
   private runNote(): string {
-    if (this.runState === 'running') return 'ProveKit is clearing the order fill';
-    if (this.runState === 'proved') return `fresh order-fill receipt · ${this.ms(this.liveElapsedMs ?? undefined)}`;
+    if (this.runState === 'running') return 'provekit prepare/prove/verify in progress';
+    if (this.runState === 'proved') return `fresh receipt · ${this.ms(this.liveElapsedMs ?? undefined)}`;
     if (this.runState === 'error') return `runner error · ${this.liveError}`;
     return this.sourceLabel;
   }
@@ -819,20 +715,12 @@ export class AacFundraiseDemo extends LitElement {
     const s = this.summary;
     const balances = s.settlement.balances ?? [];
     const total = s.settlement.total_supply || s.economics.issued_unit_total || 1;
-    const orderUnits = s.economics.issued_unit_total || 0;
-    const orderCash = s.economics.settlement_amount_total || 0;
-    const price = orderUnits ? orderCash / orderUnits : 0;
-    const fillStatus = this.runState === 'running'
-      ? 'clearing fills'
-      : s.accepted
-        ? 'fills proven'
-        : 'fills staged';
     return html`
-      <section class="console" aria-label="Private order fill demo">
+      <section class="console" aria-label="Fundraise settlement demo">
         <div class="mast">
           <div>
-            <div class="eyebrow">Private order book</div>
-            <h2>${this.runState === 'idle' && !s.accepted ? 'Private SAFE order ready to fill.' : 'Private order filled against issuer books.'}</h2>
+            <div class="eyebrow">Private treasury issuance</div>
+            <h2>${this.runState === 'idle' && !s.accepted ? 'Private fundraise ready to prove.' : 'Seed round settled against private books.'}</h2>
             <div class="issuer">${s.issuer_name} · ${s.round_id}</div>
           </div>
           <div class="live-box">
@@ -846,29 +734,14 @@ export class AacFundraiseDemo extends LitElement {
         </div>
 
         <div class="numbers">
-          <div class="num"><b>${orderCash}</b><span>USDC order size</span></div>
-          <div class="num"><b>${orderUnits}</b><span>SAFE receipt units</span></div>
-          <div class="num"><b>${s.economics.recipient_count}</b><span>fills in batch</span></div>
-        </div>
-
-        <div class="order-ticket" aria-label="Order fill ticket">
-          <section class="order-main">
-            <div class="ticket-label">Open order</div>
-            <div class="order-line">
-              <b>Sell ${orderUnits} restricted receipt units</b>
-              <span class="price-stamp">${price.toFixed(0)} USDC / unit</span>
-            </div>
-            <div class="order-meta">${fillStatus} · ${this.short(s.commitments.mint_recipient_set, 10, 8)}</div>
-          </section>
-          <section class="fill-main">
-            <div class="ticket-label">Submitted fills</div>
-            ${this.orderFills().map((fill) => this.fillRow(fill.party, fill.cash, fill.units))}
-          </section>
+          <div class="num"><b>${s.economics.settlement_amount_total}</b><span>target cash</span></div>
+          <div class="num"><b>${s.economics.issued_unit_total}</b><span>target receipt units</span></div>
+          <div class="num"><b>${s.economics.recipient_count}</b><span>subscribers in packet</span></div>
         </div>
 
         <div class="flow">
           <section class="lane">
-            <div class="lane-title"><b>Private books</b><span>roots move</span></div>
+            <div class="lane-title"><b>Private row</b><span>roots move</span></div>
             ${this.rootRow('balance sheet', s.commitments.prev_balance_sheet_root, s.commitments.next_balance_sheet_root)}
             ${this.rootRow('cap table', s.commitments.prev_cap_table_root, s.commitments.next_cap_table_root)}
             <div class="slips">
@@ -880,11 +753,11 @@ export class AacFundraiseDemo extends LitElement {
           </section>
 
           <section class="lane">
-            <div class="lane-title"><b>Clearing proof</b><span>${s.proof.proof_system ?? 'not run'}</span></div>
+            <div class="lane-title"><b>Proof spine</b><span>${s.proof.proof_system ?? 'not run'}</span></div>
             <div class="spine">
-              ${this.step('P', s.proof.proof_digest ? 'ProveKit cleared order' : 'ProveKit not run', s.proof.proof_digest)}
-              ${this.step('W', s.workflow.authorizer_receipt_digest ? 'Workflow authorized fill' : 'Workflow waiting', s.workflow.authorizer_receipt_digest)}
-              ${this.step('S', s.workflow.action_digest ? 'Mint action prepared' : 'Mint not prepared', s.workflow.action_digest)}
+              ${this.step('P', s.proof.proof_digest ? 'ProveKit accepted VNET' : 'ProveKit not run', s.proof.proof_digest)}
+              ${this.step('W', s.workflow.authorizer_receipt_digest ? 'Workflow authorized mint' : 'Workflow waiting', s.workflow.authorizer_receipt_digest)}
+              ${this.step('S', s.workflow.action_digest ? 'Settlement action prepared' : 'Settlement not prepared', s.workflow.action_digest)}
             </div>
             <div class="timings">
               <div class="time"><b>${this.ms(s.proof.timings_ms.prepare)}</b><span>prepare</span></div>
@@ -894,7 +767,7 @@ export class AacFundraiseDemo extends LitElement {
           </section>
 
           <section class="lane">
-            <div class="lane-title"><b>Receipt tokens</b><span>local EVM</span></div>
+            <div class="lane-title"><b>Settlement</b><span>local EVM</span></div>
             <div class="root-row">
               <span class="key">total supply</span>
               <span class="val next">${s.settlement.total_supply ?? 'pending'}</span>
@@ -917,7 +790,7 @@ export class AacFundraiseDemo extends LitElement {
                     )}
                   </div>
                 `
-              : html`<div class="empty">Receipt-token mint is proof-bound and waiting for settlement signature.</div>`}
+              : html`<div class="empty">Mint authorization is proof-bound and waiting for settlement submission.</div>`}
             ${this.contractRow('token', s.settlement.token_contract)}
             ${this.contractRow('settlement', s.settlement.settlement_contract)}
             ${this.contractRow('tx', s.settlement.transaction_hash)}
@@ -942,23 +815,6 @@ export class AacFundraiseDemo extends LitElement {
 
   private slip(label: string, value: string) {
     return html`<div class="slip"><span>${label}</span><span>${this.short(value)}</span></div>`;
-  }
-
-  private orderFills() {
-    return [
-      { party: 'investor-a', cash: 1000, units: 100 },
-      { party: 'investor-b', cash: 500, units: 50 },
-    ];
-  }
-
-  private fillRow(party: string, cash: number, units: number) {
-    return html`
-      <div class="fill-row">
-        <span class="fill-party">${party}</span>
-        <span class="fill-amount">${cash} USDC deposited</span>
-        <span class="fill-units">${units} units</span>
-      </div>
-    `;
   }
 
   private step(mark: string, label: string, digest: string) {
