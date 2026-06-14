@@ -1,0 +1,1909 @@
+{
+  "schema": "aac.fundraise-demo.conformance.v1",
+  "vectors": [
+    {
+      "description": "accepted settlement/admissibility reports, balanced VNET link, and token-bound mint authorization",
+      "expect": {
+        "accepted": true,
+        "reason": "accepted"
+      },
+      "id": "fundraise-demo-good",
+      "packet": {
+        "admissibility_report": {
+          "accepted": [
+            {
+              "accepted": true,
+              "admissibility_ref": "cre-admissibility:investor-a:001",
+              "investor_id": "investor-a"
+            },
+            {
+              "accepted": true,
+              "admissibility_ref": "cre-admissibility:investor-b:001",
+              "investor_id": "investor-b"
+            }
+          ],
+          "policy_hash": "c4ab37f727d3ed57b8bb150bb422312eadad832144c8d0835248f150dcda3715",
+          "schema": "aac.fundraise-demo.admissibility-report.v1"
+        },
+        "mint_authorization": {
+          "issued_unit_total": 150,
+          "mint_recipient_set_commitment": "29c163f11deb254a1c43f13e2f4a32e3332f97be23e68087e9a9a0f9a1a1bcf3",
+          "recipients": [
+            {
+              "investor_id": "investor-a",
+              "issued_units": 100,
+              "recipient": "0xA11ce00000000000000000000000000000000039"
+            },
+            {
+              "investor_id": "investor-b",
+              "issued_units": 50,
+              "recipient": "0xB0b000000000000000000000000000000000039"
+            }
+          ],
+          "round_id": "aac-seed-2026-001",
+          "schema": "aac.fundraise-demo.mint-authorization.v1",
+          "token_contract": "0xAac000000000000000000000000000000000039"
+        },
+        "public_inputs": {
+          "context_commitment": "0633da5423e7e17ccca84ca8f54dc12fdcb02322cde0408587e283995b655962",
+          "issued_unit_total": 150,
+          "issuer_name": "issuer-a.private-row",
+          "mint_recipient_set_commitment": "29c163f11deb254a1c43f13e2f4a32e3332f97be23e68087e9a9a0f9a1a1bcf3",
+          "next_balance_sheet_root": "397f6dbf1508863b1cc47f7a40ede33c0a884fe5c33cefb1a235e296296d2f7b",
+          "next_cap_table_root": "5d300f345039acd9a9cc3579a12196db27e79745df443b46f7bc2471ea6062ef",
+          "prev_balance_sheet_root": "87cf442c583edd149cb3144007eb696c1f0f25ecbd24686846202947818ba4ce",
+          "prev_cap_table_root": "42057a2fe3f27a81492ac4ce05d7a3776e393aebf48ab0885c1d29e2c2575f14",
+          "round_id": "aac-seed-2026-001",
+          "settlement_amount_total": 1500,
+          "subscription_set_commitment": "d93b120236d3a36cb1a9f93e9f67b192f23c8a742e5f6e26c58d29569d4193be",
+          "token_contract": "0xAac000000000000000000000000000000000039",
+          "transition_set_commitment": "95f7ef07792bd9439bcc1e98d23c36170e22c257616054a0a17fd6f507d07f61",
+          "vnet_public_commitment": "bd6593f71056f7a92f665f1bfce2ad598c172e35e5a47f1d4fc2919e1577e713"
+        },
+        "round_policy": {
+          "admissibility_policy_hash": "c4ab37f727d3ed57b8bb150bb422312eadad832144c8d0835248f150dcda3715",
+          "issued_unit_type_id": "SAFE:issuer:series-a:unit",
+          "issuer_name": "issuer-a.private-row",
+          "max_issued_units": 200,
+          "max_settlement_amount": 2000,
+          "price_denominator": 1,
+          "price_numerator": 10,
+          "round_id": "aac-seed-2026-001",
+          "settlement_adapter_hash": "f6f4097006a5487eeb59780f65336ec3d6eb1420a854a3b95f26a16d3433e426",
+          "settlement_asset_type_id": "USDC:arc-testnet:atomic",
+          "token_contract": "0xAac000000000000000000000000000000000039",
+          "transfer_policy_hash": "64f2996ebeb8c4628dba977af97f45e4d7bf558623e0d9c0167419e6558f4586"
+        },
+        "settlement_report": {
+          "accepted": [
+            {
+              "amount": 1001,
+              "asset_type_id": "USDC:arc-testnet:atomic",
+              "investor_id": "investor-a",
+              "settlement_ref": "arc-usdc-payment:0xa001"
+            },
+            {
+              "amount": 500,
+              "asset_type_id": "USDC:arc-testnet:atomic",
+              "investor_id": "investor-b",
+              "settlement_ref": "arc-usdc-payment:0xb001"
+            }
+          ],
+          "adapter_hash": "f6f4097006a5487eeb59780f65336ec3d6eb1420a854a3b95f26a16d3433e426",
+          "schema": "aac.fundraise-demo.settlement-report.v1"
+        },
+        "subscriptions": [
+          {
+            "admissibility_ref": "cre-admissibility:investor-a:001",
+            "investor_id": "investor-a",
+            "issued_units": 100,
+            "mint_recipient": "0xA11ce00000000000000000000000000000000039",
+            "settlement_amount": 1000,
+            "settlement_ref": "arc-usdc-payment:0xa001",
+            "subscription_id": "sub-investor-a-001",
+            "subscription_nullifier": "0x31f4f93b6c2e19a001"
+          },
+          {
+            "admissibility_ref": "cre-admissibility:investor-b:001",
+            "investor_id": "investor-b",
+            "issued_units": 50,
+            "mint_recipient": "0xB0b000000000000000000000000000000000039",
+            "settlement_amount": 500,
+            "settlement_ref": "arc-usdc-payment:0xb001",
+            "subscription_id": "sub-investor-b-001",
+            "subscription_nullifier": "0x31f4f93b6c2e19b001"
+          }
+        ],
+        "vnet_link": {
+          "description": "accepted TRANSITION reports, valid link certificates, and VNET zero-opening",
+          "expect": {
+            "accepted": true,
+            "reason": "accepted"
+          },
+          "id": "vnet-link-good-fundraise",
+          "link_certificates": [
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "f5fed6de1de7ca86c6e53a67c8e64cda3e8fb6d871c37e9f473748e3394da556",
+              "credit": [
+                1000,
+                0
+              ],
+              "debit": [
+                0,
+                100
+              ],
+              "journal_commitment": "17171717171717171717171717171717",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "investor-a-subscription-row/7"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "10d276bd687ac0d1a51d08d6c662c4d2da6648857c187763415e5ec3213a70eb",
+              "credit": [
+                0,
+                100
+              ],
+              "debit": [
+                1000,
+                0
+              ],
+              "journal_commitment": "29292929292929292929292929292929",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "issuer-a-recognition-row/19"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "88a2c4cedb2c28251052bfdf8a063079ad927ef3b394b253706a99024f15130c",
+              "credit": [
+                500,
+                0
+              ],
+              "debit": [
+                0,
+                50
+              ],
+              "journal_commitment": "31313131313131313131313131313131",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "investor-b-subscription-row/8"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "939f98fda25c40db992c22550b21b19caf513e340271b770c2396a08bfa2933d",
+              "credit": [
+                0,
+                50
+              ],
+              "debit": [
+                500,
+                0
+              ],
+              "journal_commitment": "37373737373737373737373737373737",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "issuer-b-recognition-row/20"
+            }
+          ],
+          "transition_report": {
+            "accepted": [
+              {
+                "journal_commitment": "17171717171717171717171717171717",
+                "target": "TRANSITION/1",
+                "transition_ref": "investor-a-subscription-row/7"
+              },
+              {
+                "journal_commitment": "29292929292929292929292929292929",
+                "target": "TRANSITION/1",
+                "transition_ref": "issuer-a-recognition-row/19"
+              },
+              {
+                "journal_commitment": "31313131313131313131313131313131",
+                "target": "TRANSITION/1",
+                "transition_ref": "investor-b-subscription-row/8"
+              },
+              {
+                "journal_commitment": "37373737373737373737373737373737",
+                "target": "TRANSITION/1",
+                "transition_ref": "issuer-b-recognition-row/20"
+              }
+            ],
+            "schema": "aac.vnet-link-ref.transition-report.v1"
+          },
+          "vnet": {
+            "aggregate_blinding": "1",
+            "aggregate_opening": {
+              "uncompressed": "0x04085dc282e0c7150d6c03672f734009a9ab2c6ed5a0a1363ff56e6f5588aef60d2e5e656d1fd1f3e8cacbdc4e0510be13a92dfe9e2f1af25c85e778928d35c500",
+              "x": "3784162032946715964029045661947196252208032604648019817679190254663970518541",
+              "y": "20973174677285685160566224761601676419425910910351686180311743854382411007232"
+            },
+            "atoms": [
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  1000,
+                  0
+                ],
+                "credit_blinding": 12,
+                "credit_commitment": {
+                  "uncompressed": "0x040da1ccdff020cf5b49633373a823ff3c50a0c90f3e93c9161e713e9b5b2b37d81a4f74961841724af41ced3c4881cee0b72d43a6301cb18d703f20a47b9bb193",
+                  "x": "6165943402623082221624606226333309081976704828451202610153228945031659468760",
+                  "y": "11900519630405064348268869540745008555303485976119315068294482534525516362131"
+                },
+                "debit": [
+                  0,
+                  100
+                ],
+                "debit_blinding": 11,
+                "debit_commitment": {
+                  "uncompressed": "0x04006b77409275e752c625145a3a6056b90d0cd9ade626f21549b9227b82c3b0d40077fcac70895492c00b7578ea0a9f35139c448fea486e3da744f8065c1803a2",
+                  "x": "189875684607239212177122474464795190803911935390351475027252482460755407060",
+                  "y": "211998689750316809133041826379194324207432973891807947814899379184109880226"
+                },
+                "journal_commitment": "17171717171717171717171717171717",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "investor-a-subscription-row/7"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  0,
+                  100
+                ],
+                "credit_blinding": 20,
+                "credit_commitment": {
+                  "uncompressed": "0x0413e5d4153e9753eb96383a447544fbb0f00e15ac0c5c8ccb7f0b72d5cea428722faaa4beac123dd48d1a19a6481f27a0510b689ace59795bd4e496f460dcc89d",
+                  "x": "9000015843892325735403483275857997440275482437142655355682223386863784437874",
+                  "y": "21560204911337804295583955472452944970911153227857987221497953375168306661533"
+                },
+                "debit": [
+                  1000,
+                  0
+                ],
+                "debit_blinding": 21,
+                "debit_commitment": {
+                  "uncompressed": "0x042e21680a9decd50c73ad116c47f7c3f307aefec9ab94fd9030f4d131b4737dc228cc9dee8c6f1745dae0cf1082ecf715e2454a8ef4126bc813e6de99278932f2",
+                  "x": "20865415055818930354999897227119099683186890384024102139144543176386862611906",
+                  "y": "18454040749978619821660441645153231342025889971038604929947247098174470959858"
+                },
+                "journal_commitment": "29292929292929292929292929292929",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "issuer-a-recognition-row/19"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  500,
+                  0
+                ],
+                "credit_blinding": 33,
+                "credit_commitment": {
+                  "uncompressed": "0x042d0c906d6b7e1e82e0d4fe78b12b725f42ad59a31b4cc4efa3aeb9b28615f51f0310239e249fa297ab9f4253b3516f7523aec2640866b888c780376f22925296",
+                  "x": "20376277152452750281128370132551965992010802663952055082628585569581197030687",
+                  "y": "1385453923436876976162223465646606066144957730284293100322889382055694717590"
+                },
+                "debit": [
+                  0,
+                  50
+                ],
+                "debit_blinding": 31,
+                "debit_commitment": {
+                  "uncompressed": "0x042c8e023d1468a1cf8ee3ff380332f94d2dd7ff351dcc249bb4284f2c8c00ce6a2d8c016866c0f8d73af6101e476772f4047b2ae348f53ea19ba1a64257994ddd",
+                  "x": "20152673071060980912294041289227618239137295953407021547521903181529685741162",
+                  "y": "20601446491717999297773399221151396061784905844969977189731966908993906494941"
+                },
+                "journal_commitment": "31313131313131313131313131313131",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "investor-b-subscription-row/8"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  0,
+                  50
+                ],
+                "credit_blinding": 40,
+                "credit_commitment": {
+                  "uncompressed": "0x0418679e8c2eef35a72b96d55ea407b0dd0ed970a801865c6cefa56e404a42fcbb2d49ed9408a1793da733647720263faaa90aed95336e2466a661822848e2d52d",
+                  "x": "11038587868928663748189557526022873417611257885538817512062951511971940465851",
+                  "y": "20484697726841030353058427310435512033281509487505124116530543825861919036717"
+                },
+                "debit": [
+                  500,
+                  0
+                ],
+                "debit_blinding": 43,
+                "debit_commitment": {
+                  "uncompressed": "0x0429b1b015b8d33da7ba7f489111afb132e4b6cf3903fef71e346ec1b2b26b2fda1c9797f70d3a970e119f1e965374259c69099e6abf2603b373924d73b78dee61",
+                  "x": "18858774015359972207515362072980730082935998630122217183738693920473389674458",
+                  "y": "12932602491311349413288674062041803122818155620708250790341183045076113026657"
+                },
+                "journal_commitment": "37373737373737373737373737373737",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "issuer-b-recognition-row/20"
+              }
+            ],
+            "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+            "basis_type_ids": [
+              "USDC:arc-testnet:atomic",
+              "SAFE:issuer:series-a:unit"
+            ],
+            "commitment_set_commitment": "11828161753588383608511287713191948800523963973941502891710636737949306785447",
+            "description": "two approved subscriptions clear USDC and SAFE units per basis",
+            "expect": {
+              "accepted": true,
+              "reason": "accepted"
+            },
+            "id": "fundraise-good-batch",
+            "profile_id": "vnet-bn254-g1/1",
+            "transition_set_commitment": "9298707835305159247032141471909732946481652324668351677401198201140368335773"
+          }
+        }
+      }
+    },
+    {
+      "description": "one subscription violates the round's fixed issue-price arithmetic",
+      "expect": {
+        "accepted": false,
+        "reason": "price_mismatch"
+      },
+      "id": "fundraise-demo-price-mismatch-reject",
+      "packet": {
+        "admissibility_report": {
+          "accepted": [
+            {
+              "accepted": true,
+              "admissibility_ref": "cre-admissibility:investor-a:001",
+              "investor_id": "investor-a"
+            },
+            {
+              "accepted": true,
+              "admissibility_ref": "cre-admissibility:investor-b:001",
+              "investor_id": "investor-b"
+            }
+          ],
+          "policy_hash": "c4ab37f727d3ed57b8bb150bb422312eadad832144c8d0835248f150dcda3715",
+          "schema": "aac.fundraise-demo.admissibility-report.v1"
+        },
+        "mint_authorization": {
+          "issued_unit_total": 151,
+          "mint_recipient_set_commitment": "1de28f512711f201d5dab9d737484d0d66b27a058492718a481e1e2162ed5a81",
+          "recipients": [
+            {
+              "investor_id": "investor-a",
+              "issued_units": 101,
+              "recipient": "0xA11ce00000000000000000000000000000000039"
+            },
+            {
+              "investor_id": "investor-b",
+              "issued_units": 50,
+              "recipient": "0xB0b000000000000000000000000000000000039"
+            }
+          ],
+          "round_id": "aac-seed-2026-001",
+          "schema": "aac.fundraise-demo.mint-authorization.v1",
+          "token_contract": "0xAac000000000000000000000000000000000039"
+        },
+        "public_inputs": {
+          "context_commitment": "0633da5423e7e17ccca84ca8f54dc12fdcb02322cde0408587e283995b655962",
+          "issued_unit_total": 151,
+          "issuer_name": "issuer-a.private-row",
+          "mint_recipient_set_commitment": "1de28f512711f201d5dab9d737484d0d66b27a058492718a481e1e2162ed5a81",
+          "next_balance_sheet_root": "397f6dbf1508863b1cc47f7a40ede33c0a884fe5c33cefb1a235e296296d2f7b",
+          "next_cap_table_root": "5d300f345039acd9a9cc3579a12196db27e79745df443b46f7bc2471ea6062ef",
+          "prev_balance_sheet_root": "87cf442c583edd149cb3144007eb696c1f0f25ecbd24686846202947818ba4ce",
+          "prev_cap_table_root": "42057a2fe3f27a81492ac4ce05d7a3776e393aebf48ab0885c1d29e2c2575f14",
+          "round_id": "aac-seed-2026-001",
+          "settlement_amount_total": 1500,
+          "subscription_set_commitment": "fd6b7ddfede48db48199f8727f61dc9305af94d3870d41f6e81b1b821bda3463",
+          "token_contract": "0xAac000000000000000000000000000000000039",
+          "transition_set_commitment": "95f7ef07792bd9439bcc1e98d23c36170e22c257616054a0a17fd6f507d07f61",
+          "vnet_public_commitment": "bd6593f71056f7a92f665f1bfce2ad598c172e35e5a47f1d4fc2919e1577e713"
+        },
+        "round_policy": {
+          "admissibility_policy_hash": "c4ab37f727d3ed57b8bb150bb422312eadad832144c8d0835248f150dcda3715",
+          "issued_unit_type_id": "SAFE:issuer:series-a:unit",
+          "issuer_name": "issuer-a.private-row",
+          "max_issued_units": 200,
+          "max_settlement_amount": 2000,
+          "price_denominator": 1,
+          "price_numerator": 10,
+          "round_id": "aac-seed-2026-001",
+          "settlement_adapter_hash": "f6f4097006a5487eeb59780f65336ec3d6eb1420a854a3b95f26a16d3433e426",
+          "settlement_asset_type_id": "USDC:arc-testnet:atomic",
+          "token_contract": "0xAac000000000000000000000000000000000039",
+          "transfer_policy_hash": "64f2996ebeb8c4628dba977af97f45e4d7bf558623e0d9c0167419e6558f4586"
+        },
+        "settlement_report": {
+          "accepted": [
+            {
+              "amount": 1000,
+              "asset_type_id": "USDC:arc-testnet:atomic",
+              "investor_id": "investor-a",
+              "settlement_ref": "arc-usdc-payment:0xa001"
+            },
+            {
+              "amount": 500,
+              "asset_type_id": "USDC:arc-testnet:atomic",
+              "investor_id": "investor-b",
+              "settlement_ref": "arc-usdc-payment:0xb001"
+            }
+          ],
+          "adapter_hash": "f6f4097006a5487eeb59780f65336ec3d6eb1420a854a3b95f26a16d3433e426",
+          "schema": "aac.fundraise-demo.settlement-report.v1"
+        },
+        "subscriptions": [
+          {
+            "admissibility_ref": "cre-admissibility:investor-a:001",
+            "investor_id": "investor-a",
+            "issued_units": 101,
+            "mint_recipient": "0xA11ce00000000000000000000000000000000039",
+            "settlement_amount": 1000,
+            "settlement_ref": "arc-usdc-payment:0xa001",
+            "subscription_id": "sub-investor-a-001",
+            "subscription_nullifier": "0x31f4f93b6c2e19a001"
+          },
+          {
+            "admissibility_ref": "cre-admissibility:investor-b:001",
+            "investor_id": "investor-b",
+            "issued_units": 50,
+            "mint_recipient": "0xB0b000000000000000000000000000000000039",
+            "settlement_amount": 500,
+            "settlement_ref": "arc-usdc-payment:0xb001",
+            "subscription_id": "sub-investor-b-001",
+            "subscription_nullifier": "0x31f4f93b6c2e19b001"
+          }
+        ],
+        "vnet_link": {
+          "description": "accepted TRANSITION reports, valid link certificates, and VNET zero-opening",
+          "expect": {
+            "accepted": true,
+            "reason": "accepted"
+          },
+          "id": "vnet-link-good-fundraise",
+          "link_certificates": [
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "f5fed6de1de7ca86c6e53a67c8e64cda3e8fb6d871c37e9f473748e3394da556",
+              "credit": [
+                1000,
+                0
+              ],
+              "debit": [
+                0,
+                100
+              ],
+              "journal_commitment": "17171717171717171717171717171717",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "investor-a-subscription-row/7"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "10d276bd687ac0d1a51d08d6c662c4d2da6648857c187763415e5ec3213a70eb",
+              "credit": [
+                0,
+                100
+              ],
+              "debit": [
+                1000,
+                0
+              ],
+              "journal_commitment": "29292929292929292929292929292929",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "issuer-a-recognition-row/19"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "88a2c4cedb2c28251052bfdf8a063079ad927ef3b394b253706a99024f15130c",
+              "credit": [
+                500,
+                0
+              ],
+              "debit": [
+                0,
+                50
+              ],
+              "journal_commitment": "31313131313131313131313131313131",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "investor-b-subscription-row/8"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "939f98fda25c40db992c22550b21b19caf513e340271b770c2396a08bfa2933d",
+              "credit": [
+                0,
+                50
+              ],
+              "debit": [
+                500,
+                0
+              ],
+              "journal_commitment": "37373737373737373737373737373737",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "issuer-b-recognition-row/20"
+            }
+          ],
+          "transition_report": {
+            "accepted": [
+              {
+                "journal_commitment": "17171717171717171717171717171717",
+                "target": "TRANSITION/1",
+                "transition_ref": "investor-a-subscription-row/7"
+              },
+              {
+                "journal_commitment": "29292929292929292929292929292929",
+                "target": "TRANSITION/1",
+                "transition_ref": "issuer-a-recognition-row/19"
+              },
+              {
+                "journal_commitment": "31313131313131313131313131313131",
+                "target": "TRANSITION/1",
+                "transition_ref": "investor-b-subscription-row/8"
+              },
+              {
+                "journal_commitment": "37373737373737373737373737373737",
+                "target": "TRANSITION/1",
+                "transition_ref": "issuer-b-recognition-row/20"
+              }
+            ],
+            "schema": "aac.vnet-link-ref.transition-report.v1"
+          },
+          "vnet": {
+            "aggregate_blinding": "1",
+            "aggregate_opening": {
+              "uncompressed": "0x04085dc282e0c7150d6c03672f734009a9ab2c6ed5a0a1363ff56e6f5588aef60d2e5e656d1fd1f3e8cacbdc4e0510be13a92dfe9e2f1af25c85e778928d35c500",
+              "x": "3784162032946715964029045661947196252208032604648019817679190254663970518541",
+              "y": "20973174677285685160566224761601676419425910910351686180311743854382411007232"
+            },
+            "atoms": [
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  1000,
+                  0
+                ],
+                "credit_blinding": 12,
+                "credit_commitment": {
+                  "uncompressed": "0x040da1ccdff020cf5b49633373a823ff3c50a0c90f3e93c9161e713e9b5b2b37d81a4f74961841724af41ced3c4881cee0b72d43a6301cb18d703f20a47b9bb193",
+                  "x": "6165943402623082221624606226333309081976704828451202610153228945031659468760",
+                  "y": "11900519630405064348268869540745008555303485976119315068294482534525516362131"
+                },
+                "debit": [
+                  0,
+                  100
+                ],
+                "debit_blinding": 11,
+                "debit_commitment": {
+                  "uncompressed": "0x04006b77409275e752c625145a3a6056b90d0cd9ade626f21549b9227b82c3b0d40077fcac70895492c00b7578ea0a9f35139c448fea486e3da744f8065c1803a2",
+                  "x": "189875684607239212177122474464795190803911935390351475027252482460755407060",
+                  "y": "211998689750316809133041826379194324207432973891807947814899379184109880226"
+                },
+                "journal_commitment": "17171717171717171717171717171717",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "investor-a-subscription-row/7"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  0,
+                  100
+                ],
+                "credit_blinding": 20,
+                "credit_commitment": {
+                  "uncompressed": "0x0413e5d4153e9753eb96383a447544fbb0f00e15ac0c5c8ccb7f0b72d5cea428722faaa4beac123dd48d1a19a6481f27a0510b689ace59795bd4e496f460dcc89d",
+                  "x": "9000015843892325735403483275857997440275482437142655355682223386863784437874",
+                  "y": "21560204911337804295583955472452944970911153227857987221497953375168306661533"
+                },
+                "debit": [
+                  1000,
+                  0
+                ],
+                "debit_blinding": 21,
+                "debit_commitment": {
+                  "uncompressed": "0x042e21680a9decd50c73ad116c47f7c3f307aefec9ab94fd9030f4d131b4737dc228cc9dee8c6f1745dae0cf1082ecf715e2454a8ef4126bc813e6de99278932f2",
+                  "x": "20865415055818930354999897227119099683186890384024102139144543176386862611906",
+                  "y": "18454040749978619821660441645153231342025889971038604929947247098174470959858"
+                },
+                "journal_commitment": "29292929292929292929292929292929",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "issuer-a-recognition-row/19"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  500,
+                  0
+                ],
+                "credit_blinding": 33,
+                "credit_commitment": {
+                  "uncompressed": "0x042d0c906d6b7e1e82e0d4fe78b12b725f42ad59a31b4cc4efa3aeb9b28615f51f0310239e249fa297ab9f4253b3516f7523aec2640866b888c780376f22925296",
+                  "x": "20376277152452750281128370132551965992010802663952055082628585569581197030687",
+                  "y": "1385453923436876976162223465646606066144957730284293100322889382055694717590"
+                },
+                "debit": [
+                  0,
+                  50
+                ],
+                "debit_blinding": 31,
+                "debit_commitment": {
+                  "uncompressed": "0x042c8e023d1468a1cf8ee3ff380332f94d2dd7ff351dcc249bb4284f2c8c00ce6a2d8c016866c0f8d73af6101e476772f4047b2ae348f53ea19ba1a64257994ddd",
+                  "x": "20152673071060980912294041289227618239137295953407021547521903181529685741162",
+                  "y": "20601446491717999297773399221151396061784905844969977189731966908993906494941"
+                },
+                "journal_commitment": "31313131313131313131313131313131",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "investor-b-subscription-row/8"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  0,
+                  50
+                ],
+                "credit_blinding": 40,
+                "credit_commitment": {
+                  "uncompressed": "0x0418679e8c2eef35a72b96d55ea407b0dd0ed970a801865c6cefa56e404a42fcbb2d49ed9408a1793da733647720263faaa90aed95336e2466a661822848e2d52d",
+                  "x": "11038587868928663748189557526022873417611257885538817512062951511971940465851",
+                  "y": "20484697726841030353058427310435512033281509487505124116530543825861919036717"
+                },
+                "debit": [
+                  500,
+                  0
+                ],
+                "debit_blinding": 43,
+                "debit_commitment": {
+                  "uncompressed": "0x0429b1b015b8d33da7ba7f489111afb132e4b6cf3903fef71e346ec1b2b26b2fda1c9797f70d3a970e119f1e965374259c69099e6abf2603b373924d73b78dee61",
+                  "x": "18858774015359972207515362072980730082935998630122217183738693920473389674458",
+                  "y": "12932602491311349413288674062041803122818155620708250790341183045076113026657"
+                },
+                "journal_commitment": "37373737373737373737373737373737",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "issuer-b-recognition-row/20"
+              }
+            ],
+            "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+            "basis_type_ids": [
+              "USDC:arc-testnet:atomic",
+              "SAFE:issuer:series-a:unit"
+            ],
+            "commitment_set_commitment": "11828161753588383608511287713191948800523963973941502891710636737949306785447",
+            "description": "two approved subscriptions clear USDC and SAFE units per basis",
+            "expect": {
+              "accepted": true,
+              "reason": "accepted"
+            },
+            "id": "fundraise-good-batch",
+            "profile_id": "vnet-bn254-g1/1",
+            "transition_set_commitment": "9298707835305159247032141471909732946481652324668351677401198201140368335773"
+          }
+        }
+      }
+    },
+    {
+      "description": "one subscription settlement reference is absent from the trusted settlement report",
+      "expect": {
+        "accepted": false,
+        "reason": "settlement_report_missing"
+      },
+      "id": "fundraise-demo-missing-settlement-reject",
+      "packet": {
+        "admissibility_report": {
+          "accepted": [
+            {
+              "accepted": true,
+              "admissibility_ref": "cre-admissibility:investor-a:001",
+              "investor_id": "investor-a"
+            },
+            {
+              "accepted": true,
+              "admissibility_ref": "cre-admissibility:investor-b:001",
+              "investor_id": "investor-b"
+            }
+          ],
+          "policy_hash": "c4ab37f727d3ed57b8bb150bb422312eadad832144c8d0835248f150dcda3715",
+          "schema": "aac.fundraise-demo.admissibility-report.v1"
+        },
+        "mint_authorization": {
+          "issued_unit_total": 150,
+          "mint_recipient_set_commitment": "29c163f11deb254a1c43f13e2f4a32e3332f97be23e68087e9a9a0f9a1a1bcf3",
+          "recipients": [
+            {
+              "investor_id": "investor-a",
+              "issued_units": 100,
+              "recipient": "0xA11ce00000000000000000000000000000000039"
+            },
+            {
+              "investor_id": "investor-b",
+              "issued_units": 50,
+              "recipient": "0xB0b000000000000000000000000000000000039"
+            }
+          ],
+          "round_id": "aac-seed-2026-001",
+          "schema": "aac.fundraise-demo.mint-authorization.v1",
+          "token_contract": "0xAac000000000000000000000000000000000039"
+        },
+        "public_inputs": {
+          "context_commitment": "0633da5423e7e17ccca84ca8f54dc12fdcb02322cde0408587e283995b655962",
+          "issued_unit_total": 150,
+          "issuer_name": "issuer-a.private-row",
+          "mint_recipient_set_commitment": "29c163f11deb254a1c43f13e2f4a32e3332f97be23e68087e9a9a0f9a1a1bcf3",
+          "next_balance_sheet_root": "397f6dbf1508863b1cc47f7a40ede33c0a884fe5c33cefb1a235e296296d2f7b",
+          "next_cap_table_root": "5d300f345039acd9a9cc3579a12196db27e79745df443b46f7bc2471ea6062ef",
+          "prev_balance_sheet_root": "87cf442c583edd149cb3144007eb696c1f0f25ecbd24686846202947818ba4ce",
+          "prev_cap_table_root": "42057a2fe3f27a81492ac4ce05d7a3776e393aebf48ab0885c1d29e2c2575f14",
+          "round_id": "aac-seed-2026-001",
+          "settlement_amount_total": 1500,
+          "subscription_set_commitment": "d93b120236d3a36cb1a9f93e9f67b192f23c8a742e5f6e26c58d29569d4193be",
+          "token_contract": "0xAac000000000000000000000000000000000039",
+          "transition_set_commitment": "95f7ef07792bd9439bcc1e98d23c36170e22c257616054a0a17fd6f507d07f61",
+          "vnet_public_commitment": "bd6593f71056f7a92f665f1bfce2ad598c172e35e5a47f1d4fc2919e1577e713"
+        },
+        "round_policy": {
+          "admissibility_policy_hash": "c4ab37f727d3ed57b8bb150bb422312eadad832144c8d0835248f150dcda3715",
+          "issued_unit_type_id": "SAFE:issuer:series-a:unit",
+          "issuer_name": "issuer-a.private-row",
+          "max_issued_units": 200,
+          "max_settlement_amount": 2000,
+          "price_denominator": 1,
+          "price_numerator": 10,
+          "round_id": "aac-seed-2026-001",
+          "settlement_adapter_hash": "f6f4097006a5487eeb59780f65336ec3d6eb1420a854a3b95f26a16d3433e426",
+          "settlement_asset_type_id": "USDC:arc-testnet:atomic",
+          "token_contract": "0xAac000000000000000000000000000000000039",
+          "transfer_policy_hash": "64f2996ebeb8c4628dba977af97f45e4d7bf558623e0d9c0167419e6558f4586"
+        },
+        "settlement_report": {
+          "accepted": [
+            {
+              "amount": 1000,
+              "asset_type_id": "USDC:arc-testnet:atomic",
+              "investor_id": "investor-a",
+              "settlement_ref": "arc-usdc-payment:0xa001"
+            }
+          ],
+          "adapter_hash": "f6f4097006a5487eeb59780f65336ec3d6eb1420a854a3b95f26a16d3433e426",
+          "schema": "aac.fundraise-demo.settlement-report.v1"
+        },
+        "subscriptions": [
+          {
+            "admissibility_ref": "cre-admissibility:investor-a:001",
+            "investor_id": "investor-a",
+            "issued_units": 100,
+            "mint_recipient": "0xA11ce00000000000000000000000000000000039",
+            "settlement_amount": 1000,
+            "settlement_ref": "arc-usdc-payment:0xa001",
+            "subscription_id": "sub-investor-a-001",
+            "subscription_nullifier": "0x31f4f93b6c2e19a001"
+          },
+          {
+            "admissibility_ref": "cre-admissibility:investor-b:001",
+            "investor_id": "investor-b",
+            "issued_units": 50,
+            "mint_recipient": "0xB0b000000000000000000000000000000000039",
+            "settlement_amount": 500,
+            "settlement_ref": "arc-usdc-payment:0xb001",
+            "subscription_id": "sub-investor-b-001",
+            "subscription_nullifier": "0x31f4f93b6c2e19b001"
+          }
+        ],
+        "vnet_link": {
+          "description": "accepted TRANSITION reports, valid link certificates, and VNET zero-opening",
+          "expect": {
+            "accepted": true,
+            "reason": "accepted"
+          },
+          "id": "vnet-link-good-fundraise",
+          "link_certificates": [
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "f5fed6de1de7ca86c6e53a67c8e64cda3e8fb6d871c37e9f473748e3394da556",
+              "credit": [
+                1000,
+                0
+              ],
+              "debit": [
+                0,
+                100
+              ],
+              "journal_commitment": "17171717171717171717171717171717",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "investor-a-subscription-row/7"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "10d276bd687ac0d1a51d08d6c662c4d2da6648857c187763415e5ec3213a70eb",
+              "credit": [
+                0,
+                100
+              ],
+              "debit": [
+                1000,
+                0
+              ],
+              "journal_commitment": "29292929292929292929292929292929",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "issuer-a-recognition-row/19"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "88a2c4cedb2c28251052bfdf8a063079ad927ef3b394b253706a99024f15130c",
+              "credit": [
+                500,
+                0
+              ],
+              "debit": [
+                0,
+                50
+              ],
+              "journal_commitment": "31313131313131313131313131313131",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "investor-b-subscription-row/8"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "939f98fda25c40db992c22550b21b19caf513e340271b770c2396a08bfa2933d",
+              "credit": [
+                0,
+                50
+              ],
+              "debit": [
+                500,
+                0
+              ],
+              "journal_commitment": "37373737373737373737373737373737",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "issuer-b-recognition-row/20"
+            }
+          ],
+          "transition_report": {
+            "accepted": [
+              {
+                "journal_commitment": "17171717171717171717171717171717",
+                "target": "TRANSITION/1",
+                "transition_ref": "investor-a-subscription-row/7"
+              },
+              {
+                "journal_commitment": "29292929292929292929292929292929",
+                "target": "TRANSITION/1",
+                "transition_ref": "issuer-a-recognition-row/19"
+              },
+              {
+                "journal_commitment": "31313131313131313131313131313131",
+                "target": "TRANSITION/1",
+                "transition_ref": "investor-b-subscription-row/8"
+              },
+              {
+                "journal_commitment": "37373737373737373737373737373737",
+                "target": "TRANSITION/1",
+                "transition_ref": "issuer-b-recognition-row/20"
+              }
+            ],
+            "schema": "aac.vnet-link-ref.transition-report.v1"
+          },
+          "vnet": {
+            "aggregate_blinding": "1",
+            "aggregate_opening": {
+              "uncompressed": "0x04085dc282e0c7150d6c03672f734009a9ab2c6ed5a0a1363ff56e6f5588aef60d2e5e656d1fd1f3e8cacbdc4e0510be13a92dfe9e2f1af25c85e778928d35c500",
+              "x": "3784162032946715964029045661947196252208032604648019817679190254663970518541",
+              "y": "20973174677285685160566224761601676419425910910351686180311743854382411007232"
+            },
+            "atoms": [
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  1000,
+                  0
+                ],
+                "credit_blinding": 12,
+                "credit_commitment": {
+                  "uncompressed": "0x040da1ccdff020cf5b49633373a823ff3c50a0c90f3e93c9161e713e9b5b2b37d81a4f74961841724af41ced3c4881cee0b72d43a6301cb18d703f20a47b9bb193",
+                  "x": "6165943402623082221624606226333309081976704828451202610153228945031659468760",
+                  "y": "11900519630405064348268869540745008555303485976119315068294482534525516362131"
+                },
+                "debit": [
+                  0,
+                  100
+                ],
+                "debit_blinding": 11,
+                "debit_commitment": {
+                  "uncompressed": "0x04006b77409275e752c625145a3a6056b90d0cd9ade626f21549b9227b82c3b0d40077fcac70895492c00b7578ea0a9f35139c448fea486e3da744f8065c1803a2",
+                  "x": "189875684607239212177122474464795190803911935390351475027252482460755407060",
+                  "y": "211998689750316809133041826379194324207432973891807947814899379184109880226"
+                },
+                "journal_commitment": "17171717171717171717171717171717",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "investor-a-subscription-row/7"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  0,
+                  100
+                ],
+                "credit_blinding": 20,
+                "credit_commitment": {
+                  "uncompressed": "0x0413e5d4153e9753eb96383a447544fbb0f00e15ac0c5c8ccb7f0b72d5cea428722faaa4beac123dd48d1a19a6481f27a0510b689ace59795bd4e496f460dcc89d",
+                  "x": "9000015843892325735403483275857997440275482437142655355682223386863784437874",
+                  "y": "21560204911337804295583955472452944970911153227857987221497953375168306661533"
+                },
+                "debit": [
+                  1000,
+                  0
+                ],
+                "debit_blinding": 21,
+                "debit_commitment": {
+                  "uncompressed": "0x042e21680a9decd50c73ad116c47f7c3f307aefec9ab94fd9030f4d131b4737dc228cc9dee8c6f1745dae0cf1082ecf715e2454a8ef4126bc813e6de99278932f2",
+                  "x": "20865415055818930354999897227119099683186890384024102139144543176386862611906",
+                  "y": "18454040749978619821660441645153231342025889971038604929947247098174470959858"
+                },
+                "journal_commitment": "29292929292929292929292929292929",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "issuer-a-recognition-row/19"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  500,
+                  0
+                ],
+                "credit_blinding": 33,
+                "credit_commitment": {
+                  "uncompressed": "0x042d0c906d6b7e1e82e0d4fe78b12b725f42ad59a31b4cc4efa3aeb9b28615f51f0310239e249fa297ab9f4253b3516f7523aec2640866b888c780376f22925296",
+                  "x": "20376277152452750281128370132551965992010802663952055082628585569581197030687",
+                  "y": "1385453923436876976162223465646606066144957730284293100322889382055694717590"
+                },
+                "debit": [
+                  0,
+                  50
+                ],
+                "debit_blinding": 31,
+                "debit_commitment": {
+                  "uncompressed": "0x042c8e023d1468a1cf8ee3ff380332f94d2dd7ff351dcc249bb4284f2c8c00ce6a2d8c016866c0f8d73af6101e476772f4047b2ae348f53ea19ba1a64257994ddd",
+                  "x": "20152673071060980912294041289227618239137295953407021547521903181529685741162",
+                  "y": "20601446491717999297773399221151396061784905844969977189731966908993906494941"
+                },
+                "journal_commitment": "31313131313131313131313131313131",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "investor-b-subscription-row/8"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  0,
+                  50
+                ],
+                "credit_blinding": 40,
+                "credit_commitment": {
+                  "uncompressed": "0x0418679e8c2eef35a72b96d55ea407b0dd0ed970a801865c6cefa56e404a42fcbb2d49ed9408a1793da733647720263faaa90aed95336e2466a661822848e2d52d",
+                  "x": "11038587868928663748189557526022873417611257885538817512062951511971940465851",
+                  "y": "20484697726841030353058427310435512033281509487505124116530543825861919036717"
+                },
+                "debit": [
+                  500,
+                  0
+                ],
+                "debit_blinding": 43,
+                "debit_commitment": {
+                  "uncompressed": "0x0429b1b015b8d33da7ba7f489111afb132e4b6cf3903fef71e346ec1b2b26b2fda1c9797f70d3a970e119f1e965374259c69099e6abf2603b373924d73b78dee61",
+                  "x": "18858774015359972207515362072980730082935998630122217183738693920473389674458",
+                  "y": "12932602491311349413288674062041803122818155620708250790341183045076113026657"
+                },
+                "journal_commitment": "37373737373737373737373737373737",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "issuer-b-recognition-row/20"
+              }
+            ],
+            "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+            "basis_type_ids": [
+              "USDC:arc-testnet:atomic",
+              "SAFE:issuer:series-a:unit"
+            ],
+            "commitment_set_commitment": "11828161753588383608511287713191948800523963973941502891710636737949306785447",
+            "description": "two approved subscriptions clear USDC and SAFE units per basis",
+            "expect": {
+              "accepted": true,
+              "reason": "accepted"
+            },
+            "id": "fundraise-good-batch",
+            "profile_id": "vnet-bn254-g1/1",
+            "transition_set_commitment": "9298707835305159247032141471909732946481652324668351677401198201140368335773"
+          }
+        }
+      }
+    },
+    {
+      "description": "mint authorization names a token contract different from the round policy",
+      "expect": {
+        "accepted": false,
+        "reason": "token_contract_mismatch"
+      },
+      "id": "fundraise-demo-token-mismatch-reject",
+      "packet": {
+        "admissibility_report": {
+          "accepted": [
+            {
+              "accepted": true,
+              "admissibility_ref": "cre-admissibility:investor-a:001",
+              "investor_id": "investor-a"
+            },
+            {
+              "accepted": true,
+              "admissibility_ref": "cre-admissibility:investor-b:001",
+              "investor_id": "investor-b"
+            }
+          ],
+          "policy_hash": "c4ab37f727d3ed57b8bb150bb422312eadad832144c8d0835248f150dcda3715",
+          "schema": "aac.fundraise-demo.admissibility-report.v1"
+        },
+        "mint_authorization": {
+          "issued_unit_total": 150,
+          "mint_recipient_set_commitment": "29c163f11deb254a1c43f13e2f4a32e3332f97be23e68087e9a9a0f9a1a1bcf3",
+          "recipients": [
+            {
+              "investor_id": "investor-a",
+              "issued_units": 100,
+              "recipient": "0xA11ce00000000000000000000000000000000039"
+            },
+            {
+              "investor_id": "investor-b",
+              "issued_units": 50,
+              "recipient": "0xB0b000000000000000000000000000000000039"
+            }
+          ],
+          "round_id": "aac-seed-2026-001",
+          "schema": "aac.fundraise-demo.mint-authorization.v1",
+          "token_contract": "0xBad0000000000000000000000000000000000039"
+        },
+        "public_inputs": {
+          "context_commitment": "0633da5423e7e17ccca84ca8f54dc12fdcb02322cde0408587e283995b655962",
+          "issued_unit_total": 150,
+          "issuer_name": "issuer-a.private-row",
+          "mint_recipient_set_commitment": "29c163f11deb254a1c43f13e2f4a32e3332f97be23e68087e9a9a0f9a1a1bcf3",
+          "next_balance_sheet_root": "397f6dbf1508863b1cc47f7a40ede33c0a884fe5c33cefb1a235e296296d2f7b",
+          "next_cap_table_root": "5d300f345039acd9a9cc3579a12196db27e79745df443b46f7bc2471ea6062ef",
+          "prev_balance_sheet_root": "87cf442c583edd149cb3144007eb696c1f0f25ecbd24686846202947818ba4ce",
+          "prev_cap_table_root": "42057a2fe3f27a81492ac4ce05d7a3776e393aebf48ab0885c1d29e2c2575f14",
+          "round_id": "aac-seed-2026-001",
+          "settlement_amount_total": 1500,
+          "subscription_set_commitment": "d93b120236d3a36cb1a9f93e9f67b192f23c8a742e5f6e26c58d29569d4193be",
+          "token_contract": "0xBad0000000000000000000000000000000000039",
+          "transition_set_commitment": "95f7ef07792bd9439bcc1e98d23c36170e22c257616054a0a17fd6f507d07f61",
+          "vnet_public_commitment": "bd6593f71056f7a92f665f1bfce2ad598c172e35e5a47f1d4fc2919e1577e713"
+        },
+        "round_policy": {
+          "admissibility_policy_hash": "c4ab37f727d3ed57b8bb150bb422312eadad832144c8d0835248f150dcda3715",
+          "issued_unit_type_id": "SAFE:issuer:series-a:unit",
+          "issuer_name": "issuer-a.private-row",
+          "max_issued_units": 200,
+          "max_settlement_amount": 2000,
+          "price_denominator": 1,
+          "price_numerator": 10,
+          "round_id": "aac-seed-2026-001",
+          "settlement_adapter_hash": "f6f4097006a5487eeb59780f65336ec3d6eb1420a854a3b95f26a16d3433e426",
+          "settlement_asset_type_id": "USDC:arc-testnet:atomic",
+          "token_contract": "0xAac000000000000000000000000000000000039",
+          "transfer_policy_hash": "64f2996ebeb8c4628dba977af97f45e4d7bf558623e0d9c0167419e6558f4586"
+        },
+        "settlement_report": {
+          "accepted": [
+            {
+              "amount": 1000,
+              "asset_type_id": "USDC:arc-testnet:atomic",
+              "investor_id": "investor-a",
+              "settlement_ref": "arc-usdc-payment:0xa001"
+            },
+            {
+              "amount": 500,
+              "asset_type_id": "USDC:arc-testnet:atomic",
+              "investor_id": "investor-b",
+              "settlement_ref": "arc-usdc-payment:0xb001"
+            }
+          ],
+          "adapter_hash": "f6f4097006a5487eeb59780f65336ec3d6eb1420a854a3b95f26a16d3433e426",
+          "schema": "aac.fundraise-demo.settlement-report.v1"
+        },
+        "subscriptions": [
+          {
+            "admissibility_ref": "cre-admissibility:investor-a:001",
+            "investor_id": "investor-a",
+            "issued_units": 100,
+            "mint_recipient": "0xA11ce00000000000000000000000000000000039",
+            "settlement_amount": 1000,
+            "settlement_ref": "arc-usdc-payment:0xa001",
+            "subscription_id": "sub-investor-a-001",
+            "subscription_nullifier": "0x31f4f93b6c2e19a001"
+          },
+          {
+            "admissibility_ref": "cre-admissibility:investor-b:001",
+            "investor_id": "investor-b",
+            "issued_units": 50,
+            "mint_recipient": "0xB0b000000000000000000000000000000000039",
+            "settlement_amount": 500,
+            "settlement_ref": "arc-usdc-payment:0xb001",
+            "subscription_id": "sub-investor-b-001",
+            "subscription_nullifier": "0x31f4f93b6c2e19b001"
+          }
+        ],
+        "vnet_link": {
+          "description": "accepted TRANSITION reports, valid link certificates, and VNET zero-opening",
+          "expect": {
+            "accepted": true,
+            "reason": "accepted"
+          },
+          "id": "vnet-link-good-fundraise",
+          "link_certificates": [
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "f5fed6de1de7ca86c6e53a67c8e64cda3e8fb6d871c37e9f473748e3394da556",
+              "credit": [
+                1000,
+                0
+              ],
+              "debit": [
+                0,
+                100
+              ],
+              "journal_commitment": "17171717171717171717171717171717",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "investor-a-subscription-row/7"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "10d276bd687ac0d1a51d08d6c662c4d2da6648857c187763415e5ec3213a70eb",
+              "credit": [
+                0,
+                100
+              ],
+              "debit": [
+                1000,
+                0
+              ],
+              "journal_commitment": "29292929292929292929292929292929",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "issuer-a-recognition-row/19"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "88a2c4cedb2c28251052bfdf8a063079ad927ef3b394b253706a99024f15130c",
+              "credit": [
+                500,
+                0
+              ],
+              "debit": [
+                0,
+                50
+              ],
+              "journal_commitment": "31313131313131313131313131313131",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "investor-b-subscription-row/8"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "939f98fda25c40db992c22550b21b19caf513e340271b770c2396a08bfa2933d",
+              "credit": [
+                0,
+                50
+              ],
+              "debit": [
+                500,
+                0
+              ],
+              "journal_commitment": "37373737373737373737373737373737",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "issuer-b-recognition-row/20"
+            }
+          ],
+          "transition_report": {
+            "accepted": [
+              {
+                "journal_commitment": "17171717171717171717171717171717",
+                "target": "TRANSITION/1",
+                "transition_ref": "investor-a-subscription-row/7"
+              },
+              {
+                "journal_commitment": "29292929292929292929292929292929",
+                "target": "TRANSITION/1",
+                "transition_ref": "issuer-a-recognition-row/19"
+              },
+              {
+                "journal_commitment": "31313131313131313131313131313131",
+                "target": "TRANSITION/1",
+                "transition_ref": "investor-b-subscription-row/8"
+              },
+              {
+                "journal_commitment": "37373737373737373737373737373737",
+                "target": "TRANSITION/1",
+                "transition_ref": "issuer-b-recognition-row/20"
+              }
+            ],
+            "schema": "aac.vnet-link-ref.transition-report.v1"
+          },
+          "vnet": {
+            "aggregate_blinding": "1",
+            "aggregate_opening": {
+              "uncompressed": "0x04085dc282e0c7150d6c03672f734009a9ab2c6ed5a0a1363ff56e6f5588aef60d2e5e656d1fd1f3e8cacbdc4e0510be13a92dfe9e2f1af25c85e778928d35c500",
+              "x": "3784162032946715964029045661947196252208032604648019817679190254663970518541",
+              "y": "20973174677285685160566224761601676419425910910351686180311743854382411007232"
+            },
+            "atoms": [
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  1000,
+                  0
+                ],
+                "credit_blinding": 12,
+                "credit_commitment": {
+                  "uncompressed": "0x040da1ccdff020cf5b49633373a823ff3c50a0c90f3e93c9161e713e9b5b2b37d81a4f74961841724af41ced3c4881cee0b72d43a6301cb18d703f20a47b9bb193",
+                  "x": "6165943402623082221624606226333309081976704828451202610153228945031659468760",
+                  "y": "11900519630405064348268869540745008555303485976119315068294482534525516362131"
+                },
+                "debit": [
+                  0,
+                  100
+                ],
+                "debit_blinding": 11,
+                "debit_commitment": {
+                  "uncompressed": "0x04006b77409275e752c625145a3a6056b90d0cd9ade626f21549b9227b82c3b0d40077fcac70895492c00b7578ea0a9f35139c448fea486e3da744f8065c1803a2",
+                  "x": "189875684607239212177122474464795190803911935390351475027252482460755407060",
+                  "y": "211998689750316809133041826379194324207432973891807947814899379184109880226"
+                },
+                "journal_commitment": "17171717171717171717171717171717",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "investor-a-subscription-row/7"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  0,
+                  100
+                ],
+                "credit_blinding": 20,
+                "credit_commitment": {
+                  "uncompressed": "0x0413e5d4153e9753eb96383a447544fbb0f00e15ac0c5c8ccb7f0b72d5cea428722faaa4beac123dd48d1a19a6481f27a0510b689ace59795bd4e496f460dcc89d",
+                  "x": "9000015843892325735403483275857997440275482437142655355682223386863784437874",
+                  "y": "21560204911337804295583955472452944970911153227857987221497953375168306661533"
+                },
+                "debit": [
+                  1000,
+                  0
+                ],
+                "debit_blinding": 21,
+                "debit_commitment": {
+                  "uncompressed": "0x042e21680a9decd50c73ad116c47f7c3f307aefec9ab94fd9030f4d131b4737dc228cc9dee8c6f1745dae0cf1082ecf715e2454a8ef4126bc813e6de99278932f2",
+                  "x": "20865415055818930354999897227119099683186890384024102139144543176386862611906",
+                  "y": "18454040749978619821660441645153231342025889971038604929947247098174470959858"
+                },
+                "journal_commitment": "29292929292929292929292929292929",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "issuer-a-recognition-row/19"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  500,
+                  0
+                ],
+                "credit_blinding": 33,
+                "credit_commitment": {
+                  "uncompressed": "0x042d0c906d6b7e1e82e0d4fe78b12b725f42ad59a31b4cc4efa3aeb9b28615f51f0310239e249fa297ab9f4253b3516f7523aec2640866b888c780376f22925296",
+                  "x": "20376277152452750281128370132551965992010802663952055082628585569581197030687",
+                  "y": "1385453923436876976162223465646606066144957730284293100322889382055694717590"
+                },
+                "debit": [
+                  0,
+                  50
+                ],
+                "debit_blinding": 31,
+                "debit_commitment": {
+                  "uncompressed": "0x042c8e023d1468a1cf8ee3ff380332f94d2dd7ff351dcc249bb4284f2c8c00ce6a2d8c016866c0f8d73af6101e476772f4047b2ae348f53ea19ba1a64257994ddd",
+                  "x": "20152673071060980912294041289227618239137295953407021547521903181529685741162",
+                  "y": "20601446491717999297773399221151396061784905844969977189731966908993906494941"
+                },
+                "journal_commitment": "31313131313131313131313131313131",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "investor-b-subscription-row/8"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  0,
+                  50
+                ],
+                "credit_blinding": 40,
+                "credit_commitment": {
+                  "uncompressed": "0x0418679e8c2eef35a72b96d55ea407b0dd0ed970a801865c6cefa56e404a42fcbb2d49ed9408a1793da733647720263faaa90aed95336e2466a661822848e2d52d",
+                  "x": "11038587868928663748189557526022873417611257885538817512062951511971940465851",
+                  "y": "20484697726841030353058427310435512033281509487505124116530543825861919036717"
+                },
+                "debit": [
+                  500,
+                  0
+                ],
+                "debit_blinding": 43,
+                "debit_commitment": {
+                  "uncompressed": "0x0429b1b015b8d33da7ba7f489111afb132e4b6cf3903fef71e346ec1b2b26b2fda1c9797f70d3a970e119f1e965374259c69099e6abf2603b373924d73b78dee61",
+                  "x": "18858774015359972207515362072980730082935998630122217183738693920473389674458",
+                  "y": "12932602491311349413288674062041803122818155620708250790341183045076113026657"
+                },
+                "journal_commitment": "37373737373737373737373737373737",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "issuer-b-recognition-row/20"
+              }
+            ],
+            "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+            "basis_type_ids": [
+              "USDC:arc-testnet:atomic",
+              "SAFE:issuer:series-a:unit"
+            ],
+            "commitment_set_commitment": "11828161753588383608511287713191948800523963973941502891710636737949306785447",
+            "description": "two approved subscriptions clear USDC and SAFE units per basis",
+            "expect": {
+              "accepted": true,
+              "reason": "accepted"
+            },
+            "id": "fundraise-good-batch",
+            "profile_id": "vnet-bn254-g1/1",
+            "transition_set_commitment": "9298707835305159247032141471909732946481652324668351677401198201140368335773"
+          }
+        }
+      }
+    },
+    {
+      "description": "the fundraising transcript is otherwise bound but VNET amount-vector clearing fails",
+      "expect": {
+        "accepted": false,
+        "reason": "vnet_zero_opening"
+      },
+      "id": "fundraise-demo-vnet-false-net-reject",
+      "packet": {
+        "admissibility_report": {
+          "accepted": [
+            {
+              "accepted": true,
+              "admissibility_ref": "cre-admissibility:investor-a:001",
+              "investor_id": "investor-a"
+            },
+            {
+              "accepted": true,
+              "admissibility_ref": "cre-admissibility:investor-b:001",
+              "investor_id": "investor-b"
+            }
+          ],
+          "policy_hash": "c4ab37f727d3ed57b8bb150bb422312eadad832144c8d0835248f150dcda3715",
+          "schema": "aac.fundraise-demo.admissibility-report.v1"
+        },
+        "mint_authorization": {
+          "issued_unit_total": 150,
+          "mint_recipient_set_commitment": "29c163f11deb254a1c43f13e2f4a32e3332f97be23e68087e9a9a0f9a1a1bcf3",
+          "recipients": [
+            {
+              "investor_id": "investor-a",
+              "issued_units": 100,
+              "recipient": "0xA11ce00000000000000000000000000000000039"
+            },
+            {
+              "investor_id": "investor-b",
+              "issued_units": 50,
+              "recipient": "0xB0b000000000000000000000000000000000039"
+            }
+          ],
+          "round_id": "aac-seed-2026-001",
+          "schema": "aac.fundraise-demo.mint-authorization.v1",
+          "token_contract": "0xAac000000000000000000000000000000000039"
+        },
+        "public_inputs": {
+          "context_commitment": "0633da5423e7e17ccca84ca8f54dc12fdcb02322cde0408587e283995b655962",
+          "issued_unit_total": 150,
+          "issuer_name": "issuer-a.private-row",
+          "mint_recipient_set_commitment": "29c163f11deb254a1c43f13e2f4a32e3332f97be23e68087e9a9a0f9a1a1bcf3",
+          "next_balance_sheet_root": "397f6dbf1508863b1cc47f7a40ede33c0a884fe5c33cefb1a235e296296d2f7b",
+          "next_cap_table_root": "5d300f345039acd9a9cc3579a12196db27e79745df443b46f7bc2471ea6062ef",
+          "prev_balance_sheet_root": "87cf442c583edd149cb3144007eb696c1f0f25ecbd24686846202947818ba4ce",
+          "prev_cap_table_root": "42057a2fe3f27a81492ac4ce05d7a3776e393aebf48ab0885c1d29e2c2575f14",
+          "round_id": "aac-seed-2026-001",
+          "settlement_amount_total": 1500,
+          "subscription_set_commitment": "d93b120236d3a36cb1a9f93e9f67b192f23c8a742e5f6e26c58d29569d4193be",
+          "token_contract": "0xAac000000000000000000000000000000000039",
+          "transition_set_commitment": "95f7ef07792bd9439bcc1e98d23c36170e22c257616054a0a17fd6f507d07f61",
+          "vnet_public_commitment": "4000da19c3ce12382dca702ad88a27f1da0ab41893da9c045078699797cefe78"
+        },
+        "round_policy": {
+          "admissibility_policy_hash": "c4ab37f727d3ed57b8bb150bb422312eadad832144c8d0835248f150dcda3715",
+          "issued_unit_type_id": "SAFE:issuer:series-a:unit",
+          "issuer_name": "issuer-a.private-row",
+          "max_issued_units": 200,
+          "max_settlement_amount": 2000,
+          "price_denominator": 1,
+          "price_numerator": 10,
+          "round_id": "aac-seed-2026-001",
+          "settlement_adapter_hash": "f6f4097006a5487eeb59780f65336ec3d6eb1420a854a3b95f26a16d3433e426",
+          "settlement_asset_type_id": "USDC:arc-testnet:atomic",
+          "token_contract": "0xAac000000000000000000000000000000000039",
+          "transfer_policy_hash": "64f2996ebeb8c4628dba977af97f45e4d7bf558623e0d9c0167419e6558f4586"
+        },
+        "settlement_report": {
+          "accepted": [
+            {
+              "amount": 1000,
+              "asset_type_id": "USDC:arc-testnet:atomic",
+              "investor_id": "investor-a",
+              "settlement_ref": "arc-usdc-payment:0xa001"
+            },
+            {
+              "amount": 500,
+              "asset_type_id": "USDC:arc-testnet:atomic",
+              "investor_id": "investor-b",
+              "settlement_ref": "arc-usdc-payment:0xb001"
+            }
+          ],
+          "adapter_hash": "f6f4097006a5487eeb59780f65336ec3d6eb1420a854a3b95f26a16d3433e426",
+          "schema": "aac.fundraise-demo.settlement-report.v1"
+        },
+        "subscriptions": [
+          {
+            "admissibility_ref": "cre-admissibility:investor-a:001",
+            "investor_id": "investor-a",
+            "issued_units": 100,
+            "mint_recipient": "0xA11ce00000000000000000000000000000000039",
+            "settlement_amount": 1000,
+            "settlement_ref": "arc-usdc-payment:0xa001",
+            "subscription_id": "sub-investor-a-001",
+            "subscription_nullifier": "0x31f4f93b6c2e19a001"
+          },
+          {
+            "admissibility_ref": "cre-admissibility:investor-b:001",
+            "investor_id": "investor-b",
+            "issued_units": 50,
+            "mint_recipient": "0xB0b000000000000000000000000000000000039",
+            "settlement_amount": 500,
+            "settlement_ref": "arc-usdc-payment:0xb001",
+            "subscription_id": "sub-investor-b-001",
+            "subscription_nullifier": "0x31f4f93b6c2e19b001"
+          }
+        ],
+        "vnet_link": {
+          "description": "transition links verify but VNET amount-vector zero-opening fails",
+          "expect": {
+            "accepted": false,
+            "reason": "zero_opening"
+          },
+          "id": "vnet-link-false-net-reject",
+          "link_certificates": [
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "f5fed6de1de7ca86c6e53a67c8e64cda3e8fb6d871c37e9f473748e3394da556",
+              "credit": [
+                1000,
+                0
+              ],
+              "debit": [
+                0,
+                100
+              ],
+              "journal_commitment": "17171717171717171717171717171717",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "investor-a-subscription-row/7"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "10d276bd687ac0d1a51d08d6c662c4d2da6648857c187763415e5ec3213a70eb",
+              "credit": [
+                0,
+                100
+              ],
+              "debit": [
+                1000,
+                0
+              ],
+              "journal_commitment": "29292929292929292929292929292929",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "issuer-a-recognition-row/19"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "88a2c4cedb2c28251052bfdf8a063079ad927ef3b394b253706a99024f15130c",
+              "credit": [
+                500,
+                0
+              ],
+              "debit": [
+                0,
+                50
+              ],
+              "journal_commitment": "31313131313131313131313131313131",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "investor-b-subscription-row/8"
+            },
+            {
+              "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+              "basis_type_ids": [
+                "USDC:arc-testnet:atomic",
+                "SAFE:issuer:series-a:unit"
+              ],
+              "certificate_hash": "8da2d939b92697a332a531f74c6bbd8ac21801b1fb7a2c6b12ef1c32dcbd7759",
+              "credit": [
+                0,
+                49
+              ],
+              "debit": [
+                500,
+                0
+              ],
+              "journal_commitment": "37373737373737373737373737373737",
+              "profile_id": "vnet-bn254-g1/1",
+              "transition_ref": "issuer-b-recognition-row/20"
+            }
+          ],
+          "transition_report": {
+            "accepted": [
+              {
+                "journal_commitment": "17171717171717171717171717171717",
+                "target": "TRANSITION/1",
+                "transition_ref": "investor-a-subscription-row/7"
+              },
+              {
+                "journal_commitment": "29292929292929292929292929292929",
+                "target": "TRANSITION/1",
+                "transition_ref": "issuer-a-recognition-row/19"
+              },
+              {
+                "journal_commitment": "31313131313131313131313131313131",
+                "target": "TRANSITION/1",
+                "transition_ref": "investor-b-subscription-row/8"
+              },
+              {
+                "journal_commitment": "37373737373737373737373737373737",
+                "target": "TRANSITION/1",
+                "transition_ref": "issuer-b-recognition-row/20"
+              }
+            ],
+            "schema": "aac.vnet-link-ref.transition-report.v1"
+          },
+          "vnet": {
+            "aggregate_blinding": "1",
+            "aggregate_opening": {
+              "uncompressed": "0x042788225e18e23d17f543de75a579e1b8e4be4d8dc4088d04461d0632e869b7721b6dd578bb52c1352c8e12709626bacaef87bad0014f03dc5ebf9b368a0eba32",
+              "x": "17880729491788591187853827599622431152502856604937153498610572567113594681202",
+              "y": "12406506568701944684434527970588325513116987482204788562579976606196228340274"
+            },
+            "atoms": [
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  1000,
+                  0
+                ],
+                "credit_blinding": 12,
+                "credit_commitment": {
+                  "uncompressed": "0x040da1ccdff020cf5b49633373a823ff3c50a0c90f3e93c9161e713e9b5b2b37d81a4f74961841724af41ced3c4881cee0b72d43a6301cb18d703f20a47b9bb193",
+                  "x": "6165943402623082221624606226333309081976704828451202610153228945031659468760",
+                  "y": "11900519630405064348268869540745008555303485976119315068294482534525516362131"
+                },
+                "debit": [
+                  0,
+                  100
+                ],
+                "debit_blinding": 11,
+                "debit_commitment": {
+                  "uncompressed": "0x04006b77409275e752c625145a3a6056b90d0cd9ade626f21549b9227b82c3b0d40077fcac70895492c00b7578ea0a9f35139c448fea486e3da744f8065c1803a2",
+                  "x": "189875684607239212177122474464795190803911935390351475027252482460755407060",
+                  "y": "211998689750316809133041826379194324207432973891807947814899379184109880226"
+                },
+                "journal_commitment": "17171717171717171717171717171717",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "investor-a-subscription-row/7"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  0,
+                  100
+                ],
+                "credit_blinding": 20,
+                "credit_commitment": {
+                  "uncompressed": "0x0413e5d4153e9753eb96383a447544fbb0f00e15ac0c5c8ccb7f0b72d5cea428722faaa4beac123dd48d1a19a6481f27a0510b689ace59795bd4e496f460dcc89d",
+                  "x": "9000015843892325735403483275857997440275482437142655355682223386863784437874",
+                  "y": "21560204911337804295583955472452944970911153227857987221497953375168306661533"
+                },
+                "debit": [
+                  1000,
+                  0
+                ],
+                "debit_blinding": 21,
+                "debit_commitment": {
+                  "uncompressed": "0x042e21680a9decd50c73ad116c47f7c3f307aefec9ab94fd9030f4d131b4737dc228cc9dee8c6f1745dae0cf1082ecf715e2454a8ef4126bc813e6de99278932f2",
+                  "x": "20865415055818930354999897227119099683186890384024102139144543176386862611906",
+                  "y": "18454040749978619821660441645153231342025889971038604929947247098174470959858"
+                },
+                "journal_commitment": "29292929292929292929292929292929",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "issuer-a-recognition-row/19"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  500,
+                  0
+                ],
+                "credit_blinding": 33,
+                "credit_commitment": {
+                  "uncompressed": "0x042d0c906d6b7e1e82e0d4fe78b12b725f42ad59a31b4cc4efa3aeb9b28615f51f0310239e249fa297ab9f4253b3516f7523aec2640866b888c780376f22925296",
+                  "x": "20376277152452750281128370132551965992010802663952055082628585569581197030687",
+                  "y": "1385453923436876976162223465646606066144957730284293100322889382055694717590"
+                },
+                "debit": [
+                  0,
+                  50
+                ],
+                "debit_blinding": 31,
+                "debit_commitment": {
+                  "uncompressed": "0x042c8e023d1468a1cf8ee3ff380332f94d2dd7ff351dcc249bb4284f2c8c00ce6a2d8c016866c0f8d73af6101e476772f4047b2ae348f53ea19ba1a64257994ddd",
+                  "x": "20152673071060980912294041289227618239137295953407021547521903181529685741162",
+                  "y": "20601446491717999297773399221151396061784905844969977189731966908993906494941"
+                },
+                "journal_commitment": "31313131313131313131313131313131",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "investor-b-subscription-row/8"
+              },
+              {
+                "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+                "basis_type_ids": [
+                  "USDC:arc-testnet:atomic",
+                  "SAFE:issuer:series-a:unit"
+                ],
+                "credit": [
+                  0,
+                  49
+                ],
+                "credit_blinding": 40,
+                "credit_commitment": {
+                  "uncompressed": "0x041441918b14587c496123f62a21b3655804ee565b42ef61caa2e228ba49f89b841ca762a6eb6917492cde524ba40280d0f9255c91ce931adc432da4bfed1d2807",
+                  "x": "9162106533671440769137509619096874923996439950366666028151974966261328681860",
+                  "y": "12960504091434201735395097888160076502906846463322660086403937490763941488647"
+                },
+                "debit": [
+                  500,
+                  0
+                ],
+                "debit_blinding": 43,
+                "debit_commitment": {
+                  "uncompressed": "0x0429b1b015b8d33da7ba7f489111afb132e4b6cf3903fef71e346ec1b2b26b2fda1c9797f70d3a970e119f1e965374259c69099e6abf2603b373924d73b78dee61",
+                  "x": "18858774015359972207515362072980730082935998630122217183738693920473389674458",
+                  "y": "12932602491311349413288674062041803122818155620708250790341183045076113026657"
+                },
+                "journal_commitment": "37373737373737373737373737373737",
+                "profile_id": "vnet-bn254-g1/1",
+                "transition_link": {
+                  "opening_matches_journal": true
+                },
+                "transition_ref": "issuer-b-recognition-row/20"
+              }
+            ],
+            "basis_commitment": "10723217609491833595150728704716000768030802811632416392548361375388669902010",
+            "basis_type_ids": [
+              "USDC:arc-testnet:atomic",
+              "SAFE:issuer:series-a:unit"
+            ],
+            "commitment_set_commitment": "10000148523332963663640303480852733132147303538540360168361549407295818197794",
+            "description": "points are well-formed but SAFE unit credits do not net",
+            "expect": {
+              "accepted": false,
+              "reason": "zero_opening"
+            },
+            "id": "fundraise-false-net-reject",
+            "profile_id": "vnet-bn254-g1/1",
+            "transition_set_commitment": "9298707835305159247032141471909732946481652324668351677401198201140368335773"
+          }
+        }
+      }
+    }
+  ]
+}

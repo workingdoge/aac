@@ -1,0 +1,1 @@
+cascade scoped: journal_commitment + event_commitment byte-identical (kernel/120 untouched); participant_set + event_nullifier changed (tags 124/125)

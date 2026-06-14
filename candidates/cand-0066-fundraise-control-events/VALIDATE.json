@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0066-fundraise-control-events",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "d36744b1b2837a710a1e71a2482912d4b3617e9c263657cc0fefc5a3ad23b90d",
+    "META": "2df927210f6060f44d539a4b24527da035a0a7a8087eb103c92fbcaebf0aa74b"
+  }
+}

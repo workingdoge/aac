@@ -1,0 +1,8 @@
+cargo/sites/ledger/specs/applications/FUNDRAISE-CLEARING-1.md	sites/ledger/specs/applications/FUNDRAISE-CLEARING-1.md
+cargo/sites/ledger/specs/applications/reference/fundraise_demo.py	sites/ledger/specs/applications/reference/fundraise_demo.py
+cargo/sites/ledger/specs/applications/vectors/FUNDRAISE-DEMO-1.json	sites/ledger/specs/applications/vectors/FUNDRAISE-DEMO-1.json
+cargo/fundraise-runtime/package.json	fundraise-runtime/package.json
+cargo/fundraise-runtime/README.md	fundraise-runtime/README.md
+cargo/fundraise-runtime/src/index.mjs	fundraise-runtime/src/index.mjs
+cargo/fundraise-runtime/src/index.d.ts	fundraise-runtime/src/index.d.ts
+cargo/fundraise-runtime/test/run-tests.mjs	fundraise-runtime/test/run-tests.mjs

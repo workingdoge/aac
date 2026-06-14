@@ -1,0 +1,7 @@
+first_root          = "0x29060c36dcff93bdc306c8223a8944d7f79b3f518462c3f2e274126a0b9283c6"
+last_root           = "0x17e2d4d910ec868a9100d23505a354404133b17be7e5e8d0ed1d779de8230651"
+sequence_commitment = "0x0324a319d844dbfff73d5a05e46a2b79c44fea1e5799021f243c8e46a749d15c"
+count               = "1"
+old_values          = ["10", "20", "30", "40"]
+new_value           = "25"
+low_index           = "2"

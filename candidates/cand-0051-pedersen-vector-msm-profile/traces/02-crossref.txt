@@ -1,0 +1,1 @@
+profiles index and VNET/1 carry both BN254 reference and PEDERSEN ProveKit paths

@@ -1,0 +1,19 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0036-naming-layering",
+  "evaluated_at": "2026-06-14T02:50:20Z",
+  "task": "land Design Note 0003 (non-normative): the kernel/app naming + layering vocabulary after the cand-0033 boundary law -- EVENT-COMPLETE/1 -> EVENT/1 (+ its statement), rulebook -> Posting Program, kernel {pacioli,hash,ledger,transition,nullify} vs application {posting-program,receipt,event} layer sets, the circuits crate rename plan, and NET/1 vs VNET/1 placement (VNET binds to TRANSITION/1 journal_commitments but lives outside it). Witnessed: the note carries the decided vocabulary + the EVENT/1 statement + the non-normative marker, every referenced artifact resolves in the live tree, the README indexes 0003, and a mutant stripped of the statement is caught.",
+  "checks": {
+    "content": "pass",
+    "crossref": "pass",
+    "mutant": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "1fb5686f565017901558a35ea00f9695e8001551fc8beed35b77428797869f26",
+    "traces_sha256": "e2b4965b1593fbf96ecd689ddc07cf68405d937d526a7626368a1830433fb1ac",
+    "body_sha256": "d60870669ed6875417b5169aee438d32bc6addc2e0dd2c4e5224721aa2a3b495",
+    "attestation": "c517a2c3b44815af1a431b18dc575470a5dff2bb31bb94b686a53e90f1f71474"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0061-live-demo-ready-state",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "6554297eee9c9d023e5da9ca0b0ce790df8eb44fe00b6e62f79165d17ebccbda",
+    "META": "dd62cc2d2dedc85ea2d467c08980d518be99781abd53807382cac9ca8377bb2a"
+  }
+}

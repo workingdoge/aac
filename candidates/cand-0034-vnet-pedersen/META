@@ -1,0 +1,5 @@
+candidate_id: cand-0034-vnet-pedersen
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T02:06:13Z
+intent: Define VNET/1 as a non-enshrined amount-vector netting target: Pedersen vector commitments per basis, zero-opening proof, and explicit linkage back to posted TRANSITION/1 journal commitments.
+status: landed

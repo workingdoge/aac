@@ -1,0 +1,19 @@
+[aac_vnet_provekit] Running 8 test functions
+[aac_vnet_provekit] Testing rejects_false_net ... [0m[32mok[0m
+[aac_vnet_provekit] Testing accepts_true_net ... [0m[32mok[0m
+[aac_vnet_provekit] Testing rejects_mismatched_transition_set_commitment ... [0m[32mok[0m
+[aac_vnet_provekit] Testing rejects_wrong_generator_set_id ... [0m[32mok[0m
+[aac_vnet_provekit] Testing rejects_mismatched_transition_link ... [0m[32mok[0m
+[aac_vnet_provekit] Testing rejects_out_of_bound_coordinate ... [0m[32mok[0m
+[aac_vnet_provekit] Testing rejects_bad_opening ... [0m[32mok[0m
+[aac_vnet_provekit] Testing print_public_inputs ... [0m[32mok[0m
+--- print_public_inputs stdout ---
+0x1954e5cc33780be8646e73e066d5e4fa6777454ba133cba74e4ebf2ce0bb1e87
+0x12ec609f776f7694164a22064e8f66fcad5bf9f148740e9f4070c662f3dba75e
+0x14a94b4b9a511bbb36a024081fbc0edbbc41d71ac630962feb053bd004107a24
+0x184127cf9ef264e4be95cf3bd518eac486117cc564c895861043aa775e6a29cc
+0x11a6a0193f74d35ed8d23be9cc94985cd3fc6ed4d06be175358fe109c37aac44
+0x24cf2fbb1603cc7904c853897da323808784b8bec50d12ea51bff584d2fd9f1a
+false
+----------------------------------
+[aac_vnet_provekit] [0m[32m8 tests passed[0m

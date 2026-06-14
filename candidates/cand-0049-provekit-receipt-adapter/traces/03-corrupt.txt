@@ -1,0 +1,1 @@
+adapter rejects verifier-key tamper and bad timings while satisfying live-proof workflow policy

@@ -1,0 +1,1 @@
+nargo test --workspace green (8 crates incl. receipt+ledger); transition+nullify+event_complete witnesses solve

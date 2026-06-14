@@ -1,0 +1,1 @@
+VNET/1 spec carries commitment profile, transition linkage, zero opening, ABI, verifier contract, and rejection boundaries

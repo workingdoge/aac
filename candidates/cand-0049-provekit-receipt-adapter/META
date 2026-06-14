@@ -1,0 +1,5 @@
+candidate_id: cand-0049-provekit-receipt-adapter
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T07:23:45Z
+intent: Add a dependency-free ProveKit verifier receipt adapter that normalizes accepted ProveKit WHIR/Groth16 proof results into fundraise-workflow verifier receipts, allowing require_live_proof workflows without touching flake/Nix dependencies.
+status: landed

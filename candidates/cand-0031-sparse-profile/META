@@ -1,0 +1,5 @@
+candidate_id: cand-0031-sparse-profile
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T00:11:23Z
+intent: Define a sparse finite-basis amount/profile representation: fixed slots of per-basis T-account cells with active flags, basis-id bounds, canonical ordering/uniqueness, zero inactive slots, and target-version consequences; no circuit rewrite yet.
+status: landed

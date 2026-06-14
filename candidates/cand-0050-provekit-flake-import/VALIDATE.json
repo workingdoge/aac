@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0050-provekit-flake-import",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "70106c0a84a8f1e835ccf0a3fa01efc166b58a986a38cedb3ce0831c264b3e39",
+    "LANDING": "ad6d4abf9251858bc6e2aafb9c6ed009b525913f971c1cc85f704214ffc785d7",
+    "META": "f143410cb16a3b504ecfc5e58b8b73db404abbf3660baa7e1fee37e64b4cb8d5"
+  }
+}

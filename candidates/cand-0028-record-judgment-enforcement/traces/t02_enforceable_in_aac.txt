@@ -1,0 +1,21 @@
+shipped fixtures: 8 (declare 8)
+statement: record-judgments-v0.md
+  result: accepted
+fixture: record-meta-telescope-pass-v0.md
+  result: accepted
+fixture: record-meta-telescope-fail-v0.md
+  result: accepted
+fixture: record-scores-sigma-pass-v0.md
+  result: accepted
+fixture: record-scores-sigma-fail-v0.md
+  result: accepted
+fixture: record-queue-checking-mode-pass-v0.md
+  result: accepted
+fixture: record-queue-checking-mode-fail-v0.md
+  result: accepted
+fixture: record-landing-receipt-pass-v0.md
+  result: accepted
+fixture: record-vocab-atom-fail-v0.md
+  result: accepted
+record-judgment-check: ok
+record-judgment-check --all rc=0 (declare 0 — enforceable against aac's statement)

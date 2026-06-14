@@ -1,0 +1,2 @@
+Usage: aac-fundraise-demo [--repo-root PATH] [--provekit-bin PATH] [--out PATH] [--keep-workdir]
+       aac-fundraise-demo --settle-local --rpc-url URL [--forge-bin PATH] [--cast-bin PATH] [--solc-bin PATH]

@@ -1,0 +1,5 @@
+fundraise-demo-good: pass accepted=True reason=accepted
+fundraise-demo-price-mismatch-reject: pass accepted=False reason=price_mismatch
+fundraise-demo-missing-settlement-reject: pass accepted=False reason=settlement_report_missing
+fundraise-demo-token-mismatch-reject: pass accepted=False reason=token_contract_mismatch
+fundraise-demo-vnet-false-net-reject: pass accepted=False reason=vnet_zero_opening

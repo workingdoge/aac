@@ -1,0 +1,4 @@
+component missing default API base helper
+component does not use same-origin localhost API
+component lost explicit runner fallback
+cross-origin-default mutant rejected

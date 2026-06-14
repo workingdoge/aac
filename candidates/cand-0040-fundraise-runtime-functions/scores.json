@@ -1,0 +1,20 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0040-fundraise-runtime-functions",
+  "evaluated_at": "2026-06-14T04:37:47Z",
+  "task": "Add a function-first JavaScript/TypeScript-facing fundraising runtime; JSON transcript is fixture/audit receipt; Python is reference oracle only.",
+  "checks": {
+    "text": "pass",
+    "runtime": "pass",
+    "oracle": "pass",
+    "corrupt": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "56498d7a8a5312fb174234e092c578818dc48531fd2e501ad7abe95d060d5391",
+    "traces_sha256": "9a70dec159834015ff2e01dc720d253cd8daaf4536c3e5e15694051aec43dadf",
+    "body_sha256": "2a1b717a1b5614ce2019a80f2cbe2d74534de057be11b24ed6227b106d043fbc",
+    "attestation": "fbb708b96987fbe1f381c1bb199c9e7f24d5691669803af9aa7b31777ec37f4e"
+  }
+}

@@ -1,0 +1,1 @@
+mutant rejected when no-EmbeddedCurveAdd finding is removed

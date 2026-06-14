@@ -1,0 +1,19 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0033-kernel-boundary-law",
+  "evaluated_at": "2026-06-14T02:09:56Z",
+  "task": "land tools/kernel-boundary-check.sh -- a read-only ROOT-relative court for the kernel/app crate boundary (4/REG S5): KERNEL = {pacioli,hash,ledger,transition,nullify}, each kernel crate may depend on / import only KERNEL crates + std; a Nargo.toml dep or use naming a non-kernel crate is refused typed (witnessId minted). Enrolled in evaluate-landed.sh so every post-land re-checks the boundary. Witnessed: structural (ROOT-relative, KERNEL pinned, typed witnesses, [[ -f ]]-guard-enrolled), CLEAN on the live post-cand-0032 tree, and NON-VACUOUS (a manifest-dep mutant AND a use-import mutant are both refused, exit 1).",
+  "checks": {
+    "logic": "pass",
+    "clean": "pass",
+    "mutant": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "cb54a0542a0d0002a07a9ec6ef8a2e834169d48a370acbc68236d99bdc5036ba",
+    "traces_sha256": "8effeceb44f5964950724b7aa47b5b38c0820c1b9b1b8c62b7ccef057a41cdf3",
+    "body_sha256": "7905d1e48259b70a0d597f7d6ac5da02876d6c2b7747cff5d128280bf4ecadf9",
+    "attestation": "440061c5e07391f9b34e47b1e24ea0c142e0189f4712d9792cfb15b2a105d229"
+  }
+}

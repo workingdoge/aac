@@ -1,0 +1,1 @@
+workflow entrypoint, verifier guard, live-proof guard, and boundary text are present

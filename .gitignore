@@ -39,3 +39,4 @@ web/src/content/docs/specs/
 
 # transient agent worktrees (boat dispatch / background agents)
 .claude/worktrees/
+.worktrees/

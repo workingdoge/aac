@@ -1,0 +1,1 @@
+all referenced artifacts resolve (EVENT-COMPLETE-1.md, circuits/{rulebook,event-complete,receipt}, kernel-boundary-check.sh, DN0001); README indexes 0003

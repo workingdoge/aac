@@ -1,0 +1,1 @@
+component uses simple GET runner fetch with URL fallback controls

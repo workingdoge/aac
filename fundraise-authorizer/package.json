@@ -1,0 +1,21 @@
+{
+  "name": "@aac/fundraise-authorizer",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Dependency-free authorizer seam for FUNDRAISE-CLEARING/1 settlement signing requests.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.mjs"
+    }
+  },
+  "scripts": {
+    "test": "node test/run-tests.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

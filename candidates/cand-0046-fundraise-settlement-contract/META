@@ -1,0 +1,5 @@
+candidate_id: cand-0046-fundraise-settlement-contract
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T06:38:57Z
+intent: Add a thin authorized-mint settlement contract path for FUNDRAISE-CLEARING/1: runtime emits EVM-shaped mint authorization fields, Solidity verifies signer/round/token/recipient-set/replay, and mints a demo restricted receipt token.
+status: landed

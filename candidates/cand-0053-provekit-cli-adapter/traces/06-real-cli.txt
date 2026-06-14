@@ -1,0 +1,1 @@
+native CLI ProveKit receipt accepted; proof=0xa63d2401d66a4486 vk=0x051a9737c6c606d6

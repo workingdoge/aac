@@ -1,0 +1,8 @@
+cargo/circuits/receipt/Nargo.toml circuits/receipt/Nargo.toml
+cargo/circuits/receipt/src/lib.nr circuits/receipt/src/lib.nr
+cargo/circuits/ledger/src/lib.nr circuits/ledger/src/lib.nr
+cargo/circuits/event-complete/Nargo.toml circuits/event-complete/Nargo.toml
+cargo/circuits/event-complete/src/main.nr circuits/event-complete/src/main.nr
+cargo/circuits/event-complete/Prover.toml circuits/event-complete/Prover.toml
+cargo/circuits/Nargo.toml circuits/Nargo.toml
+cargo/sites/ledger/specs/registers/R1.md sites/ledger/specs/registers/R1.md

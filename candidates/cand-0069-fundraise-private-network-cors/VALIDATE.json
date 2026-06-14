@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0069-fundraise-private-network-cors",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "c7da437a0861212c5d1427f80ee1b61df5e808ff720e05a5cd96048644251fe9",
+    "META": "e39228074f03e39472d8bdb451dbcb1da8eac784c6eb213e1e7dd1e07291a21a"
+  }
+}

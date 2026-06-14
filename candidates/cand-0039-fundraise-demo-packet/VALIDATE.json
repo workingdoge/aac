@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0039-fundraise-demo-packet",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "29d214f26f472ae4f72f0ea8a795c0fdc8194acbb3f701cba018b34c1d6b424c",
+    "META": "9ea136d50d99e23ee73961dcd6c1b9b6c6826a438bf84eea86434191e8fd6358"
+  }
+}

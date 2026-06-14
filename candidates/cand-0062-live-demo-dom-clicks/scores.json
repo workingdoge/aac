@@ -1,0 +1,19 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0062-live-demo-dom-clicks",
+  "evaluated_at": "2026-06-14T11:18:04Z",
+  "task": "Attach explicit DOM click listeners to the fundraise live controls.",
+  "checks": {
+    "source": "pass",
+    "build": "pass",
+    "scope": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "9c4c33db4ff1c109a25f1d079207e83c6525762a9064bc107edf8a5d793e3413",
+    "traces_sha256": "4a650d13f682e7634414ba13c28cd6b235f296ea98da22bea057b85ecb35e06b",
+    "body_sha256": "e24a99327abb29c2649a1a8fb0d3a3902b451291d9a47990afadafe2475578bd",
+    "attestation": "f87d03df80c8f01fefdbd37d9bd01031491859ceafaf0d9066a3ddf906e73ed2"
+  }
+}

@@ -1,0 +1,1 @@
+runner exposes a deterministic summary projection with explicit verifier boundary

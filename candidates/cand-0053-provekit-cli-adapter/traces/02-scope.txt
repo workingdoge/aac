@@ -1,0 +1,1 @@
+landing scope is adapter package only; no generated artifacts or review-guard paths

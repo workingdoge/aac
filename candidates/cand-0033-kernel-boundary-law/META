@@ -1,0 +1,5 @@
+candidate_id: cand-0033-kernel-boundary-law
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T01:47:49Z
+intent: Land tools/kernel-boundary-check.sh -- a read-only, ROOT-relative court for the kernel/app crate boundary (4/REG S5: the base MUST NOT require an application target; the recompute-vs-consume seam, cand-0030/0032). The law: each KERNEL circuit crate {pacioli,hash,ledger,transition,nullify} may depend on / import only KERNEL crates + std; any Nargo.toml path-dep or 'use' naming a non-kernel workspace crate (rulebook, receipt, event_complete, or any future schema/receipt lib) is REFUSED typed (witness-id minted). Sound via the manifest alone (Noir requires a dep to reference a crate); the 'use' scan is defense-in-depth. Enrolled in tools/eval/evaluate-landed.sh so every post-land re-checks the boundary -- a future candidate re-introducing a kernel->app edge FAILs. tools/ cargo -> independent REVIEW required (tier guard). Eval: checker green on the live post-cand-0032 tree; a mutant (inject receipt dep into a kernel crate) FAILs; enrollment present.
+status: landed

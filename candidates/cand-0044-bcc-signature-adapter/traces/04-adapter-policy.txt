@@ -1,0 +1,1 @@
+BCC typed-data adapter policy accepts configured signatures and rejects missing/bad adapters

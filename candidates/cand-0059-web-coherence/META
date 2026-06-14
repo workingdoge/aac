@@ -1,0 +1,5 @@
+candidate_id: cand-0059-web-coherence
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T10:40:00Z
+intent: Repair web site coherence: publish missing applications/profiles, fix stale internal links, and reorganize navigation around the current demo stack.
+status: landed

@@ -1,0 +1,1 @@
+ledger slimmed to journal_commitment+TAG_JOURNAL; receipt holds participant_set/event_nullifier at 124/125; consumers+workspace+R1 rewired

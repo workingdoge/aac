@@ -1,0 +1,1 @@
+non-vacuous: manifest-dep, use-import, AND reordered-key (path-not-first) edges all refused (exit 1, typed witnesses)

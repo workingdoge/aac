@@ -1,0 +1,19 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0034-vnet-pedersen",
+  "evaluated_at": "2026-06-14T02:09:02Z",
+  "task": "Define VNET/1 as a Raw non-enshrined application target for amount-vector netting across posted TRANSITION/1 journals: Pedersen vector commitments with basis-bound generators, explicit transition journal linkage, aggregate zero-opening proof A=R*H, atom-set commitments, verifier contract/context checks, rejection requirements, and EVENT-COMPLETE/index cross-references. No circuit, registry, or R1 tag allocation.",
+  "checks": {
+    "vnet_spec": "pass",
+    "crossrefs": "pass",
+    "corrupt": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "ff1aa7d9d10c6175e0da3223242bbf2c88cd8cea7f0b300fa773678c5305cf3d",
+    "traces_sha256": "7b5458ce1cfc58abe08b4636bb2153815d34e724f8067aa26f0c4ba1c46bda62",
+    "body_sha256": "0a2396d9e86de00a868ca42acdde6a5afb11386135fc291a5254e6a5989a54d3",
+    "attestation": "d24bb6bf01c82860100b2ee9f0319daed790cb3bb06705f3d595ca92b4feeb24"
+  }
+}

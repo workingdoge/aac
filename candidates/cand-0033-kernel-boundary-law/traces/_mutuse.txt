@@ -1,0 +1,1 @@
+{"failed_judgment": "kernel-app crate boundary (cand-0033)", "obstruction_class": "kernel-app-boundary-violation", "lawRef": "4/REG S5 (base MUST NOT require an application target)", "tokenPath": "ledger.lib.nr.receipt", "reason": "kernel crate 'ledger' imports non-kernel crate 'receipt' (use receipt::...)", "witnessId": "w1_iu0ibep3rttj079pfbpf9s92rutqt4n8ibnahs0c6rqopv404lgg"}

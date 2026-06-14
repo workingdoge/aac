@@ -1,0 +1,1 @@
+mutant rejected when the VNET zero-opening requirement is removed

@@ -1,0 +1,5 @@
+candidate_id: cand-0058-fundraise-root-layout-polish
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T10:25:34Z
+intent: Polish the fundraise demo private-root rows so before/after commitments do not wrap vertically at desktop widths.
+status: landed

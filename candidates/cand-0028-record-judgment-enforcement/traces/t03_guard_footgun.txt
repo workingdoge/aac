@@ -1,0 +1,2 @@
+BEFORE: evaluate-landed enrolls record-judgments guarded by [[ -f tools/record-judgment-check.sh ]]; that file is ABSENT in live aac -> member SILENTLY SKIPPED (the footgun)
+AFTER: this candidate LANDS tools/record-judgment-check.sh -> guard flips true -> member runs post-land

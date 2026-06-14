@@ -1,0 +1,2 @@
+[nullify] Circuit witness successfully solved
+[nullify] Witness saved to target/nullify.gz

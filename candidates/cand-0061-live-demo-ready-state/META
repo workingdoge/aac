@@ -1,0 +1,5 @@
+candidate_id: cand-0061-live-demo-ready-state
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T11:09:24Z
+intent: Make the fundraise UI open in a ready-to-run state instead of a fully populated captured receipt, so the live proof action is visible and credible.
+status: landed

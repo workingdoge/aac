@@ -1,0 +1,24 @@
+{
+  "name": "@aac/fundraise-demo-runner",
+  "version": "0.0.0",
+  "private": true,
+  "description": "One-command runner and localhost API for the AAC fundraising demo: ProveKit proof, live workflow receipt, and settlement action JSON.",
+  "type": "module",
+  "bin": {
+    "aac-fundraise-demo": "./bin/fundraise-demo.mjs"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.mjs"
+    }
+  },
+  "scripts": {
+    "test": "node test/run-tests.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

@@ -1,0 +1,1 @@
+nargo test green workspace-wide; transition+nullify+event_complete witnesses still solve

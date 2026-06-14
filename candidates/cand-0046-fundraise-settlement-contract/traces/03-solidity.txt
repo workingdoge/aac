@@ -1,0 +1,23 @@
+boat-governed project
+  contract: WORKER.md
+  backlog:  candidates/QUEUE.md
+  runner:   tools/loop
+verify the Lean spec (machine-checked, zero sorries):
+  (cd sites/ledger/statements && lake exe cache get && lake build)
+nargo version = 1.0.0-beta.14
+noirc version = 1.0.0-beta.14+60ccd48e18ad8ce50d5ecda9baf813b712145051
+bb v2.1.8
+No files changed, compilation skipped
+
+Ran 8 tests for test/FundraiseSettlement.t.sol:FundraiseSettlementTest
+[PASS] test_BadSignerReverts() (gas: 28775)
+[PASS] test_IssuedTotalMismatchReverts() (gas: 20386)
+[PASS] test_ReplayReverts() (gas: 137919)
+[PASS] test_RoundMismatchReverts() (gas: 17433)
+[PASS] test_TamperedRecipientAfterSignatureReverts() (gas: 28799)
+[PASS] test_TokenMismatchReverts() (gas: 17742)
+[PASS] test_ValidAuthorizationMintsAndRecordsReplay() (gas: 133968)
+[PASS] test_ZeroRuntimeDigestReverts() (gas: 17752)
+Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 12.03ms (26.32ms CPU time)
+
+Ran 1 test suite in 18.75ms (12.03ms CPU time): 8 tests passed, 0 failed, 0 skipped (8 total tests)

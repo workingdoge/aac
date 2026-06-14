@@ -1,0 +1,1 @@
+astro build OK (); Lit-safe constructor initialization bundled

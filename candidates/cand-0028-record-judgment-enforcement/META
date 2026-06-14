@@ -1,0 +1,5 @@
+candidate_id: cand-0028-record-judgment-enforcement
+cycle_id: aac-2026-06-13
+opened: 2026-06-13T21:00:19Z
+intent: ship tools/record-judgment-check.sh and its 8 record-* fixtures so aac actually enforces premath.record-judgments.v0 — aac enrolls run_suite record-judgments in evaluate-landed but the checker is absent, so the guard is false and the law has been silently skipped every post-land
+status: landed

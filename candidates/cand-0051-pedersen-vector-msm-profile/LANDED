@@ -1,0 +1,6 @@
+cargo/sites/ledger/specs/profiles/PEDERSEN-VECTOR-1.md	sites/ledger/specs/profiles/PEDERSEN-VECTOR-1.md	no
+cargo/sites/ledger/specs/profiles/README.md	sites/ledger/specs/profiles/README.md	yes
+cargo/sites/ledger/specs/applications/VNET-1.md	sites/ledger/specs/applications/VNET-1.md	yes
+# landed_at: 2026-06-14T08:18:50Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=feebb6c98bd0faef8b540a9e26c410e98caefd38b6309aaaefa5a9045adf0c3b unavailable(not-in-devshell)
+git_commit	cb9508e

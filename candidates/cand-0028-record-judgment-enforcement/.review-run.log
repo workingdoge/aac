@@ -1,0 +1,13 @@
+Review written. Verdict: **admit**.
+
+Summary of what I verified:
+
+- **Manifest delta** is exactly −0/+9 (`diff` of live `tools/schemas/export-manifest.tsv` vs candidate copy): checker inserted with the enforcers (line 16), 8 record-* fixtures grouped with the site fixtures (lines 50-57).
+- **Footgun confirmed**: `tools/eval/evaluate-landed.sh:206-207` enrolls `run_suite record-judgments` guarded by `[[ -f "$ROOT/tools/record-judgment-check.sh" ]]`; that file is ENOENT in live aac, so the suite has been silently skipped.
+- **Checker shape**: ROOT-relative (`record-judgment-check.sh:15`), runs identically inside aac with no patch.
+- **Closure**: the 8 shipped fixtures match the checker's `ALL_FIXTURES` array exactly (basename-for-basename).
+- **Statement**: aac's live `sites/premath/statements/record-judgments-v0.md` satisfies every `require_contains` needle in `check_statement` (all 12 grep-confirmed).
+- **Re-run**: `bash tools/eval/eval-check.sh candidates/cand-0028-... .` returned `REPRODUCED (pass attested, pass reproduced, evidence intact)`; all 5 traces re-PASS; attestation `ea3ea56ed887` verified pre- and post-replay.
+- **Individual fixture lines (not a dir entry)** is the correct shape — matches the existing `queue-*` convention and prevents future aac-sovereign fixtures from being dragged into the kernel export.
+
+No concerns. REVIEW.md written at `candidates/cand-0028-record-judgment-enforcement/REVIEW.md`.

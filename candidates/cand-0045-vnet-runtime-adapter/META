@@ -1,0 +1,5 @@
+candidate_id: cand-0045-vnet-runtime-adapter
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T06:17:50Z
+intent: Add a dependency-free JS VNET-BN254/link verifier, wire fundraise-runtime to use it by default, and add a BCC cancellation verifier seam for non-mock profiles.
+status: landed

@@ -1,0 +1,5 @@
+candidate_id: cand-0051-pedersen-vector-msm-profile
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T08:16:51Z
+intent: port the governed ProveKit MSM-only Pedersen vector profile into vnet fundraising
+status: landed

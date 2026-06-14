@@ -1,0 +1,10 @@
+[package]
+name = "transition"
+type = "bin"
+authors = ["American Accounting Company"]
+
+[dependencies]
+pacioli = { path = "../pacioli" }
+ledger = { path = "../ledger" }
+rulebook = { path = "../rulebook" }
+hash = { path = "../hash" }

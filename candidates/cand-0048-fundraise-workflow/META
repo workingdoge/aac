@@ -1,0 +1,5 @@
+candidate_id: cand-0048-fundraise-workflow
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T07:10:03Z
+intent: Add a dependency-free fundraise workflow core that composes ProveKit/CRE verifier receipts with the fundraise authorizer seam, producing deterministic settlement actions for FundraiseMintSettlement without touching flake/Nix dependencies.
+status: landed

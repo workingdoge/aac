@@ -1,0 +1,1 @@
+note carries: non-normative marker, EVENT/1 + statement, Posting Program, kernel/app layer sets, circuits rename plan, NET-vs-VNET placement

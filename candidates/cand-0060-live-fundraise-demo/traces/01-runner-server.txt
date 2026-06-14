@@ -1,0 +1,2 @@
+fundraise-demo-runner tests: pass
+runner unit tests pass; server action, localhost API, and --serve are exposed

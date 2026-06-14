@@ -1,0 +1,19 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0050-provekit-flake-import",
+  "evaluated_at": "2026-06-14T08:04:18Z",
+  "task": "Import the ProveKit flake package into the vnet fundraising worktree without landing generated proof artifacts.",
+  "checks": {
+    "flake_import": "pass",
+    "ignore_hygiene": "pass",
+    "landing_scope": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "107dbb16e626d718ae2e25780599db5e08efe4bbd26cd56cc4fbb71f28f14296",
+    "traces_sha256": "dbf71347ee16538e3432d683ffcd9045a5fa84f20d40e3618f64e5c3f5cd8201",
+    "body_sha256": "4cf9ad1c0c35d3f40dc026b793f6aaed8e571fd2c8eb0e1e61f82d138e7d5eb5",
+    "attestation": "f667fdd16783ec873a6baa8e9aa075399bccaaace7c452ce66e12236b44df8c2"
+  }
+}

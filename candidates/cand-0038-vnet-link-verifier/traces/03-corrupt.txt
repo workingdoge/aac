@@ -1,0 +1,1 @@
+corrupt link vector rejected when the accepted transition journal_commitment is changed
