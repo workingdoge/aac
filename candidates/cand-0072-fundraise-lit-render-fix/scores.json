@@ -1,20 +1,19 @@
 {
-  "schema": "boat.eval-self.v0",
+  "evaluated_at": "2026-06-14T12:37:52Z",
+  "task": "post-land conformance",
   "candidate": "cand-0072-fundraise-lit-render-fix",
-  "evaluated_at": "2026-06-14T12:35:05Z",
-  "task": "Fix the fundraise Lit component render failure by moving reactive field initializers into the constructor.",
-  "checks": {
-    "source": "pass",
-    "mutant": "pass",
-    "build": "pass",
-    "scope": "pass"
-  },
+  "snapshot": "056ea61",
+  "checks": [
+    { "name": "manifest", "result": "pass" },
+    { "name": "snapshot", "result": "pass" },
+    { "name": "suite", "result": "pass" }
+  ],
   "verdict": "pass"
   ,"provenance": {
-    "harness": "eval-self.sh",
-    "harness_sha256": "92e4fb13c967ce5ff87e308a84c71eb1feab6cba79a33014fcfb979bb4eb90b4",
-    "traces_sha256": "41f07ca72fc58f327216c6eed9361d27bd5c6d2d1e12b32cc161f79b2b0120a6",
-    "body_sha256": "6e9ad22c3e35872a6c2420cb4680562d0ba6eb69d3ce5451a9ff72ade96bd9af",
-    "attestation": "c84124508bf4b06693102edc8d827dd7f4d99c5758f090702b24b4ff28f86ce6"
+    "harness": "evaluate-landed.sh",
+    "harness_sha256": "34f271602979a5f0473f86b5b667a65c6879198ad1fb7f8d3226f7fce5b6c1d1",
+    "traces_sha256": "dff204c12b6af8e59df51c3ec0e90dc2cb444e64147db86b1a1537329037222c",
+    "body_sha256": "6b654bb9695668b8dfe42c19b7125bc731350a85898cbb801dd5f4656b38860f",
+    "attestation": "13f84a11e67f73020ea67f0820f8b8387312b578232f68ac92da422149ced909"
   }
 }
