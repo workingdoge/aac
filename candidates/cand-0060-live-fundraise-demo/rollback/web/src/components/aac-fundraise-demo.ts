@@ -1,27 +1,13 @@
 import { LitElement, html, css } from 'lit';
 import { fundraiseDemoSummary } from '../data/fundraise-demo-summary';
 
-type FundraiseSummary = typeof fundraiseDemoSummary;
-type RunState = 'idle' | 'running' | 'proved' | 'error';
-
 /** aac-fundraise-demo — presentation console for the ProveKit fundraise path:
  *  private issuer roots -> VNET proof/workflow authorization -> local receipt
- *  token settlement. The component starts from a captured settled receipt, then
- *  can replace it with a fresh localhost runner response. */
+ *  token settlement. Values are a captured `fundraise-demo-runner --settle-local
+ *  --summary` run, so the component is static but sourced from the real demo
+ *  contract rather than handwritten marketing copy. */
 export class AacFundraiseDemo extends LitElement {
-  static properties = {
-    summary: { state: true },
-    runState: { state: true },
-    liveError: { state: true },
-    liveElapsedMs: { state: true },
-    sourceLabel: { state: true },
-  };
-
-  private summary: FundraiseSummary = fundraiseDemoSummary;
-  private runState: RunState = 'idle';
-  private liveError = '';
-  private liveElapsedMs: number | null = null;
-  private sourceLabel = 'captured settlement';
+  private summary = fundraiseDemoSummary;
 
   private short(value: string | null | undefined, head = 6, tail = 4): string {
     if (!value) return 'none';
@@ -98,53 +84,6 @@ export class AacFundraiseDemo extends LitElement {
       padding: 7px 10px;
       white-space: nowrap;
       transform: rotate(-1deg);
-    }
-
-    .live-box {
-      align-self: start;
-      display: grid;
-      justify-items: end;
-      gap: 9px;
-    }
-
-    button.run {
-      appearance: none;
-      border: 1px solid var(--aac-color-navy, #21324f);
-      background: var(--aac-color-navy, #21324f);
-      color: var(--aac-color-bond, #fff);
-      border-radius: var(--aac-radius-r, 2px);
-      padding: 9px 11px;
-      font: inherit;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-
-    button.run:hover:not(:disabled),
-    button.run:focus-visible:not(:disabled) {
-      background: var(--aac-color-oxblood, #93302c);
-      border-color: var(--aac-color-oxblood, #93302c);
-      outline: none;
-    }
-
-    button.run:disabled {
-      cursor: wait;
-      opacity: 0.72;
-    }
-
-    .live-note {
-      max-width: 220px;
-      color: var(--aac-color-steel, #6b6b64);
-      font-family: var(--aac-mono, "IBM Plex Mono", monospace);
-      font-size: 10.5px;
-      text-align: right;
-      overflow-wrap: anywhere;
-    }
-
-    .live-note.error {
-      color: var(--aac-color-oxblood, #93302c);
     }
 
     .numbers {
@@ -385,15 +324,6 @@ export class AacFundraiseDemo extends LitElement {
       margin-top: 14px;
     }
 
-    .empty {
-      margin-top: 14px;
-      padding: 10px;
-      border: 1px dashed var(--aac-color-rule2, #c9be9e);
-      color: var(--aac-color-steel, #6b6b64);
-      font-size: 11.5px;
-      line-height: 1.45;
-    }
-
     .bar-row {
       display: grid;
       gap: 6px;
@@ -438,8 +368,6 @@ export class AacFundraiseDemo extends LitElement {
     @media (max-width: 900px) {
       .mast { grid-template-columns: 1fr; }
       .status { justify-self: start; }
-      .live-box { justify-items: start; }
-      .live-note { text-align: left; }
       .numbers { grid-template-columns: 1fr; }
       .num { border-right: 0; border-bottom: 1px solid var(--aac-color-rule, #e2dac4); }
       .num:last-child { border-bottom: 0; }
@@ -451,54 +379,9 @@ export class AacFundraiseDemo extends LitElement {
     }
   `;
 
-  private apiEndpoint(): string {
-    const base = this.getAttribute('api-base') || 'http://127.0.0.1:8787';
-    return `${base.replace(/\/+$/, '')}/api/fundraise/run`;
-  }
-
-  private async runLiveProof() {
-    if (this.runState === 'running') return;
-    const started = Date.now();
-    this.runState = 'running';
-    this.liveError = '';
-    this.liveElapsedMs = null;
-    try {
-      const response = await fetch(this.apiEndpoint(), {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ settle_local: false }),
-      });
-      const payload = await response.json().catch(() => null);
-      if (!response.ok || payload?.accepted !== true || !payload.summary) {
-        throw new Error(payload?.message || payload?.reason || `HTTP ${response.status}`);
-      }
-      this.summary = payload.summary;
-      this.liveElapsedMs = payload.elapsed_ms ?? Date.now() - started;
-      this.sourceLabel = 'live proof';
-      this.runState = 'proved';
-    } catch (error) {
-      this.runState = 'error';
-      this.liveError = error instanceof Error ? error.message : 'live runner failed';
-    }
-  }
-
-  private runButtonText(): string {
-    if (this.runState === 'running') return 'Running proof';
-    if (this.runState === 'proved') return 'Run again';
-    return 'Run live proof';
-  }
-
-  private runNote(): string {
-    if (this.runState === 'running') return 'provekit prepare/prove/verify in progress';
-    if (this.runState === 'proved') return `fresh receipt · ${this.ms(this.liveElapsedMs ?? undefined)}`;
-    if (this.runState === 'error') return `runner error · ${this.liveError}`;
-    return this.sourceLabel;
-  }
-
   render() {
     const s = this.summary;
-    const balances = s.settlement.balances ?? [];
-    const total = s.settlement.total_supply || s.economics.issued_unit_total || 1;
+    const total = s.settlement.total_supply || s.economics.issued_unit_total;
     return html`
       <section class="console" aria-label="Fundraise settlement demo">
         <div class="mast">
@@ -507,13 +390,7 @@ export class AacFundraiseDemo extends LitElement {
             <h2>Seed round settled against private books.</h2>
             <div class="issuer">${s.issuer_name} · ${s.round_id}</div>
           </div>
-          <div class="live-box">
-            <div class="status">${s.status.replace('-', ' ')}</div>
-            <button class="run" type="button" ?disabled=${this.runState === 'running'} @click=${this.runLiveProof}>
-              ${this.runButtonText()}
-            </button>
-            <div class=${`live-note ${this.runState === 'error' ? 'error' : ''}`}>${this.runNote()}</div>
-          </div>
+          <div class="status">${s.status.replace('-', ' ')}</div>
         </div>
 
         <div class="numbers">
@@ -553,27 +430,23 @@ export class AacFundraiseDemo extends LitElement {
             <div class="lane-title"><b>Settlement</b><span>local EVM</span></div>
             <div class="root-row">
               <span class="key">total supply</span>
-              <span class="val next">${s.settlement.total_supply ?? 'pending'}</span>
+              <span class="val next">${s.settlement.total_supply}</span>
             </div>
-            ${balances.length
-              ? html`
-                  <div class="bars">
-                    ${balances.map(
-                      (item) => html`
-                        <div class="bar-row">
-                          <div class="bar-top">
-                            <span>${this.short(item.account, 5, 4)}</span>
-                            <span>${item.amount}</span>
-                          </div>
-                          <div class="bar-track">
-                            <div class="bar" style=${`width: ${Math.max(0, Math.min(100, (item.amount / total) * 100))}%`}></div>
-                          </div>
-                        </div>
-                      `,
-                    )}
+            <div class="bars">
+              ${s.settlement.balances.map(
+                (item) => html`
+                  <div class="bar-row">
+                    <div class="bar-top">
+                      <span>${this.short(item.account, 5, 4)}</span>
+                      <span>${item.amount}</span>
+                    </div>
+                    <div class="bar-track">
+                      <div class="bar" style=${`width: ${Math.max(0, Math.min(100, (item.amount / total) * 100))}%`}></div>
+                    </div>
                   </div>
-                `
-              : html`<div class="empty">Mint authorization is proof-bound and waiting for settlement submission.</div>`}
+                `,
+              )}
+            </div>
             ${this.contractRow('token', s.settlement.token_contract)}
             ${this.contractRow('settlement', s.settlement.settlement_contract)}
             ${this.contractRow('tx', s.settlement.transaction_hash)}

@@ -12,7 +12,6 @@ import {
   prepareProveKitWorkdir,
   runFundraiseDemo,
   runFundraiseDemoLocalSettlement,
-  runFundraiseDemoServerAction,
 } from "../src/index.mjs";
 
 const repoRoot = resolve(import.meta.dirname, "../..");
@@ -165,36 +164,5 @@ await assert.rejects(
     }),
   /provekit verify failed/,
 );
-
-const serverCommands = [];
-const serverPayload = await runFundraiseDemoServerAction({
-  repo_root: repoRoot,
-  circuit_dir: resolve(fakeWork, "circuit"),
-  provekit_bin: "/nix/store/fake-provekit-cli/bin/provekit-cli",
-  run_command: async (command) => {
-    serverCommands.push(command);
-    if (command.step === "prepare") {
-      await writeFile(command.args[command.args.indexOf("-p") + 1], new Uint8Array([1, 2, 3]));
-      await writeFile(command.args[command.args.indexOf("-v") + 1], new Uint8Array([4, 5, 6]));
-    }
-    if (command.step === "prove") {
-      await writeFile(command.args[command.args.indexOf("-o") + 1], new Uint8Array([7, 8, 9]));
-    }
-    return { exit_code: 0, stdout: `${command.step}: ok\n` };
-  },
-}, {
-  path: "/api/fundraise/run?settle_local=false",
-  body: {
-    settle_local: false,
-    provekit_bin: "/tmp/must-not-run",
-    repo_root: "/tmp/must-not-read",
-  },
-});
-assert.equal(serverPayload.accepted, true);
-assert.equal(serverPayload.mode, "live-proof");
-assert.equal(serverPayload.summary.status, "authorized-pending-signature");
-assert.equal(serverPayload.summary.proof.proof_system, "provekit-whir");
-assert.deepEqual(serverCommands.map((command) => command.step), ["prepare", "prove", "verify"]);
-assert.ok(serverCommands.every((command) => command.executable === "/nix/store/fake-provekit-cli/bin/provekit-cli"));
 
 console.log("fundraise-demo-runner tests: pass");

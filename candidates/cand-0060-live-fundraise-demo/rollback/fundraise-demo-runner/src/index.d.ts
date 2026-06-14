@@ -12,9 +12,6 @@ export declare const FUNDRAISE_DEMO_SUMMARY_SCHEMA = "aac.fundraise-demo-runner.
 export declare const FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA = "aac.fundraise-demo-runner.local-settlement.v1";
 export declare const DEFAULT_REGISTRY_PACKAGE = "registry";
 export declare const DEFAULT_LOCAL_RPC_URL = "http://127.0.0.1:8545";
-export declare const FUNDRAISE_DEMO_SERVER_SCHEMA = "aac.fundraise-demo-runner.server.v1";
-export declare const DEFAULT_FUNDRAISE_DEMO_SERVER_HOST = "127.0.0.1";
-export declare const DEFAULT_FUNDRAISE_DEMO_SERVER_PORT = 8787;
 export declare const DEFAULT_ANVIL_DEPLOYER_PRIVATE_KEY =
   "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
 export declare const DEFAULT_DEMO_AUTHORIZER_PRIVATE_KEY =
@@ -56,13 +53,6 @@ export interface FundraiseDemoRunnerInput {
   token_name?: string;
   token_symbol?: string;
   foundry_command?: (command: FoundryCommand) => Promise<FoundryCommandResult>;
-}
-
-export interface FundraiseDemoServerInput extends FundraiseDemoRunnerInput {
-  host?: string;
-  port?: number;
-  cors_origin?: string;
-  settle_local?: boolean;
 }
 
 export interface FundraiseDemoReceipt {
@@ -179,26 +169,6 @@ export type FundraiseLocalSettlementReceipt = FundraiseDemoReceipt & {
 };
 
 export declare function runFundraiseDemo(input?: FundraiseDemoRunnerInput): Promise<FundraiseDemoReceipt>;
-export declare function runFundraiseDemoServerAction(input?: FundraiseDemoServerInput, request?: {
-  path?: string;
-  body?: Record<string, unknown>;
-}): Promise<{
-  schema: typeof FUNDRAISE_DEMO_SERVER_SCHEMA;
-  accepted: true;
-  reason: "accepted";
-  mode: "live-proof" | "live-proof+local-settlement";
-  elapsed_ms: number;
-  receipt: FundraiseDemoReceipt | FundraiseLocalSettlementReceipt;
-  summary: FundraiseDemoSummary;
-}>;
-export declare function serveFundraiseDemo(input?: FundraiseDemoServerInput): Promise<{
-  schema: typeof FUNDRAISE_DEMO_SERVER_SCHEMA;
-  host: string;
-  port: number;
-  url: string;
-  server: unknown;
-  close: () => Promise<void>;
-}>;
 export declare function buildFundraiseDemoVerifierReceipt(input?: FundraiseDemoRunnerInput): Promise<{
   packet: FundraisePacket;
   verifier_receipt: VerifierReceipt & {
