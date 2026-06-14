@@ -11,4 +11,3 @@ register entry, at which point the normative version supersedes the sketch.
 |--:|-------|---------|
 | 0001 | [The BalancedVectorReceipt — a Pⁿ Clearing Kernel](0001-bvr-clearing-kernel.md) | 1/PACI, 2/FACT, 3/PROOF, 4/REG, 5/NET; future 9/PROV, 10/ADMIT, 12/OTC |
 | 0002 | [The World Stack for AAC: AgentKit + ProveKit](0002-world-stack-agentkit-provekit.md) | 2/FACT, 3/PROOF, 4/REG, EVENT-COMPLETE/1; future 9/PROV, 10/ADMIT, 12/OTC |
-| 0003 | [Naming and Layering: the kernel/app vocabulary after the boundary law](0003-naming-and-layering.md) | 1/PACI, 2/FACT, 3/PROOF, 4/REG, EVENT-COMPLETE/1; the `circuits/` crates |

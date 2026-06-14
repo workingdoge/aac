@@ -1,0 +1,1 @@
+mutant caught: a note stripped of the EVENT/1 statement fails the content-probe (non-vacuous)
