@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0038-vnet-link-verifier",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "703d0737ea026507ce2dd326975e173546b2dbc48cfc9c77fb341719241ae961",
+    "META": "20d1c10e7f12228584e91a32b932a422c4d8082e1c5e87d9631fe1e2765e07ba"
+  }
+}

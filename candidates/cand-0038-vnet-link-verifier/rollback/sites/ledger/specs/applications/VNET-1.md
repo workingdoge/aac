@@ -177,16 +177,7 @@ conformance fixtures at
 profile fixes BN254 G1 point encoding, generator derivation, amount bounds, and
 the zero-opening fixture suite.
 
-The first executable reference for the transition-link boundary is
-[`vnet_link_verifier.py`](reference/vnet_link_verifier.py), with fixtures at
-[`VNET-LINK-REF-1.json`](vectors/VNET-LINK-REF-1.json). It checks a transparent
-companion-link form: each VNET atom must resolve against an accepted
-TRANSITION/1 report, its `journal_commitment` must match the accepted
-TRANSITION/1 public input, and a link certificate must bind the atom's opened
-debit/credit vectors to that exact transition and basis before the
-VNET-BN254-G1/1 amount-netting checker runs.
-
 No reference VNET/1 circuit or native verifier is assigned by this candidate.
-The next implementation slice should choose whether production uses this
-companion-link shape, recomputes the referenced `journal_commitment` in the VNET
-witness, or wraps the link in a separate proof object.
+The next implementation slice should decide whether the link relation is
+recomputed in the VNET witness or supplied as a companion proof, then implement
+a minimal verifier/checker against the profile fixtures.
