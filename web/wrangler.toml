@@ -7,3 +7,7 @@ directory = "./dist"
 [[routes]]
 pattern = "specs.aac.sh"
 custom_domain = true
+
+[[routes]]
+pattern = "www.aac.sh"
+custom_domain = true

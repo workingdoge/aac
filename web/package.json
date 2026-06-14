@@ -6,6 +6,8 @@
     "sync-specs": "node scripts/sync-specs.mjs",
     "dev": "node scripts/sync-specs.mjs && astro dev",
     "build": "node scripts/sync-specs.mjs && astro build",
+    "deploy:dry-run": "bash scripts/deploy-cloudflare.sh --dry-run",
+    "deploy": "bash scripts/deploy-cloudflare.sh --execute",
     "preview": "astro preview --host"
   },
   "dependencies": {
