@@ -5,54 +5,6 @@ export const fundraiseDemoSummary = {
   vector_id: 'fundraise-demo-good',
   round_id: 'aac-seed-2026-001',
   issuer_name: 'issuer-a.private-row',
-  metrics: [
-    { value: '1500', label: 'USDC order size' },
-    { value: '150', label: 'restricted SAFE receipt units' },
-    { value: '2', label: 'fills in batch' },
-  ],
-  order: {
-    headline: 'Sell 150 restricted SAFE receipt units',
-    price_label: '10 USDC / unit',
-    settlement_asset: 'USDC',
-    issued_unit: 'restricted SAFE receipt units',
-    issued_unit_noun: 'units',
-    price_per_unit: 10,
-  },
-  fills: [
-    {
-      party: 'investor-a',
-      subscription_id: 'sub-investor-a-001',
-      settlement_ref: 'arc-usdc-payment:0xa001',
-      settlement_amount: 1000,
-      settlement_label: '1000 USDC',
-      issued_units: 100,
-      issued_label: '100 units',
-      recipient: '0xA11ce00000000000000000000000000000000039',
-    },
-    {
-      party: 'investor-b',
-      subscription_id: 'sub-investor-b-001',
-      settlement_ref: 'arc-usdc-payment:0xb001',
-      settlement_amount: 500,
-      settlement_label: '500 USDC',
-      issued_units: 50,
-      issued_label: '50 units',
-      recipient: '0xB0b000000000000000000000000000000000039',
-    },
-  ],
-  opening_balances: [
-    { label: 'USDC collected', value: '0 USDC' },
-    { label: 'units issued', value: '0 units' },
-    { label: 'units open', value: '150 units' },
-  ],
-  reconciliation: {
-    accepted: true,
-    rows: [
-      { line: 'USDC collected', opening: '0 USDC', delta: '+1500 USDC', closing: '1500 USDC' },
-      { line: 'units issued', opening: '0 units', delta: '+150 units', closing: '150 units' },
-      { line: 'units open', opening: '150 units', delta: '-150 units', closing: '0 units' },
-    ],
-  },
   economics: {
     settlement_amount_total: 1500,
     issued_unit_total: 150,
@@ -105,7 +57,7 @@ export const fundraiseDemoSummary = {
     total_supply: 150,
     balances: [
       { account: '0xA11ce00000000000000000000000000000000039', amount: 100 },
-      { account: '0xB0b000000000000000000000000000000000039', amount: 50 },
+      { account: '0xB0b0000000000000000000000000000000000039', amount: 50 },
     ],
   },
   claims: [

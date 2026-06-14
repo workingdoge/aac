@@ -1,0 +1,5 @@
+candidate_id: cand-0078-fundraise-summary-driven-ui
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T13:47:20Z
+intent: Make the fundraise presentation render order, fill, balance, and reconciliation data from the runner summary instead of component constants.
+status: landed

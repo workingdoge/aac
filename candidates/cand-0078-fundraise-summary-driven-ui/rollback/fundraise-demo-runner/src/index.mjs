@@ -577,7 +577,6 @@ function buildDemoReceipt({ input, packet, verifier_receipt, workflow_receipt, w
     reason: "accepted",
     vector_id: input.vector_id ?? DEFAULT_VECTOR_ID,
     packet_round_id: packet.public_inputs?.round_id ?? packet.round_policy?.round_id ?? null,
-    packet_projection: buildFundraisePacketProjection(packet),
     public_inputs: packet.public_inputs ?? {},
     provekit: {
       mode: verifier_receipt.mode,
@@ -595,72 +594,15 @@ function buildDemoReceipt({ input, packet, verifier_receipt, workflow_receipt, w
   return { ...receipt, summary: buildFundraiseDemoSummary(receipt) };
 }
 
-function buildFundraisePacketProjection(packet) {
-  const policy = packet.round_policy ?? {};
-  return {
-    round_policy: {
-      round_id: policy.round_id ?? null,
-      issuer_name: policy.issuer_name ?? null,
-      settlement_asset_type_id: policy.settlement_asset_type_id ?? null,
-      issued_unit_type_id: policy.issued_unit_type_id ?? null,
-      price_numerator: finiteNumber(policy.price_numerator),
-      price_denominator: finiteNumber(policy.price_denominator),
-      max_issued_units: finiteNumber(policy.max_issued_units),
-      max_settlement_amount: finiteNumber(policy.max_settlement_amount),
-    },
-    subscriptions: Array.isArray(packet.subscriptions)
-      ? packet.subscriptions.map((sub) => ({
-          subscription_id: sub.subscription_id ?? null,
-          investor_id: sub.investor_id ?? null,
-          settlement_ref: sub.settlement_ref ?? null,
-          settlement_amount: finiteNumber(sub.settlement_amount),
-          issued_units: finiteNumber(sub.issued_units),
-          mint_recipient: sub.mint_recipient ?? null,
-        }))
-      : [],
-  };
-}
-
 export function buildFundraiseDemoSummary(receipt) {
   if (!receipt || receipt.schema !== FUNDRAISE_DEMO_RUNNER_SCHEMA) {
     throw new FundraiseDemoRunnerError("receipt_schema_mismatch");
   }
   const publicInputs = receipt.public_inputs ?? {};
-  const packetProjection = receipt.packet_projection ?? {};
-  const policy = packetProjection.round_policy ?? {};
-  const subscriptions = Array.isArray(packetProjection.subscriptions) ? packetProjection.subscriptions : [];
   const action = receipt.settlement_action ?? {};
   const auth = action.args?.auth ?? {};
   const local = receipt.local_settlement ?? null;
   const settled = Boolean(local?.transaction_hash);
-  const settlementAsset = settlementAssetLabel(policy.settlement_asset_type_id);
-  const issuedUnit = issuedUnitLabel(policy.issued_unit_type_id);
-  const unitNoun = issuedUnitNoun(policy.issued_unit_type_id);
-  const subscriptionSettlementTotal = sumNumbers(subscriptions, "settlement_amount");
-  const subscriptionIssuedTotal = sumNumbers(subscriptions, "issued_units");
-  const settlementTotal = firstNumber(publicInputs.settlement_amount_total, subscriptionSettlementTotal);
-  const issuedTotal = firstNumber(auth.issued_unit_total, publicInputs.issued_unit_total, subscriptionIssuedTotal);
-  const recipientCount = Array.isArray(auth.recipients) ? auth.recipients.length : subscriptions.length;
-  const pricePerUnit = priceFromPolicy(policy);
-  const fills = subscriptions.map((sub, index) => ({
-    party: sub.investor_id ?? `fill-${index + 1}`,
-    subscription_id: sub.subscription_id ?? null,
-    settlement_ref: sub.settlement_ref ?? null,
-    settlement_amount: finiteNumber(sub.settlement_amount),
-    settlement_label: amountWithUnit(sub.settlement_amount, settlementAsset),
-    issued_units: finiteNumber(sub.issued_units),
-    issued_label: amountWithUnit(sub.issued_units, unitNoun),
-    recipient: sub.mint_recipient ?? null,
-  }));
-  const filledSettlement = sumNumbers(fills, "settlement_amount");
-  const filledUnits = sumNumbers(fills, "issued_units");
-  const openAfter = Math.max(0, (issuedTotal ?? 0) - filledUnits);
-  const reconciliationAccepted =
-    settlementTotal !== null
-    && issuedTotal !== null
-    && filledSettlement === settlementTotal
-    && filledUnits === issuedTotal
-    && openAfter === 0;
   return {
     schema: FUNDRAISE_DEMO_SUMMARY_SCHEMA,
     accepted: receipt.accepted === true,
@@ -668,52 +610,10 @@ export function buildFundraiseDemoSummary(receipt) {
     vector_id: receipt.vector_id,
     round_id: receipt.packet_round_id ?? publicInputs.round_id ?? null,
     issuer_name: publicInputs.issuer_name ?? null,
-    metrics: [
-      { value: amountValue(settlementTotal), label: `${settlementAsset} order size` },
-      { value: amountValue(issuedTotal), label: issuedUnit },
-      { value: amountValue(recipientCount), label: "fills in batch" },
-    ],
-    order: {
-      headline: `Sell ${amountValue(issuedTotal)} ${issuedUnit}`,
-      price_label: pricePerUnit === null ? "price unavailable" : `${amountValue(pricePerUnit)} ${settlementAsset} / ${singularUnit(unitNoun)}`,
-      settlement_asset: settlementAsset,
-      issued_unit: issuedUnit,
-      issued_unit_noun: unitNoun,
-      price_per_unit: pricePerUnit,
-    },
-    fills,
-    opening_balances: [
-      { label: `${settlementAsset} collected`, value: amountWithUnit(0, settlementAsset) },
-      { label: `${unitNoun} issued`, value: amountWithUnit(0, unitNoun) },
-      { label: `${unitNoun} open`, value: amountWithUnit(issuedTotal, unitNoun) },
-    ],
-    reconciliation: {
-      accepted: reconciliationAccepted,
-      rows: [
-        {
-          line: `${settlementAsset} collected`,
-          opening: amountWithUnit(0, settlementAsset),
-          delta: signedAmountWithUnit(filledSettlement, settlementAsset),
-          closing: amountWithUnit(filledSettlement, settlementAsset),
-        },
-        {
-          line: `${unitNoun} issued`,
-          opening: amountWithUnit(0, unitNoun),
-          delta: signedAmountWithUnit(filledUnits, unitNoun),
-          closing: amountWithUnit(filledUnits, unitNoun),
-        },
-        {
-          line: `${unitNoun} open`,
-          opening: amountWithUnit(issuedTotal, unitNoun),
-          delta: signedAmountWithUnit(-filledUnits, unitNoun),
-          closing: amountWithUnit(openAfter, unitNoun),
-        },
-      ],
-    },
     economics: {
-      settlement_amount_total: settlementTotal,
-      issued_unit_total: issuedTotal,
-      recipient_count: recipientCount,
+      settlement_amount_total: publicInputs.settlement_amount_total ?? null,
+      issued_unit_total: auth.issued_unit_total ?? publicInputs.issued_unit_total ?? null,
+      recipient_count: Array.isArray(auth.recipients) ? auth.recipients.length : 0,
     },
     commitments: {
       transition_set: publicInputs.transition_set_commitment ?? null,
@@ -766,71 +666,6 @@ export function buildFundraiseDemoSummary(receipt) {
       "The current contract path verifies the authorizer signature and replay guard; production recursive/on-chain VNET proof verification remains a separate target.",
     ],
   };
-}
-
-function finiteNumber(value) {
-  return typeof value === "number" && Number.isFinite(value) ? value : null;
-}
-
-function firstNumber(...values) {
-  for (const value of values) {
-    const number = finiteNumber(value);
-    if (number !== null) return number;
-  }
-  return null;
-}
-
-function sumNumbers(items, key) {
-  return items.reduce((sum, item) => sum + (finiteNumber(item?.[key]) ?? 0), 0);
-}
-
-function settlementAssetLabel(typeId) {
-  if (typeof typeId !== "string" || !typeId.trim()) return "settlement units";
-  return typeId.split(":")[0] || "settlement units";
-}
-
-function issuedUnitLabel(typeId) {
-  if (typeof typeId !== "string" || !typeId.trim()) return "receipt units";
-  const family = typeId.split(":")[0]?.toUpperCase();
-  if (family === "SAFE") return "restricted SAFE receipt units";
-  return `${family || "restricted"} receipt units`;
-}
-
-function issuedUnitNoun(typeId) {
-  if (typeof typeId !== "string" || !typeId.trim()) return "units";
-  const tail = typeId.split(":").filter(Boolean).at(-1);
-  if (!tail) return "units";
-  if (tail.endsWith("s")) return tail;
-  return `${tail}s`;
-}
-
-function singularUnit(unitNoun) {
-  if (typeof unitNoun !== "string" || unitNoun.length === 0) return "unit";
-  return unitNoun.endsWith("s") ? unitNoun.slice(0, -1) : unitNoun;
-}
-
-function priceFromPolicy(policy) {
-  const numerator = finiteNumber(policy.price_numerator);
-  const denominator = finiteNumber(policy.price_denominator);
-  if (numerator === null || denominator === null || denominator === 0) return null;
-  return numerator / denominator;
-}
-
-function amountValue(value) {
-  const number = finiteNumber(value);
-  if (number === null) return "n/a";
-  if (Number.isInteger(number)) return String(number);
-  return String(Number(number.toFixed(4)));
-}
-
-function amountWithUnit(value, unit) {
-  return `${amountValue(value)} ${unit}`;
-}
-
-function signedAmountWithUnit(value, unit) {
-  const number = finiteNumber(value) ?? 0;
-  const sign = number >= 0 ? "+" : "";
-  return `${sign}${amountValue(number)} ${unit}`;
 }
 
 function contractAuthorizationTuple(auth) {

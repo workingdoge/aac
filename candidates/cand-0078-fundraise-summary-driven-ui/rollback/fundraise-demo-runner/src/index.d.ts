@@ -76,26 +76,6 @@ export interface FundraiseDemoReceipt {
   reason: "accepted";
   vector_id: string;
   packet_round_id: string | null;
-  packet_projection: {
-    round_policy: {
-      round_id: string | null;
-      issuer_name: string | null;
-      settlement_asset_type_id: string | null;
-      issued_unit_type_id: string | null;
-      price_numerator: number | null;
-      price_denominator: number | null;
-      max_issued_units: number | null;
-      max_settlement_amount: number | null;
-    };
-    subscriptions: Array<{
-      subscription_id: string | null;
-      investor_id: string | null;
-      settlement_ref: string | null;
-      settlement_amount: number | null;
-      issued_units: number | null;
-      mint_recipient: string | null;
-    }>;
-  };
   public_inputs: Record<string, unknown>;
   provekit: {
     mode: string;
@@ -122,41 +102,6 @@ export interface FundraiseDemoSummary {
   vector_id: string;
   round_id: string | null;
   issuer_name: string | null;
-  metrics: Array<{
-    value: string;
-    label: string;
-  }>;
-  order: {
-    headline: string;
-    price_label: string;
-    settlement_asset: string;
-    issued_unit: string;
-    issued_unit_noun: string;
-    price_per_unit: number | null;
-  };
-  fills: Array<{
-    party: string;
-    subscription_id: string | null;
-    settlement_ref: string | null;
-    settlement_amount: number | null;
-    settlement_label: string;
-    issued_units: number | null;
-    issued_label: string;
-    recipient: string | null;
-  }>;
-  opening_balances: Array<{
-    label: string;
-    value: string;
-  }>;
-  reconciliation: {
-    accepted: boolean;
-    rows: Array<{
-      line: string;
-      opening: string;
-      delta: string;
-      closing: string;
-    }>;
-  };
   economics: {
     settlement_amount_total: number | null;
     issued_unit_total: number | null;

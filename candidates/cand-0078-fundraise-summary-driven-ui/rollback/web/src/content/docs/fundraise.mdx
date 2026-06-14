@@ -12,13 +12,14 @@ import Loader from '../../components/Loader.astro';
 <Loader />
 
 This is the presentation console for a private issuer order. The issuer offers
-restricted receipt units and investors fill the order. The ticket, starting
-balances, submitted fills, and reconciliation rows are rendered from the runner
-summary returned by the localhost API. The live path calls the localhost runner,
-clears the fill batch with ProveKit, and returns a fresh authorization receipt.
+150 restricted SAFE receipt units at 10 USDC each; two investors fill the order.
+The ticket opens from explicit starting balances: 0 USDC collected, 0 receipt
+units issued, and 150 units still open. The live path calls the localhost
+runner, clears the fill batch with ProveKit, and returns a fresh authorization
+receipt.
 
-After the swap, the console reconciles the issuer books from summary-provided
-opening balances, fill deltas, and closing balances.
+After the swap, the console reconciles the issuer books by recomputing opening
+balances plus fill deltas into closing balances: 1500 USDC collected, 150 receipt units issued, and 0 units left open.
 
 <aac-fundraise-demo></aac-fundraise-demo>
 

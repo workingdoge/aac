@@ -77,14 +77,6 @@ const receipt = await runFundraiseDemo({
 assert.equal(receipt.schema, FUNDRAISE_DEMO_RUNNER_SCHEMA);
 assert.equal(receipt.accepted, true);
 assert.equal(receipt.public_inputs.round_id, "aac-seed-2026-001");
-assert.equal(receipt.packet_projection.round_policy.settlement_asset_type_id, "USDC:arc-testnet:atomic");
-assert.deepEqual(
-  receipt.packet_projection.subscriptions.map((item) => [item.investor_id, item.settlement_amount, item.issued_units]),
-  [
-    ["investor-a", 1000, 100],
-    ["investor-b", 500, 50],
-  ],
-);
 assert.equal(receipt.summary.schema, FUNDRAISE_DEMO_SUMMARY_SCHEMA);
 assert.equal(receipt.summary.status, "authorized-pending-signature");
 assert.equal(receipt.summary.round_id, "aac-seed-2026-001");
@@ -92,49 +84,6 @@ assert.equal(receipt.summary.issuer_name, "issuer-a.private-row");
 assert.equal(receipt.summary.economics.settlement_amount_total, 1500);
 assert.equal(receipt.summary.economics.issued_unit_total, 150);
 assert.equal(receipt.summary.economics.recipient_count, 2);
-assert.deepEqual(receipt.summary.metrics, [
-  { value: "1500", label: "USDC order size" },
-  { value: "150", label: "restricted SAFE receipt units" },
-  { value: "2", label: "fills in batch" },
-]);
-assert.deepEqual(receipt.summary.order, {
-  headline: "Sell 150 restricted SAFE receipt units",
-  price_label: "10 USDC / unit",
-  settlement_asset: "USDC",
-  issued_unit: "restricted SAFE receipt units",
-  issued_unit_noun: "units",
-  price_per_unit: 10,
-});
-assert.deepEqual(receipt.summary.fills.map((item) => ({
-  party: item.party,
-  settlement_label: item.settlement_label,
-  issued_label: item.issued_label,
-  recipient: item.recipient,
-})), [
-  {
-    party: "investor-a",
-    settlement_label: "1000 USDC",
-    issued_label: "100 units",
-    recipient: "0xA11ce00000000000000000000000000000000039",
-  },
-  {
-    party: "investor-b",
-    settlement_label: "500 USDC",
-    issued_label: "50 units",
-    recipient: "0xB0b000000000000000000000000000000000039",
-  },
-]);
-assert.deepEqual(receipt.summary.opening_balances, [
-  { label: "USDC collected", value: "0 USDC" },
-  { label: "units issued", value: "0 units" },
-  { label: "units open", value: "150 units" },
-]);
-assert.equal(receipt.summary.reconciliation.accepted, true);
-assert.deepEqual(receipt.summary.reconciliation.rows, [
-  { line: "USDC collected", opening: "0 USDC", delta: "+1500 USDC", closing: "1500 USDC" },
-  { line: "units issued", opening: "0 units", delta: "+150 units", closing: "150 units" },
-  { line: "units open", opening: "150 units", delta: "-150 units", closing: "0 units" },
-]);
 assert.equal(receipt.summary.commitments.transition_set, receipt.public_inputs.transition_set_commitment);
 assert.equal(receipt.summary.proof.proof_digest, receipt.provekit.proof_digest);
 assert.equal(receipt.summary.workflow.signature_status, "pending");

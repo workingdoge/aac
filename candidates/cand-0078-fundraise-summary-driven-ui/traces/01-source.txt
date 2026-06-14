@@ -1,0 +1,1 @@
+fundraise UI renders packet-derived summary fields instead of local constants

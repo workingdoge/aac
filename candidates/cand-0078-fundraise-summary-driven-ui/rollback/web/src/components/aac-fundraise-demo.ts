@@ -83,10 +83,6 @@ export class AacFundraiseDemo extends LitElement {
         'Press Fill order live to call the localhost ProveKit runner.',
         fundraiseDemoSummary.caveats[1],
       ],
-      reconciliation: {
-        ...fundraiseDemoSummary.reconciliation,
-        accepted: false,
-      },
     } as unknown as FundraiseSummary;
   }
 
@@ -978,12 +974,14 @@ export class AacFundraiseDemo extends LitElement {
     const s = this.summary;
     const balances = s.settlement.balances ?? [];
     const total = s.settlement.total_supply || s.economics.issued_unit_total || 1;
-    const metrics = s.metrics ?? [];
-    const order = s.order ?? { headline: 'Order unavailable', price_label: 'price unavailable' };
-    const fills = s.fills ?? [];
-    const openingBalances = s.opening_balances ?? [];
-    const reconciliation = s.reconciliation ?? { accepted: false, rows: [] };
-    const booksClose = reconciliation.accepted === true;
+    const orderUnits = s.economics.issued_unit_total || 0;
+    const orderCash = s.economics.settlement_amount_total || 0;
+    const fills = this.orderFills();
+    const filledCash = fills.reduce((sum, fill) => sum + fill.cash, 0);
+    const filledUnits = fills.reduce((sum, fill) => sum + fill.units, 0);
+    const openAfter = Math.max(0, orderUnits - filledUnits);
+    const booksClose = filledCash === orderCash && filledUnits === orderUnits && openAfter === 0;
+    const price = orderUnits ? orderCash / orderUnits : 0;
     const fillStatus = this.runState === 'running'
       ? 'clearing fills'
       : s.accepted
@@ -1008,31 +1006,29 @@ export class AacFundraiseDemo extends LitElement {
         </div>
 
         <div class="numbers">
-          ${metrics.map((item) => html`<div class="num"><b>${item.value}</b><span>${item.label}</span></div>`)}
+          <div class="num"><b>${orderCash}</b><span>USDC order size</span></div>
+          <div class="num"><b>${orderUnits}</b><span>SAFE receipt units</span></div>
+          <div class="num"><b>${s.economics.recipient_count}</b><span>fills in batch</span></div>
         </div>
 
         <div class="order-ticket" aria-label="Order fill ticket">
           <section class="order-main">
             <div class="ticket-label">Open order</div>
             <div class="order-line">
-              <b>${order.headline}</b>
-              <span class="price-stamp">${order.price_label}</span>
+              <b>Sell ${orderUnits} restricted receipt units</b>
+              <span class="price-stamp">${price.toFixed(0)} USDC / unit</span>
             </div>
             <div class="order-meta">${fillStatus} · ${this.short(s.commitments.mint_recipient_set, 10, 8)}</div>
           </section>
           <section class="balance-main">
             <div class="ticket-label">Starting balances</div>
             <div class="balance-list">
-              ${openingBalances.length
-                ? openingBalances.map((item) => this.balanceRow(item))
-                : html`<div class="empty">No opening balances in the runner summary.</div>`}
+              ${this.openingBalances(orderUnits).map((item) => this.balanceRow(item.label, item.value))}
             </div>
           </section>
           <section class="fill-main">
             <div class="ticket-label">Submitted fills</div>
-            ${fills.length
-              ? fills.map((fill) => this.fillRow(fill))
-              : html`<div class="empty">No submitted fills in the runner summary.</div>`}
+            ${fills.map((fill) => this.fillRow(fill.party, fill.cash, fill.units))}
           </section>
         </div>
 
@@ -1053,7 +1049,7 @@ export class AacFundraiseDemo extends LitElement {
               <span class="book-cell">swap delta</span>
               <span class="book-cell">closing</span>
             </div>
-            ${reconciliation.rows.map((row) => this.bookRow(row))}
+            ${this.bookRows(orderUnits, filledCash, filledUnits, openAfter).map((row) => this.bookRow(row))}
           </div>
         </section>
 
@@ -1135,11 +1131,26 @@ export class AacFundraiseDemo extends LitElement {
     return html`<div class="slip"><span>${label}</span><span>${this.short(value)}</span></div>`;
   }
 
-  private balanceRow(item: { label: string; value: string }) {
+  private orderFills() {
+    return [
+      { party: 'investor-a', cash: 1000, units: 100 },
+      { party: 'investor-b', cash: 500, units: 50 },
+    ];
+  }
+
+  private openingBalances(orderUnits: number) {
+    return [
+      { label: 'USDC collected', value: '0 USDC' },
+      { label: 'receipt units issued', value: '0 units' },
+      { label: 'order units open', value: `${orderUnits} units` },
+    ];
+  }
+
+  private balanceRow(label: string, value: string) {
     return html`
       <div class="balance-row">
-        <span class="balance-label">${item.label}</span>
-        <span class="balance-value">${item.value}</span>
+        <span class="balance-label">${label}</span>
+        <span class="balance-value">${value}</span>
       </div>
     `;
   }
@@ -1149,6 +1160,29 @@ export class AacFundraiseDemo extends LitElement {
     if (accepted && booksClose) return 'books reconciled';
     if (accepted) return 'mismatch flagged';
     return 'ready to reconcile';
+  }
+
+  private bookRows(orderUnits: number, filledCash: number, filledUnits: number, openAfter: number) {
+    return [
+      {
+        line: 'USDC collected',
+        opening: '0 USDC',
+        delta: `+${filledCash} USDC`,
+        closing: `${filledCash} USDC`,
+      },
+      {
+        line: 'receipt units issued',
+        opening: '0 units',
+        delta: `+${filledUnits} units`,
+        closing: `${filledUnits} units`,
+      },
+      {
+        line: 'order units open',
+        opening: `${orderUnits} units`,
+        delta: `-${filledUnits} units`,
+        closing: `${openAfter} units`,
+      },
+    ];
   }
 
   private bookRow(row: { line: string; opening: string; delta: string; closing: string }) {
@@ -1162,12 +1196,12 @@ export class AacFundraiseDemo extends LitElement {
     `;
   }
 
-  private fillRow(fill: { party: string; settlement_label: string; issued_label: string }) {
+  private fillRow(party: string, cash: number, units: number) {
     return html`
       <div class="fill-row">
-        <span class="fill-party">${fill.party}</span>
-        <span class="fill-amount">${fill.settlement_label}</span>
-        <span class="fill-units">${fill.issued_label}</span>
+        <span class="fill-party">${party}</span>
+        <span class="fill-amount">${cash} USDC deposited</span>
+        <span class="fill-units">${units} units</span>
       </div>
     `;
   }
