@@ -1,0 +1,5 @@
+candidate_id: cand-0065-fundraise-slotted-controls
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T11:40:48Z
+intent: Keep fundraise controls owned by aac-fundraise-demo while rendering the clickable buttons as component-owned light-DOM slotted controls.
+status: landed

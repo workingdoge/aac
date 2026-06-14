@@ -1,0 +1,37 @@
+# Reflection: cand-0065-fundraise-slotted-controls
+
+Intent: Keep fundraise controls owned by aac-fundraise-demo while rendering the clickable buttons as component-owned light-DOM slotted controls.
+Status at reflection: landed
+Reflected at: 2026-06-14T11:44:08Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0065-fundraise-slotted-controls",
+  "evaluated_at": "2026-06-14T11:43:01Z",
+  "task": "Keep fundraise controls owned by the component while rendering clickable controls as slotted light-DOM buttons.",
+  "checks": {
+    "source": "pass",
+    "build": "pass",
+    "scope": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "56d635eb18a070d20f27f661b6dbf5bb1e86ee4659db60b8baa437f538d8e5f0",
+    "traces_sha256": "3b693eae1a4dd09986d963c80c5cd6d5ba2bc9ef4c9951afccac2417ad1da849",
+    "body_sha256": "736f10bc0a07ccc9f0166fc7cb2782e4089fd2f7be0f3003cca6b73f9e5affb0",
+    "attestation": "8d59a6b5c100ba6fce79da7bd4350b5d6c58c907566fd14e0b0c3687a1dc450a"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.

@@ -6,8 +6,8 @@ type RunState = 'idle' | 'running' | 'proved' | 'error';
 
 /** aac-fundraise-demo — presentation console for the ProveKit fundraise path:
  *  private issuer roots -> VNET proof/workflow authorization -> local receipt
- *  token settlement. The component owns the live runner controls, starts from a
- *  ready-to-run state, and can replace it with a fresh localhost response. */
+ *  token settlement. The component starts from a captured settled receipt, then
+ *  can replace it with a fresh localhost runner response. */
 export class AacFundraiseDemo extends LitElement {
   static properties = {
     summary: { state: true },
@@ -22,8 +22,6 @@ export class AacFundraiseDemo extends LitElement {
   private liveError = '';
   private liveElapsedMs: number | null = null;
   private sourceLabel = 'ready: no proof run yet';
-  private runControl: HTMLButtonElement | null = null;
-  private captureControl: HTMLButtonElement | null = null;
 
   private readySummary(): FundraiseSummary {
     return {
@@ -166,7 +164,8 @@ export class AacFundraiseDemo extends LitElement {
       gap: 7px;
     }
 
-    ::slotted(button) {
+    button.run,
+    button.ghost {
       appearance: none;
       border: 1px solid var(--aac-color-navy, #21324f);
       border-radius: var(--aac-radius-r, 2px);
@@ -179,25 +178,27 @@ export class AacFundraiseDemo extends LitElement {
       cursor: pointer;
     }
 
-    ::slotted(button[data-fundraise-action="run-live-proof"]) {
+    button.run {
       background: var(--aac-color-navy, #21324f);
       color: var(--aac-color-bond, #fff);
     }
 
-    ::slotted(button[data-fundraise-action="show-capture"]) {
+    button.ghost {
       background: transparent;
       color: var(--aac-color-navy, #21324f);
     }
 
-    ::slotted(button:hover),
-    ::slotted(button:focus-visible) {
+    button.run:hover:not(:disabled),
+    button.run:focus-visible:not(:disabled),
+    button.ghost:hover:not(:disabled),
+    button.ghost:focus-visible:not(:disabled) {
       background: var(--aac-color-oxblood, #93302c);
       border-color: var(--aac-color-oxblood, #93302c);
       color: var(--aac-color-bond, #fff);
       outline: none;
     }
 
-    ::slotted(button:disabled) {
+    button.run:disabled {
       cursor: wait;
       opacity: 0.72;
     }
@@ -525,76 +526,39 @@ export class AacFundraiseDemo extends LitElement {
     return `${base.replace(/\/+$/, '')}/api/fundraise/run`;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.ensureOwnedControls();
-    this.syncOwnedControls();
-  }
-
   updated() {
-    this.syncOwnedControls();
+    this.bindRenderedControls();
   }
 
   disconnectedCallback() {
-    this.runControl?.removeEventListener('click', this.handleRunControl);
-    this.captureControl?.removeEventListener('click', this.handleCaptureControl);
-    this.runControl = null;
-    this.captureControl = null;
+    this.unbindRenderedControls();
     super.disconnectedCallback();
   }
 
-  private ensureOwnedControls() {
-    const run = this.ownedButton('run-live-proof', 'fundraise-run', 'run');
-    const capture = this.ownedButton('show-capture', 'fundraise-capture', 'ghost');
+  private bindRenderedControls() {
+    const run = this.renderRoot?.querySelector<HTMLButtonElement>('[data-fundraise-action="run-live-proof"]');
+    const capture = this.renderRoot?.querySelector<HTMLButtonElement>('[data-fundraise-action="show-capture"]');
 
-    if (this.runControl !== run) {
-      this.runControl?.removeEventListener('click', this.handleRunControl);
-      run.addEventListener('click', this.handleRunControl);
-      this.runControl = run;
+    if (run) {
+      run.onclick = () => {
+        if (run.disabled) return;
+        void this.runLiveProof();
+      };
     }
-    if (this.captureControl !== capture) {
-      this.captureControl?.removeEventListener('click', this.handleCaptureControl);
-      capture.addEventListener('click', this.handleCaptureControl);
-      this.captureControl = capture;
-    }
-  }
-
-  private ownedButton(action: string, slot: string, className: string): HTMLButtonElement {
-    const existing = Array.from(this.children).find(
-      (child): child is HTMLButtonElement =>
-        child instanceof HTMLButtonElement && child.dataset.fundraiseAction === action,
-    );
-    if (existing) return existing;
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.slot = slot;
-    button.className = className;
-    button.dataset.fundraiseAction = action;
-    this.append(button);
-    return button;
-  }
-
-  private syncOwnedControls() {
-    this.ensureOwnedControls();
-    if (this.runControl) {
-      this.runControl.textContent = this.runButtonText();
-      this.runControl.disabled = this.runState === 'running';
-    }
-    if (this.captureControl) {
-      this.captureControl.textContent = 'Show capture';
-      this.captureControl.disabled = this.runState === 'running';
+    if (capture) {
+      capture.onclick = () => {
+        if (capture.disabled) return;
+        this.showCapturedReceipt();
+      };
     }
   }
 
-  private readonly handleRunControl = () => {
-    if (this.runState === 'running') return;
-    void this.runLiveProof();
-  };
-
-  private readonly handleCaptureControl = () => {
-    if (this.runState === 'running') return;
-    this.showCapturedReceipt();
-  };
+  private unbindRenderedControls() {
+    const run = this.renderRoot?.querySelector<HTMLButtonElement>('[data-fundraise-action="run-live-proof"]');
+    const capture = this.renderRoot?.querySelector<HTMLButtonElement>('[data-fundraise-action="show-capture"]');
+    if (run) run.onclick = null;
+    if (capture) capture.onclick = null;
+  }
 
   private async runLiveProof() {
     if (this.runState === 'running') return;
@@ -663,8 +627,12 @@ export class AacFundraiseDemo extends LitElement {
           <div class="live-box">
             <div class="status">${this.displayStatus(s.status)}</div>
             <div class="actions">
-              <slot name="fundraise-run"></slot>
-              <slot name="fundraise-capture"></slot>
+              <button class="run" type="button" data-fundraise-action="run-live-proof" ?disabled=${this.runState === 'running'}>
+                ${this.runButtonText()}
+              </button>
+              <button class="ghost" type="button" data-fundraise-action="show-capture" ?disabled=${this.runState === 'running'}>
+                Show capture
+              </button>
             </div>
             <div class=${`live-note ${this.runState === 'error' ? 'error' : ''}`}>${this.runNote()}</div>
           </div>
