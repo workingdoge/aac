@@ -257,21 +257,6 @@
         "type": "github"
       }
     },
-    "crane_2": {
-      "locked": {
-        "lastModified": 1780532242,
-        "narHash": "sha256-D+BsdpxmtUwtqGoY0IXPhHgTlmqgcZKCEo1oMyn7ep0=",
-        "owner": "ipetkov",
-        "repo": "crane",
-        "rev": "59a82a1222dd3b2080b5cc52a1a2e8d5f1b77f37",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ipetkov",
-        "repo": "crane",
-        "type": "github"
-      }
-    },
     "crate2nix": {
       "inputs": {
         "cachix": "cachix_2",
@@ -1373,23 +1358,6 @@
         "type": "github"
       }
     },
-    "provekit-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1781414529,
-        "narHash": "sha256-LDc1flXaNUfFgD+t39g54kGEGaotbntSbRWYZcb/FjI=",
-        "owner": "worldfnd",
-        "repo": "ProveKit",
-        "rev": "b0cb124685bcf24cc0deaa7b191032f58875a47a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "worldfnd",
-        "repo": "ProveKit",
-        "rev": "b0cb124685bcf24cc0deaa7b191032f58875a47a",
-        "type": "github"
-      }
-    },
     "pyproject-build-systems": {
       "inputs": {
         "nixpkgs": [
@@ -1491,13 +1459,10 @@
         "bignum-paramgen-src": "bignum-paramgen-src",
         "boat": "boat",
         "co-snarks-src": "co-snarks-src",
-        "crane": "crane_2",
         "flake-utils": "flake-utils_2",
         "nixpkgs": "nixpkgs_8",
         "noir-src": "noir-src",
-        "paintgun": "paintgun",
-        "provekit-src": "provekit-src",
-        "rust-overlay": "rust-overlay_3"
+        "paintgun": "paintgun"
       }
     },
     "rust-analyzer-src": {
@@ -1566,26 +1531,6 @@
         "owner": "oxalica",
         "repo": "rust-overlay",
         "rev": "3c27f4c92a7d977556dd2c10bb564d9c61b375e9",
-        "type": "github"
-      },
-      "original": {
-        "owner": "oxalica",
-        "repo": "rust-overlay",
-        "type": "github"
-      }
-    },
-    "rust-overlay_3": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1781407245,
-        "narHash": "sha256-VzJq4MmD0uyNDAceudSe1hHqcQMe9Tau0U4S+5iRGh0=",
-        "owner": "oxalica",
-        "repo": "rust-overlay",
-        "rev": "d5f483210eb016d66102eef22baa128b3b3233fc",
         "type": "github"
       },
       "original": {

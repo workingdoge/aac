@@ -1,0 +1,5 @@
+candidate_id: cand-0050-provekit-flake-import
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T07:33:47Z
+intent: import ProveKit flake package from main into vnet fundraising workspace
+status: landed

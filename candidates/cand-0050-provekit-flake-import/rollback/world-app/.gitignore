@@ -9,7 +9,4 @@ target/
 # circuit witness/proof artifacts
 provekit-circuit/Prover.toml
 provekit-circuit/proof.bin
-provekit-circuit/proof.np
 provekit-circuit/public.json
-provekit-circuit/*.pkp
-provekit-circuit/*.pkv

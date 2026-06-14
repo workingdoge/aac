@@ -30,19 +30,6 @@
       url = "github:noir-lang/noir-bignum-paramgen";
       flake = false;
     };
-    # ProveKit (worldfnd/ProveKit) — the WHIR-based Noir proving stack used
-    # for the World Mini App client-side receipt proof (world-app/). Built
-    # from source (no prebuilt release binaries) via crane, with the pinned
-    # nightly the repo's rust-toolchain.toml requires. Commit-pinned.
-    crane.url = "github:ipetkov/crane";
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    provekit-src = {
-      url = "github:worldfnd/ProveKit/b0cb124685bcf24cc0deaa7b191032f58875a47a";
-      flake = false;
-    };
   };
 
   outputs =
@@ -55,21 +42,12 @@
       noir-src,
       co-snarks-src,
       bignum-paramgen-src,
-      crane,
-      rust-overlay,
-      provekit-src,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = import nixpkgs {
-          inherit system;
-          # rust-overlay adds `pkgs.rust-bin.*` (the pinned nightly the
-          # ProveKit build needs); it is additive and does not alter the
-          # stable rustPlatform the co-snarks build uses.
-          overlays = [ (import rust-overlay) ];
-        };
+        pkgs = import nixpkgs { inherit system; };
         lib = pkgs.lib;
 
         # bb (Barretenberg) — the UltraHonk prover/verifier, fetched as the
@@ -206,60 +184,6 @@
           };
         };
 
-        # nargo19 — the beta.19 Noir CLI, provisioned the SAME hash-pinned way as
-        # `nargo` above, but for the ProveKit re-expression (world-app/provekit-
-        # circuit, Design Note 0002 S2.1). ADDITIVE BY DESIGN: it is NOT on the
-        # devShell PATH and NOT the default package, because the main `circuits/`
-        # workspace pins beta.14 and two `nargo` binaries on PATH would collide.
-        # Reach it explicitly:  nix build .#nargo19  then run
-        #   ./result/bin/nargo {compile,test,execute}  inside world-app/provekit-circuit.
-        # Hashes pinned via `nix store prefetch-file <url>` for all four release triples.
-        nargo19Release = "v1.0.0-beta.19";
-        nargo19Systems = {
-          "aarch64-darwin" = {
-            triple = "aarch64-apple-darwin";
-            hash = "sha256-PQIUPvzAalyZH2m7a7dw5jkjBUnWTzXtE977REILenU=";
-          };
-          "x86_64-darwin" = {
-            triple = "x86_64-apple-darwin";
-            hash = "sha256-QVQni4ZXhrvzxQZJRKe4RQ9J2mmtIqPJcYJvazNmaOs=";
-          };
-          "x86_64-linux" = {
-            triple = "x86_64-unknown-linux-gnu";
-            hash = "sha256-t3ScdOdW2OjQLeXX5NmkQbTBhlZ0tI9ug7YhT7O4C+U=";
-          };
-          "aarch64-linux" = {
-            triple = "aarch64-unknown-linux-gnu";
-            hash = "sha256-3br3C+KpU3AZYq/vjOGFF7f3fXdoXQcPCBIXM5Zqe/s=";
-          };
-        };
-        nargo19Entry = nargo19Systems.${system} or (throw "nargo19: no pinned release for ${system}");
-        nargo19 = pkgs.stdenv.mkDerivation {
-          pname = "nargo";
-          version = nargo19Release;
-          src = pkgs.fetchurl {
-            url = "https://github.com/noir-lang/noir/releases/download/${nargo19Release}/nargo-${nargo19Entry.triple}.tar.gz";
-            hash = nargo19Entry.hash;
-          };
-          sourceRoot = ".";
-          dontConfigure = true;
-          dontBuild = true;
-          nativeBuildInputs = lib.optionals pkgs.stdenv.isLinux [ pkgs.autoPatchelfHook ];
-          buildInputs = lib.optionals pkgs.stdenv.isLinux [ pkgs.stdenv.cc.cc.lib ];
-          installPhase = ''
-            runHook preInstall
-            install -Dm755 nargo $out/bin/nargo
-            runHook postInstall
-          '';
-          meta = {
-            description = "Nargo beta.19 -- the Noir CLI for the ProveKit re-expression (pinned prebuilt).";
-            homepage = "https://noir-lang.org/";
-            license = lib.licenses.mit;
-            platforms = builtins.attrNames nargo19Systems;
-            mainProgram = "nargo";
-          };
-        };
-
         co-snarks = pkgs.rustPlatform.buildRustPackage (finalAttrs: {
           pname = "co-snarks";
           version = "co-noir-v0.7.0";
@@ -348,50 +272,6 @@
           };
         });
 
-        # ── ProveKit CLI (worldfnd/ProveKit) ────────────────────────────
-        # The WHIR proving stack: `provekit-cli {prepare,prove,verify}`
-        # (ACIR -> R1CS -> WHIR; default Merkle hash Skyscraper). This is
-        # the client-side proving path for the World Mini App receipt
-        # circuit (world-app/provekit-circuit, Noir beta.19) — SEPARATE
-        # from the bb/UltraHonk beta.14 `circuits/` workspace + 4/REG path.
-        # Built from source via crane with the repo's pinned nightly.
-        # Kept OFF the default dev-shell; reach it via `nix build .#provekit`
-        # then `./result/bin/provekit-cli`.
-        provekitToolchain = pkgs.rust-bin.nightly."2026-03-04".minimal;
-        provekitCraneLib = (crane.mkLib pkgs).overrideToolchain (_: provekitToolchain);
-        provekitCommonArgs = {
-          pname = "provekit-cli";
-          version = "1.0.0";
-          src = provekit-src;
-          strictDeps = true;
-          # Build only the CLI's closure (the full-workspace cargo build is
-          # proven, but -p keeps the gnark/wasm members out of the picture).
-          cargoExtraArgs = "--locked -p provekit-cli";
-          doCheck = false;
-          # Vendored noir (beta.19) build.rs uses `build_data` for git info,
-          # which fails in the sandbox; it short-circuits when GIT_COMMIT is
-          # already set — the same escape hatch the co-snarks build uses.
-          GIT_COMMIT = "74d6be658e1ad252f87943292ba09bdd4da80bd4";
-          GIT_DIRTY = "false";
-          nativeBuildInputs = [ pkgs.pkg-config ];
-          buildInputs = lib.optionals pkgs.stdenv.isDarwin [ pkgs.libiconv ];
-        };
-        provekit = provekitCraneLib.buildPackage (
-          provekitCommonArgs
-          // {
-            # Cache the (heavy) dependency compile separately so iterating on
-            # the final package step doesn't recompile noir/whir/arkworks.
-            cargoArtifacts = provekitCraneLib.buildDepsOnly provekitCommonArgs;
-            meta = {
-              description = "ProveKit CLI -- WHIR-based Noir prover/verifier (prepare/prove/verify).";
-              homepage = "https://github.com/worldfnd/ProveKit";
-              license = lib.licenses.mit;
-              mainProgram = "provekit-cli";
-              platforms = lib.platforms.unix;
-            };
-          }
-        );
-
         noirToolchainPackages =
           [
             nargo
@@ -412,7 +292,7 @@
         packages =
           {
             default = nargo;
-            inherit nargo nargo19 bignum-paramgen provekit;
+            inherit nargo bignum-paramgen;
           }
           // lib.optionalAttrs pkgs.stdenv.isLinux {
             inherit co-snarks;
