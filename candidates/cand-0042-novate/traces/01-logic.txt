@@ -1,0 +1,1 @@
+structural ok: net_grid + novate obligation (composition + bilateral-clean + balanced legs) + canonical compile; bin binds the three commitments + discharges novate; workspace updated

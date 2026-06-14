@@ -1,0 +1,7 @@
+# NOVATE/1 witness: a trade and (implicitly) its canonical novation.
+# Public = the three journal commitments (bilateral, leg A-C, leg C-B).
+bilateral_commitment = "0x06d8c1226d19f5721d11b7ba13bc724db2ae6592eb6512b21087b8e0e269d44a"
+leg_ac_commitment = "0x035d8bd0b8b2b0cd1d683e38be3d7b5af216b23782802557d0a87be110d25cd0"
+leg_cb_commitment = "0x0f2caa22c4838e2d3aac0e26fb864a1c04603d3958a59115842d86d82e1cd163"
+asset_amt = "1000000"
+cash_amt = "100000000"

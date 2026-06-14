@@ -1,0 +1,3 @@
+[workspace]
+members = ["pacioli", "hash", "ledger", "receipt", "event-harness", "rulebook", "event-complete", "bom-receipt", "event-bom-receipt", "repo", "event-repo-open", "event-repo-close", "transition", "nullify"]
+default-member = "transition"

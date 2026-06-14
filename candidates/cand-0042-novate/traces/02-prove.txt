@@ -1,0 +1,1 @@
+nargo test --workspace green (novate 5/5 incl. tampered/unbalanced/non-bilateral rejects + event_novate 4/4); event_novate witness solves; existing event_complete/transition/nullify still solve (value-preserving)

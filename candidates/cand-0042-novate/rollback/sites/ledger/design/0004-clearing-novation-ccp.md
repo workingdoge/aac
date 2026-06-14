@@ -162,20 +162,19 @@ not have to see inside of to believe.
 ## 8. Status and the buildable next steps
 
 Landed: the repo instrument (cand-0040, `circuits/repo` + `event-repo-open` /
-`event-repo-close`, R1 tags 127/128) — the first real clearing input; and **NOVATE/1
-itself** (cand-0042, [`NOVATE-1.md`](../specs/applications/NOVATE-1.md) +
-`circuits/novate` + `circuits/event-novate`) — §3 promoted to an application-target
-spec and a proof. Specced and enshrined: TRANSITION/1, NULLIFY/1, NET/1. Specced, in
-progress (operator): VNET/1.
+`event-repo-close`, R1 tags 127/128) — the first real clearing input. Specced and
+enshrined: TRANSITION/1, NULLIFY/1, NET/1. Specced, in progress (operator): VNET/1.
+**Specified by this note, unbuilt: NOVATE/1.**
 
 VNET-safe next slices (the layers *around* the multilateral net, which is the
 operator's VNET work):
 
 1. **More posting programs** — a UST cash trade (security ⇄ cash, the simplest
    input), then agency MBS / TBA — extending the EVENT/1 capture layer.
-2. **NOVATE/1 v2** — the venue-submitted-legs variant (legs witnessed independently
-   and only *checked*), a CCP fee/spread (CCP-flat becomes a witnessed target, not a
-   theorem), and a richer chart — building on the v1 just landed.
+2. **NOVATE/1** — promote this note's §3 to an application-target spec + a
+   `circuits/novate` proof: the balanced two-leg decomposition with the CCP-flat
+   obligation, policy-gated. The conceptual keystone; it gives VNET a clean
+   matched-book interface to net against.
 3. **Fails carry** — the nullifier-chained roll-forward over TRANSITION/1.
 
 Related: Design Note [0001](0001-bvr-clearing-kernel.md) (the Pⁿ clearing kernel),

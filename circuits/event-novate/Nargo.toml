@@ -1,0 +1,8 @@
+[package]
+name = "event_novate"
+type = "bin"
+authors = ["American Accounting Company"]
+[dependencies]
+novate = { path = "../novate" }
+ledger = { path = "../ledger" }
+event_harness = { path = "../event-harness" }

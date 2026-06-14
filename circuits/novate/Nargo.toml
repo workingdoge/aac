@@ -1,0 +1,8 @@
+[package]
+name = "novate"
+type = "lib"
+authors = ["American Accounting Company"]
+
+[dependencies]
+pacioli = { path = "../pacioli" }
+event_harness = { path = "../event-harness" }

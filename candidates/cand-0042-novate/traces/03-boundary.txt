@@ -1,0 +1,1 @@
+cand-0033 boundary law still passes with novate + event-novate present (app-side; kernel untouched)

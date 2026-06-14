@@ -1,0 +1,9 @@
+cargo/circuits/Nargo.toml                                 circuits/Nargo.toml
+cargo/circuits/novate/Nargo.toml                          circuits/novate/Nargo.toml
+cargo/circuits/novate/src/lib.nr                          circuits/novate/src/lib.nr
+cargo/circuits/event-novate/Nargo.toml                    circuits/event-novate/Nargo.toml
+cargo/circuits/event-novate/src/main.nr                   circuits/event-novate/src/main.nr
+cargo/circuits/event-novate/Prover.toml                   circuits/event-novate/Prover.toml
+cargo/sites/ledger/specs/applications/NOVATE-1.md         sites/ledger/specs/applications/NOVATE-1.md
+cargo/sites/ledger/specs/applications/README.md           sites/ledger/specs/applications/README.md
+cargo/sites/ledger/design/0004-clearing-novation-ccp.md   sites/ledger/design/0004-clearing-novation-ccp.md
