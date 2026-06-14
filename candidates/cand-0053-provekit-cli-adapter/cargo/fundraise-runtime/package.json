@@ -1,8 +1,8 @@
 {
-  "name": "@aac/fundraise-provekit-adapter",
+  "name": "@aac/fundraise-runtime",
   "version": "0.0.0",
   "private": true,
-  "description": "Dependency-free adapter from ProveKit native CLI or accepted verification results to fundraise-workflow verifier receipts.",
+  "description": "Function-first JS runtime for FUNDRAISE-CLEARING/1 demo packets. Transcripts are fixtures/receipts, not the app core.",
   "type": "module",
   "exports": {
     ".": {

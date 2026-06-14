@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0053-provekit-cli-adapter",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "f94dc323a3b7127f5451fa41ebe42b66f16516179266e9601320d5831fe3e6f6",
+    "META": "3ba59a94e335cfdfc822b82895c2844791c6425b0cdd5ca0925ae20f16c8c4ca"
+  }
+}
