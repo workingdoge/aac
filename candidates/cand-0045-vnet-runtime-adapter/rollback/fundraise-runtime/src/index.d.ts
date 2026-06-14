@@ -106,12 +106,6 @@ export interface BccSignatureVerifierInput {
   transcript_hash: string;
 }
 
-export interface BccCancellationVerifierInput {
-  certificate: any;
-  cancellation_opening: any;
-  payload: any;
-}
-
 export interface AuthorizedMint {
   schema: "aac.fundraise-runtime.authorized-mint.v1";
   round_id: string;
@@ -123,18 +117,11 @@ export interface AuthorizedMint {
 }
 
 export interface VerifyOptions {
-  /**
-   * Optional deployment verifier for VNET/1. If omitted, the runtime uses the
-   * dependency-free JS reference verifier for the landed VNET-BN254-G1/1
-   * transition-link fixture shape.
-   */
   verifyVnetLink?: (vnetLink: any) => { accepted: boolean; reason: string };
   seenBccFinalityTags?: Set<string>;
   seen_bcc_finality_tags?: string[];
   verifyBccSignature?: (input: BccSignatureVerifierInput) => boolean | { accepted: boolean; reason?: string };
   verify_bcc_signature?: (input: BccSignatureVerifierInput) => boolean | { accepted: boolean; reason?: string };
-  verifyBccCancellation?: (input: BccCancellationVerifierInput) => boolean | { accepted: boolean; reason?: string };
-  verify_bcc_cancellation?: (input: BccCancellationVerifierInput) => boolean | { accepted: boolean; reason?: string };
   bccSignatureDomain?: Record<string, unknown>;
   bcc_signature_domain?: Record<string, unknown>;
 }

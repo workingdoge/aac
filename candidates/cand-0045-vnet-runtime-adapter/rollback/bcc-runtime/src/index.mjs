@@ -6,8 +6,6 @@ export const PACKET_SCHEMA = "aac.bcc.packet.v1";
 export const VECTOR_SCHEMA = "aac.bcc-demo.conformance.v1";
 export const MOCK_RECORD_COMMITMENT_SCHEME = "mock-record-commitment/1";
 export const MOCK_CANCELLATION_SCHEME = "mock-cancellation-opening/1";
-export const FIXTURE_VNET_CANCELLATION_SCHEME = "fixture-vnet-cancellation/1";
-export const CANCELLATION_PAYLOAD_SCHEMA = "aac.bcc.cancellation-payload.v1";
 export const MOCK_SIGNATURE_SCHEME = "mock-signature/1";
 export const EIP712_SIGNATURE_SCHEME = "eip712-adapter/1";
 export const SIGNATURE_TYPED_DATA_SCHEMA = "aac.bcc.signature-typed-data.v1";
@@ -274,46 +272,6 @@ export function fixtureVerifyTypedDataSignature({ signature, typed_data }) {
   return signature.signature === want;
 }
 
-export function bccCancellationPayload(cert) {
-  const opening = clone(cert.cancellation_opening);
-  delete opening.proof_digest;
-  return {
-    schema: CANCELLATION_PAYLOAD_SCHEMA,
-    certificateSchema: cert.schema,
-    basis_type_ids: [...cert.basis_type_ids],
-    records: cert.records.map((r) => ({
-      party_id: r.party_id,
-      role: r.role,
-      transition_ref: r.transition_ref,
-      journal_commitment: r.journal_commitment,
-      basis_type_ids: [...r.basis_type_ids],
-      record_commitment: clone(r.record_commitment),
-    })),
-    cancellation_opening: opening,
-  };
-}
-
-export function fixtureProveCancellation(cert) {
-  const opening = {
-    scheme: FIXTURE_VNET_CANCELLATION_SCHEME,
-    commitment_scheme: "vnet-bn254-g1/1",
-    aggregate_opening: cert.cancellation_opening.aggregate_opening,
-    zero_opening: true,
-    proof_digest: "",
-    record_count: cert.records.length,
-  };
-  const partial = { ...cert, cancellation_opening: opening };
-  return {
-    ...opening,
-    proof_digest: digestHex("aac/bcc/fixture-vnet-cancellation/1", bccCancellationPayload(partial)),
-  };
-}
-
-export function fixtureVerifyCancellation({ cancellation_opening, payload }) {
-  const want = digestHex("aac/bcc/fixture-vnet-cancellation/1", payload);
-  return cancellation_opening.proof_digest === want;
-}
-
 export function buildFinality({ transcript_hash, log_ref = "demo-log", nullifier } = {}) {
   const n = nullifier ?? digestHex("aac/bcc/nullifier/1", transcript_hash);
   return {
@@ -419,7 +377,7 @@ function checkCertificate(cert, opts) {
     }
   }
 
-  checkCancellationOpening(cert, opts);
+  checkCancellationOpening(cert);
   checkAuthenticatedDh(cert);
 
   if (cert.transcript_hash !== transcriptHash(cert)) fail("transcript_hash_mismatch");
@@ -470,23 +428,8 @@ function checkSignature(cert, record, sig, opts) {
   fail("signature_mismatch");
 }
 
-function checkCancellationOpening(cert, opts) {
+function checkCancellationOpening(cert) {
   const opening = cert.cancellation_opening;
-  if (opening?.scheme !== MOCK_CANCELLATION_SCHEME) {
-    const verifyCancellation = opts.verifyCancellation ?? opts.verify_cancellation;
-    if (typeof verifyCancellation !== "function") fail("cancellation_verifier_missing");
-    const payload = bccCancellationPayload(cert);
-    const result = verifyCancellation({
-      certificate: cert,
-      cancellation_opening: opening,
-      payload,
-    });
-    if (result === true || result?.accepted === true) return;
-    if (result && typeof result === "object" && typeof result.reason === "string") {
-      fail(result.reason.startsWith("cancellation_") ? result.reason : `cancellation_${result.reason}`);
-    }
-    fail("cancellation_proof_mismatch");
-  }
   if (!opening || opening.scheme !== MOCK_CANCELLATION_SCHEME) fail("cancellation_opening_missing");
   if (opening.commitment_scheme !== MOCK_RECORD_COMMITMENT_SCHEME) fail("cancellation_commitment_scheme_mismatch");
   if (opening.record_count !== cert.records.length) fail("cancellation_record_count_mismatch");
@@ -606,10 +549,6 @@ export function demoVectors() {
   const typedDataNoVerifier = clone(typedDataGood);
   const typedDataBadSigner = clone(typedDataGood);
   typedDataBadSigner.signatures[0].public_key = "wrong-signer";
-  const cancellationAdapterGood = withFixtureCancellationAdapter(good);
-  const cancellationAdapterNoVerifier = clone(cancellationAdapterGood);
-  const cancellationAdapterBadProof = clone(cancellationAdapterGood);
-  cancellationAdapterBadProof.cancellation_opening.proof_digest = "bad-proof";
 
   const falseNetPacket = buildBilateralPacket({
     event: good.event,
@@ -685,27 +624,6 @@ export function demoVectors() {
         expect: { accepted: false, reason: "signature_mismatch" },
       },
       {
-        id: "bcc-vnet-cancellation-adapter-accept",
-        description: "non-mock cancellation openings verify through the supplied cancellation adapter",
-        certificate: cancellationAdapterGood,
-        verifier_context: { cancellation_adapter: "fixture-vnet" },
-        expect: { accepted: true, reason: "accepted" },
-      },
-      {
-        id: "bcc-vnet-cancellation-missing-verifier-reject",
-        description: "non-mock cancellation openings require a verifier adapter",
-        certificate: cancellationAdapterNoVerifier,
-        verifier_context: { cancellation_adapter: "none" },
-        expect: { accepted: false, reason: "cancellation_verifier_missing" },
-      },
-      {
-        id: "bcc-vnet-cancellation-bad-proof-reject",
-        description: "the supplied cancellation adapter rejects an invalid cancellation proof digest",
-        certificate: cancellationAdapterBadProof,
-        verifier_context: { cancellation_adapter: "fixture-vnet" },
-        expect: { accepted: false, reason: "cancellation_proof_mismatch" },
-      },
-      {
         id: "bcc-cancellation-false-net-reject",
         description: "records are signed but the cancellation opening says the committed records do not net to zero",
         certificate: falseNetPacket.certificate,
@@ -743,25 +661,6 @@ export function demoVectors() {
       },
     ],
   };
-}
-
-function withFixtureCancellationAdapter(cert) {
-  const out = clone(cert);
-  out.cancellation_opening = fixtureProveCancellation(out);
-  out.transcript_hash = transcriptHash(out);
-  out.finality = buildFinality({
-    transcript_hash: out.transcript_hash,
-    log_ref: out.finality.log_ref,
-    nullifier: out.finality.nullifier,
-  });
-  out.signatures = out.records.map((r) =>
-    mockSignTranscript({
-      party_id: r.party_id,
-      public_key: `${r.party_id}:pub`,
-      transcript_hash: out.transcript_hash,
-    }),
-  );
-  return out;
 }
 
 function aggregateOpening(records) {

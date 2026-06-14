@@ -4,14 +4,12 @@ import { resolve } from "node:path";
 
 import {
   authorizeFinality,
-  bccCancellationPayload,
   bccSignatureTypedData,
   buildBilateralCertificate,
   buildBilateralPacket,
   demoCertificate,
   demoPacket,
   demoVectors,
-  fixtureVerifyCancellation,
   fixtureVerifyTypedDataSignature,
   verifyBilateralCertificate,
   verifyBilateralPacket,
@@ -22,13 +20,9 @@ function verifyVector(vector) {
   const verifySignature = ctx.signature_adapter === "fixture-eip712"
     ? fixtureVerifyTypedDataSignature
     : undefined;
-  const verifyCancellation = ctx.cancellation_adapter === "fixture-vnet"
-    ? fixtureVerifyCancellation
-    : undefined;
   const result = verifyBilateralCertificate(vector.certificate, {
     seen_finality_tags: ctx.seen_finality_tags ?? [],
     verifySignature,
-    verifyCancellation,
   });
   assert.equal(result.accepted, vector.expect.accepted, `${vector.id} accepted`);
   assert.equal(result.reason, vector.expect.reason, `${vector.id} reason`);
@@ -67,13 +61,6 @@ assert.equal(typedData.message.transcriptHash, `0x${typed.transcript_hash}`);
 assert.equal(typedData.message.partyId, typed.signatures[0].party_id);
 assert.equal(verifyBilateralCertificate(typed).reason, "signature_verifier_missing");
 assert.equal(verifyBilateralCertificate(typed, { verifySignature: fixtureVerifyTypedDataSignature }).accepted, true);
-
-const vnetCancellation = demoVectors().vectors.find((v) => v.id === "bcc-vnet-cancellation-adapter-accept").certificate;
-const cancellationPayload = bccCancellationPayload(vnetCancellation);
-assert.equal(cancellationPayload.schema, "aac.bcc.cancellation-payload.v1");
-assert.equal(cancellationPayload.records.length, 2);
-assert.equal(verifyBilateralCertificate(vnetCancellation).reason, "cancellation_verifier_missing");
-assert.equal(verifyBilateralCertificate(vnetCancellation, { verifyCancellation: fixtureVerifyCancellation }).accepted, true);
 
 const rebuiltPacket = buildBilateralPacket({
   event: good.event,

@@ -196,29 +196,6 @@ typed commitments, authenticated ECDH public keys, finality refs, and state
 refs. A conforming verifier MUST reject any non-mock signature whose scheme has
 no configured verifier adapter.
 
-## 3.2 Cancellation verifier profile
-
-A BCC/1 runtime MAY support multiple cancellation-opening schemes. The first
-executable runtime keeps `mock-cancellation-opening/1` only as a fixture
-adapter. Any non-mock cancellation scheme MUST be verified by a
-deployment-supplied cancellation verifier.
-
-For VNET-style cancellation, the canonical public payload is:
-
-```text
-BccCancellationPayload := {
-  schema:            "aac.bcc.cancellation-payload.v1"
-  certificateSchema
-  basis_type_ids
-  records:           public record commitments and TRANSITION refs
-  cancellation_opening
-}
-```
-
-The payload is the binding surface between BCC/1 and a VNET/ProveKit/native or
-contract verifier result. A conforming verifier MUST reject any non-mock
-cancellation opening whose scheme has no configured verifier adapter.
-
 ## 4. Statement
 
 Given a canonical BCC/1 certificate, a conforming public verifier checks:
@@ -233,9 +210,8 @@ Given a canonical BCC/1 certificate, a conforming public verifier checks:
    encodings, subgroup membership, generator derivation, amount bounds, and
    domain separation according to their profile.
 4. **Cancellation opening.** The aggregate commitment relation opens to the
-   zero value vector: `C_A + C_B = R * H`. Non-mock schemes verify through the
-   deployment's configured cancellation adapter and MUST fail closed when no
-   adapter is available. Merely producing a group point is not enough.
+   zero value vector: `C_A + C_B = R * H`. Merely producing a group point is not
+   enough.
 5. **Signed agreement.** Every required party signature verifies over the same
    `transcript_hash`. Non-mock schemes verify through the deployment's
    configured signature adapter and MUST fail closed when no adapter is
@@ -338,7 +314,6 @@ A conforming BCC/1 verifier MUST reject:
 - public certificates that expose private debit/credit vectors or blindings;
 - a record commitment that is malformed for the declared profile;
 - a cancellation opening that does not prove `C_A + C_B = R * H`;
-- a non-mock cancellation opening with no configured verifier adapter;
 - a signature over a different transcript;
 - a non-mock signature whose verifier adapter is missing or rejects the typed
   data payload;

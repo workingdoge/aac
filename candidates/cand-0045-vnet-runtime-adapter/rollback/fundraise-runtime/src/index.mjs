@@ -3,9 +3,6 @@ import {
   buildBilateralPacket,
   verifyBilateralCertificate,
 } from "../../bcc-runtime/src/index.mjs";
-import {
-  verifyVnetLink as verifyVnetLinkReference,
-} from "../../vnet-runtime/src/index.mjs";
 
 export const SCHEMA = "aac.fundraise-demo.conformance.v1";
 export const SETTLEMENT_ASSET = "USDC:arc-testnet:atomic";
@@ -388,7 +385,6 @@ function checkPacket(packet, opts) {
     const bccResult = verifyBilateralCertificate(cert, {
       seenFinalityTags: bccFinalityTags,
       verifySignature: opts.verifyBccSignature ?? opts.verify_bcc_signature,
-      verifyCancellation: opts.verifyBccCancellation ?? opts.verify_bcc_cancellation,
       signatureDomain: opts.bccSignatureDomain ?? opts.bcc_signature_domain,
     });
     if (!bccResult.accepted) fail(`bcc_${bccResult.reason}`);
@@ -428,7 +424,7 @@ function checkPacket(packet, opts) {
     fail("bridge_settlement_commitment_mismatch");
   }
 
-  const vnet = opts.verifyVnetLink?.(packet.vnet_link) ?? verifyVnetLinkReference(packet.vnet_link);
+  const vnet = opts.verifyVnetLink?.(packet.vnet_link) ?? transparentVnetCheck(packet.vnet_link);
   if (!vnet.accepted) fail(`vnet_${vnet.reason}`);
 
   const [debit, credit] = vnetAmountTotals(packet.vnet_link);
@@ -455,6 +451,13 @@ function checkBccContext(policy, sub, cert) {
   if (bridge.settlement_chain !== policy.settlement_chain) fail("bcc_bridge_chain_mismatch");
   if (bridge.vault_or_contract !== policy.vault_or_contract) fail("bcc_bridge_contract_mismatch");
   if (bridge.deposit_ref !== sub.settlement_ref) fail("bcc_bridge_deposit_mismatch");
+}
+
+function transparentVnetCheck(vnetLink) {
+  const [debit, credit] = vnetAmountTotals(vnetLink);
+  if (!sameVector(debit, credit)) return { accepted: false, reason: "zero_opening" };
+  if (!vnetLink.vnet?.aggregate_opening) return { accepted: false, reason: "missing_aggregate_opening" };
+  return { accepted: true, reason: "accepted" };
 }
 
 export function vnetAmountTotals(vnetLink) {

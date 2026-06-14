@@ -4,8 +4,6 @@ export declare const PACKET_SCHEMA = "aac.bcc.packet.v1";
 export declare const VECTOR_SCHEMA = "aac.bcc-demo.conformance.v1";
 export declare const MOCK_RECORD_COMMITMENT_SCHEME = "mock-record-commitment/1";
 export declare const MOCK_CANCELLATION_SCHEME = "mock-cancellation-opening/1";
-export declare const FIXTURE_VNET_CANCELLATION_SCHEME = "fixture-vnet-cancellation/1";
-export declare const CANCELLATION_PAYLOAD_SCHEMA = "aac.bcc.cancellation-payload.v1";
 export declare const MOCK_SIGNATURE_SCHEME = "mock-signature/1";
 export declare const EIP712_SIGNATURE_SCHEME = "eip712-adapter/1";
 export declare const SIGNATURE_TYPED_DATA_SCHEMA = "aac.bcc.signature-typed-data.v1";
@@ -111,21 +109,6 @@ export interface BccSignatureTypedData {
   };
 }
 
-export interface BccCancellationPayload {
-  schema: typeof CANCELLATION_PAYLOAD_SCHEMA;
-  certificateSchema: string;
-  basis_type_ids: string[];
-  records: Array<{
-    party_id: string;
-    role: string;
-    transition_ref: string;
-    journal_commitment: string;
-    basis_type_ids: string[];
-    record_commitment: Commitment;
-  }>;
-  cancellation_opening: Record<string, unknown>;
-}
-
 export interface SignatureVerifierInput {
   certificate: BccCertificate;
   record: BccPublicRecord;
@@ -136,15 +119,6 @@ export interface SignatureVerifierInput {
 
 export type SignatureVerifier =
   (input: SignatureVerifierInput) => boolean | { accepted: boolean; reason?: string };
-
-export interface CancellationVerifierInput {
-  certificate: BccCertificate;
-  cancellation_opening: CancellationOpening;
-  payload: BccCancellationPayload;
-}
-
-export type CancellationVerifier =
-  (input: CancellationVerifierInput) => boolean | { accepted: boolean; reason?: string };
 
 export type VerificationResult =
   | { accepted: true; reason: "accepted"; authorization: Record<string, unknown> }
@@ -216,9 +190,6 @@ export declare function fixtureSignTypedData(input?: {
   domain?: Record<string, unknown>;
 }): { party_id: string; public_key: string; scheme: string; signature: string };
 export declare function fixtureVerifyTypedDataSignature(input: SignatureVerifierInput): boolean;
-export declare function bccCancellationPayload(cert: BccCertificate): BccCancellationPayload;
-export declare function fixtureProveCancellation(cert: BccCertificate): CancellationOpening;
-export declare function fixtureVerifyCancellation(input: CancellationVerifierInput): boolean;
 export declare function buildFinality(input?: {
   transcript_hash?: string;
   log_ref?: string;
@@ -247,8 +218,6 @@ export declare function verifyBilateralCertificate(cert: BccCertificate, opts?: 
   verify_signature?: SignatureVerifier;
   signatureDomain?: Record<string, unknown>;
   signature_domain?: Record<string, unknown>;
-  verifyCancellation?: CancellationVerifier;
-  verify_cancellation?: CancellationVerifier;
 }): VerificationResult;
 export declare function verifyBilateralPacket(packet: BccPacket, opts?: {
   seenFinalityTags?: Set<string>;
@@ -257,8 +226,6 @@ export declare function verifyBilateralPacket(packet: BccPacket, opts?: {
   verify_signature?: SignatureVerifier;
   signatureDomain?: Record<string, unknown>;
   signature_domain?: Record<string, unknown>;
-  verifyCancellation?: CancellationVerifier;
-  verify_cancellation?: CancellationVerifier;
 }): VerificationResult;
 export declare function authorizeFinality(cert: BccCertificate): Record<string, unknown>;
 export declare function amountTotals(records: Array<Pick<BccPrivateRecord, "debit" | "credit">>): [number[], number[]];

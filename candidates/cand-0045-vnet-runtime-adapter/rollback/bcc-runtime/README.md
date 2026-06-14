@@ -9,7 +9,6 @@ The product-facing API is:
 - `createRecord`
 - `createAuthenticatedDh`
 - `bccSignatureTypedData`
-- `bccCancellationPayload`
 - `buildBilateralPacket`
 - `buildBilateralCertificate`
 - `verifyBilateralCertificate`
@@ -38,28 +37,15 @@ verifyBilateralCertificate(cert, {
 wallet adapter should sign or verify. The runtime does not depend on wallet
 libraries.
 
-Non-mock cancellation openings are verified through an adapter:
-
-```js
-verifyBilateralCertificate(cert, {
-  verifyCancellation({ payload, cancellation_opening }) {
-    // VNET, ProveKit, native, service, or contract verifier goes here
-    return true;
-  },
-});
-```
-
-`bccCancellationPayload` returns the canonical public payload that a deployment
-adapter can bind to a VNET/ProveKit/native/contract verifier result.
-
 The demo fixture `BCC-DEMO-1.json` is an audit/conformance receipt. It is not
 the app core.
 
 This runtime uses deterministic mock commitments, mock cancellation openings,
 mock signatures, and mock authenticated ECDH tags so the fixture suite can
 execute without wallet, curve, or proving dependencies. Those mock seams are
-explicit. Non-mock signatures and non-mock cancellation openings fail closed
-unless configured adapters accept them.
+explicit and should be replaced by typed Pedersen commitments with aggregate
+zero-opening verification, wallet/EIP-712/passkey signatures, and real
+authenticated ECDH handling in production.
 
 BCC/1 remains an agreement certificate. Registry admission, private-state
 membership/nullifier proofs, bridge custody, mint/burn/release logic, and

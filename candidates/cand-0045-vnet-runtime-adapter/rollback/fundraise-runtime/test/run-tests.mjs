@@ -4,12 +4,7 @@ import { resolve } from "node:path";
 
 import {
   fixtureSignTypedData,
-  fixtureProveCancellation,
-  fixtureVerifyCancellation,
   fixtureVerifyTypedDataSignature,
-  mockSignTranscript,
-  transcriptHash,
-  buildFinality,
 } from "../../bcc-runtime/src/index.mjs";
 
 import {
@@ -18,7 +13,6 @@ import {
   buildBccAgreements,
   buildBridgeSettlement,
   buildMintAuthorization,
-  buildPublicInputs,
   buildSettlementReport,
   createRoundPolicy,
   createSubscription,
@@ -127,48 +121,6 @@ assert.deepEqual(
   { accepted: false, reason: "bcc_signature_mismatch" },
 );
 
-const vnetCancellationBcc = structuredClone(rebuilt);
-for (const agreement of vnetCancellationBcc.bcc_agreements) {
-  const cert = agreement.certificate;
-  cert.cancellation_opening = fixtureProveCancellation(cert);
-  cert.transcript_hash = transcriptHash(cert);
-  cert.finality = buildFinality({
-    transcript_hash: cert.transcript_hash,
-    log_ref: cert.finality.log_ref,
-    nullifier: cert.finality.nullifier,
-  });
-  cert.signatures = cert.records.map((record) =>
-    mockSignTranscript({
-      party_id: record.party_id,
-      public_key: `${record.party_id}:pub`,
-      transcript_hash: cert.transcript_hash,
-    }),
-  );
-}
-vnetCancellationBcc.public_inputs = buildPublicInputs(
-  vnetCancellationBcc.round_policy,
-  vnetCancellationBcc.subscriptions,
-  vnetCancellationBcc.vnet_link,
-  vnetCancellationBcc.mint_authorization,
-  vnetCancellationBcc.bcc_agreements,
-  vnetCancellationBcc.bridge_settlement,
-);
-assert.deepEqual(verifyFundraisePacket(vnetCancellationBcc), {
-  accepted: false,
-  reason: "bcc_cancellation_verifier_missing",
-});
-assert.equal(
-  verifyFundraisePacket(vnetCancellationBcc, { verifyBccCancellation: fixtureVerifyCancellation }).accepted,
-  true,
-);
-
-const vnetCancellationBad = structuredClone(vnetCancellationBcc);
-vnetCancellationBad.bcc_agreements[0].certificate.cancellation_opening.proof_digest = "bad-proof";
-assert.deepEqual(
-  verifyFundraisePacket(vnetCancellationBad, { verifyBccCancellation: fixtureVerifyCancellation }),
-  { accepted: false, reason: "bcc_cancellation_proof_mismatch" },
-);
-
 const settlementBad = structuredClone(rebuilt);
 settlementBad.settlement_report.accepted.pop();
 assert.deepEqual(verifyFundraisePacket(settlementBad), { accepted: false, reason: "settlement_report_missing" });
@@ -182,16 +134,7 @@ assert.deepEqual(verifyFundraisePacket(priceBad), { accepted: false, reason: "pr
 
 const vnetBad = structuredClone(rebuilt);
 vnetBad.vnet_link.vnet.atoms[0].credit[0] += 1;
-assert.deepEqual(verifyFundraisePacket(vnetBad), { accepted: false, reason: "vnet_link_certificate_mismatch" });
-
-const vnetPointBad = structuredClone(rebuilt);
-vnetPointBad.vnet_link.vnet.atoms[0].debit_commitment.x = "1";
-assert.deepEqual(verifyFundraisePacket(vnetPointBad), { accepted: false, reason: "vnet_non_canonical_point_encoding" });
-
-const customVnet = verifyFundraisePacket(vnetPointBad, {
-  verifyVnetLink: () => ({ accepted: false, reason: "deployment_verifier_rejected" }),
-});
-assert.deepEqual(customVnet, { accepted: false, reason: "vnet_deployment_verifier_rejected" });
+assert.deepEqual(verifyFundraisePacket(vnetBad), { accepted: false, reason: "vnet_zero_opening" });
 
 const authorized = authorizeMint(rebuilt);
 assert.equal(authorized.schema, "aac.fundraise-runtime.authorized-mint.v1");
