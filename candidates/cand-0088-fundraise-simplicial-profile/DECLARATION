@@ -1,0 +1,4 @@
+layer: model
+implements: FUNDRAISE-CLEARING/1 simplicial statement profile over LEDGER/1
+preserves: dm.presentation.projection, dm.commitment.attest
+compares_to: cand-0087-fundraise-ledger-language, cand-0086-ledger-statement-interface

@@ -202,75 +202,6 @@ capital, SAFE receipts, or another declared account set. The target requires
 only that the policy fixes the account vocabulary and that every value-bearing
 movement is represented as non-negative debit/credit coordinates in P^n.
 
-### 2.6 Simplicial statement profile
-
-FUNDRAISE-CLEARING/1 is a simplicial profile over LEDGER/1 state. The profile
-does not add public ABI slots. It fixes how the existing commitments are read as
-vertices, edges, and required face fillers.
-
-The 0-simplices are the objects whose identities must be stable under
-verification:
-
-```text
-FundraiseVertexSet := {
-  issuer_pre_state:        LedgerStateHeader
-  issuer_post_state:       LedgerStateHeader
-  cap_table_pre_state:     LedgerStateHeader
-  cap_table_post_state:    LedgerStateHeader
-  round_policy:            RoundPolicy
-  subscription_set:        committed ordered SubscriptionAtom set
-  settlement_report:       BridgeSettlement
-  bcc_certificate_set:     committed ordered BCC/1 summaries
-  vnet_certificate:        VNET/1 public input vector or verifier receipt
-  capacity_statement:      StatementReceipt(statement_type = round_capacity)
-  balance_statement:       StatementReceipt(statement_type = balance_sheet)
-  receipt_statement:       StatementReceipt(statement_type = receipt_issuance)
-  settlement_action:       mint/release action digest
-}
-```
-
-The 1-simplices are typed maps between those vertices:
-
-```text
-FundraiseEdgeSet := {
-  capacity_projection:   issuer_pre_state -> capacity_statement
-  subscription_admit:    subscription_set -> settlement_report
-  agreement_bind:        subscription_set -> bcc_certificate_set
-  settlement_post:       issuer_pre_state + subscription_set -> issuer_post_state
-  cap_table_post:        cap_table_pre_state + subscription_set -> cap_table_post_state
-  vnet_link:             transition_set -> vnet_certificate
-  balance_projection:    issuer_post_state -> balance_statement
-  receipt_projection:    issuer_post_state + subscription_set -> receipt_statement
-  mint_authorize:        receipt_statement -> settlement_action
-  nullifier_consume:     subscription_set -> accepted nullifier set
-}
-```
-
-The required 2-simplices are the faces that a conforming verifier MUST fill or
-reject:
-
-| face | horn supplied to verifier | required filler |
-|------|---------------------------|-----------------|
-| capacity face | issuer pre-state, round policy, selected subscription batch | `round_capacity` statement bound to `prev_balance_sheet_root` and the selected totals |
-| payment face | subscription set, settlement/admissibility context, bridge report | accepted settlement/admissibility binding for every atom |
-| agreement face | subscription set, BCC certificate summaries, round policy | BCC/1 context equality plus valid signatures, cancellation opening, authenticated ECDH binding, and replay context |
-| transition face | issuer/cap-table pre-states, selected batch, transition refs | issuer and cap-table post-states whose roots match the TRANSITION/1 public inputs and posted journals |
-| VNET face | transition refs, journal commitments, VNET public vector | VNET/1 certificate whose atoms reference the exact TRANSITION/1 `journal_commitment` values and aggregate to a zero-opening |
-| statement face | issuer post-state, selected batch, projection policies | `balance_sheet` and `receipt_issuance` statements bound to post-state roots and selected totals |
-| settlement face | receipt statement, token policy, mint recipient set | settlement action for exactly the token, recipients, issued-unit total, round, and replay domain in the receipt statement |
-| nullifier face | subscription nullifiers, round policy, accepted-nullifier set | atomic nonzero, not-previously-accepted nullifier consumption |
-
-A face filler is unique up to canonical encoding: if the same horn admits two
-different roots, totals, token contracts, recipient commitments, transition
-references, verifier profiles, or replay domains, the verifier MUST reject the
-horn as `glue_non_contractible` under the LEDGER/1 boundary vocabulary. If a
-horn lacks trusted context needed to choose a filler, the verifier MUST reject
-the horn rather than ask the prover to supply that context.
-
-This profile is the testing shape for implementations. A conformance vector
-SHOULD be written as a horn plus expected filler or rejection class. It SHOULD
-NOT be written merely as a monolithic accepted transcript.
-
 ## 3. The statement
 
 Given a canonical ordered set of subscription atoms, FUNDRAISE-CLEARING/1
@@ -281,8 +212,7 @@ proves:
    `transition_set_commitment`, and `context_commitment` are interpreted as
    LEDGER/1 state headers and statement contexts. The proof MUST bind the
    issuer ledger pre-state, issuer ledger post-state, cap-table pre-state,
-   cap-table post-state, and projection policies used by the verifier. These
-   are the ledger-state vertices of the simplicial profile.
+   cap-table post-state, and projection policies used by the verifier.
 2. **Round capacity statement.** Before accepting the selected batch, the
    issuer pre-state admits a `round_capacity` statement showing that the
    selected issued units and settlement amount fit inside the round policy.
@@ -310,11 +240,11 @@ proves:
    MUST be deterministic, monotone, and included in `context_commitment`.
 8. **Round caps.** The accumulated settlement amount and issued units do not
    exceed `max_settlement_amount` or `max_issued_units`.
-9. **Private settlement transition.** The private witness contains issuer
-   journals that recognize the subscription amounts and issued units under the
-   round policy's account vocabulary. Those journals connect the claimed old
-   and new private roots through TRANSITION/1-compatible state arithmetic and
-   LEDGER/1 transition binding. This is the transition face filler.
+9. **Private settlement transition.** The private witness contains issuer journals
+   that recognize the subscription amounts and issued units under the round
+   policy's account vocabulary. Those journals connect the claimed old and new
+   private roots through TRANSITION/1-compatible state arithmetic and LEDGER/1
+   transition binding.
 10. **Cap-table root update.** The private witness updates the cap-table root
    from `prev_cap_table_root` to `next_cap_table_root` by inserting or
    increasing the investors' allocations exactly by the issued units in the
@@ -369,11 +299,6 @@ as trusted context.
 Inputs marked `unconstrained` carry meaning only through the verifier's context
 checks under 3/PROOF section 5.
 
-The public ABI is also the canonical ordering for the simplicial profile's
-public vertices and edge summaries. Implementations MAY commit to richer
-internal vertex/edge encodings, but the verifier's public decision MUST reduce
-to the ordered ABI above.
-
 ## 5. Verifier contract
 
 A conforming FUNDRAISE-CLEARING/1 verifier, in order:
@@ -382,37 +307,30 @@ A conforming FUNDRAISE-CLEARING/1 verifier, in order:
 2. Verifies the proof against the pinned instance.
 3. Resolves `round_id`, `issuer_name`, `token_contract`, and
    `context_commitment` against the round policy and LEDGER/1 contexts.
-4. Forms the simplicial horn from the public ABI, trusted context, and
-   referenced receipts; rejects if any required vertex or edge has ambiguous
-   identity.
-5. Checks that the issuer pre-state admits the declared `round_capacity`
+4. Checks that the issuer pre-state admits the declared `round_capacity`
    statement for the selected batch.
-6. Checks the settlement adapter report for every `settlement_ref` included in
+5. Checks the settlement adapter report for every `settlement_ref` included in
    `subscription_set_commitment`.
-7. Checks the admissibility adapter report for every `admissibility_ref`.
-8. Verifies every BCC/1 agreement certificate named by `bcc_set_commitment`,
+6. Checks the admissibility adapter report for every `admissibility_ref`.
+7. Verifies every BCC/1 agreement certificate named by `bcc_set_commitment`,
    including signed transcript, cancellation opening, authenticated ECDH
    binding, and BCC finality/replay context.
-9. Checks the bridge settlement report named by
+8. Checks the bridge settlement report named by
    `bridge_settlement_commitment` against the policy's settlement chain,
    custody contract/account, asset type, deposit references, and amounts.
-10. Resolves the referenced TRANSITION/1 updates and checks the
+9. Resolves the referenced TRANSITION/1 updates and checks the
    `transition_set_commitment` against their accepted public inputs, including
    LEDGER/1 previous/next roots, `journal_commitment`, and
    `context_commitment`.
-11. Verifies that the issuer post-state admits the declared `balance_sheet`
+10. Verifies that the issuer post-state admits the declared `balance_sheet`
    statement and that the receipt mint inputs satisfy the declared
    `receipt_issuance` statement.
-12. Verifies or resolves the VNET/1 certificate named by
+11. Verifies or resolves the VNET/1 certificate named by
    `vnet_public_commitment`, including VNET's transition linkage and
    zero-opening requirements.
-13. Checks every subscription nullifier against the round's accepted-nullifier
+12. Checks every subscription nullifier against the round's accepted-nullifier
    set, then records the new nullifiers atomically with acceptance.
-14. Checks that all required simplicial faces fill over the same vertices and edge summaries.
-   A successful proof over one face MUST NOT authorize a settlement action if
-   another face uses a different root, transition ref, token, recipient set,
-   verifier profile, or replay domain.
-15. Authorizes token mint/release only for `issued_unit_total`,
+13. Authorizes token mint/release only for `issued_unit_total`,
    `mint_recipient_set_commitment`, `round_id`, `token_contract`,
    `bcc_set_commitment`, and `bridge_settlement_commitment` from this proof.
 
@@ -453,10 +371,6 @@ A conforming instance MUST reject:
 - a subscription atom not included in the committed subscription set;
 - a ledger context, statement projection policy, or disclosure scope that is
   not bound by `context_commitment`;
-- a simplicial horn whose vertices or edges do not have unique canonical
-  identities under trusted context;
-- any required face filler that is missing, ambiguous, or bound to a different
-  vertex or edge than the public ABI supplies;
 - a round-capacity statement that is missing, stale, or bound to a different
   issuer pre-state;
 - a payment or admissibility report that is not bound by `context_commitment`;

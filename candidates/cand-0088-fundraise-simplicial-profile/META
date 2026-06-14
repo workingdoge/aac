@@ -1,0 +1,5 @@
+candidate_id: cand-0088-fundraise-simplicial-profile
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T20:52:16Z
+intent: Define FUNDRAISE-CLEARING/1 as a simplicial statement profile: vertices, edges, horns, and required face fillers over LEDGER/1 state.
+status: landed
