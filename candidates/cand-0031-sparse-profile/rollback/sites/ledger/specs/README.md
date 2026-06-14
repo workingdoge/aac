@@ -60,11 +60,6 @@ tables — live in **Registers**: append-only, non-normative documents
 (R1: Deployment Register). Conformance is claimed against a
 (core, profile-set) pair.
 
-Concrete profile definitions live under [`profiles/`](profiles/). The first
-amount-representation profile is
-[`SPARSE-CELLS/1`](profiles/SPARSE-CELLS-1.md), a canonical sparse encoding of
-the default finite-basis 1/PACI amount domain for proof targets.
-
 ## Lifecycle gates
 
 - Raw → Draft: executable conformance exists (test vectors or a reference

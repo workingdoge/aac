@@ -44,13 +44,6 @@ carrier encodings are immutable; public inputs are carrier scalars of the
 target's profile. Any change — including reordering — is a
 new version, a new instance, and a new registry entry.
 
-Private witness layout is not itself public ABI. However, changing a target's
-constraint obligations or commitment preimages — for example by adopting a
-sparse amount profile instead of dense vectors — changes the target identity
-even when the public-input vector is unchanged. The profile used to interpret
-amount witnesses MUST be included in the target declaration's obligations
-digest.
-
 ## 3. Constraint idioms (normative for all targets)
 
 Obligations are profile-independent; the mechanism that discharges each

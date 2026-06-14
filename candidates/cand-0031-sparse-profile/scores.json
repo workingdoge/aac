@@ -1,0 +1,19 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0031-sparse-profile",
+  "evaluated_at": "2026-06-14T00:16:03Z",
+  "task": "define SPARSE-CELLS/1, a sparse finite-basis amount profile: fixed per-basis T-account cells with active flags, basis-id bounds, active-prefix canonicalization, strict basis-id ordering, zero inactive slots, active zero-cell rejection, absent-as-zero interpretation, sparse state uniqueness, commitment preimage rules, and target-identity consequences. No circuit rewrite, no domain tags, no R1 allocation.",
+  "checks": {
+    "profile": "pass",
+    "crossrefs": "pass",
+    "corrupt": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "7a7f8d28b9185aaee65cc5616d97ed18255e394d1983ea17bb17fd602c5d0956",
+    "traces_sha256": "6c083abd3c48ddaf0ac7457cb41715c72a5ab59228e655322f20c90c460f1976",
+    "body_sha256": "a31b4ecbdd6d3083a8caa16cdef2394950ed3ef7ec7db0208c81c3b451fdfa5f",
+    "attestation": "dba50bdabfbeba7aca6e5f947bb9dded7676357b973d9654ccd9c6a5cb5a10d8"
+  }
+}

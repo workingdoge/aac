@@ -1,0 +1,1 @@
+mutant rejected when strict basis ordering is removed

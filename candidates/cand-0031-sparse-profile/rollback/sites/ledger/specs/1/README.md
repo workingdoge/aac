@@ -19,11 +19,6 @@ Implementations MUST reject amounts outside the profile bound at every
 ingestion and witness boundary. Rationale: cancellativity and the bound are
 jointly what make §2 sound when evaluated in a finite field (3/PROOF §4).
 
-Profiles MAY represent the default finite-basis domain densely or sparsely.
-A sparse representation is conforming only if absent basis coordinates
-interpret as zero and its profile rejects duplicate or otherwise
-non-canonical encodings. `SPARSE-CELLS/1` is the first such profile.
-
 ## 2. Terms and the Pacioli group
 
 A **term** is an ordered pair (debit, credit) ∈ M × M.
