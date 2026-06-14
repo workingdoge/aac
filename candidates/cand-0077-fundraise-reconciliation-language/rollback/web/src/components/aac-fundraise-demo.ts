@@ -401,7 +401,7 @@ export class AacFundraiseDemo extends LitElement {
       white-space: nowrap;
     }
 
-    .book-state.reconciled {
+    .book-state.verified {
       background: var(--aac-color-navy, #21324f);
       color: var(--aac-color-bond, #fff);
     }
@@ -1032,14 +1032,14 @@ export class AacFundraiseDemo extends LitElement {
           </section>
         </div>
 
-        <section class="book-check" aria-label="Book reconciliation">
+        <section class="book-check" aria-label="Book verification">
           <div class="book-head">
             <div>
-              <div class="ticket-label">Book reconciliation</div>
+              <div class="ticket-label">Book verification</div>
               <b>Opening books + swap deltas close the issuer row.</b>
             </div>
-            <span class=${`book-state ${s.accepted && booksClose ? 'reconciled' : ''}`}>
-              ${this.bookReconciliationState(s.accepted, booksClose)}
+            <span class=${`book-state ${s.accepted && booksClose ? 'verified' : ''}`}>
+              ${this.bookVerificationState(s.accepted, booksClose)}
             </span>
           </div>
           <div class="book-grid">
@@ -1155,11 +1155,11 @@ export class AacFundraiseDemo extends LitElement {
     `;
   }
 
-  private bookReconciliationState(accepted: boolean, booksClose: boolean): string {
-    if (this.runState === 'running') return 'reconciling books';
-    if (accepted && booksClose) return 'books reconciled';
+  private bookVerificationState(accepted: boolean, booksClose: boolean): string {
+    if (this.runState === 'running') return 'checking books';
+    if (accepted && booksClose) return 'books verified';
     if (accepted) return 'mismatch flagged';
-    return 'ready to reconcile';
+    return 'ready to verify';
   }
 
   private bookRows(orderUnits: number, filledCash: number, filledUnits: number, openAfter: number) {
