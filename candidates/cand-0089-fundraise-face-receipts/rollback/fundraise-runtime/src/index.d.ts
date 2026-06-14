@@ -1,5 +1,4 @@
 export declare const SCHEMA = "aac.fundraise-demo.conformance.v1";
-export declare const FUNDRAISE_FACE_RECEIPTS_SCHEMA = "aac.fundraise-runtime.face-receipts.v1";
 export declare const SETTLEMENT_ASSET = "USDC:arc-testnet:atomic";
 export declare const ISSUED_UNIT = "SAFE:issuer:series-a:unit";
 
@@ -137,43 +136,6 @@ export interface EvmMintAuthorization {
   }>;
 }
 
-export type FundraiseFaceId =
-  | "capacity"
-  | "payment"
-  | "agreement"
-  | "transition"
-  | "vnet"
-  | "statement"
-  | "settlement"
-  | "nullifier";
-
-export type FundraiseFailedFace = FundraiseFaceId | "glue" | null;
-
-export interface FundraiseFaceReceipt {
-  id: FundraiseFaceId;
-  label: string;
-  accepted: boolean;
-  status: "filled" | "rejected" | "blocked";
-  reason: string | null;
-  digest: string;
-}
-
-export interface FundraiseFaceReceipts {
-  schema: typeof FUNDRAISE_FACE_RECEIPTS_SCHEMA;
-  profile_id: "FUNDRAISE-CLEARING/1#simplicial-profile";
-  accepted: boolean;
-  reason: string;
-  failed_face: FundraiseFailedFace;
-  packet_commitment: string;
-  public_inputs_commitment: string;
-  vertices_commitment: string;
-  edges_commitment: string;
-  faces_commitment: string;
-  vertices: Record<string, unknown>;
-  edges: Array<Record<string, unknown>>;
-  faces: FundraiseFaceReceipt[];
-}
-
 export interface VerifyOptions {
   /**
    * Optional deployment verifier for VNET/1. If omitted, the runtime uses the
@@ -231,8 +193,6 @@ export declare function buildFundraisePacket(input: {
   mintAuthorization?: MintAuthorization;
 }): FundraisePacket;
 export declare function verifyFundraisePacket(packet: FundraisePacket, opts?: VerifyOptions): VerificationResult;
-export declare function buildFundraiseFaceReceipts(packet: FundraisePacket, opts?: VerifyOptions): FundraiseFaceReceipts;
-export declare function fundraiseFaceForReason(reason: string): FundraiseFailedFace;
 export declare function authorizeMint(packet: FundraisePacket): AuthorizedMint;
 export declare function buildEvmMintAuthorization(
   authorization: AuthorizedMint,

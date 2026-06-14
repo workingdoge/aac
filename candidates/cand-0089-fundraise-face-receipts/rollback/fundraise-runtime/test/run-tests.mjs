@@ -15,7 +15,6 @@ import {
 import {
   authorizeMint,
   buildEvmMintAuthorization,
-  buildFundraiseFaceReceipts,
   buildFundraisePacket,
   buildBccAgreements,
   buildBridgeSettlement,
@@ -24,7 +23,6 @@ import {
   buildSettlementReport,
   createRoundPolicy,
   createSubscription,
-  fundraiseFaceForReason,
   verifyFundraisePacket,
 } from "../src/index.mjs";
 
@@ -75,37 +73,11 @@ assert.equal(rebuilt.bcc_agreements.length, 2);
 assert.equal(rebuilt.bcc_agreements[0].certificate.event.fundraise_context.round_id, policy.round_id);
 assert.equal(rebuilt.public_inputs.bcc_set_commitment.length, 64);
 assert.equal(rebuilt.public_inputs.bridge_settlement_commitment.length, 64);
-const faceReceipts = buildFundraiseFaceReceipts(rebuilt);
-assert.equal(faceReceipts.schema, "aac.fundraise-runtime.face-receipts.v1");
-assert.equal(faceReceipts.profile_id, "FUNDRAISE-CLEARING/1#simplicial-profile");
-assert.equal(faceReceipts.accepted, true);
-assert.equal(faceReceipts.reason, "accepted");
-assert.equal(faceReceipts.failed_face, null);
-assert.match(faceReceipts.vertices_commitment, /^[0-9a-f]{64}$/);
-assert.match(faceReceipts.edges_commitment, /^[0-9a-f]{64}$/);
-assert.match(faceReceipts.faces_commitment, /^[0-9a-f]{64}$/);
-assert.deepEqual(faceReceipts.faces.map((face) => face.id), [
-  "capacity",
-  "payment",
-  "agreement",
-  "transition",
-  "vnet",
-  "statement",
-  "settlement",
-  "nullifier",
-]);
-assert.ok(faceReceipts.faces.every((face) => face.status === "filled" && face.accepted === true));
-assert.equal(faceReceipts.vertices.base_context.entity, policy.issuer_name);
-assert.equal(faceReceipts.vertices.subscription_batch.issued_unit_total, 150);
-assert.equal(faceReceipts.vertices.issuer_pre_state.balance_sheet_root, rebuilt.public_inputs.prev_balance_sheet_root);
-assert.equal(faceReceipts.vertices.receipt_statement.token_contract, policy.token_contract);
 
 const tokenBad = structuredClone(rebuilt);
 tokenBad.mint_authorization.token_contract = "0xBad0000000000000000000000000000000000039";
 tokenBad.public_inputs.token_contract = tokenBad.mint_authorization.token_contract;
 assert.deepEqual(verifyFundraisePacket(tokenBad), { accepted: false, reason: "token_contract_mismatch" });
-assert.equal(fundraiseFaceForReason("token_contract_mismatch"), "settlement");
-assert.equal(buildFundraiseFaceReceipts(tokenBad).failed_face, "settlement");
 
 const missingBcc = structuredClone(rebuilt);
 missingBcc.bcc_agreements.pop();
@@ -122,11 +94,6 @@ assert.deepEqual(
   }),
   { accepted: false, reason: "bcc_finality_replay" },
 );
-const replayFaces = buildFundraiseFaceReceipts(bccReplayBad, {
-  seenBccFinalityTags: new Set([bccReplayBad.bcc_agreements[0].certificate.finality.finality_tag]),
-});
-assert.equal(replayFaces.failed_face, "agreement");
-assert.equal(replayFaces.faces.find((face) => face.id === "agreement").status, "rejected");
 
 const bccRoundBad = structuredClone(rebuilt);
 bccRoundBad.bcc_agreements[0] = buildBccAgreements(
@@ -213,12 +180,10 @@ const priceBad = buildFundraisePacket({
   vnetLink: good.vnet_link,
 });
 assert.deepEqual(verifyFundraisePacket(priceBad), { accepted: false, reason: "price_mismatch" });
-assert.equal(buildFundraiseFaceReceipts(priceBad).failed_face, "capacity");
 
 const vnetBad = structuredClone(rebuilt);
 vnetBad.vnet_link.vnet.atoms[0].credit[0] += 1;
 assert.deepEqual(verifyFundraisePacket(vnetBad), { accepted: false, reason: "vnet_link_certificate_mismatch" });
-assert.equal(buildFundraiseFaceReceipts(vnetBad).failed_face, "vnet");
 
 const vnetPointBad = structuredClone(rebuilt);
 vnetPointBad.vnet_link.vnet.atoms[0].debit_commitment.x = "1";
@@ -228,17 +193,6 @@ const customVnet = verifyFundraisePacket(vnetPointBad, {
   verifyVnetLink: () => ({ accepted: false, reason: "deployment_verifier_rejected" }),
 });
 assert.deepEqual(customVnet, { accepted: false, reason: "vnet_deployment_verifier_rejected" });
-
-const duplicateNullifier = buildFundraisePacket({
-  policy,
-  subscriptions: [
-    subscriptions[0],
-    { ...subscriptions[1], subscription_nullifier: subscriptions[0].subscription_nullifier },
-  ],
-  vnetLink: good.vnet_link,
-});
-assert.deepEqual(verifyFundraisePacket(duplicateNullifier), { accepted: false, reason: "duplicate_nullifier" });
-assert.equal(buildFundraiseFaceReceipts(duplicateNullifier).failed_face, "nullifier");
 
 const authorized = authorizeMint(rebuilt);
 assert.equal(authorized.schema, "aac.fundraise-runtime.authorized-mint.v1");

@@ -100,12 +100,12 @@ assert.equal(receipt.summary.economics.settlement_amount_total, 1500);
 assert.equal(receipt.summary.economics.issued_unit_total, 150);
 assert.equal(receipt.summary.economics.recipient_count, 2);
 assert.deepEqual(receipt.summary.metrics, [
-  { value: "1500", label: "USDC capacity statement" },
-  { value: "150", label: "restricted SAFE receipt units selected" },
-  { value: "0", label: "remaining capacity" },
+  { value: "1500", label: "USDC order cap" },
+  { value: "150", label: "restricted SAFE receipt units in batch" },
+  { value: "0", label: "units open" },
 ]);
 assert.deepEqual(receipt.summary.order, {
-  headline: "Capacity: up to 150 restricted SAFE receipt units",
+  headline: "Fill 150 of 150 restricted SAFE receipt units",
   price_label: "10 USDC / unit",
   settlement_asset: "USDC",
   issued_unit: "restricted SAFE receipt units",
@@ -148,8 +148,8 @@ assert.deepEqual(receipt.summary.reconciliation.rows, [
 ]);
 assert.equal(receipt.summary.verifier.accepted, true);
 assert.equal(receipt.summary.verifier.status, "accepted");
-assert.equal(receipt.summary.verifier.status_label, "native ProveKit statement verifier accepted");
-assert.equal(receipt.summary.verifier.target_label, "native ProveKit statement verifier");
+assert.equal(receipt.summary.verifier.status_label, "native ProveKit verifier accepted");
+assert.equal(receipt.summary.verifier.target_label, "native ProveKit verifier");
 assert.equal(receipt.summary.verifier.verifier_id, "aac-fundraise-demo-provekit");
 assert.equal(receipt.summary.verifier.verifier_profile, receipt.verifier_receipt.verifier_profile);
 assert.equal(receipt.summary.verifier.packet_commitment, receipt.verifier_receipt.packet_commitment);
@@ -161,8 +161,6 @@ assert.equal(receipt.summary.verifier.timings_ms.verify, receipt.verifier_receip
 assert.match(receipt.summary.verifier.boundary, /recursive\/on-chain proof verification remains/);
 assert.equal(receipt.summary.balance_sheet.accepted, true);
 assert.equal(receipt.summary.balance_sheet.status, "accepted");
-assert.equal(receipt.summary.balance_sheet.status_label, "native ProveKit balance-sheet statement accepted");
-assert.equal(receipt.summary.balance_sheet.target_label, "LEDGER/1 balance-sheet statement verifier");
 assert.equal(receipt.summary.balance_sheet.verifier_id, "aac-fundraise-balance-sheet-provekit");
 assert.equal(receipt.summary.balance_sheet.verifier_profile, "fundraise-balance-sheet-demo/v1");
 assert.equal(receipt.summary.balance_sheet.fundraise_packet_commitment, receipt.balance_sheet_packet.fundraise_packet_commitment);
@@ -177,22 +175,6 @@ assert.deepEqual(receipt.summary.balance_sheet.rows, [
   { line: "units_open", opening: 150, delta: -150, closing: 0 },
 ]);
 assert.equal(receipt.summary.commitments.transition_set, receipt.public_inputs.transition_set_commitment);
-assert.equal(receipt.face_receipts.schema, "aac.fundraise-runtime.face-receipts.v1");
-assert.equal(receipt.face_receipts.accepted, true);
-assert.equal(receipt.face_receipts.failed_face, null);
-assert.deepEqual(receipt.summary.faces.items.map((item) => item.id), [
-  "capacity",
-  "payment",
-  "agreement",
-  "transition",
-  "vnet",
-  "statement",
-  "settlement",
-  "nullifier",
-]);
-assert.equal(receipt.summary.faces.profile_id, "FUNDRAISE-CLEARING/1#simplicial-profile");
-assert.equal(receipt.summary.faces.faces_commitment, receipt.face_receipts.faces_commitment);
-assert.ok(receipt.summary.faces.items.every((item) => item.status === "filled"));
 assert.equal(receipt.summary.proof.proof_digest, receipt.provekit.proof_digest);
 assert.equal(receipt.summary.workflow.signature_status, "pending");
 assert.equal(receipt.summary.settlement.total_supply, null);
@@ -240,14 +222,10 @@ assert.equal(variablePreview.summary.accepted, false);
 assert.equal(variablePreview.summary.status, "ready-to-run");
 assert.equal(variablePreview.summary.economics.issued_unit_total, 130);
 assert.deepEqual(variablePreview.summary.metrics, [
-  { value: "1500", label: "USDC capacity statement" },
-  { value: "130", label: "restricted SAFE receipt units selected" },
-  { value: "20", label: "remaining capacity" },
+  { value: "1500", label: "USDC order cap" },
+  { value: "130", label: "restricted SAFE receipt units in batch" },
+  { value: "20", label: "units open" },
 ]);
-assert.equal(variablePreview.receipt.face_receipts.accepted, true);
-assert.equal(variablePreview.summary.faces.accepted, false);
-assert.equal(variablePreview.summary.faces.items.length, 8);
-assert.ok(variablePreview.summary.faces.items.every((item) => item.status === "blocked"));
 assert.deepEqual(variablePreview.summary.reconciliation.rows, [
   { line: "USDC collected", opening: "0 USDC", delta: "+1300 USDC", closing: "1300 USDC" },
   { line: "units issued", opening: "0 units", delta: "+130 units", closing: "130 units" },

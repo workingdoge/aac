@@ -1,0 +1,1 @@
+astro build OK; fundraise face receipt panel bundled

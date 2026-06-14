@@ -1,0 +1,4 @@
+layer: artifact
+implements: FUNDRAISE-CLEARING/1 simplicial face receipts for the fundraise runtime and demo summary
+preserves: dm.presentation.projection, dm.commitment.attest
+compares_to: cand-0088-fundraise-simplicial-profile, cand-0087-fundraise-ledger-language, cand-0040-fundraise-demo-runner

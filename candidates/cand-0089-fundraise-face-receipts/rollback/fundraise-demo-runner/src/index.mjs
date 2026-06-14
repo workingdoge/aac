@@ -11,7 +11,6 @@ import {
   runProveKitNativeCli,
 } from "../../fundraise-provekit-adapter/src/index.mjs";
 import {
-  buildFundraiseFaceReceipts,
   buildFundraisePacket as buildRuntimeFundraisePacket,
   verifyFundraisePacket,
 } from "../../fundraise-runtime/src/index.mjs";
@@ -734,9 +733,9 @@ function requestWantsHtmlFragment(request) {
 function fundraiseVerifyResultHtml(payload) {
   const accepted = payload.accepted === true;
   const status = accepted ? "accepted" : "rejected";
-  const title = accepted ? "Statement verifier accepted submitted inputs" : "Statement verifier rejected submitted inputs";
+  const title = accepted ? "Verifier accepted submitted inputs" : "Verifier rejected submitted inputs";
   const detail = accepted
-    ? "Native ProveKit verify reran for the ledger-transition proof and the balance-sheet statement."
+    ? "Native ProveKit verify reran for the order-fill proof and the balance-sheet proof."
     : verifyRejectionDetail(payload);
   const proofId = payload.proof_id ? `proof ${payload.proof_id}` : "proof session unavailable";
   return [
@@ -1140,7 +1139,6 @@ function buildDemoReceipt({
     balance_sheet_verifier_receipt,
     balance_sheet_state,
     balance_sheet_provekit: balanceSheetProvekit,
-    face_receipts: buildFundraiseFaceReceipts(packet, input.verify_options),
     workflow_receipt,
     settlement_action: workflow_receipt.settlement_action,
     workdir,
@@ -1180,7 +1178,6 @@ function buildPreviewReceipt({ input, packet }) {
       verifier_key_digest: null,
       timings_ms: {},
     },
-    face_receipts: buildFundraiseFaceReceipts(packet, input.verify_options),
     workflow_receipt: null,
     settlement_action: {},
     workdir: null,
@@ -1505,10 +1502,8 @@ export function buildFundraiseDemoSummary(receipt) {
   const balanceSheetVerifier = receipt.balance_sheet_verifier_receipt ?? {};
   const balanceSheetPacket = receipt.balance_sheet_packet ?? null;
   const balanceSheetState = receipt.balance_sheet_state ?? null;
-  const faceReceipts = receipt.face_receipts ?? null;
   const local = receipt.local_settlement ?? null;
   const accepted = receipt.accepted === true;
-  const faceReceiptsAccepted = accepted && faceReceipts?.accepted === true;
   const settled = Boolean(local?.transaction_hash);
   const settlementAsset = settlementAssetLabel(policy.settlement_asset_type_id);
   const issuedUnit = issuedUnitLabel(policy.issued_unit_type_id);
@@ -1551,14 +1546,14 @@ export function buildFundraiseDemoSummary(receipt) {
     round_id: receipt.packet_round_id ?? publicInputs.round_id ?? null,
     issuer_name: publicInputs.issuer_name ?? null,
     metrics: [
-      { value: amountValue(orderCapacitySettlement), label: `${settlementAsset} capacity statement` },
-      { value: amountValue(issuedTotal), label: `${issuedUnit} selected` },
-      { value: amountValue(openAfter), label: "remaining capacity" },
+      { value: amountValue(orderCapacitySettlement), label: `${settlementAsset} order cap` },
+      { value: amountValue(issuedTotal), label: `${issuedUnit} in batch` },
+      { value: amountValue(openAfter), label: `${unitNoun} open` },
     ],
     order: {
       headline: orderCapacityUnits !== null && issuedTotal !== null
-        ? `Capacity: up to ${amountValue(orderCapacityUnits)} ${issuedUnit}`
-        : `Capacity statement for ${amountValue(issuedTotal)} ${issuedUnit}`,
+        ? `Fill ${amountValue(issuedTotal)} of ${amountValue(orderCapacityUnits)} ${issuedUnit}`
+        : `Sell ${amountValue(issuedTotal)} ${issuedUnit}`,
       price_label: pricePerUnit === null ? "price unavailable" : `${amountValue(pricePerUnit)} ${settlementAsset} / ${singularUnit(unitNoun)}`,
       settlement_asset: settlementAsset,
       issued_unit: issuedUnit,
@@ -1601,7 +1596,7 @@ export function buildFundraiseDemoSummary(receipt) {
     verifier: {
       accepted: verifier.accepted === true,
       status: verifier.accepted === true ? "accepted" : "not-run",
-      status_label: verifier.accepted === true ? `${verifierModeLabel(verifier.mode)} accepted` : "statement verifier not run",
+      status_label: verifier.accepted === true ? `${verifierModeLabel(verifier.mode)} accepted` : "verifier not run",
       target_label: verifierModeLabel(verifier.mode),
       verifier_id: verifier.verifier_id ?? null,
       verifier_profile: verifier.verifier_profile ?? null,
@@ -1621,11 +1616,11 @@ export function buildFundraiseDemoSummary(receipt) {
       accepted: balanceSheetVerifier.accepted === true,
       status: balanceSheetVerifier.accepted === true ? "accepted" : "not-run",
       status_label: balanceSheetVerifier.accepted === true
-        ? `${balanceSheetVerifierModeLabel(balanceSheetVerifier.mode)} accepted`
-        : "balance-sheet statement verifier not run",
+        ? `${verifierModeLabel(balanceSheetVerifier.mode)} accepted`
+        : "balance-sheet verifier not run",
       target_label: balanceSheetVerifier.mode
-        ? "LEDGER/1 balance-sheet statement verifier"
-        : "LEDGER/1 balance-sheet statement verifier",
+        ? `${verifierModeLabel(balanceSheetVerifier.mode)} · balance sheet`
+        : "ProveKit balance-sheet verifier",
       verifier_id: balanceSheetVerifier.verifier_id ?? null,
       verifier_profile: balanceSheetVerifier.verifier_profile ?? null,
       proof_system: balanceSheetVerifier.proof_system ?? receipt.balance_sheet_provekit?.proof_system ?? null,
@@ -1648,7 +1643,7 @@ export function buildFundraiseDemoSummary(receipt) {
       public_inputs: balanceSheetState?.public_inputs ?? balanceSheetPacket?.public_inputs ?? {},
       rows: balanceSheetState?.rows ?? balanceSheetPacket?.rows ?? [],
       boundary: balanceSheetPacket?.boundary
-        ?? "Proves a statement over the private ledger pre-state and post-state for the selected batch; starting balance-sheet truth still needs an external anchor.",
+        ?? "Proves private before/after state arithmetic for the selected batch; starting balance-sheet truth still needs an external anchor.",
     },
     economics: {
       settlement_amount_total: settlementTotal,
@@ -1668,26 +1663,6 @@ export function buildFundraiseDemoSummary(receipt) {
       next_balance_sheet_root: publicInputs.next_balance_sheet_root ?? null,
       prev_cap_table_root: publicInputs.prev_cap_table_root ?? null,
       next_cap_table_root: publicInputs.next_cap_table_root ?? null,
-    },
-    faces: {
-      schema: faceReceipts?.schema ?? null,
-      profile_id: faceReceipts?.profile_id ?? "FUNDRAISE-CLEARING/1#simplicial-profile",
-      accepted: faceReceiptsAccepted,
-      reason: faceReceipts?.reason ?? null,
-      failed_face: faceReceiptsAccepted ? null : faceReceipts?.failed_face ?? null,
-      vertices_commitment: faceReceipts?.vertices_commitment ?? null,
-      edges_commitment: faceReceipts?.edges_commitment ?? null,
-      faces_commitment: faceReceipts?.faces_commitment ?? null,
-      items: Array.isArray(faceReceipts?.faces)
-        ? faceReceipts.faces.map((face) => ({
-            id: face.id,
-            label: face.label,
-            accepted: faceReceiptsAccepted && face.accepted === true,
-            status: faceReceiptsAccepted ? face.status : "blocked",
-            reason: faceReceiptsAccepted ? face.reason ?? null : null,
-            digest: face.digest ?? null,
-          }))
-        : [],
     },
     proof: {
       mode: receipt.provekit?.mode ?? null,
@@ -1716,13 +1691,13 @@ export function buildFundraiseDemoSummary(receipt) {
     },
     claims: [
       accepted
-        ? "The round-capacity statement admitted the selected subscription batch."
+        ? "ProveKit accepted the VNET proof for the selected fundraise batch."
         : "The selected batch has been rebuilt into a fundraise packet but not proven yet.",
       accepted
-        ? "The ledger-transition proof and balance-sheet statement verified against the submitted public inputs."
+        ? "The workflow authorized an EVM mint bound to the proof receipt and recipient set."
         : "Generate proof to bind the selected batch to the ProveKit receipt and workflow authorization.",
       settled
-        ? "The workflow authorized a receipt-issuance statement and the local settlement contract refused replay."
+        ? "A local settlement contract minted receipt tokens and refused replay."
         : "Settlement is pending an authorizer signature and transaction submission.",
     ],
     caveats: [
@@ -1798,19 +1773,11 @@ function signedAmountWithUnit(value, unit) {
 }
 
 function verifierModeLabel(mode) {
-  if (mode === "native-cli") return "native ProveKit statement verifier";
-  if (mode === "browser-wasm") return "browser ProveKit statement verifier";
-  if (mode === "service") return "ProveKit statement verifier service";
-  if (mode === "cre-workflow") return "CRE statement verifier workflow";
-  return "ProveKit statement verifier";
-}
-
-function balanceSheetVerifierModeLabel(mode) {
-  if (mode === "native-cli") return "native ProveKit balance-sheet statement";
-  if (mode === "browser-wasm") return "browser ProveKit balance-sheet statement";
-  if (mode === "service") return "ProveKit balance-sheet statement service";
-  if (mode === "cre-workflow") return "CRE balance-sheet statement workflow";
-  return "ProveKit balance-sheet statement";
+  if (mode === "native-cli") return "native ProveKit verifier";
+  if (mode === "browser-wasm") return "browser ProveKit verifier";
+  if (mode === "service") return "ProveKit verifier service";
+  if (mode === "cre-workflow") return "CRE verifier workflow";
+  return "ProveKit verifier";
 }
 
 function contractAuthorizationTuple(auth) {

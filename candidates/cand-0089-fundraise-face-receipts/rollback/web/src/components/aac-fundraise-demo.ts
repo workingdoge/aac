@@ -77,21 +77,6 @@ export class AacFundraiseDemo extends LitElement {
         prev_cap_table_root: null,
         next_cap_table_root: null,
       },
-      faces: {
-        ...fundraiseDemoSummary.faces,
-        accepted: false,
-        reason: 'ready',
-        failed_face: null,
-        vertices_commitment: null,
-        edges_commitment: null,
-        faces_commitment: null,
-        items: fundraiseDemoSummary.faces.items.map((item) => ({
-          ...item,
-          accepted: false,
-          status: 'blocked',
-          digest: null,
-        })),
-      },
       proof: {
         mode: null,
         proof_system: null,
@@ -764,72 +749,6 @@ export class AacFundraiseDemo extends LitElement {
       margin-top: 12px;
     }
 
-    .face-panel {
-      display: grid;
-      gap: 7px;
-      margin: 12px 0 14px;
-      padding: 11px;
-      border: 1px solid var(--aac-color-rule2, #c9be9e);
-      background: var(--aac-color-bond, #fff);
-    }
-
-    .face-row {
-      display: grid;
-      grid-template-columns: 24px minmax(0, 1fr) minmax(70px, auto);
-      gap: 8px;
-      align-items: center;
-      min-height: 28px;
-      padding: 4px 0;
-      border-bottom: 1px solid color-mix(in srgb, var(--aac-color-rule2, #c9be9e) 55%, transparent);
-      color: var(--aac-color-steel, #6b6b64);
-      font-size: 12px;
-    }
-
-    .face-row:last-child { border-bottom: 0; }
-
-    .face-mark {
-      display: inline-grid;
-      place-items: center;
-      width: 20px;
-      height: 20px;
-      border: 1px solid var(--aac-color-rule2, #c9be9e);
-      color: var(--aac-color-steel, #6b6b64);
-      font-size: 10px;
-      font-weight: 700;
-      line-height: 1;
-    }
-
-    .face-row.filled .face-mark {
-      border-color: var(--aac-color-navy, #21324f);
-      background: var(--aac-color-navy, #21324f);
-      color: var(--aac-color-bond, #fff);
-    }
-
-    .face-row.rejected .face-mark {
-      border-color: var(--aac-color-oxblood, #93302c);
-      background: var(--aac-color-oxblood, #93302c);
-      color: var(--aac-color-bond, #fff);
-    }
-
-    .face-row b {
-      min-width: 0;
-      color: var(--aac-color-ink, #1a1a1a);
-      font-size: 12px;
-      line-height: 1.1;
-      overflow-wrap: anywhere;
-    }
-
-    .face-row code {
-      justify-self: end;
-      max-width: 100%;
-      color: var(--aac-color-steel, #6b6b64);
-      font-family: var(--aac-mono, "IBM Plex Mono", monospace);
-      font-size: 10.5px;
-      background: transparent;
-      padding: 0;
-      overflow-wrap: anywhere;
-    }
-
     .verify-form {
       display: grid;
       gap: 10px;
@@ -1384,16 +1303,12 @@ export class AacFundraiseDemo extends LitElement {
     if (!summary || typeof summary !== 'object') return false;
     const candidate = summary as Record<string, unknown>;
     const reconciliation = candidate.reconciliation as Record<string, unknown> | null | undefined;
-    const faces = candidate.faces as Record<string, unknown> | null | undefined;
     return Array.isArray(candidate.fills)
       && Array.isArray(candidate.opening_balances)
       && !!candidate.verifier
       && typeof candidate.verifier === 'object'
       && !!candidate.balance_sheet
       && typeof candidate.balance_sheet === 'object'
-      && !!faces
-      && typeof faces === 'object'
-      && Array.isArray(faces.items)
       && !!reconciliation
       && typeof reconciliation === 'object'
       && Array.isArray(reconciliation.rows);
@@ -1535,7 +1450,7 @@ export class AacFundraiseDemo extends LitElement {
     };
     if (accepted) {
       this.runState = 'verified';
-      this.sourceLabel = 'statement verifier accepted submitted inputs';
+      this.sourceLabel = 'verifier accepted submitted inputs';
       this.liveError = '';
       return;
     }
@@ -1737,7 +1652,6 @@ export class AacFundraiseDemo extends LitElement {
               ${this.step('I', verifier.public_inputs_commitment ? 'Public inputs bound' : 'Inputs absent', verifier.public_inputs_commitment)}
               ${this.step('K', verifier.verifier_key_digest ? 'Verifier key pinned' : 'Verifier key absent', verifier.verifier_key_digest)}
             </div>
-            ${this.facePanel(s.faces)}
             <div class="timings">
               <div class="time"><b>${this.ms(verifier.timings_ms.prepare)}</b><span>prepare</span></div>
               <div class="time"><b>${this.ms(verifier.timings_ms.prove)}</b><span>prove</span></div>
@@ -1850,28 +1764,6 @@ export class AacFundraiseDemo extends LitElement {
         </div>
         <div id="verify-result" aria-live="polite">${this.renderVerifyResult()}</div>
       </form>
-    `;
-  }
-
-  private facePanel(faces: any) {
-    const items = faces?.items ?? [];
-    return html`
-      <div class="face-panel" aria-label="Simplicial face receipts">
-        <div class="ticket-label">Simplicial face receipts</div>
-        ${items.length
-          ? items.map((item) => {
-              const status = item.status ?? (item.accepted ? 'filled' : 'blocked');
-              const mark = status === 'filled' ? '✓' : status === 'rejected' ? '!' : '·';
-              return html`
-                <div class=${`face-row ${status}`}>
-                  <span class="face-mark" aria-label=${status}>${mark}</span>
-                  <b>${item.label ?? item.id}</b>
-                  <code>${this.short(item.digest, 6, 4)}</code>
-                </div>
-              `;
-            })
-          : html`<div class="empty">No simplicial face receipts in the runner summary.</div>`}
-      </div>
     `;
   }
 
