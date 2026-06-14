@@ -1,0 +1,5 @@
+statement: queue-judgments-v0.md
+  result: accepted
+  FIXTURE queue-misfiled-report should fail under --strict
+fixtures: rejected
+queue-lint: ok (status vocabulary clean; 0 report-only finding(s))
