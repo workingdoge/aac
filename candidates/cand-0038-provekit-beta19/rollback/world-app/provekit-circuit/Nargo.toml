@@ -15,14 +15,10 @@
 name = "aac_receipt_provekit"
 type = "bin"
 authors = ["American Accounting Company"]
-# TOOLCHAIN: install with `noirup --version 1.0.0-beta.19`, or `nix build .#nargo19`
-# in this repo (the flake provisions the pinned beta.19 prebuilt binary).
-#
-# NB: there is deliberately NO `compiler_version` key. Nargo's semver parser rejects
-# ANY requirement that names a prerelease ("Requirements may only refer to full
-# releases") -- `>=1.0.0-beta.19`, `=1.0.0-beta.19`, and the bare `1.0.0-beta.19` are
-# all refused at parse time, so the package would not even load. The toolchain guard
-# is therefore enforced out-of-band (the flake's `nargo19`), not by this manifest.
+# compiler_version is the ProveKit pin. If your local `nargo --version` differs,
+# this package will refuse to compile -- that is the intended guard. Install the
+# matching toolchain with: `noirup --version 1.0.0-beta.19`
+compiler_version = ">=1.0.0-beta.19"
 
 [dependencies]
 # No path/git deps: standalone for the beta.14/beta.19 split. If ProveKit ships a

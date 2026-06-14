@@ -1,0 +1,2 @@
+[aac_receipt_provekit] Circuit witness successfully solved
+[aac_receipt_provekit] Witness saved to target/aac_receipt_provekit.gz

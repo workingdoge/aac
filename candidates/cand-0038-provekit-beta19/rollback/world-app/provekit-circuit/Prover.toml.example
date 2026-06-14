@@ -1,0 +1,19 @@
+# Prover.toml.example -- a witness for the right-sized receipt.
+#
+# Copy to `Prover.toml` and fill the public commitment values from
+# `nargo test --show-output print_public_inputs` (they depend on the chosen hash;
+# the values below are PLACEHOLDERS computed under the Poseidon2 placeholder hash
+# and WILL change once the hash is switched to Skyscraper -- recompute them).
+#
+# Private witness:
+usd_cents = "10000"
+fabric_meters = "50"
+buyer_id = "111"
+supplier_id = "222"
+
+# Public inputs (recompute these -- see note above):
+rulebook_id = "7"
+event_commitment_pub = "0x00"        # <- from print_public_inputs (line 1)
+participant_set_pub = "0x00"         # <- from print_public_inputs (line 2)
+journal_commitment_pub = "0x00"      # <- from print_public_inputs (line 3)
+event_nullifier_pub = "0x00"         # <- from print_public_inputs (line 4)

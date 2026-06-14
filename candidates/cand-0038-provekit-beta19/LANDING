@@ -1,0 +1,5 @@
+# SRC (in candidate dir)                                   DEST (root-relative)
+cargo/flake.nix                                            flake.nix
+cargo/world-app/provekit-circuit/Nargo.toml               world-app/provekit-circuit/Nargo.toml
+cargo/world-app/provekit-circuit/Prover.toml.example      world-app/provekit-circuit/Prover.toml.example
+cargo/world-app/provekit-circuit/src/hash.nr              world-app/provekit-circuit/src/hash.nr

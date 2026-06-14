@@ -1,0 +1,1 @@
+structural ok: compiler_version removed; hash.nr is a sponge over the public permutation; example regenerated; additive flake nargo19 pinned+exposed, off the default/devShell PATH

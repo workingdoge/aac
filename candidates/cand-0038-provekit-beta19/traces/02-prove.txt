@@ -1,0 +1,1 @@
+beta.19 (nargo version = 1.0.0-beta.19): compile clean; nargo test 8/8; witness solved on the regenerated Prover.toml.example

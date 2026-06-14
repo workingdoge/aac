@@ -1,0 +1,1 @@
+SKIP: flake nargo19 not buildable from ROOT yet (pre-land ROOT/flake.nix lacks the attribute; reproducible once landed)

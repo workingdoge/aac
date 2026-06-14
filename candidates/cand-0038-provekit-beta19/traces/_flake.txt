@@ -1,0 +1,2 @@
+error: flake 'git+file:///Users/arj/irai/aac/.worktrees/cand-0038-provekit-beta19' does not provide attribute 'packages.aarch64-darwin.nargo19', 'legacyPackages.aarch64-darwin.nargo19' or 'nargo19'
+       Did you mean nargo?

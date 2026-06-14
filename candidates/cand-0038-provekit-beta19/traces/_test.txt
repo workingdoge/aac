@@ -1,0 +1,10 @@
+[aac_receipt_provekit] Running 8 test functions
+[aac_receipt_provekit] Testing nullifier_is_event_and_party_distinguishing ... ok
+[aac_receipt_provekit] Testing pacioli::pn_numeraire_collapse_is_rejected ... ok
+[aac_receipt_provekit] Testing pacioli::pn_vector_zero_account_balances ... ok
+[aac_receipt_provekit] Testing rejects_self_dealing ... ok
+[aac_receipt_provekit] Testing accepts_a_complete_receipt ... ok
+[aac_receipt_provekit] Testing print_public_inputs ... ok
+[aac_receipt_provekit] Testing rejects_missing_role ... ok
+[aac_receipt_provekit] Testing rejects_replay_under_a_foreign_nullifier ... ok
+[aac_receipt_provekit] 8 tests passed

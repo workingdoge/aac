@@ -184,60 +184,6 @@
           };
         };
 
-        # nargo19 — the beta.19 Noir CLI, provisioned the SAME hash-pinned way as
-        # `nargo` above, but for the ProveKit re-expression (world-app/provekit-
-        # circuit, Design Note 0002 S2.1). ADDITIVE BY DESIGN: it is NOT on the
-        # devShell PATH and NOT the default package, because the main `circuits/`
-        # workspace pins beta.14 and two `nargo` binaries on PATH would collide.
-        # Reach it explicitly:  nix build .#nargo19  then run
-        #   ./result/bin/nargo {compile,test,execute}  inside world-app/provekit-circuit.
-        # Hashes pinned via `nix store prefetch-file <url>` for all four release triples.
-        nargo19Release = "v1.0.0-beta.19";
-        nargo19Systems = {
-          "aarch64-darwin" = {
-            triple = "aarch64-apple-darwin";
-            hash = "sha256-PQIUPvzAalyZH2m7a7dw5jkjBUnWTzXtE977REILenU=";
-          };
-          "x86_64-darwin" = {
-            triple = "x86_64-apple-darwin";
-            hash = "sha256-QVQni4ZXhrvzxQZJRKe4RQ9J2mmtIqPJcYJvazNmaOs=";
-          };
-          "x86_64-linux" = {
-            triple = "x86_64-unknown-linux-gnu";
-            hash = "sha256-t3ScdOdW2OjQLeXX5NmkQbTBhlZ0tI9ug7YhT7O4C+U=";
-          };
-          "aarch64-linux" = {
-            triple = "aarch64-unknown-linux-gnu";
-            hash = "sha256-3br3C+KpU3AZYq/vjOGFF7f3fXdoXQcPCBIXM5Zqe/s=";
-          };
-        };
-        nargo19Entry = nargo19Systems.${system} or (throw "nargo19: no pinned release for ${system}");
-        nargo19 = pkgs.stdenv.mkDerivation {
-          pname = "nargo";
-          version = nargo19Release;
-          src = pkgs.fetchurl {
-            url = "https://github.com/noir-lang/noir/releases/download/${nargo19Release}/nargo-${nargo19Entry.triple}.tar.gz";
-            hash = nargo19Entry.hash;
-          };
-          sourceRoot = ".";
-          dontConfigure = true;
-          dontBuild = true;
-          nativeBuildInputs = lib.optionals pkgs.stdenv.isLinux [ pkgs.autoPatchelfHook ];
-          buildInputs = lib.optionals pkgs.stdenv.isLinux [ pkgs.stdenv.cc.cc.lib ];
-          installPhase = ''
-            runHook preInstall
-            install -Dm755 nargo $out/bin/nargo
-            runHook postInstall
-          '';
-          meta = {
-            description = "Nargo beta.19 -- the Noir CLI for the ProveKit re-expression (pinned prebuilt).";
-            homepage = "https://noir-lang.org/";
-            license = lib.licenses.mit;
-            platforms = builtins.attrNames nargo19Systems;
-            mainProgram = "nargo";
-          };
-        };
-
         co-snarks = pkgs.rustPlatform.buildRustPackage (finalAttrs: {
           pname = "co-snarks";
           version = "co-noir-v0.7.0";
@@ -346,7 +292,7 @@
         packages =
           {
             default = nargo;
-            inherit nargo nargo19 bignum-paramgen;
+            inherit nargo bignum-paramgen;
           }
           // lib.optionalAttrs pkgs.stdenv.isLinux {
             inherit co-snarks;

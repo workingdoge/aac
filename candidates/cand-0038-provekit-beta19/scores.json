@@ -1,0 +1,19 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0038-provekit-beta19",
+  "evaluated_at": "2026-06-14T04:32:11Z",
+  "task": "Make world-app/provekit-circuit (the ProveKit EVENT/1 re-expression) compile/test/execute on its declared Noir beta.19 toolchain, and bring beta.19 in reproducibly via Nix. Three never-exercised scaffold bugs fixed: (1) removed the invalid prerelease compiler_version pin (beta.19 rejects any prerelease requirement, so the package would not load); (2) rewrote hash.nr from the private Poseidon2::hash to a width-4/rate-3 sponge over the PUBLIC poseidon2_permutation (identical to circuits/hash cand-0024); (3) regenerated Prover.toml.example from 0x00 placeholders to the real sponge-hash commitments so execute solves. Added an ADDITIVE flake package nargo19 (hash-pinned beta.19 nargo, four triples, same mechanism as the beta.14 nargo) kept off the dev-shell PATH and out of the default package so the beta.14 circuits/ workspace is untouched. Witnessed: structural (three fixes + additive flake package); beta.19 compile clean + nargo test 8/8 + witness solved on the regenerated example; the flake nargo19 attribute builds to a beta.19 binary.",
+  "checks": {
+    "logic": "pass",
+    "prove": "pass",
+    "flake": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "4efd90836df3007cdbe5e2231ab7fed3580f8fa71d055eeec52b83a383ac0a00",
+    "traces_sha256": "49ea6e8a93c86b9660fdba3c360d2f13f16a84eb8680a83652d73dd24731bd52",
+    "body_sha256": "d13e2bb81c0adf504ce12fb581045287e7db4b1ff5bab3c838cdbe60977dc675",
+    "attestation": "7b09bf5561c31a4ca753f21e7e01af5a00a8ef1ca25eb6e6eaebd5fcd600396b"
+  }
+}
