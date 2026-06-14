@@ -1,0 +1,1 @@
+landing scope is runner, fundraise UI, adapter, docs, and tests only

@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0084-fundraise-htmx-verify-form",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "8baace9dba8bec5056d9c286f53c45db36f76f12c71a4f801a66376530305978",
+    "LANDING": "203de800a0c42348724eeb265a2cd84e5294a0c6029ae316322a4d59bc11a139",
+    "META": "95e64fb29e146a0bf4dcce61842710e734e087a84223a11f5e16a69f91bd6bf0"
+  }
+}

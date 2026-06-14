@@ -16,12 +16,10 @@ up to 150 restricted receipt units; investor A stays fixed while investor B's
 batch can be changed before proof generation. The ticket, starting balances,
 submitted fills, and reconciliation rows are rendered from the runner summary
 returned by the localhost API. The live path calls the localhost runner,
-generates the selected order-fill proof packet with ProveKit, and leaves a
-submitted verifier form as the second console step. The verifier step posts
-the packet commitment, public-input commitment, proof digest, verifier-key
-digest, balance-sheet roots, and batch binding back to the runner; edits to
-those submitted public inputs are rejected before the console can show an
-accepted verifier receipt.
+generates the selected order-fill proof packet with ProveKit, and leaves the
+verifier as a second console step. The verifier step surfaces the native
+ProveKit receipt: verifier status, packet commitment, public-input commitment,
+proof digest, verifier-key digest, and verify timing.
 
 After the swap, the console reconciles the issuer books from summary-provided
 opening balances, fill deltas, and closing balances; a partial selected batch
@@ -45,14 +43,14 @@ prior root, auditor signature, or registry log.
 The live presentation mode is one origin: build the site, then run
 `aac-fundraise-demo --serve --static-dir web/dist --port 4328`. The component
 calls `/api/fundraise/preview` to rebuild the selected batch without proving,
-then `/api/fundraise/prove` on that same localhost origin to run ProveKit and
-stage a short-lived proof session. The verifier form uses htmx-style
-`hx-post` submission to `/api/fundraise/verify`, where the runner checks the
-submitted public inputs against the stored proof session and reruns native
-ProveKit verification. Local settlement remains an explicit runner mode because
-it requires an Anvil/Foundry environment. The runner writes a fresh Prover.toml
-for the balance-sheet circuit for each selected batch, so changing the second
-fill changes the state roots and the state-verifier public inputs.
+then `/api/fundraise/run` on that same localhost origin to run ProveKit
+prepare/prove/verify for the selected order-fill packet and return a new
+summary. Local settlement remains an explicit runner mode because it requires an
+Anvil/Foundry environment. The current localhost runner returns the proof and
+verifier receipt in one response; the console separates their presentation so
+the operator sees generation before verification. The runner writes a fresh
+Prover.toml for the balance-sheet circuit for each selected batch, so changing
+the second fill changes the state roots and the state-verifier public inputs.
 
 ## Where it fits
 

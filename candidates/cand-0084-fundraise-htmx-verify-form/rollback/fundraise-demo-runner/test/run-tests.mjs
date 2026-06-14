@@ -6,7 +6,6 @@ import { resolve } from "node:path";
 import {
   FUNDRAISE_DEMO_RUNNER_SCHEMA,
   FUNDRAISE_DEMO_SUMMARY_SCHEMA,
-  FUNDRAISE_DEMO_VERIFY_RESULT_SCHEMA,
   FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA,
   buildBalanceSheetProofPacket,
   buildFundraiseDemoBatchPacket,
@@ -18,8 +17,6 @@ import {
   previewFundraiseDemo,
   resolveFundraiseStaticPath,
   runFundraiseDemo,
-  runFundraiseDemoProveAction,
-  runFundraiseDemoVerifyAction,
   runFundraiseDemoLocalSettlement,
   runFundraiseDemoServerAction,
 } from "../src/index.mjs";
@@ -421,65 +418,9 @@ assert.equal(serverPayload.summary.proof.proof_system, "provekit-whir");
 assert.deepEqual(serverCommands.map((command) => command.step), ["prepare", "prove", "verify", "prepare", "prove", "verify"]);
 assert.ok(serverCommands.every((command) => command.executable === "/nix/store/fake-provekit-cli/bin/provekit-cli"));
 
-const formVerifyCommands = [];
-const provePayload = await runFundraiseDemoProveAction({
-  repo_root: repoRoot,
-  circuit_dir: resolve(fakeWork, "circuit"),
-  balance_sheet_circuit_dir: resolve(fakeWork, "circuit"),
-  provekit_bin: "/nix/store/fake-provekit-cli/bin/provekit-cli",
-  run_command: async (command) => {
-    formVerifyCommands.push(command);
-    return satisfyFakeProveKitCommand(command);
-  },
-}, {
-  path: "/api/fundraise/prove?variable_fill_units=30",
-});
-assert.equal(provePayload.accepted, true);
-assert.equal(provePayload.mode, "proof-generated");
-assert.match(provePayload.proof_id, /^proof_[0-9a-f]+$/);
-assert.equal(provePayload.proof_session.proof_id, provePayload.proof_id);
-assert.equal(provePayload.proof_session.verify_fields.proof_id, provePayload.proof_id);
-assert.equal(
-  provePayload.proof_session.verify_fields.balance_next_balance_sheet_root,
-  provePayload.summary.balance_sheet.roots.next_balance_sheet_root,
-);
-assert.equal(provePayload.summary.economics.issued_unit_total, 130);
-assert.deepEqual(formVerifyCommands.map((command) => command.step), ["prepare", "prove", "verify", "prepare", "prove", "verify"]);
-
-const verifyPayload = await runFundraiseDemoVerifyAction({}, {
-  path: "/api/fundraise/verify",
-  body: provePayload.proof_session.verify_fields,
-});
-assert.equal(verifyPayload.schema, FUNDRAISE_DEMO_VERIFY_RESULT_SCHEMA);
-assert.equal(verifyPayload.accepted, true);
-assert.equal(verifyPayload.mode, "form-verify");
-assert.equal(verifyPayload.proof_id, provePayload.proof_id);
-assert.equal(verifyPayload.summary.verifier.accepted, true);
-assert.equal(verifyPayload.summary.balance_sheet.accepted, true);
-assert.equal(verifyPayload.summary.balance_sheet.roots.next_balance_sheet_root, "425716857369");
-assert.deepEqual(
-  formVerifyCommands.map((command) => command.step),
-  ["prepare", "prove", "verify", "prepare", "prove", "verify", "verify", "verify"],
-);
-
-const commandCountBeforeTamper = formVerifyCommands.length;
-const tamperedVerifyPayload = await runFundraiseDemoVerifyAction({}, {
-  path: "/api/fundraise/verify",
-  body: {
-    ...provePayload.proof_session.verify_fields,
-    balance_next_balance_sheet_root: "425716857368",
-  },
-});
-assert.equal(tamperedVerifyPayload.schema, FUNDRAISE_DEMO_VERIFY_RESULT_SCHEMA);
-assert.equal(tamperedVerifyPayload.accepted, false);
-assert.equal(tamperedVerifyPayload.reason, "submitted_public_input_mismatch");
-assert.deepEqual(tamperedVerifyPayload.detail.mismatches.map((item) => item.field), ["balance_next_balance_sheet_root"]);
-assert.equal(formVerifyCommands.length, commandCountBeforeTamper);
-
 const corsHeaders = buildFundraiseDemoCorsHeaders("http://127.0.0.1:4328");
 assert.equal(corsHeaders["access-control-allow-origin"], "http://127.0.0.1:4328");
 assert.equal(corsHeaders["access-control-allow-private-network"], "true");
-assert.match(corsHeaders["access-control-allow-headers"], /hx-request/);
 assert.match(corsHeaders.vary, /Access-Control-Request-Private-Network/);
 
 console.log("fundraise-demo-runner tests: pass");

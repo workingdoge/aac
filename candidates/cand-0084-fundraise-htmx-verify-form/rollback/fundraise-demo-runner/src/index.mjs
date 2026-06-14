@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { cp, mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
@@ -45,11 +44,8 @@ export const FUNDRAISE_DEMO_PREVIEW_SCHEMA = "aac.fundraise-demo-runner.preview.
 export const DEFAULT_REGISTRY_PACKAGE = "registry";
 export const DEFAULT_LOCAL_RPC_URL = "http://127.0.0.1:8545";
 export const FUNDRAISE_DEMO_SERVER_SCHEMA = "aac.fundraise-demo-runner.server.v1";
-export const FUNDRAISE_DEMO_PROOF_SESSION_SCHEMA = "aac.fundraise-demo-runner.proof-session.v1";
-export const FUNDRAISE_DEMO_VERIFY_RESULT_SCHEMA = "aac.fundraise-demo-runner.verify-result.v1";
 export const DEFAULT_FUNDRAISE_DEMO_SERVER_HOST = "127.0.0.1";
 export const DEFAULT_FUNDRAISE_DEMO_SERVER_PORT = 8787;
-export const DEFAULT_FUNDRAISE_PROOF_SESSION_TTL_MS = 10 * 60 * 1000;
 export const DEFAULT_ANVIL_DEPLOYER_PRIVATE_KEY =
   "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
 export const DEFAULT_DEMO_AUTHORIZER_PRIVATE_KEY =
@@ -63,7 +59,6 @@ const BALANCE_SHEET_CASH_COEFF = 1000003n;
 const BALANCE_SHEET_ISSUED_COEFF = 1000033n;
 const BALANCE_SHEET_OPEN_COEFF = 1000037n;
 const BALANCE_SHEET_SALT_COEFF = 1000039n;
-const fundraiseProofSessions = new Map();
 
 export class FundraiseDemoRunnerError extends Error {
   constructor(reason, message = reason, detail = {}) {
@@ -143,20 +138,6 @@ export async function buildFundraiseDemoVerifierReceipt(input = {}) {
       balance_sheet_state: balanceSheet.state,
       workdir: input.keep_workdir ? work.work_dir : null,
       balance_sheet_workdir: balanceSheet.workdir,
-      provekit_artifacts: {
-        provekit_bin: provekitBin,
-        circuit_dir: work.circuit_dir,
-        home_dir: work.home_dir,
-        public_inputs: packet.public_inputs,
-        prover_toml: "Prover.toml",
-        prover_key: input.prover_key ?? DEFAULT_PROVEKIT_PROVER_KEY,
-        verifier_key: input.verifier_key ?? DEFAULT_PROVEKIT_VERIFIER_KEY,
-        proof: input.proof ?? DEFAULT_PROVEKIT_PROOF,
-        proof_ref: input.proof_ref,
-        verifier_id: input.verifier_id ?? "aac-fundraise-demo-provekit",
-        verifier_profile: "fundraise-runtime/v1+vnet-runtime/v1",
-      },
-      balance_sheet_provekit_artifacts: balanceSheet.provekit_artifacts,
     };
   } finally {
     if (!input.keep_workdir) {
@@ -311,266 +292,6 @@ export async function runFundraiseDemoServerAction(input = {}, request = {}) {
   };
 }
 
-export async function runFundraiseDemoProveAction(input = {}, request = {}) {
-  const url = new URL(request.path ?? "/api/fundraise/prove", "http://localhost");
-  const body = request.body ?? {};
-  const variableFillUnits = requestVariableFillUnits({ body, url });
-  const actionInput = {
-    ...input,
-    ...(variableFillUnits === undefined ? {} : { variable_fill_units: variableFillUnits }),
-    keep_workdir: true,
-  };
-  const started = Date.now();
-  const proof = await buildFundraiseDemoVerifierReceipt(actionInput);
-  const workflowReceipt = buildLiveWorkflowReceipt({
-    packet: proof.packet,
-    verifier_receipt: proof.verifier_receipt,
-    workflow_policy: actionInput.workflow_policy,
-    recipient_overrides: actionInput.recipient_overrides,
-    verify_options: actionInput.verify_options,
-  });
-  const receipt = buildDemoReceipt({
-    input: actionInput,
-    packet: proof.packet,
-    verifier_receipt: proof.verifier_receipt,
-    balance_sheet_packet: proof.balance_sheet_packet,
-    balance_sheet_verifier_receipt: proof.balance_sheet_verifier_receipt,
-    balance_sheet_state: proof.balance_sheet_state,
-    workflow_receipt: workflowReceipt,
-    workdir: proof.workdir,
-    balance_sheet_workdir: proof.balance_sheet_workdir,
-  });
-  const session = storeFundraiseProofSession({ input: actionInput, proof, receipt });
-  return {
-    schema: FUNDRAISE_DEMO_SERVER_SCHEMA,
-    accepted: true,
-    reason: "accepted",
-    mode: "proof-generated",
-    elapsed_ms: Date.now() - started,
-    proof_id: session.proof_id,
-    proof_session: publicFundraiseProofSession(session),
-    receipt,
-    summary: receipt.summary,
-  };
-}
-
-export async function runFundraiseDemoVerifyAction(input = {}, request = {}) {
-  const started = Date.now();
-  pruneFundraiseProofSessions();
-  const body = request.body ?? {};
-  const proofId = stringField(body.proof_id).trim();
-  const session = fundraiseProofSessions.get(proofId);
-  if (!session) {
-    return fundraiseVerifyRejection({
-      reason: "proof_session_missing",
-      proof_id: proofId,
-      elapsed_ms: Date.now() - started,
-    });
-  }
-  if (session.expires_at_ms <= Date.now()) {
-    fundraiseProofSessions.delete(session.proof_id);
-    cleanupFundraiseProofSession(session);
-    return fundraiseVerifyRejection({
-      reason: "proof_session_expired",
-      proof_id: proofId,
-      elapsed_ms: Date.now() - started,
-    });
-  }
-  const mismatches = submittedVerifyFieldMismatches(body, session.expected_fields);
-  if (mismatches.length > 0) {
-    return fundraiseVerifyRejection({
-      reason: "submitted_public_input_mismatch",
-      proof_id: proofId,
-      elapsed_ms: Date.now() - started,
-      detail: { mismatches },
-    });
-  }
-  const verifierReceipt = await rerunStoredFundraiseVerification(session, "vnet");
-  const balanceSheetVerifierReceipt = await rerunStoredFundraiseVerification(session, "balance_sheet");
-  const receipt = {
-    ...session.receipt,
-    verifier_receipt: verifierReceipt,
-    balance_sheet_verifier_receipt: balanceSheetVerifierReceipt,
-    provekit: {
-      ...session.receipt.provekit,
-      proof_digest: verifierReceipt.proof_digest,
-      verifier_key_digest: verifierReceipt.verifier_key_digest,
-      timings_ms: {
-        ...(session.receipt.provekit?.timings_ms ?? {}),
-        verify: verifierReceipt.timings_ms.verify,
-      },
-    },
-    balance_sheet_provekit: {
-      ...(session.receipt.balance_sheet_provekit ?? {}),
-      proof_digest: balanceSheetVerifierReceipt.proof_digest,
-      verifier_key_digest: balanceSheetVerifierReceipt.verifier_key_digest,
-      timings_ms: {
-        ...(session.receipt.balance_sheet_provekit?.timings_ms ?? {}),
-        verify: balanceSheetVerifierReceipt.timings_ms.verify,
-      },
-    },
-  };
-  const summary = buildFundraiseDemoSummary(receipt);
-  const verifiedReceipt = { ...receipt, summary };
-  session.receipt = verifiedReceipt;
-  return {
-    schema: FUNDRAISE_DEMO_VERIFY_RESULT_SCHEMA,
-    accepted: true,
-    reason: "accepted",
-    mode: "form-verify",
-    proof_id: proofId,
-    elapsed_ms: Date.now() - started,
-    proof_session: publicFundraiseProofSession(session),
-    receipt: verifiedReceipt,
-    summary,
-    verification: {
-      status: "accepted",
-      fields: session.expected_fields,
-    },
-  };
-}
-
-function storeFundraiseProofSession({ input, proof, receipt }) {
-  pruneFundraiseProofSessions();
-  const now = Date.now();
-  const ttl = finitePositiveNumber(input.proof_session_ttl_ms, DEFAULT_FUNDRAISE_PROOF_SESSION_TTL_MS);
-  const proofId = `proof_${randomUUID().replaceAll("-", "")}`;
-  const session = {
-    schema: FUNDRAISE_DEMO_PROOF_SESSION_SCHEMA,
-    proof_id: proofId,
-    created_at_ms: now,
-    expires_at_ms: now + ttl,
-    receipt,
-    expected_fields: buildFundraiseVerifyFields(proofId, receipt.summary),
-    timeout_ms: input.timeout_ms,
-    env: input.env,
-    run_command: input.run_command,
-    cleanup_paths: Array.from(new Set([proof.workdir, proof.balance_sheet_workdir].filter(Boolean))),
-    artifacts: {
-      vnet: {
-        ...(proof.provekit_artifacts ?? {}),
-        packet: proof.packet,
-      },
-      balance_sheet: {
-        ...(proof.balance_sheet_provekit_artifacts ?? {}),
-        packet: proof.balance_sheet_packet,
-      },
-    },
-  };
-  fundraiseProofSessions.set(proofId, session);
-  return session;
-}
-
-function publicFundraiseProofSession(session) {
-  return {
-    schema: FUNDRAISE_DEMO_PROOF_SESSION_SCHEMA,
-    proof_id: session.proof_id,
-    expires_at: new Date(session.expires_at_ms).toISOString(),
-    verify_fields: session.expected_fields,
-  };
-}
-
-function buildFundraiseVerifyFields(proofId, summary) {
-  const verifier = summary.verifier ?? {};
-  const balanceSheet = summary.balance_sheet ?? {};
-  const roots = balanceSheet.roots ?? {};
-  const publicInputs = balanceSheet.public_inputs ?? {};
-  return {
-    proof_id: proofId,
-    packet_commitment: stringField(verifier.packet_commitment),
-    public_inputs_commitment: stringField(verifier.public_inputs_commitment),
-    proof_digest: stringField(verifier.proof_digest),
-    verifier_key_digest: stringField(verifier.verifier_key_digest),
-    balance_packet_commitment: stringField(balanceSheet.packet_commitment),
-    balance_public_inputs_commitment: stringField(balanceSheet.public_inputs_commitment),
-    balance_proof_digest: stringField(balanceSheet.proof_digest),
-    balance_verifier_key_digest: stringField(balanceSheet.verifier_key_digest),
-    balance_prev_balance_sheet_root: stringField(roots.prev_balance_sheet_root),
-    balance_next_balance_sheet_root: stringField(roots.next_balance_sheet_root),
-    balance_issued_unit_total: stringField(publicInputs.issued_unit_total ?? summary.economics?.issued_unit_total),
-    balance_fundraise_packet_commitment: stringField(balanceSheet.fundraise_packet_commitment),
-  };
-}
-
-function submittedVerifyFieldMismatches(body, expected) {
-  const mismatches = [];
-  for (const [field, expectedValue] of Object.entries(expected)) {
-    const submitted = stringField(body[field]);
-    if (submitted !== expectedValue) {
-      mismatches.push({ field, expected: expectedValue, submitted });
-    }
-  }
-  return mismatches;
-}
-
-async function rerunStoredFundraiseVerification(session, kind) {
-  const artifact = session.artifacts[kind];
-  if (!artifact?.packet || !artifact.circuit_dir) {
-    throw new FundraiseDemoRunnerError("proof_session_artifact_missing", kind);
-  }
-  const provekit = await runProveKitNativeCli({
-    public_inputs: artifact.public_inputs,
-    provekit_bin: artifact.provekit_bin,
-    circuit_dir: artifact.circuit_dir,
-    cwd: artifact.circuit_dir,
-    prover_toml: artifact.prover_toml ?? "Prover.toml",
-    prover_key: artifact.prover_key,
-    verifier_key: artifact.verifier_key,
-    proof: artifact.proof,
-    proof_ref: artifact.proof_ref,
-    timeout_ms: session.timeout_ms ?? 300_000,
-    env: { HOME: artifact.home_dir, ...(session.env ?? {}) },
-    run_command: session.run_command,
-    prepare: false,
-    prove: false,
-    verify: true,
-  });
-  return buildProveKitVerifierReceipt({
-    packet: artifact.packet,
-    provekit,
-    verifier_id: artifact.verifier_id,
-    verifier_profile: artifact.verifier_profile,
-  });
-}
-
-function fundraiseVerifyRejection({ reason, proof_id, elapsed_ms, detail = {} }) {
-  return {
-    schema: FUNDRAISE_DEMO_VERIFY_RESULT_SCHEMA,
-    accepted: false,
-    reason,
-    mode: "form-verify",
-    proof_id: proof_id || null,
-    elapsed_ms,
-    detail,
-  };
-}
-
-function pruneFundraiseProofSessions(now = Date.now()) {
-  for (const session of fundraiseProofSessions.values()) {
-    if (session.expires_at_ms <= now) {
-      fundraiseProofSessions.delete(session.proof_id);
-      cleanupFundraiseProofSession(session);
-    }
-  }
-}
-
-function cleanupFundraiseProofSession(session) {
-  for (const path of session.cleanup_paths ?? []) {
-    void rm(path, { recursive: true, force: true }).catch(() => {});
-  }
-}
-
-function finitePositiveNumber(value, fallback) {
-  const number = Number(value);
-  return Number.isFinite(number) && number > 0 ? number : fallback;
-}
-
-function stringField(value) {
-  if (value === undefined || value === null) return "";
-  if (Array.isArray(value)) return value.map((item) => stringField(item)).join(",");
-  return String(value);
-}
-
 async function handleFundraiseDemoRequest(request, response, input) {
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "localhost"}`);
   if (request.method === "OPTIONS") {
@@ -583,36 +304,14 @@ async function handleFundraiseDemoRequest(request, response, input) {
       ok: true,
       service: "aac-fundraise-demo",
       live_proof: true,
-      form_verify: true,
       settle_local_default: input.settle_local === true,
     }, input.cors_origin);
-    return;
-  }
-  if (["GET", "POST"].includes(request.method ?? "") && url.pathname === "/api/fundraise/prove") {
-    let body = {};
-    if (request.method === "POST") {
-      body = await readRequestPayload(request);
-    }
-    const payload = await runFundraiseDemoProveAction(input, { body, path: `${url.pathname}${url.search}` });
-    writeJson(response, 200, payload, input.cors_origin);
-    return;
-  }
-  if (["GET", "POST"].includes(request.method ?? "") && url.pathname === "/api/fundraise/verify") {
-    const body = request.method === "POST"
-      ? await readRequestPayload(request)
-      : Object.fromEntries(url.searchParams.entries());
-    const payload = await runFundraiseDemoVerifyAction(input, { body, path: `${url.pathname}${url.search}` });
-    if (requestWantsHtmlFragment(request)) {
-      writeHtml(response, 200, fundraiseVerifyResultHtml(payload), input.cors_origin);
-    } else {
-      writeJson(response, 200, payload, input.cors_origin);
-    }
     return;
   }
   if (["GET", "POST"].includes(request.method ?? "") && url.pathname === "/api/fundraise/run") {
     let body = {};
     if (request.method === "POST") {
-      body = await readRequestPayload(request);
+      body = await readJsonRequest(request);
     }
     const payload = await runFundraiseDemoServerAction(input, { body, path: `${url.pathname}${url.search}` });
     writeJson(response, 200, payload, input.cors_origin);
@@ -621,7 +320,7 @@ async function handleFundraiseDemoRequest(request, response, input) {
   if (["GET", "POST"].includes(request.method ?? "") && url.pathname === "/api/fundraise/preview") {
     let body = {};
     if (request.method === "POST") {
-      body = await readRequestPayload(request);
+      body = await readJsonRequest(request);
     }
     const urlInput = new URL(`${url.pathname}${url.search}`, "http://localhost");
     const variableFillUnits = requestVariableFillUnits({ body, url: urlInput });
@@ -675,7 +374,7 @@ function requestVariableFillUnits({ body, url }) {
   return value;
 }
 
-async function readRequestPayload(request) {
+async function readJsonRequest(request) {
   let raw = "";
   for await (const chunk of request) {
     raw += chunk;
@@ -684,10 +383,6 @@ async function readRequestPayload(request) {
     }
   }
   if (!raw.trim()) return {};
-  const contentType = String(request.headers["content-type"] ?? "");
-  if (contentType.includes("application/x-www-form-urlencoded")) {
-    return Object.fromEntries(new URLSearchParams(raw).entries());
-  }
   try {
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
@@ -713,58 +408,6 @@ function writeJson(response, status, body, corsOrigin) {
     ...corsHeaders(corsOrigin),
   });
   response.end(`${JSON.stringify(body, null, 2)}\n`);
-}
-
-function writeHtml(response, status, body, corsOrigin) {
-  response.writeHead(status, {
-    "content-type": "text/html; charset=utf-8",
-    "cache-control": "no-store",
-    ...corsHeaders(corsOrigin),
-  });
-  response.end(body);
-}
-
-function requestWantsHtmlFragment(request) {
-  if (String(request.headers["hx-request"] ?? "").toLowerCase() === "true") return true;
-  const accept = String(request.headers.accept ?? "");
-  return accept.includes("text/html") && !accept.includes("application/json");
-}
-
-function fundraiseVerifyResultHtml(payload) {
-  const accepted = payload.accepted === true;
-  const status = accepted ? "accepted" : "rejected";
-  const title = accepted ? "Verifier accepted submitted inputs" : "Verifier rejected submitted inputs";
-  const detail = accepted
-    ? "Native ProveKit verify reran for the order-fill proof and the balance-sheet proof."
-    : verifyRejectionDetail(payload);
-  const proofId = payload.proof_id ? `proof ${payload.proof_id}` : "proof session unavailable";
-  return [
-    `<div class="verify-result ${status}" data-verify-accepted="${accepted ? "true" : "false"}" data-verify-reason="${escapeHtml(payload.reason ?? status)}">`,
-    `<strong>${escapeHtml(title)}</strong>`,
-    `<span>${escapeHtml(detail)}</span>`,
-    `<code>${escapeHtml(proofId)} · ${escapeHtml(String(payload.elapsed_ms ?? 0))}ms</code>`,
-    `</div>`,
-  ].join("");
-}
-
-function verifyRejectionDetail(payload) {
-  const mismatches = payload.detail?.mismatches;
-  if (Array.isArray(mismatches) && mismatches.length > 0) {
-    return `field mismatch: ${mismatches.map((item) => item.field).join(", ")}`;
-  }
-  if (payload.reason === "proof_session_missing") return "Generate a proof packet before submitting verifier inputs.";
-  if (payload.reason === "proof_session_expired") return "The proof session expired; generate a fresh proof packet.";
-  return payload.reason ?? "verification failed";
-}
-
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;",
-  })[char]);
 }
 
 async function writeStaticAsset(response, staticDir, pathname, options = {}) {
@@ -849,7 +492,7 @@ export function buildFundraiseDemoCorsHeaders(corsOrigin) {
   return {
     "access-control-allow-origin": corsOrigin || "*",
     "access-control-allow-methods": "GET,POST,OPTIONS",
-    "access-control-allow-headers": "content-type,hx-request",
+    "access-control-allow-headers": "content-type",
     "access-control-allow-private-network": "true",
     "vary": "Origin, Access-Control-Request-Private-Network",
   };
@@ -1069,19 +712,6 @@ async function buildBalanceSheetVerifierReceipt({ input, packet, repo_root, prov
       verifier_receipt: verifierReceipt,
       state: publicBalanceSheetState(proofInput),
       workdir: input.keep_workdir ? work.work_dir : null,
-      provekit_artifacts: {
-        provekit_bin,
-        circuit_dir: work.circuit_dir,
-        home_dir: work.home_dir,
-        public_inputs: balancePacket.public_inputs,
-        prover_toml: "Prover.toml",
-        prover_key: input.balance_sheet_prover_key ?? DEFAULT_BALANCE_SHEET_PROVER_KEY,
-        verifier_key: input.balance_sheet_verifier_key ?? DEFAULT_BALANCE_SHEET_VERIFIER_KEY,
-        proof: input.balance_sheet_proof ?? DEFAULT_BALANCE_SHEET_PROOF,
-        proof_ref: input.balance_sheet_proof_ref,
-        verifier_id: input.balance_sheet_verifier_id ?? "aac-fundraise-balance-sheet-provekit",
-        verifier_profile: input.balance_sheet_verifier_profile ?? "fundraise-balance-sheet-demo/v1",
-      },
     };
   } finally {
     if (!input.keep_workdir) {

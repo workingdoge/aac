@@ -2,13 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { fundraiseDemoSummary } from '../data/fundraise-demo-summary';
 
 type FundraiseSummary = typeof fundraiseDemoSummary;
-type RunState = 'idle' | 'proving' | 'proof-ready' | 'verifying' | 'verified' | 'error';
-type VerifyFields = Record<string, string>;
-type ProofSession = {
-  proof_id: string;
-  expires_at: string;
-  verify_fields: VerifyFields;
-};
+type RunState = 'idle' | 'proving' | 'proof-ready' | 'verified' | 'error';
 
 /** aac-fundraise-demo — presentation console for the ProveKit fundraise path:
  *  a private SAFE order receives fills -> VNET proof/workflow authorization ->
@@ -23,7 +17,6 @@ export class AacFundraiseDemo extends LitElement {
     liveElapsedMs: { state: true },
     sourceLabel: { state: true },
     variableFillUnits: { state: true },
-    proofSession: { state: true },
   };
 
   declare summary: FundraiseSummary;
@@ -32,7 +25,6 @@ export class AacFundraiseDemo extends LitElement {
   declare liveElapsedMs: number | null;
   declare sourceLabel: string;
   declare variableFillUnits: number;
-  declare proofSession: ProofSession | null;
   private runControl: HTMLAnchorElement | null = null;
   private verifyControl: HTMLAnchorElement | null = null;
   private captureControl: HTMLAnchorElement | null = null;
@@ -47,7 +39,6 @@ export class AacFundraiseDemo extends LitElement {
     this.liveElapsedMs = null;
     this.sourceLabel = 'ready: order not filled';
     this.variableFillUnits = this.defaultVariableFillUnits(this.summary);
-    this.proofSession = null;
   }
 
   private readySummary(): FundraiseSummary {
@@ -740,120 +731,6 @@ export class AacFundraiseDemo extends LitElement {
       margin-top: 12px;
     }
 
-    .verify-form {
-      display: grid;
-      gap: 10px;
-      margin: 12px 0 14px;
-      padding: 11px;
-      border: 1px solid var(--aac-color-rule2, #c9be9e);
-      background: var(--aac-color-bond, #fff);
-    }
-
-    .verify-fields {
-      display: grid;
-      gap: 7px;
-    }
-
-    .verify-field {
-      display: grid;
-      grid-template-columns: minmax(7.5em, 0.42fr) minmax(0, 1fr);
-      gap: 9px;
-      align-items: center;
-      min-width: 0;
-    }
-
-    .verify-field span {
-      color: var(--aac-color-steel, #6b6b64);
-      font-size: 9.5px;
-      font-weight: 700;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-    }
-
-    .verify-field input {
-      min-width: 0;
-      width: 100%;
-      box-sizing: border-box;
-      border: 1px solid var(--aac-color-rule2, #c9be9e);
-      background: var(--aac-color-field, #fcf9f0);
-      color: var(--aac-color-ink, #1a1a1a);
-      font-family: var(--aac-mono, "IBM Plex Mono", monospace);
-      font-size: 10.5px;
-      padding: 6px 7px;
-      overflow-wrap: anywhere;
-    }
-
-    .verify-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-    }
-
-    .verify-submit,
-    .verify-tamper {
-      border: 1px solid var(--aac-color-navy, #21324f);
-      border-radius: var(--aac-radius-r, 2px);
-      min-height: 33px;
-      padding: 7px 9px;
-      font: inherit;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-
-    .verify-submit {
-      background: var(--aac-color-navy, #21324f);
-      color: var(--aac-color-bond, #fff);
-    }
-
-    .verify-tamper {
-      background: transparent;
-      color: var(--aac-color-oxblood, #93302c);
-      border-color: var(--aac-color-oxblood, #93302c);
-    }
-
-    .verify-submit:disabled {
-      cursor: not-allowed;
-      opacity: 0.68;
-    }
-
-    .verify-result {
-      display: grid;
-      gap: 3px;
-      margin-top: 8px;
-      padding: 9px 10px;
-      border: 1px solid var(--aac-color-rule2, #c9be9e);
-      color: var(--aac-color-steel, #6b6b64);
-      font-size: 11px;
-      line-height: 1.35;
-    }
-
-    .verify-result strong {
-      color: var(--aac-color-ink, #1a1a1a);
-      font-size: 12px;
-    }
-
-    .verify-result code {
-      color: var(--aac-color-steel, #6b6b64);
-      font-family: var(--aac-mono, "IBM Plex Mono", monospace);
-      font-size: 10px;
-      background: transparent;
-      padding: 0;
-      overflow-wrap: anywhere;
-    }
-
-    .verify-result.accepted {
-      border-color: var(--aac-color-navy, #21324f);
-      background: color-mix(in srgb, var(--aac-color-navy, #21324f) 6%, var(--aac-color-bond, #fff));
-    }
-
-    .verify-result.rejected {
-      border-color: var(--aac-color-oxblood, #93302c);
-      background: color-mix(in srgb, var(--aac-color-oxblood, #93302c) 6%, var(--aac-color-bond, #fff));
-    }
-
     .slip {
       display: flex;
       align-items: center;
@@ -1071,19 +948,13 @@ export class AacFundraiseDemo extends LitElement {
       .lane { border-right: 0; border-bottom: 1px solid var(--aac-color-rule2, #c9be9e); }
       .lane:last-child { border-bottom: 0; }
       .root-row, .digest-row, .contract-row { grid-template-columns: 1fr; gap: 4px; }
-      .verify-field { grid-template-columns: 1fr; gap: 3px; }
       .val { justify-self: start; }
     }
   `;
 
-  private apiProveEndpoint(): string {
+  private apiEndpoint(): string {
     const base = this.getAttribute('api-base') || this.defaultApiBase();
-    return `${base.replace(/\/+$/, '')}/api/fundraise/prove`;
-  }
-
-  private apiVerifyEndpoint(): string {
-    const base = this.getAttribute('api-base') || this.defaultApiBase();
-    return `${base.replace(/\/+$/, '')}/api/fundraise/verify`;
+    return `${base.replace(/\/+$/, '')}/api/fundraise/run`;
   }
 
   private apiPreviewEndpoint(): string {
@@ -1099,8 +970,9 @@ export class AacFundraiseDemo extends LitElement {
     return 'http://127.0.0.1:8787';
   }
 
-  private apiProveUrl(): string {
-    const url = new URL(this.apiProveEndpoint());
+  private apiRunUrl(): string {
+    const url = new URL(this.apiEndpoint());
+    url.searchParams.set('settle_local', 'false');
     url.searchParams.set('variable_fill_units', String(this.variableFillUnits));
     return url.toString();
   }
@@ -1120,7 +992,6 @@ export class AacFundraiseDemo extends LitElement {
 
   updated() {
     this.syncOwnedControls();
-    window.htmx?.process(this.renderRoot);
   }
 
   disconnectedCallback() {
@@ -1232,7 +1103,7 @@ export class AacFundraiseDemo extends LitElement {
     if (action === 'run') {
       void this.runLiveProof();
     } else if (action === 'verify') {
-      void this.runLiveProof({ submitVerifier: true });
+      void this.runLiveProof({ revealVerifier: true });
     } else if (action === 'capture') {
       this.showCapturedReceipt();
     }
@@ -1256,32 +1127,26 @@ export class AacFundraiseDemo extends LitElement {
     this.showCapturedReceipt();
   };
 
-  private async runLiveProof({ submitVerifier = false } = {}) {
+  private async runLiveProof({ revealVerifier = false } = {}) {
     if (this.isBusy()) return;
     const started = Date.now();
     this.runState = 'proving';
     this.liveError = '';
     this.liveElapsedMs = null;
-    this.proofSession = null;
     try {
-      const response = await fetch(this.apiProveUrl(), { method: 'GET' });
+      const response = await fetch(this.apiRunUrl(), { method: 'GET' });
       const payload = await response.json().catch(() => null);
-      if (!response.ok || payload?.accepted !== true || !payload.summary || !payload.proof_session) {
+      if (!response.ok || payload?.accepted !== true || !payload.summary) {
         throw new Error(payload?.message || payload?.reason || `HTTP ${response.status}`);
       }
       if (!this.isCurrentRunnerSummary(payload.summary)) {
         throw new Error('runner summary schema is stale; restart fundraise demo runner');
       }
       this.summary = payload.summary;
-      this.proofSession = payload.proof_session;
       this.variableFillUnits = this.defaultVariableFillUnits(this.summary);
       this.liveElapsedMs = payload.elapsed_ms ?? Date.now() - started;
-      this.sourceLabel = 'proof generated; verifier form ready';
-      this.runState = 'proof-ready';
-      if (submitVerifier) {
-        await this.updateComplete;
-        this.verifyProof();
-      }
+      this.sourceLabel = revealVerifier ? 'verifier accepted' : 'proof generated';
+      this.runState = revealVerifier ? 'verified' : 'proof-ready';
     } catch (error) {
       this.runState = 'error';
       this.liveError = error instanceof Error ? error.message : 'live runner failed';
@@ -1311,7 +1176,6 @@ export class AacFundraiseDemo extends LitElement {
     this.liveError = '';
     this.sourceLabel = 'captured fallback';
     this.runState = 'verified';
-    this.proofSession = null;
   }
 
   private unitsFromSearchParams(params: URLSearchParams): number | null {
@@ -1364,7 +1228,6 @@ export class AacFundraiseDemo extends LitElement {
     this.runState = 'idle';
     this.liveError = '';
     this.liveElapsedMs = null;
-    this.proofSession = null;
     this.sourceLabel = `ready: ${this.selectedTotalUnits()} units selected`;
     void this.refreshBatchPreview();
   };
@@ -1396,63 +1259,17 @@ export class AacFundraiseDemo extends LitElement {
   }
 
   private isBusy(): boolean {
-    return this.runState === 'proving' || this.runState === 'verifying';
+    return this.runState === 'proving';
   }
 
   private canVerifyProof(): boolean {
-    return this.runState === 'proof-ready'
-      && this.summary.accepted === true
-      && !!this.proofSession?.proof_id
-      && this.isCurrentRunnerSummary(this.summary);
+    return this.runState === 'proof-ready' && this.summary.accepted === true && this.isCurrentRunnerSummary(this.summary);
   }
 
   private verifyProof() {
     if (!this.canVerifyProof()) return;
-    const form = this.renderRoot.querySelector<HTMLFormElement>('form[data-fundraise-verify-form]');
-    if (!form) {
-      this.liveError = 'verifier form is not mounted';
-      this.runState = 'error';
-      return;
-    }
-    form.requestSubmit();
-  }
-
-  private readonly handleVerifierBeforeRequest = () => {
-    this.runState = 'verifying';
-    this.liveError = '';
-    this.sourceLabel = 'verifier form submitted';
-  };
-
-  private readonly handleVerifierAfterRequest = (event: CustomEvent) => {
-    const responseText = String(event.detail?.responseText ?? '');
-    const accepted = responseText.includes('data-verify-accepted="true"');
-    if (accepted) {
-      this.runState = 'verified';
-      this.sourceLabel = 'verifier accepted submitted inputs';
-      this.liveError = '';
-      return;
-    }
-    this.runState = 'proof-ready';
-    const reason = responseText.match(/data-verify-reason="([^"]+)"/)?.[1] ?? 'verification rejected';
-    this.liveError = reason;
-    this.sourceLabel = `verifier rejected · ${reason}`;
-  };
-
-  private readonly handleVerifierResponseError = (event: CustomEvent) => {
-    this.runState = 'proof-ready';
-    const detail = event.detail?.error;
-    this.liveError = detail instanceof Error ? detail.message : 'verifier request failed';
-    this.sourceLabel = `verifier error · ${this.liveError}`;
-  };
-
-  private readonly handleTamperVerifierInput = () => {
-    const input = this.renderRoot.querySelector<HTMLInputElement>('input[name="balance_next_balance_sheet_root"]');
-    if (!input) return;
-    const current = input.value || '0';
-    const last = current.slice(-1);
-    const replacement = last === '9' ? '8' : '9';
-    input.value = `${current.slice(0, -1)}${replacement}`;
-    this.sourceLabel = 'verifier input edited';
+    this.sourceLabel = 'verifier accepted';
+    this.runState = 'verified';
   }
 
   private runButtonText(): string {
@@ -1462,16 +1279,14 @@ export class AacFundraiseDemo extends LitElement {
   }
 
   private verifyButtonText(): string {
-    if (this.runState === 'verifying') return 'Verifying';
     if (this.runState === 'verified') return 'Verified';
-    return 'Submit verifier form';
+    return 'Verify proof';
   }
 
   private runNote(): string {
     if (this.runState === 'proving') return 'ProveKit is generating the order-fill proof';
-    if (this.runState === 'proof-ready') return `proof generated · form ready · ${this.ms(this.liveElapsedMs ?? undefined)}`;
-    if (this.runState === 'verifying') return 'submitted verifier inputs to localhost runner';
-    if (this.runState === 'verified') return `verifier accepted form · ${this.ms(this.liveElapsedMs ?? undefined)}`;
+    if (this.runState === 'proof-ready') return `proof generated · ${this.ms(this.liveElapsedMs ?? undefined)}`;
+    if (this.runState === 'verified') return `verifier accepted · ${this.ms(this.liveElapsedMs ?? undefined)}`;
     if (this.runState === 'error') return `runner error · ${this.liveError}`;
     return this.sourceLabel;
   }
@@ -1595,9 +1410,6 @@ export class AacFundraiseDemo extends LitElement {
               <b>${verifier.target_label}</b>
               <code>${verifier.verifier_profile ?? 'profile pending'}</code>
             </div>
-            ${proofGenerated
-              ? this.verifierForm()
-              : html`<div class="empty">Generate a proof packet to mount the submitted verifier form.</div>`}
             <div class="spine">
               ${this.step('G', verifier.proof_digest ? 'Proof generated' : 'Proof not generated', verifier.proof_digest)}
               ${this.step('V', verifier.receipt_digest ? 'Verifier accepted proof' : 'Verifier pending', verifier.receipt_digest)}
@@ -1674,58 +1486,6 @@ export class AacFundraiseDemo extends LitElement {
         <span class="balance-label">${item.label}</span>
         <span class="balance-value">${item.value}</span>
       </div>
-    `;
-  }
-
-  private verifierForm() {
-    const fields = this.proofSession?.verify_fields ?? {};
-    return html`
-      <form
-        class="verify-form"
-        data-fundraise-verify-form
-        hx-post=${this.apiVerifyEndpoint()}
-        hx-target="#verify-result"
-        hx-swap="innerHTML"
-        autocomplete="off"
-        @htmx:beforeRequest=${this.handleVerifierBeforeRequest}
-        @htmx:afterRequest=${this.handleVerifierAfterRequest}
-        @htmx:responseError=${this.handleVerifierResponseError}
-      >
-        <input type="hidden" name="proof_id" .value=${fields.proof_id ?? ''} />
-        <div class="ticket-label">Submitted verifier inputs</div>
-        <div class="verify-fields">
-          ${this.verifyField('packet', 'packet_commitment', fields.packet_commitment)}
-          ${this.verifyField('public inputs', 'public_inputs_commitment', fields.public_inputs_commitment)}
-          ${this.verifyField('proof digest', 'proof_digest', fields.proof_digest)}
-          ${this.verifyField('verifier key', 'verifier_key_digest', fields.verifier_key_digest)}
-          ${this.verifyField('state packet', 'balance_packet_commitment', fields.balance_packet_commitment)}
-          ${this.verifyField('state inputs', 'balance_public_inputs_commitment', fields.balance_public_inputs_commitment)}
-          ${this.verifyField('prior root', 'balance_prev_balance_sheet_root', fields.balance_prev_balance_sheet_root)}
-          ${this.verifyField('next root', 'balance_next_balance_sheet_root', fields.balance_next_balance_sheet_root)}
-          ${this.verifyField('issued total', 'balance_issued_unit_total', fields.balance_issued_unit_total)}
-          ${this.verifyField('batch binding', 'balance_fundraise_packet_commitment', fields.balance_fundraise_packet_commitment)}
-          ${this.verifyField('state proof', 'balance_proof_digest', fields.balance_proof_digest)}
-          ${this.verifyField('state key', 'balance_verifier_key_digest', fields.balance_verifier_key_digest)}
-        </div>
-        <div class="verify-actions">
-          <button class="verify-submit" type="submit" ?disabled=${this.runState === 'verifying'}>
-            Verify submitted inputs
-          </button>
-          <button class="verify-tamper" type="button" @click=${this.handleTamperVerifierInput}>
-            Tamper next root
-          </button>
-        </div>
-        <div id="verify-result" aria-live="polite"></div>
-      </form>
-    `;
-  }
-
-  private verifyField(label: string, name: string, value: string | undefined) {
-    return html`
-      <label class="verify-field">
-        <span>${label}</span>
-        <input name=${name} .value=${value ?? ''} spellcheck="false" />
-      </label>
     `;
   }
 

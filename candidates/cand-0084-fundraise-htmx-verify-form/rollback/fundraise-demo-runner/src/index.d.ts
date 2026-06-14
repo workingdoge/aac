@@ -20,13 +20,8 @@ export declare const FUNDRAISE_DEMO_PREVIEW_SCHEMA = "aac.fundraise-demo-runner.
 export declare const DEFAULT_REGISTRY_PACKAGE = "registry";
 export declare const DEFAULT_LOCAL_RPC_URL = "http://127.0.0.1:8545";
 export declare const FUNDRAISE_DEMO_SERVER_SCHEMA = "aac.fundraise-demo-runner.server.v1";
-export declare const FUNDRAISE_DEMO_PROOF_SESSION_SCHEMA =
-  "aac.fundraise-demo-runner.proof-session.v1";
-export declare const FUNDRAISE_DEMO_VERIFY_RESULT_SCHEMA =
-  "aac.fundraise-demo-runner.verify-result.v1";
 export declare const DEFAULT_FUNDRAISE_DEMO_SERVER_HOST = "127.0.0.1";
 export declare const DEFAULT_FUNDRAISE_DEMO_SERVER_PORT = 8787;
-export declare const DEFAULT_FUNDRAISE_PROOF_SESSION_TTL_MS: number;
 export declare const DEFAULT_ANVIL_DEPLOYER_PRIVATE_KEY =
   "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
 export declare const DEFAULT_DEMO_AUTHORIZER_PRIVATE_KEY =
@@ -81,7 +76,6 @@ export interface FundraiseDemoRunnerInput {
   variableFillUnits?: number;
   batch_units?: number;
   batchUnits?: number;
-  proof_session_ttl_ms?: number;
 }
 
 export interface FundraiseDemoServerInput extends FundraiseDemoRunnerInput {
@@ -356,24 +350,6 @@ export declare function runFundraiseDemoServerAction(input?: FundraiseDemoServer
   receipt: FundraiseDemoReceipt | FundraiseLocalSettlementReceipt;
   summary: FundraiseDemoSummary;
 }>;
-export declare function runFundraiseDemoProveAction(input?: FundraiseDemoServerInput, request?: {
-  path?: string;
-  body?: Record<string, unknown>;
-}): Promise<{
-  schema: typeof FUNDRAISE_DEMO_SERVER_SCHEMA;
-  accepted: true;
-  reason: "accepted";
-  mode: "proof-generated";
-  elapsed_ms: number;
-  proof_id: string;
-  proof_session: FundraiseDemoProofSession;
-  receipt: FundraiseDemoReceipt;
-  summary: FundraiseDemoSummary;
-}>;
-export declare function runFundraiseDemoVerifyAction(input?: FundraiseDemoServerInput, request?: {
-  path?: string;
-  body?: Record<string, unknown>;
-}): Promise<FundraiseDemoVerifyResult>;
 export declare function previewFundraiseDemo(input?: FundraiseDemoRunnerInput): Promise<{
   schema: typeof FUNDRAISE_DEMO_PREVIEW_SCHEMA;
   accepted: true;
@@ -398,32 +374,7 @@ export declare function buildFundraiseDemoVerifierReceipt(input?: FundraiseDemoR
     timings_ms: Record<string, number>;
   };
   workdir: string | null;
-  balance_sheet_workdir: string | null;
 }>;
-
-export interface FundraiseDemoProofSession {
-  schema: typeof FUNDRAISE_DEMO_PROOF_SESSION_SCHEMA;
-  proof_id: string;
-  expires_at: string;
-  verify_fields: Record<string, string>;
-}
-
-export type FundraiseDemoVerifyResult = {
-  schema: typeof FUNDRAISE_DEMO_VERIFY_RESULT_SCHEMA;
-  accepted: boolean;
-  reason: string;
-  mode: "form-verify";
-  proof_id: string | null;
-  elapsed_ms: number;
-  proof_session?: FundraiseDemoProofSession;
-  receipt?: FundraiseDemoReceipt;
-  summary?: FundraiseDemoSummary;
-  verification?: {
-    status: "accepted";
-    fields: Record<string, string>;
-  };
-  detail?: Record<string, unknown>;
-};
 export declare function runFundraiseDemoLocalSettlement(
   input?: FundraiseDemoRunnerInput,
 ): Promise<FundraiseLocalSettlementReceipt>;
