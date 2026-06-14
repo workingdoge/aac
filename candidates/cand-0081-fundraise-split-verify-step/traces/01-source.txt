@@ -1,0 +1,1 @@
+fundraise UI separates proof generation from visible verifier acceptance

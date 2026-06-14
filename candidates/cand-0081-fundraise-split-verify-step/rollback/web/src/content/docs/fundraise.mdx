@@ -15,10 +15,10 @@ This is the presentation console for a private issuer order. The issuer offers
 restricted receipt units and investors fill the order. The ticket, starting
 balances, submitted fills, and reconciliation rows are rendered from the runner
 summary returned by the localhost API. The live path calls the localhost runner,
-generates the order-fill proof packet with ProveKit, and leaves the verifier as
-a second console step. The verifier step surfaces the native ProveKit receipt:
-verifier status, packet commitment, public-input commitment, proof digest,
-verifier-key digest, and verify timing.
+clears the fill batch with ProveKit, and returns a fresh authorization receipt.
+The console surfaces the native ProveKit verifier receipt directly: verifier
+status, packet commitment, public-input commitment, proof digest, verifier-key
+digest, and verify timing.
 
 After the swap, the console reconciles the issuer books from summary-provided
 opening balances, fill deltas, and closing balances.
@@ -37,9 +37,7 @@ The live presentation mode is one origin: build the site, then run
 calls `/api/fundraise/run` on that same localhost origin, runs ProveKit
 prepare/prove/verify for the order-fill packet, and returns a new summary. Local
 settlement remains an explicit runner mode because it requires an Anvil/Foundry
-environment. The current localhost runner returns the proof and verifier receipt
-in one response; the console separates their presentation so the operator sees
-generation before verification.
+environment.
 
 ## Where it fits
 

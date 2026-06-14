@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { fundraiseDemoSummary } from '../data/fundraise-demo-summary';
 
 type FundraiseSummary = typeof fundraiseDemoSummary;
-type RunState = 'idle' | 'proving' | 'proof-ready' | 'verified' | 'error';
+type RunState = 'idle' | 'running' | 'proved' | 'error';
 
 /** aac-fundraise-demo — presentation console for the ProveKit fundraise path:
  *  a private SAFE order receives fills -> VNET proof/workflow authorization ->
@@ -24,7 +24,6 @@ export class AacFundraiseDemo extends LitElement {
   declare liveElapsedMs: number | null;
   declare sourceLabel: string;
   private runControl: HTMLAnchorElement | null = null;
-  private verifyControl: HTMLAnchorElement | null = null;
   private captureControl: HTMLAnchorElement | null = null;
   private urlActionApplied = false;
 
@@ -94,7 +93,7 @@ export class AacFundraiseDemo extends LitElement {
       },
       claims: ['No order fill has been proven in this browser session yet.'],
       caveats: [
-        'Press Generate proof to call the localhost ProveKit runner.',
+        'Press Fill order live to call the localhost ProveKit runner.',
         fundraiseDemoSummary.caveats[1],
       ],
       reconciliation: {
@@ -212,8 +211,7 @@ export class AacFundraiseDemo extends LitElement {
       text-decoration: none;
     }
 
-    ::slotted(a[data-fundraise-action="run-live-proof"]),
-    ::slotted(a[data-fundraise-action="verify-proof"]) {
+    ::slotted(a[data-fundraise-action="run-live-proof"]) {
       background: var(--aac-color-navy, #21324f);
       color: var(--aac-color-bond, #fff);
     }
@@ -232,7 +230,7 @@ export class AacFundraiseDemo extends LitElement {
     }
 
     ::slotted(a[aria-disabled="true"]) {
-      cursor: not-allowed;
+      cursor: wait;
       opacity: 0.72;
     }
 
@@ -895,28 +893,20 @@ export class AacFundraiseDemo extends LitElement {
 
   disconnectedCallback() {
     this.clearControlHandlers(this.runControl);
-    this.clearControlHandlers(this.verifyControl);
     this.clearControlHandlers(this.captureControl);
     this.runControl = null;
-    this.verifyControl = null;
     this.captureControl = null;
     super.disconnectedCallback();
   }
 
   private ensureOwnedControls() {
     const run = this.ownedButton('run-live-proof', 'fundraise-run', 'run');
-    const verify = this.ownedButton('verify-proof', 'fundraise-verify', 'verify');
     const capture = this.ownedButton('show-capture', 'fundraise-capture', 'ghost');
 
     if (this.runControl !== run) {
       this.clearControlHandlers(this.runControl);
       this.bindControlHandlers(run, this.handleRunControl);
       this.runControl = run;
-    }
-    if (this.verifyControl !== verify) {
-      this.clearControlHandlers(this.verifyControl);
-      this.bindControlHandlers(verify, this.handleVerifyControl);
-      this.verifyControl = verify;
     }
     if (this.captureControl !== capture) {
       this.clearControlHandlers(this.captureControl);
@@ -958,32 +948,21 @@ export class AacFundraiseDemo extends LitElement {
 
   private syncOwnedControls() {
     this.ensureOwnedControls();
-    const busy = this.isBusy();
     if (this.runControl) {
       this.runControl.textContent = this.runButtonText();
       this.runControl.href = this.fallbackHref('run-live-proof');
-      this.runControl.setAttribute('aria-disabled', busy ? 'true' : 'false');
-    }
-    if (this.verifyControl) {
-      this.verifyControl.textContent = this.verifyButtonText();
-      this.verifyControl.href = this.fallbackHref('verify-proof');
-      this.verifyControl.setAttribute('aria-disabled', this.canVerifyProof() ? 'false' : 'true');
+      this.runControl.setAttribute('aria-disabled', this.runState === 'running' ? 'true' : 'false');
     }
     if (this.captureControl) {
       this.captureControl.textContent = 'Show captured fill';
       this.captureControl.href = this.fallbackHref('show-capture');
-      this.captureControl.setAttribute('aria-disabled', busy ? 'true' : 'false');
+      this.captureControl.setAttribute('aria-disabled', this.runState === 'running' ? 'true' : 'false');
     }
   }
 
   private fallbackHref(action: string): string {
     const url = new URL(window.location.href);
-    const target = action === 'run-live-proof'
-      ? 'run'
-      : action === 'verify-proof'
-        ? 'verify'
-        : 'capture';
-    url.searchParams.set('fundraise', target);
+    url.searchParams.set('fundraise', action === 'run-live-proof' ? 'run' : 'capture');
     url.hash = 'fundraise-demo';
     return `${url.pathname}${url.search}${url.hash}`;
   }
@@ -994,8 +973,6 @@ export class AacFundraiseDemo extends LitElement {
     const action = new URLSearchParams(window.location.search).get('fundraise');
     if (action === 'run') {
       void this.runLiveProof();
-    } else if (action === 'verify') {
-      void this.runLiveProof({ revealVerifier: true });
     } else if (action === 'capture') {
       this.showCapturedReceipt();
     }
@@ -1003,26 +980,20 @@ export class AacFundraiseDemo extends LitElement {
 
   private readonly handleRunControl = (event?: Event) => {
     event?.preventDefault();
-    if (this.isBusy()) return;
+    if (this.runState === 'running') return;
     void this.runLiveProof();
-  };
-
-  private readonly handleVerifyControl = (event?: Event) => {
-    event?.preventDefault();
-    if (!this.canVerifyProof()) return;
-    this.verifyProof();
   };
 
   private readonly handleCaptureControl = (event?: Event) => {
     event?.preventDefault();
-    if (this.isBusy()) return;
+    if (this.runState === 'running') return;
     this.showCapturedReceipt();
   };
 
-  private async runLiveProof({ revealVerifier = false } = {}) {
-    if (this.isBusy()) return;
+  private async runLiveProof() {
+    if (this.runState === 'running') return;
     const started = Date.now();
-    this.runState = 'proving';
+    this.runState = 'running';
     this.liveError = '';
     this.liveElapsedMs = null;
     try {
@@ -1036,8 +1007,8 @@ export class AacFundraiseDemo extends LitElement {
       }
       this.summary = payload.summary;
       this.liveElapsedMs = payload.elapsed_ms ?? Date.now() - started;
-      this.sourceLabel = revealVerifier ? 'verifier accepted' : 'proof generated';
-      this.runState = revealVerifier ? 'verified' : 'proof-ready';
+      this.sourceLabel = 'live proof';
+      this.runState = 'proved';
     } catch (error) {
       this.runState = 'error';
       this.liveError = error instanceof Error ? error.message : 'live runner failed';
@@ -1058,47 +1029,27 @@ export class AacFundraiseDemo extends LitElement {
   }
 
   private showCapturedReceipt() {
-    if (this.isBusy()) return;
+    if (this.runState === 'running') return;
     this.summary = fundraiseDemoSummary;
     this.liveElapsedMs = null;
     this.liveError = '';
     this.sourceLabel = 'captured fallback';
-    this.runState = 'verified';
+    this.runState = 'idle';
   }
 
   private displayStatus(status: string): string {
     return status.replaceAll('-', ' ');
   }
 
-  private isBusy(): boolean {
-    return this.runState === 'proving';
-  }
-
-  private canVerifyProof(): boolean {
-    return this.runState === 'proof-ready' && this.summary.accepted === true && this.isCurrentRunnerSummary(this.summary);
-  }
-
-  private verifyProof() {
-    if (!this.canVerifyProof()) return;
-    this.sourceLabel = 'verifier accepted';
-    this.runState = 'verified';
-  }
-
   private runButtonText(): string {
-    if (this.runState === 'proving') return 'Generating proof';
-    if (this.summary.accepted) return 'Generate again';
-    return 'Generate proof';
-  }
-
-  private verifyButtonText(): string {
-    if (this.runState === 'verified') return 'Verified';
-    return 'Verify proof';
+    if (this.runState === 'running') return 'Proving + verifying';
+    if (this.runState === 'proved') return 'Verify again';
+    return 'Run proof + verify';
   }
 
   private runNote(): string {
-    if (this.runState === 'proving') return 'ProveKit is generating the order-fill proof';
-    if (this.runState === 'proof-ready') return `proof generated · ${this.ms(this.liveElapsedMs ?? undefined)}`;
-    if (this.runState === 'verified') return `verifier accepted · ${this.ms(this.liveElapsedMs ?? undefined)}`;
+    if (this.runState === 'running') return 'ProveKit is proving and verifying the order fill';
+    if (this.runState === 'proved') return `fresh verifier receipt · ${this.ms(this.liveElapsedMs ?? undefined)}`;
     if (this.runState === 'error') return `runner error · ${this.liveError}`;
     return this.sourceLabel;
   }
@@ -1111,36 +1062,33 @@ export class AacFundraiseDemo extends LitElement {
     const order = s.order ?? { headline: 'Order unavailable', price_label: 'price unavailable' };
     const fills = s.fills ?? [];
     const openingBalances = s.opening_balances ?? [];
-    const verifierVisible = this.runState === 'verified';
-    const proofGenerated = s.accepted === true && (this.runState === 'proof-ready' || verifierVisible);
-    const reconciliation = verifierVisible ? s.reconciliation ?? null : null;
+    const reconciliation = s.reconciliation ?? null;
     const reconciliationAvailable = Array.isArray(reconciliation?.rows);
     const reconciliationRows = reconciliation?.rows ?? [];
-    const verifier = this.displayVerifier(s, verifierVisible, proofGenerated);
+    const verifier = s.verifier ?? { accepted: false, status_label: 'verifier not run', target_label: 'ProveKit verifier', timings_ms: {} };
     const booksClose = reconciliationAvailable && reconciliation?.accepted === true;
     const bookStateClass = [
       'book-state',
       s.accepted && booksClose ? 'reconciled' : '',
       s.accepted && !reconciliationAvailable ? 'unavailable' : '',
     ].filter(Boolean).join(' ');
-    const fillStatus = this.runState === 'proving'
-      ? 'generating proof'
+    const fillStatus = this.runState === 'running'
+      ? 'clearing fills'
       : s.accepted
-        ? verifierVisible ? 'fills verified' : 'proof generated'
+        ? 'fills proven'
         : 'fills staged';
     return html`
       <section class="console" aria-label="Private order fill demo">
         <div class="mast">
           <div>
             <div class="eyebrow">Private order book</div>
-            <h2>${this.demoHeadline(s.accepted, verifierVisible)}</h2>
+            <h2>${this.runState === 'idle' && !s.accepted ? 'Private SAFE order ready to fill.' : 'Private order filled against issuer books.'}</h2>
             <div class="issuer">${s.issuer_name} · ${s.round_id}</div>
           </div>
           <div class="live-box">
             <div class="status">${this.displayStatus(s.status)}</div>
             <div class="actions">
               <slot name="fundraise-run"></slot>
-              <slot name="fundraise-verify"></slot>
               <slot name="fundraise-capture"></slot>
             </div>
             <div class=${`live-note ${this.runState === 'error' ? 'error' : ''}`}>${this.runNote()}</div>
@@ -1183,7 +1131,7 @@ export class AacFundraiseDemo extends LitElement {
               <b>Opening books + swap deltas close the issuer row.</b>
             </div>
             <span class=${bookStateClass}>
-              ${this.bookReconciliationState(s.accepted, verifierVisible, reconciliationAvailable, booksClose)}
+              ${this.bookReconciliationState(s.accepted, reconciliationAvailable, booksClose)}
             </span>
           </div>
           <div class="book-grid">
@@ -1213,15 +1161,14 @@ export class AacFundraiseDemo extends LitElement {
           </section>
 
           <section class="lane">
-            <div class="lane-title"><b>${verifierVisible ? 'Verifier receipt' : 'Proof packet'}</b><span>${verifier.mode ?? 'not run'}</span></div>
+            <div class="lane-title"><b>Verifier receipt</b><span>${verifier.mode ?? 'not run'}</span></div>
             <div class="verifier-card">
               <span class=${`verifier-state ${verifier.accepted ? 'accepted' : ''}`}>${verifier.status_label}</span>
               <b>${verifier.target_label}</b>
               <code>${verifier.verifier_profile ?? 'profile pending'}</code>
             </div>
             <div class="spine">
-              ${this.step('G', verifier.proof_digest ? 'Proof generated' : 'Proof not generated', verifier.proof_digest)}
-              ${this.step('V', verifier.receipt_digest ? 'Verifier accepted proof' : 'Verifier pending', verifier.receipt_digest)}
+              ${this.step('V', verifier.receipt_digest ? 'Verifier accepted proof' : 'Verifier not run', verifier.receipt_digest)}
               ${this.step('P', verifier.proof_digest ? 'Proof digest bound' : 'Proof absent', verifier.proof_digest)}
               ${this.step('I', verifier.public_inputs_commitment ? 'Public inputs bound' : 'Inputs absent', verifier.public_inputs_commitment)}
               ${this.step('K', verifier.verifier_key_digest ? 'Verifier key pinned' : 'Verifier key absent', verifier.verifier_key_digest)}
@@ -1298,36 +1245,8 @@ export class AacFundraiseDemo extends LitElement {
     `;
   }
 
-  private displayVerifier(summary: FundraiseSummary, verifierVisible: boolean, proofGenerated: boolean) {
-    const fallback = {
-      accepted: false,
-      status_label: proofGenerated ? 'proof generated' : 'verifier not run',
-      target_label: proofGenerated ? 'proof packet ready' : 'ProveKit verifier',
-      verifier_profile: summary.verifier?.verifier_profile ?? 'profile pending',
-      mode: summary.proof.mode ?? summary.verifier?.mode ?? null,
-      proof_digest: proofGenerated ? summary.proof.proof_digest : null,
-      verifier_key_digest: null,
-      receipt_digest: null,
-      public_inputs_commitment: null,
-      packet_commitment: null,
-      timings_ms: proofGenerated ? {
-        prepare: summary.proof.timings_ms.prepare,
-        prove: summary.proof.timings_ms.prove,
-      } : {},
-      boundary: summary.verifier?.boundary ?? summary.caveats[1],
-    };
-    return verifierVisible ? summary.verifier ?? fallback : fallback;
-  }
-
-  private demoHeadline(accepted: boolean, verifierVisible: boolean): string {
-    if (!accepted) return 'Private SAFE order ready to fill.';
-    if (!verifierVisible) return 'Proof packet generated for issuer books.';
-    return 'Private order verified against issuer books.';
-  }
-
-  private bookReconciliationState(accepted: boolean, verifierVisible: boolean, reconciliationAvailable: boolean, booksClose: boolean): string {
-    if (this.runState === 'proving') return 'waiting for proof';
-    if (accepted && !verifierVisible) return 'verify proof';
+  private bookReconciliationState(accepted: boolean, reconciliationAvailable: boolean, booksClose: boolean): string {
+    if (this.runState === 'running') return 'reconciling books';
     if (accepted && !reconciliationAvailable) return 'runner schema stale';
     if (accepted && booksClose) return 'books reconciled';
     if (accepted) return 'mismatch flagged';
@@ -1335,9 +1254,6 @@ export class AacFundraiseDemo extends LitElement {
   }
 
   private reconciliationEmptyMessage(accepted: boolean, reconciliationAvailable: boolean): string {
-    if (accepted && this.runState !== 'verified') {
-      return 'Verifier step pending.';
-    }
     if (accepted && !reconciliationAvailable) {
       return 'Accepted proof response did not include reconciliation rows. Restart the fundraise demo runner so the UI and API use the same summary schema.';
     }
