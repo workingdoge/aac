@@ -9,12 +9,6 @@ type ProofSession = {
   expires_at: string;
   verify_fields: VerifyFields;
 };
-type VerifyResult = {
-  accepted: boolean;
-  reason: string;
-  detail: string;
-  meta: string;
-} | null;
 
 /** aac-fundraise-demo — presentation console for the ProveKit fundraise path:
  *  a private SAFE order receives fills -> VNET proof/workflow authorization ->
@@ -30,7 +24,6 @@ export class AacFundraiseDemo extends LitElement {
     sourceLabel: { state: true },
     variableFillUnits: { state: true },
     proofSession: { state: true },
-    verifyResult: { state: true },
   };
 
   declare summary: FundraiseSummary;
@@ -40,7 +33,6 @@ export class AacFundraiseDemo extends LitElement {
   declare sourceLabel: string;
   declare variableFillUnits: number;
   declare proofSession: ProofSession | null;
-  declare verifyResult: VerifyResult;
   private runControl: HTMLAnchorElement | null = null;
   private verifyControl: HTMLAnchorElement | null = null;
   private captureControl: HTMLAnchorElement | null = null;
@@ -56,7 +48,6 @@ export class AacFundraiseDemo extends LitElement {
     this.sourceLabel = 'ready: order not filled';
     this.variableFillUnits = this.defaultVariableFillUnits(this.summary);
     this.proofSession = null;
-    this.verifyResult = null;
   }
 
   private readySummary(): FundraiseSummary {
@@ -1272,7 +1263,6 @@ export class AacFundraiseDemo extends LitElement {
     this.liveError = '';
     this.liveElapsedMs = null;
     this.proofSession = null;
-    this.verifyResult = null;
     try {
       const response = await fetch(this.apiProveUrl(), { method: 'GET' });
       const payload = await response.json().catch(() => null);
@@ -1284,7 +1274,6 @@ export class AacFundraiseDemo extends LitElement {
       }
       this.summary = payload.summary;
       this.proofSession = payload.proof_session;
-      this.verifyResult = null;
       this.variableFillUnits = this.defaultVariableFillUnits(this.summary);
       this.liveElapsedMs = payload.elapsed_ms ?? Date.now() - started;
       this.sourceLabel = 'proof generated; verifier form ready';
@@ -1323,7 +1312,6 @@ export class AacFundraiseDemo extends LitElement {
     this.sourceLabel = 'captured fallback';
     this.runState = 'verified';
     this.proofSession = null;
-    this.verifyResult = null;
   }
 
   private unitsFromSearchParams(params: URLSearchParams): number | null {
@@ -1377,7 +1365,6 @@ export class AacFundraiseDemo extends LitElement {
     this.liveError = '';
     this.liveElapsedMs = null;
     this.proofSession = null;
-    this.verifyResult = null;
     this.sourceLabel = `ready: ${this.selectedTotalUnits()} units selected`;
     void this.refreshBatchPreview();
   };
@@ -1439,15 +1426,6 @@ export class AacFundraiseDemo extends LitElement {
   private readonly handleVerifierAfterRequest = (event: CustomEvent) => {
     const responseText = String(event.detail?.responseText ?? '');
     const accepted = responseText.includes('data-verify-accepted="true"');
-    const reason = this.extractVerifyReason(responseText);
-    this.verifyResult = {
-      accepted,
-      reason,
-      detail: accepted
-        ? 'Native ProveKit verify reran for the order-fill proof and balance-sheet proof.'
-        : this.extractVerifyDetail(responseText, reason),
-      meta: this.extractVerifyMeta(responseText),
-    };
     if (accepted) {
       this.runState = 'verified';
       this.sourceLabel = 'verifier accepted submitted inputs';
@@ -1455,6 +1433,7 @@ export class AacFundraiseDemo extends LitElement {
       return;
     }
     this.runState = 'proof-ready';
+    const reason = responseText.match(/data-verify-reason="([^"]+)"/)?.[1] ?? 'verification rejected';
     this.liveError = reason;
     this.sourceLabel = `verifier rejected · ${reason}`;
   };
@@ -1463,12 +1442,6 @@ export class AacFundraiseDemo extends LitElement {
     this.runState = 'proof-ready';
     const detail = event.detail?.error;
     this.liveError = detail instanceof Error ? detail.message : 'verifier request failed';
-    this.verifyResult = {
-      accepted: false,
-      reason: 'request_failed',
-      detail: this.liveError,
-      meta: 'verifier request failed',
-    };
     this.sourceLabel = `verifier error · ${this.liveError}`;
   };
 
@@ -1480,26 +1453,6 @@ export class AacFundraiseDemo extends LitElement {
     const replacement = last === '9' ? '8' : '9';
     input.value = `${current.slice(0, -1)}${replacement}`;
     this.sourceLabel = 'verifier input edited';
-  };
-
-  private extractVerifyReason(responseText: string): string {
-    return this.decodeHtml(responseText.match(/data-verify-reason="([^"]+)"/)?.[1] ?? 'verification rejected');
-  }
-
-  private extractVerifyDetail(responseText: string, fallback: string): string {
-    const match = responseText.match(/<span>(.*?)<\/span>/);
-    return match ? this.decodeHtml(match[1]) : fallback;
-  }
-
-  private extractVerifyMeta(responseText: string): string {
-    const match = responseText.match(/<code>(.*?)<\/code>/);
-    return match ? this.decodeHtml(match[1]) : 'verifier response received';
-  }
-
-  private decodeHtml(value: string): string {
-    const textarea = document.createElement('textarea');
-    textarea.innerHTML = value;
-    return textarea.value;
   }
 
   private runButtonText(): string {
@@ -1762,24 +1715,8 @@ export class AacFundraiseDemo extends LitElement {
             Tamper next root
           </button>
         </div>
-        <div id="verify-result" aria-live="polite">${this.renderVerifyResult()}</div>
+        <div id="verify-result" aria-live="polite"></div>
       </form>
-    `;
-  }
-
-  private renderVerifyResult() {
-    if (!this.verifyResult) return null;
-    const result = this.verifyResult;
-    return html`
-      <div
-        class=${`verify-result ${result.accepted ? 'accepted' : 'rejected'}`}
-        data-verify-accepted=${result.accepted ? 'true' : 'false'}
-        data-verify-reason=${result.reason}
-      >
-        <strong>${result.accepted ? 'Verifier accepted submitted inputs' : 'Verifier rejected submitted inputs'}</strong>
-        <span>${result.detail}</span>
-        <code>${result.meta}</code>
-      </div>
     `;
   }
 

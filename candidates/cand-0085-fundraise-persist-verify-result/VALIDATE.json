@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0085-fundraise-persist-verify-result",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "165f2f4db7c0a989052262acafd8623e4ca0098ddc772a2b28d14e9bae49a753",
+    "LANDING": "d36744b1b2837a710a1e71a2482912d4b3617e9c263657cc0fefc5a3ad23b90d",
+    "META": "671cc42669e966256a22abeabf34209be78047a59340060eb069646c6fd397c7"
+  }
+}

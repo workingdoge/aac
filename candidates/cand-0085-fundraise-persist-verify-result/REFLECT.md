@@ -1,0 +1,38 @@
+# Reflection: cand-0085-fundraise-persist-verify-result
+
+Intent: Preserve htmx verifier form result across Lit re-render.
+Status at reflection: landed
+Reflected at: 2026-06-14T16:19:57Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0085-fundraise-persist-verify-result",
+  "evaluated_at": "2026-06-14T16:19:42Z",
+  "task": "Preserve htmx verifier form result across Lit re-render.",
+  "checks": {
+    "source": "pass",
+    "build": "pass",
+    "mutant": "pass",
+    "scope": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "0d1c807998c3aeaa3f8ca3569208c655e954ea1a1e1d916219158fd33af0bc2d",
+    "traces_sha256": "bc60e30777907d418432a85a8223430018f8dae1afc8ce766ac46630f73443f8",
+    "body_sha256": "21c0c62375679e86d9d5c01debe3f81e12eb97d1d2108732e944b2b9cce9c71e",
+    "attestation": "0b51e01e9ca18335704582c716dbfab02dc42fcbbbcef10135aef83a7a18a137"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.
