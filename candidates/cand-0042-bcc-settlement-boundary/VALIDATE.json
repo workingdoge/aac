@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0042-bcc-settlement-boundary",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "7fbe4d907e7c794a595cf939cdce089fc21b6a271efb22913d286b6595a0ead4",
+    "META": "f76cd04cccf501a67ba8576fce743eb68f224dc77cf435e96ae66d9172222abd"
+  }
+}
