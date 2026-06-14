@@ -1,0 +1,38 @@
+# Reflection: cand-0075-fundraise-starting-balances
+
+Intent: show starting balances in the private order-fill demo
+Status at reflection: landed
+Reflected at: 2026-06-14T13:24:24Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0075-fundraise-starting-balances",
+  "evaluated_at": "2026-06-14T13:24:16Z",
+  "task": "Show explicit starting balances in the private order-fill demo.",
+  "checks": {
+    "source": "pass",
+    "mutant": "pass",
+    "build": "pass",
+    "scope": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "cf0169fa4ab779f1e93237ad80457f3ba5aa84f5f59f2a9bf5c64f804c4b240c",
+    "traces_sha256": "5c8b402a2dbfa37beb81e6dcadb5b133adc82f62f3b7dcaf4ee8f567b3b3d98f",
+    "body_sha256": "e0bf0e807d4b178a4cb7a8cf26a190e7de24c08f25504fc1e01736811021bff3",
+    "attestation": "11a69d186747ea786f2225054b0a0aea24be050e7af6e54a668073c5ce83a333"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.

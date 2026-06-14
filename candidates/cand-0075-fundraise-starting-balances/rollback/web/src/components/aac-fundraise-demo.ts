@@ -262,7 +262,7 @@ export class AacFundraiseDemo extends LitElement {
 
     .order-ticket {
       display: grid;
-      grid-template-columns: minmax(0, 0.9fr) minmax(0, 0.82fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
       border-bottom: 1px solid var(--aac-color-rule2, #c9be9e);
       background:
         repeating-linear-gradient(
@@ -274,7 +274,6 @@ export class AacFundraiseDemo extends LitElement {
     }
 
     .order-main,
-    .balance-main,
     .fill-main {
       padding: 16px 20px;
       min-width: 0;
@@ -282,11 +281,6 @@ export class AacFundraiseDemo extends LitElement {
 
     .order-main {
       border-right: 1px solid var(--aac-color-rule2, #c9be9e);
-    }
-
-    .balance-main {
-      border-right: 1px solid var(--aac-color-rule2, #c9be9e);
-      background: color-mix(in srgb, var(--aac-color-bond, #fff) 60%, transparent);
     }
 
     .ticket-label {
@@ -327,44 +321,6 @@ export class AacFundraiseDemo extends LitElement {
       font-family: var(--aac-mono, "IBM Plex Mono", monospace);
       font-size: 11px;
       overflow-wrap: anywhere;
-    }
-
-    .balance-list {
-      display: grid;
-      gap: 0;
-      margin-top: 8px;
-    }
-
-    .balance-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 10px;
-      align-items: baseline;
-      padding: 7px 0;
-      border-bottom: 1px solid var(--aac-color-rule, #e2dac4);
-      min-width: 0;
-    }
-
-    .balance-row:last-child { border-bottom: 0; }
-
-    .balance-label,
-    .balance-value {
-      min-width: 0;
-      font-family: var(--aac-mono, "IBM Plex Mono", monospace);
-      font-size: 11.5px;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .balance-label {
-      color: var(--aac-color-steel, #6b6b64);
-      overflow-wrap: anywhere;
-    }
-
-    .balance-value {
-      color: var(--aac-color-navy, #21324f);
-      font-weight: 600;
-      text-align: right;
-      white-space: nowrap;
     }
 
     .fill-main {
@@ -669,15 +625,9 @@ export class AacFundraiseDemo extends LitElement {
       .num { border-right: 0; border-bottom: 1px solid var(--aac-color-rule, #e2dac4); }
       .num:last-child { border-bottom: 0; }
       .order-ticket { grid-template-columns: 1fr; }
-      .order-main,
-      .balance-main {
-        border-right: 0;
-        border-bottom: 1px solid var(--aac-color-rule2, #c9be9e);
-      }
+      .order-main { border-right: 0; border-bottom: 1px solid var(--aac-color-rule2, #c9be9e); }
       .order-line { grid-template-columns: 1fr; align-items: start; }
       .price-stamp { justify-self: start; }
-      .balance-row { grid-template-columns: 1fr; gap: 3px; }
-      .balance-value { text-align: left; }
       .fill-row { grid-template-columns: 1fr; gap: 4px; }
       .fill-units { white-space: normal; }
       .flow { grid-template-columns: 1fr; min-height: 0; }
@@ -910,12 +860,6 @@ export class AacFundraiseDemo extends LitElement {
             </div>
             <div class="order-meta">${fillStatus} · ${this.short(s.commitments.mint_recipient_set, 10, 8)}</div>
           </section>
-          <section class="balance-main">
-            <div class="ticket-label">Starting balances</div>
-            <div class="balance-list">
-              ${this.openingBalances(orderUnits).map((item) => this.balanceRow(item.label, item.value))}
-            </div>
-          </section>
           <section class="fill-main">
             <div class="ticket-label">Submitted fills</div>
             ${this.orderFills().map((fill) => this.fillRow(fill.party, fill.cash, fill.units))}
@@ -1005,23 +949,6 @@ export class AacFundraiseDemo extends LitElement {
       { party: 'investor-a', cash: 1000, units: 100 },
       { party: 'investor-b', cash: 500, units: 50 },
     ];
-  }
-
-  private openingBalances(orderUnits: number) {
-    return [
-      { label: 'USDC collected', value: '0 USDC' },
-      { label: 'receipt units issued', value: '0 units' },
-      { label: 'order units open', value: `${orderUnits} units` },
-    ];
-  }
-
-  private balanceRow(label: string, value: string) {
-    return html`
-      <div class="balance-row">
-        <span class="balance-label">${label}</span>
-        <span class="balance-value">${value}</span>
-      </div>
-    `;
   }
 
   private fillRow(party: string, cash: number, units: number) {
