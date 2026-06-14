@@ -1,0 +1,5 @@
+candidate_id: cand-0066-fundraise-control-events
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T11:47:50Z
+intent: Harden the component-owned fundraise controls by binding direct pointer/click/key handlers to the slotted light-DOM buttons.
+status: landed

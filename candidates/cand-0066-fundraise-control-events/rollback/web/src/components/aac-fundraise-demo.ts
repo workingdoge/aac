@@ -536,8 +536,8 @@ export class AacFundraiseDemo extends LitElement {
   }
 
   disconnectedCallback() {
-    this.clearControlHandlers(this.runControl);
-    this.clearControlHandlers(this.captureControl);
+    this.runControl?.removeEventListener('click', this.handleRunControl);
+    this.captureControl?.removeEventListener('click', this.handleCaptureControl);
     this.runControl = null;
     this.captureControl = null;
     super.disconnectedCallback();
@@ -548,13 +548,13 @@ export class AacFundraiseDemo extends LitElement {
     const capture = this.ownedButton('show-capture', 'fundraise-capture', 'ghost');
 
     if (this.runControl !== run) {
-      this.clearControlHandlers(this.runControl);
-      this.bindControlHandlers(run, this.handleRunControl);
+      this.runControl?.removeEventListener('click', this.handleRunControl);
+      run.addEventListener('click', this.handleRunControl);
       this.runControl = run;
     }
     if (this.captureControl !== capture) {
-      this.clearControlHandlers(this.captureControl);
-      this.bindControlHandlers(capture, this.handleCaptureControl);
+      this.captureControl?.removeEventListener('click', this.handleCaptureControl);
+      capture.addEventListener('click', this.handleCaptureControl);
       this.captureControl = capture;
     }
   }
@@ -574,21 +574,6 @@ export class AacFundraiseDemo extends LitElement {
     return button;
   }
 
-  private bindControlHandlers(button: HTMLButtonElement, handler: (event?: Event) => void) {
-    button.onclick = handler;
-    button.onpointerup = handler;
-    button.onkeydown = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' || event.key === ' ') handler(event);
-    };
-  }
-
-  private clearControlHandlers(button: HTMLButtonElement | null) {
-    if (!button) return;
-    button.onclick = null;
-    button.onpointerup = null;
-    button.onkeydown = null;
-  }
-
   private syncOwnedControls() {
     this.ensureOwnedControls();
     if (this.runControl) {
@@ -601,14 +586,12 @@ export class AacFundraiseDemo extends LitElement {
     }
   }
 
-  private readonly handleRunControl = (event?: Event) => {
-    event?.preventDefault();
+  private readonly handleRunControl = () => {
     if (this.runState === 'running') return;
     void this.runLiveProof();
   };
 
-  private readonly handleCaptureControl = (event?: Event) => {
-    event?.preventDefault();
+  private readonly handleCaptureControl = () => {
     if (this.runState === 'running') return;
     this.showCapturedReceipt();
   };

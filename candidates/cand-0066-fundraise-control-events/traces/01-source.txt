@@ -1,0 +1,1 @@
+component owns slotted controls with direct click/pointer/key bindings
