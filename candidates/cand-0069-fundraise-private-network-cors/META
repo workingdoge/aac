@@ -1,0 +1,5 @@
+candidate_id: cand-0069-fundraise-private-network-cors
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T12:05:47Z
+intent: Allow browser local-network preflights against the fundraise runner so the web component can complete live proof requests.
+status: landed

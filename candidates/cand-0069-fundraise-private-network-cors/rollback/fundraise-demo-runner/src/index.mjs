@@ -292,18 +292,12 @@ function writeJson(response, status, body, corsOrigin) {
   response.end(`${JSON.stringify(body, null, 2)}\n`);
 }
 
-export function buildFundraiseDemoCorsHeaders(corsOrigin) {
+function corsHeaders(corsOrigin) {
   return {
     "access-control-allow-origin": corsOrigin || "*",
     "access-control-allow-methods": "GET,POST,OPTIONS",
     "access-control-allow-headers": "content-type",
-    "access-control-allow-private-network": "true",
-    "vary": "Origin, Access-Control-Request-Private-Network",
   };
-}
-
-function corsHeaders(corsOrigin) {
-  return buildFundraiseDemoCorsHeaders(corsOrigin);
 }
 
 function normalizeServerError(error) {

@@ -65,8 +65,6 @@ export interface FundraiseDemoServerInput extends FundraiseDemoRunnerInput {
   settle_local?: boolean;
 }
 
-export declare function buildFundraiseDemoCorsHeaders(cors_origin?: string): Record<string, string>;
-
 export interface FundraiseDemoReceipt {
   schema: typeof FUNDRAISE_DEMO_RUNNER_SCHEMA;
   accepted: true;

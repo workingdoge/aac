@@ -7,7 +7,6 @@ import {
   FUNDRAISE_DEMO_RUNNER_SCHEMA,
   FUNDRAISE_DEMO_SUMMARY_SCHEMA,
   FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA,
-  buildFundraiseDemoCorsHeaders,
   buildFundraiseDemoSummary,
   loadFundraiseDemoPacket,
   prepareProveKitWorkdir,
@@ -197,10 +196,5 @@ assert.equal(serverPayload.summary.status, "authorized-pending-signature");
 assert.equal(serverPayload.summary.proof.proof_system, "provekit-whir");
 assert.deepEqual(serverCommands.map((command) => command.step), ["prepare", "prove", "verify"]);
 assert.ok(serverCommands.every((command) => command.executable === "/nix/store/fake-provekit-cli/bin/provekit-cli"));
-
-const corsHeaders = buildFundraiseDemoCorsHeaders("http://127.0.0.1:4328");
-assert.equal(corsHeaders["access-control-allow-origin"], "http://127.0.0.1:4328");
-assert.equal(corsHeaders["access-control-allow-private-network"], "true");
-assert.match(corsHeaders.vary, /Access-Control-Request-Private-Network/);
 
 console.log("fundraise-demo-runner tests: pass");

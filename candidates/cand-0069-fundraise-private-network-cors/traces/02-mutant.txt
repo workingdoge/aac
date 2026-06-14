@@ -1,0 +1,2 @@
+missing private-network CORS allowance
+missing-private-network-header mutant rejected
