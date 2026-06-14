@@ -1,0 +1,1 @@
+spec binds fundraise clearing to LEDGER/1 statement objects

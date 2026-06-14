@@ -1,0 +1,5 @@
+candidate_id: cand-0087-fundraise-ledger-language
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T20:29:23Z
+intent: Bind FUNDRAISE-CLEARING/1 and the fundraise demo presentation to LEDGER/1 ledger-state and statement vocabulary.
+status: landed

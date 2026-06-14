@@ -16,11 +16,11 @@ type VerifyResult = {
   meta: string;
 } | null;
 
-/** aac-fundraise-demo — presentation console for the fundraise ledger path:
- *  issuer private ledger -> round-capacity statement -> selected subscription
- *  batch -> statement verifier -> receipt-token issuance. The component owns
- *  the live runner controls, starts from a ready ledger state, and can replace
- *  it with a fresh localhost response. */
+/** aac-fundraise-demo — presentation console for the ProveKit fundraise path:
+ *  a private SAFE order receives fills -> VNET proof/workflow authorization ->
+ *  receipt-token settlement. The component owns the live runner controls,
+ *  starts from a ready-to-fill state, and can replace it with a fresh localhost
+ *  response. */
 export class AacFundraiseDemo extends LitElement {
   static properties = {
     summary: { state: true },
@@ -53,7 +53,7 @@ export class AacFundraiseDemo extends LitElement {
     this.runState = 'idle';
     this.liveError = '';
     this.liveElapsedMs = null;
-    this.sourceLabel = 'ready: ledger capacity statement';
+    this.sourceLabel = 'ready: order not filled';
     this.variableFillUnits = this.defaultVariableFillUnits(this.summary);
     this.proofSession = null;
     this.verifyResult = null;
@@ -108,8 +108,8 @@ export class AacFundraiseDemo extends LitElement {
         ...fundraiseDemoSummary.balance_sheet,
         accepted: false,
         status: 'not-run',
-        status_label: 'balance-sheet statement verifier not run',
-        target_label: 'LEDGER/1 balance-sheet statement verifier',
+        status_label: 'balance-sheet verifier not run',
+        target_label: 'ProveKit balance-sheet verifier',
         verifier_id: null,
         verifier_profile: null,
         proof_system: null,
@@ -133,9 +133,9 @@ export class AacFundraiseDemo extends LitElement {
         total_supply: null,
         balances: [],
       },
-      claims: ['No ledger statement has been proven in this browser session yet.'],
+      claims: ['No order fill has been proven in this browser session yet.'],
       caveats: [
-        'Press Generate ledger proof to call the localhost ProveKit runner.',
+        'Press Generate proof to call the localhost ProveKit runner.',
         fundraiseDemoSummary.caveats[1],
       ],
       reconciliation: {
@@ -1341,12 +1341,12 @@ export class AacFundraiseDemo extends LitElement {
     return this.numberOr(summary.fills?.[0]?.issued_units, 0);
   }
 
-  private capacityUnits(summary = this.summary): number {
+  private orderCapUnits(summary = this.summary): number {
     return this.numberOr(summary.order?.max_issued_units, summary.economics.issued_unit_total ?? this.fixedFillUnits(summary));
   }
 
   private maxVariableFillUnits(summary = this.summary): number {
-    return Math.max(0, this.capacityUnits(summary) - this.fixedFillUnits(summary));
+    return Math.max(0, this.orderCapUnits(summary) - this.fixedFillUnits(summary));
   }
 
   private selectedTotalUnits(summary = this.summary): number {
@@ -1444,7 +1444,7 @@ export class AacFundraiseDemo extends LitElement {
       accepted,
       reason,
       detail: accepted
-        ? 'Native ProveKit verify reran for the ledger-transition proof and balance-sheet statement.'
+        ? 'Native ProveKit verify reran for the order-fill proof and balance-sheet proof.'
         : this.extractVerifyDetail(responseText, reason),
       meta: this.extractVerifyMeta(responseText),
     };
@@ -1503,9 +1503,9 @@ export class AacFundraiseDemo extends LitElement {
   }
 
   private runButtonText(): string {
-    if (this.runState === 'proving') return 'Generating ledger proof';
-    if (this.summary.accepted) return 'Generate ledger proof again';
-    return 'Generate ledger proof';
+    if (this.runState === 'proving') return 'Generating proof';
+    if (this.summary.accepted) return 'Generate again';
+    return 'Generate proof';
   }
 
   private verifyButtonText(): string {
@@ -1515,10 +1515,10 @@ export class AacFundraiseDemo extends LitElement {
   }
 
   private runNote(): string {
-    if (this.runState === 'proving') return 'ProveKit is generating the ledger-transition proof';
-    if (this.runState === 'proof-ready') return `ledger proof generated · verifier form ready · ${this.ms(this.liveElapsedMs ?? undefined)}`;
+    if (this.runState === 'proving') return 'ProveKit is generating the order-fill proof';
+    if (this.runState === 'proof-ready') return `proof generated · form ready · ${this.ms(this.liveElapsedMs ?? undefined)}`;
     if (this.runState === 'verifying') return 'submitted verifier inputs to localhost runner';
-    if (this.runState === 'verified') return `statement verifier accepted form · ${this.ms(this.liveElapsedMs ?? undefined)}`;
+    if (this.runState === 'verified') return `verifier accepted form · ${this.ms(this.liveElapsedMs ?? undefined)}`;
     if (this.runState === 'error') return `runner error · ${this.liveError}`;
     return this.sourceLabel;
   }
@@ -1545,15 +1545,15 @@ export class AacFundraiseDemo extends LitElement {
       s.accepted && !reconciliationAvailable ? 'unavailable' : '',
     ].filter(Boolean).join(' ');
     const fillStatus = this.runState === 'proving'
-      ? 'generating ledger proof'
+      ? 'generating proof'
       : s.accepted
-        ? verifierVisible ? 'statement verified' : 'ledger proof generated'
-        : 'batch staged';
+        ? verifierVisible ? 'fills verified' : 'proof generated'
+        : 'fills staged';
     return html`
-      <section class="console" aria-label="Private ledger settlement demo">
+      <section class="console" aria-label="Private order fill demo">
         <div class="mast">
           <div>
-            <div class="eyebrow">Issuer private ledger</div>
+            <div class="eyebrow">Private order book</div>
             <h2>${this.demoHeadline(s.accepted, verifierVisible)}</h2>
             <div class="issuer">${s.issuer_name} · ${s.round_id}</div>
           </div>
@@ -1572,9 +1572,9 @@ export class AacFundraiseDemo extends LitElement {
           ${metrics.map((item) => html`<div class="num"><b>${item.value}</b><span>${item.label}</span></div>`)}
         </div>
 
-        <div class="order-ticket" aria-label="Fundraise ledger settlement ticket">
+        <div class="order-ticket" aria-label="Order fill ticket">
           <section class="order-main">
-            <div class="ticket-label">Round capacity statement</div>
+            <div class="ticket-label">Open order</div>
             <div class="order-line">
               <b>${order.headline}</b>
               <span class="price-stamp">${order.price_label}</span>
@@ -1582,18 +1582,18 @@ export class AacFundraiseDemo extends LitElement {
             <div class="order-meta">${fillStatus} · ${this.short(s.commitments.mint_recipient_set, 10, 8)}</div>
           </section>
           <section class="balance-main">
-            <div class="ticket-label">Issuer ledger pre-state</div>
+            <div class="ticket-label">Starting balances</div>
             <div class="balance-list">
               ${openingBalances.length
                 ? openingBalances.map((item) => this.balanceRow(item))
-                : html`<div class="empty">No opening ledger balances in the runner summary.</div>`}
+                : html`<div class="empty">No opening balances in the runner summary.</div>`}
             </div>
           </section>
           <section class="fill-main">
-            <div class="ticket-label">Selected subscription batch</div>
+            <div class="ticket-label">Submitted fills</div>
             ${fills.length
               ? fills.map((fill) => this.fillRow(fill))
-              : html`<div class="empty">No selected subscriptions in the runner summary.</div>`}
+              : html`<div class="empty">No submitted fills in the runner summary.</div>`}
             ${this.batchControl()}
           </section>
         </div>
@@ -1601,8 +1601,8 @@ export class AacFundraiseDemo extends LitElement {
         <section class="book-check" aria-label="Book reconciliation">
           <div class="book-head">
             <div>
-              <div class="ticket-label">Ledger statement check</div>
-              <b>Pre-state + selected batch closes the issuer ledger post-state.</b>
+              <div class="ticket-label">Book reconciliation</div>
+              <b>Opening books + swap deltas close the issuer row.</b>
             </div>
             <span class=${bookStateClass}>
               ${this.bookReconciliationState(s.accepted, verifierVisible, reconciliationAvailable, booksClose)}
@@ -1612,8 +1612,8 @@ export class AacFundraiseDemo extends LitElement {
             <div class="book-row book-columns" aria-hidden="true">
               <span class="book-cell">line</span>
               <span class="book-cell">opening</span>
-              <span class="book-cell">batch delta</span>
-              <span class="book-cell">post-state</span>
+              <span class="book-cell">swap delta</span>
+              <span class="book-cell">closing</span>
             </div>
             ${reconciliationRows.length
               ? reconciliationRows.map((row) => this.bookRow(row))
@@ -1623,9 +1623,9 @@ export class AacFundraiseDemo extends LitElement {
 
         <div class="flow">
           <section class="lane">
-            <div class="lane-title"><b>Issuer ledger</b><span>state roots</span></div>
-            ${this.rootRow('balance sheet statement', s.commitments.prev_balance_sheet_root, s.commitments.next_balance_sheet_root)}
-            ${this.rootRow('cap-table statement', s.commitments.prev_cap_table_root, s.commitments.next_cap_table_root)}
+            <div class="lane-title"><b>Private books</b><span>roots move</span></div>
+            ${this.rootRow('balance sheet', s.commitments.prev_balance_sheet_root, s.commitments.next_balance_sheet_root)}
+            ${this.rootRow('cap table', s.commitments.prev_cap_table_root, s.commitments.next_cap_table_root)}
             ${this.balanceSheetProofCard(balanceSheet)}
             <div class="slips">
               ${this.slip('transition set', s.commitments.transition_set)}
@@ -1636,7 +1636,7 @@ export class AacFundraiseDemo extends LitElement {
           </section>
 
           <section class="lane">
-            <div class="lane-title"><b>${verifierVisible ? 'Statement verifier receipt' : 'Ledger proof packet'}</b><span>${verifier.mode ?? 'not run'}</span></div>
+            <div class="lane-title"><b>${verifierVisible ? 'Verifier receipt' : 'Proof packet'}</b><span>${verifier.mode ?? 'not run'}</span></div>
             <div class="verifier-card">
               <span class=${`verifier-state ${verifier.accepted ? 'accepted' : ''}`}>${verifier.status_label}</span>
               <b>${verifier.target_label}</b>
@@ -1644,10 +1644,10 @@ export class AacFundraiseDemo extends LitElement {
             </div>
             ${proofGenerated
               ? this.verifierForm()
-              : html`<div class="empty">Generate a ledger proof packet to mount the submitted verifier form.</div>`}
+              : html`<div class="empty">Generate a proof packet to mount the submitted verifier form.</div>`}
             <div class="spine">
-              ${this.step('G', verifier.proof_digest ? 'Ledger proof generated' : 'Ledger proof not generated', verifier.proof_digest)}
-              ${this.step('V', verifier.receipt_digest ? 'Statement verifier accepted' : 'Statement verifier pending', verifier.receipt_digest)}
+              ${this.step('G', verifier.proof_digest ? 'Proof generated' : 'Proof not generated', verifier.proof_digest)}
+              ${this.step('V', verifier.receipt_digest ? 'Verifier accepted proof' : 'Verifier pending', verifier.receipt_digest)}
               ${this.step('P', verifier.proof_digest ? 'Proof digest bound' : 'Proof absent', verifier.proof_digest)}
               ${this.step('I', verifier.public_inputs_commitment ? 'Public inputs bound' : 'Inputs absent', verifier.public_inputs_commitment)}
               ${this.step('K', verifier.verifier_key_digest ? 'Verifier key pinned' : 'Verifier key absent', verifier.verifier_key_digest)}
@@ -1665,7 +1665,7 @@ export class AacFundraiseDemo extends LitElement {
           </section>
 
           <section class="lane">
-            <div class="lane-title"><b>Receipt issuance</b><span>local EVM</span></div>
+            <div class="lane-title"><b>Receipt tokens</b><span>local EVM</span></div>
             <div class="root-row">
               <span class="key">total supply</span>
               <span class="val next">${s.settlement.total_supply ?? 'pending'}</span>
@@ -1739,27 +1739,27 @@ export class AacFundraiseDemo extends LitElement {
         @htmx:responseError=${this.handleVerifierResponseError}
       >
         <input type="hidden" name="proof_id" .value=${fields.proof_id ?? ''} />
-        <div class="ticket-label">Statement verifier inputs</div>
+        <div class="ticket-label">Submitted verifier inputs</div>
         <div class="verify-fields">
           ${this.verifyField('packet', 'packet_commitment', fields.packet_commitment)}
           ${this.verifyField('public inputs', 'public_inputs_commitment', fields.public_inputs_commitment)}
           ${this.verifyField('proof digest', 'proof_digest', fields.proof_digest)}
           ${this.verifyField('verifier key', 'verifier_key_digest', fields.verifier_key_digest)}
-          ${this.verifyField('statement packet', 'balance_packet_commitment', fields.balance_packet_commitment)}
-          ${this.verifyField('statement inputs', 'balance_public_inputs_commitment', fields.balance_public_inputs_commitment)}
-          ${this.verifyField('pre-state root', 'balance_prev_balance_sheet_root', fields.balance_prev_balance_sheet_root)}
-          ${this.verifyField('post-state root', 'balance_next_balance_sheet_root', fields.balance_next_balance_sheet_root)}
+          ${this.verifyField('state packet', 'balance_packet_commitment', fields.balance_packet_commitment)}
+          ${this.verifyField('state inputs', 'balance_public_inputs_commitment', fields.balance_public_inputs_commitment)}
+          ${this.verifyField('prior root', 'balance_prev_balance_sheet_root', fields.balance_prev_balance_sheet_root)}
+          ${this.verifyField('next root', 'balance_next_balance_sheet_root', fields.balance_next_balance_sheet_root)}
           ${this.verifyField('issued total', 'balance_issued_unit_total', fields.balance_issued_unit_total)}
           ${this.verifyField('batch binding', 'balance_fundraise_packet_commitment', fields.balance_fundraise_packet_commitment)}
-          ${this.verifyField('statement proof', 'balance_proof_digest', fields.balance_proof_digest)}
-          ${this.verifyField('statement key', 'balance_verifier_key_digest', fields.balance_verifier_key_digest)}
+          ${this.verifyField('state proof', 'balance_proof_digest', fields.balance_proof_digest)}
+          ${this.verifyField('state key', 'balance_verifier_key_digest', fields.balance_verifier_key_digest)}
         </div>
         <div class="verify-actions">
           <button class="verify-submit" type="submit" ?disabled=${this.runState === 'verifying'}>
-            Verify statement inputs
+            Verify submitted inputs
           </button>
           <button class="verify-tamper" type="button" @click=${this.handleTamperVerifierInput}>
-            Tamper post-state root
+            Tamper next root
           </button>
         </div>
         <div id="verify-result" aria-live="polite">${this.renderVerifyResult()}</div>
@@ -1776,7 +1776,7 @@ export class AacFundraiseDemo extends LitElement {
         data-verify-accepted=${result.accepted ? 'true' : 'false'}
         data-verify-reason=${result.reason}
       >
-        <strong>${result.accepted ? 'Statement verifier accepted submitted inputs' : 'Statement verifier rejected submitted inputs'}</strong>
+        <strong>${result.accepted ? 'Verifier accepted submitted inputs' : 'Verifier rejected submitted inputs'}</strong>
         <span>${result.detail}</span>
         <code>${result.meta}</code>
       </div>
@@ -1795,8 +1795,8 @@ export class AacFundraiseDemo extends LitElement {
   private displayVerifier(summary: FundraiseSummary, verifierVisible: boolean, proofGenerated: boolean) {
     const fallback = {
       accepted: false,
-      status_label: proofGenerated ? 'ledger proof generated' : 'statement verifier not run',
-      target_label: proofGenerated ? 'ledger proof packet ready' : 'ProveKit statement verifier',
+      status_label: proofGenerated ? 'proof generated' : 'verifier not run',
+      target_label: proofGenerated ? 'proof packet ready' : 'ProveKit verifier',
       verifier_profile: summary.verifier?.verifier_profile ?? 'profile pending',
       mode: summary.proof.mode ?? summary.verifier?.mode ?? null,
       proof_digest: proofGenerated ? summary.proof.proof_digest : null,
@@ -1821,8 +1821,8 @@ export class AacFundraiseDemo extends LitElement {
     };
     const fallback = {
       accepted: false,
-      status_label: proofGenerated ? 'balance-sheet statement generated' : 'balance-sheet statement verifier not run',
-      target_label: proofGenerated ? 'balance-sheet statement packet ready' : 'LEDGER/1 balance-sheet statement verifier',
+      status_label: proofGenerated ? 'balance proof generated' : 'state verifier not run',
+      target_label: proofGenerated ? 'before/after state packet ready' : 'ProveKit balance-sheet verifier',
       verifier_profile: source.verifier_profile ?? 'fundraise-balance-sheet-demo/v1',
       mode: summary.proof.mode ?? source.mode ?? null,
       proof_digest: proofGenerated ? source.proof_digest : null,
@@ -1836,7 +1836,7 @@ export class AacFundraiseDemo extends LitElement {
         prove: source.timings_ms?.prove,
       } : {},
       roots,
-      boundary: source.boundary ?? 'Balance-sheet statement proof not run.',
+      boundary: source.boundary ?? 'Balance-sheet state proof not run.',
     };
     return verifierVisible ? source ?? fallback : fallback;
   }
@@ -1846,14 +1846,14 @@ export class AacFundraiseDemo extends LitElement {
     return html`
       <div class="verifier-card state-card">
         <span class=${`verifier-state ${balanceSheet.accepted ? 'accepted' : ''}`}>${balanceSheet.status_label}</span>
-        <b>Balance-sheet statement</b>
+        <b>Before/after state proof</b>
         <code>${balanceSheet.verifier_profile ?? 'fundraise-balance-sheet-demo/v1'}</code>
         <div class="state-roots">
           ${this.short(roots.prev_balance_sheet_root, 8, 6)} → ${this.short(roots.next_balance_sheet_root, 8, 6)}
         </div>
         <div class="slips verifier-slips">
-          ${this.slip('statement proof', balanceSheet.proof_digest)}
-          ${this.slip('statement receipt', balanceSheet.receipt_digest)}
+          ${this.slip('state proof', balanceSheet.proof_digest)}
+          ${this.slip('state receipt', balanceSheet.receipt_digest)}
           ${this.slip('batch binding', balanceSheet.fundraise_packet_commitment)}
         </div>
       </div>
@@ -1861,14 +1861,14 @@ export class AacFundraiseDemo extends LitElement {
   }
 
   private demoHeadline(accepted: boolean, verifierVisible: boolean): string {
-    if (!accepted) return 'Issuer ledger has capacity to settle.';
-    if (!verifierVisible) return 'Ledger transition proof generated.';
-    return 'Issuer ledger statement verified.';
+    if (!accepted) return 'Private SAFE order ready to fill.';
+    if (!verifierVisible) return 'Proof packet generated for issuer books.';
+    return 'Private order verified against issuer books.';
   }
 
   private bookReconciliationState(accepted: boolean, verifierVisible: boolean, reconciliationAvailable: boolean, booksClose: boolean): string {
     if (this.runState === 'proving') return 'waiting for proof';
-    if (accepted && !verifierVisible) return 'verify statement';
+    if (accepted && !verifierVisible) return 'verify proof';
     if (accepted && !reconciliationAvailable) return 'runner schema stale';
     if (accepted && booksClose) return 'books reconciled';
     if (accepted) return 'mismatch flagged';
@@ -1877,7 +1877,7 @@ export class AacFundraiseDemo extends LitElement {
 
   private reconciliationEmptyMessage(accepted: boolean, reconciliationAvailable: boolean): string {
     if (accepted && this.runState !== 'verified') {
-      return 'Statement verifier step pending.';
+      return 'Verifier step pending.';
     }
     if (accepted && !reconciliationAvailable) {
       return 'Accepted proof response did not include reconciliation rows. Restart the fundraise demo runner so the UI and API use the same summary schema.';
@@ -1890,8 +1890,8 @@ export class AacFundraiseDemo extends LitElement {
       <div class="book-row">
         <span class="book-cell book-line">${row.line}</span>
         <span class="book-cell" data-label="opening">${row.opening}</span>
-        <span class="book-cell" data-label="batch delta">${row.delta}</span>
-        <span class="book-cell book-close" data-label="post-state">${row.closing}</span>
+        <span class="book-cell" data-label="swap delta">${row.delta}</span>
+        <span class="book-cell book-close" data-label="closing">${row.closing}</span>
       </div>
     `;
   }
@@ -1899,7 +1899,7 @@ export class AacFundraiseDemo extends LitElement {
   private batchControl() {
     const max = this.maxVariableFillUnits();
     const fixed = this.fixedFillUnits();
-    const cap = this.capacityUnits();
+    const cap = this.orderCapUnits();
     const total = fixed + this.variableFillUnits;
     const open = Math.max(0, cap - total);
     const settlementAsset = this.summary.order?.settlement_asset ?? 'USDC';

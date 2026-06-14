@@ -2,24 +2,20 @@
 
 - Name: FUNDRAISE-CLEARING/1 . Status: Raw . **Application target (not enshrined)**
 - Editor: Arjun Velagapudi <arjun@aac.sh>
-- License: GPL-3.0-or-later. RFC 2119 applies. Cites: 1/PACI, 2/FACT, 3/PROOF, 4/REG, 5/NET, LEDGER/1, BCC/1, VNET/1.
+- License: GPL-3.0-or-later. RFC 2119 applies. Cites: 1/PACI, 2/FACT, 3/PROOF, 4/REG, 5/NET, BCC/1, VNET/1.
 
 This specification defines a non-enshrined target for a paid fundraising
-round. It is the fundraise-specific statement surface over LEDGER/1: an issuer
-starts from a committed private ledger state, proves a round-capacity statement,
-admits a selected subscription batch, posts the private settlement transition,
-and emits a receipt-issuance statement that a policy verifier can use to
-authorize restricted token issuance. It is an accounting and settlement target.
-It does not assert legal equity, regulatory compliance, or transfer permission
-by itself.
+round: approved subscription settlements update an issuer's private balance
+sheet and cap table, and a policy verifier uses the accepted proof to authorize
+restricted token issuance. It is an accounting and settlement target. It does
+not assert legal equity, regulatory compliance, or transfer permission by
+itself.
 
 The target exists because a fundraiser has two facts that should be tied
 together without publishing the issuer's books:
 
-1. the issuer's private ledger has enough declared round capacity for the
-   selected subscription batch;
-2. a public or externally attested payment settlement occurred; and
-3. the issuer privately recognized that settlement in balanced books and in the
+1. a public or externally attested payment settlement occurred; and
+2. the issuer privately recognized that settlement in balanced books and in the
    capitalization ledger that determines issued units.
 
 ## 1. Non-redesign boundary
@@ -32,10 +28,9 @@ target a registry precondition.
 TRANSITION/1          posts private issuer/cap-table journals
 NULLIFY/1             prevents replay of subscription or issuance rights
 NET/1                 closes channel facts when a deployment emits them
-LEDGER/1              gives the issuer state and statement vocabulary
 BCC/1                 records investor/issuer co-signed agreement certificates
 VNET/1                proves selected posted journals net as amount vectors
-FUNDRAISE-CLEARING/1  binds ledger statements to paid subscriptions and token mint
+FUNDRAISE-CLEARING/1  binds paid subscriptions to private books and token mint
 ```
 
 A round contract, clearing venue, lender, market, or admissibility layer MAY
@@ -43,33 +38,6 @@ require FUNDRAISE-CLEARING/1 before it mints or releases a restricted token.
 The base registry MUST NOT.
 
 ## 2. Objects
-
-### 2.0 Ledger fibre
-
-A FUNDRAISE-CLEARING/1 instance is fibre-local over one or more LEDGER/1
-contexts. At minimum it fixes:
-
-```text
-FundraiseLedgerSurface := {
-  issuer_ledger_context:       LedgerContext
-  cap_table_context:           LedgerContext
-  round_capacity_statement:    StatementRequest(statement_type = round_capacity)
-  balance_sheet_statement:     StatementRequest(statement_type = balance_sheet)
-  receipt_issuance_statement:  StatementRequest(statement_type = receipt_issuance)
-}
-```
-
-The issuer ledger pre-state is the source for the `round_capacity` statement.
-The accepted private settlement transition is the vertical map between issuer
-ledger states. The issuer ledger post-state is the source for the
-`balance_sheet` and `receipt_issuance` statements. VNET/1 and BCC/1 support
-that transition, but they are not the object the user operates: the user
-operates a ledger state and asks for lawful statements over it.
-
-The `context_commitment` in the public ABI resolves the round policy, the
-ledger contexts, disclosure scopes, projection policies, verifier profiles, and
-deployment adapters. A verifier MUST resolve those contexts from trusted policy
-or registry state, never from prover-supplied text.
 
 ### 2.1 Round policy
 
@@ -207,69 +175,51 @@ movement is represented as non-negative debit/credit coordinates in P^n.
 Given a canonical ordered set of subscription atoms, FUNDRAISE-CLEARING/1
 proves:
 
-1. **Ledger context binding.** `prev_balance_sheet_root`,
-   `next_balance_sheet_root`, `prev_cap_table_root`, `next_cap_table_root`,
-   `transition_set_commitment`, and `context_commitment` are interpreted as
-   LEDGER/1 state headers and statement contexts. The proof MUST bind the
-   issuer ledger pre-state, issuer ledger post-state, cap-table pre-state,
-   cap-table post-state, and projection policies used by the verifier.
-2. **Round capacity statement.** Before accepting the selected batch, the
-   issuer pre-state admits a `round_capacity` statement showing that the
-   selected issued units and settlement amount fit inside the round policy.
-   This is the public claim a user sees before transfer; it is not a reveal of
-   the issuer's full balance sheet or cap table.
-3. **Settlement binding.** The subscription set commitment binds every
+1. **Settlement binding.** The subscription set commitment binds every
    `(subscription_id, investor_id, settlement_ref, settlement_amount,
    issued_units, admissibility_ref, subscription_nullifier)` in canonical order.
-4. **Payment/admissibility context.** Every subscription atom is in the
+2. **Payment/admissibility context.** Every subscription atom is in the
    settlement/admissibility report accepted by the verifier's trusted context.
    The proof binds the report commitments; the verifier checks the reports.
-5. **BCC agreement binding.** Every subscription atom has a BCC/1 agreement
+3. **BCC agreement binding.** Every subscription atom has a BCC/1 agreement
    certificate whose signed event context matches the round, issuer, investor,
    subscription id, settlement reference, amount, issued units, token contract,
    and bridge context. The verifier checks BCC signatures, cancellation
    opening, authenticated ECDH transcript binding, and BCC finality replay
    context before using the certificate.
-6. **Bridge settlement binding.** Every subscription atom appears in the
+4. **Bridge settlement binding.** Every subscription atom appears in the
    bridge settlement report for the policy's `settlement_chain`,
    `vault_or_contract`, and `settlement_asset_type_id`, with a matching
    deposit reference and amount.
-7. **Issue-price arithmetic.** For every atom,
+5. **Issue-price arithmetic.** For every atom,
    `settlement_amount * price_denominator = issued_units * price_numerator`
    unless the round policy explicitly admits a rounding rule. Any rounding rule
    MUST be deterministic, monotone, and included in `context_commitment`.
-8. **Round caps.** The accumulated settlement amount and issued units do not
+6. **Round caps.** The accumulated settlement amount and issued units do not
    exceed `max_settlement_amount` or `max_issued_units`.
-9. **Private settlement transition.** The private witness contains issuer journals
+7. **Private issuer accounting.** The private witness contains issuer journals
    that recognize the subscription amounts and issued units under the round
    policy's account vocabulary. Those journals connect the claimed old and new
-   private roots through TRANSITION/1-compatible state arithmetic and LEDGER/1
-   transition binding.
-10. **Cap-table root update.** The private witness updates the cap-table root
+   private roots through TRANSITION/1-compatible state arithmetic.
+8. **Cap-table root update.** The private witness updates the cap-table root
    from `prev_cap_table_root` to `next_cap_table_root` by inserting or
    increasing the investors' allocations exactly by the issued units in the
    subscription set.
-11. **Balance-sheet statement.** The issuer post-state admits the declared
-   `balance_sheet` statement after applying the selected batch. The statement
-   binds the previous root, next root, selected batch totals, projection policy,
-   and verifier profile; it does not audit the truth of an unanchored previous
-   root.
-12. **VNET amount closure.** The posted fundraising journals are linked to a
+9. **VNET amount closure.** The posted fundraising journals are linked to a
    VNET/1 instance whose atoms reference the exact TRANSITION/1
    `journal_commitment` values for the issuer and cap-table movements. The
    VNET/1 proof MUST establish aggregate zero-opening; inspecting a Pedersen
    aggregate point is not sufficient.
-13. **Nullifier discipline.** Each `subscription_nullifier` is nonzero and is
+10. **Nullifier discipline.** Each `subscription_nullifier` is nonzero and is
    consumed at most once. The verifier MUST reject a nullifier already accepted
    for the same round or policy context. BCC finality tags are also checked
    against the deployment replay surface before acceptance.
-14. **Receipt issuance statement.** The public `mint_recipient_set_commitment`,
+11. **Token issuance binding.** The public `mint_recipient_set_commitment`,
    `issued_unit_total`, `token_contract`, `round_id`,
    `bcc_set_commitment`, and `bridge_settlement_commitment` are exactly the
-   values that a receipt-issuance statement and minting policy will use. A
-   verifier MUST NOT authorize token issuance from a proof that is not bound to
-   the token contract, round policy, BCC agreement set, bridge settlement
-   context, issuer post-state, and receipt-issuance projection policy.
+   values that a minting policy will use. A verifier MUST NOT authorize token
+   issuance from a proof that is not bound to the token contract, round policy,
+   BCC agreement set, and bridge settlement context.
 
 The proof binds accounting consistency. It does not prove the external payment
 settlement or investor admissibility unless those checks are separately supplied
@@ -281,12 +231,12 @@ as trusted context.
 |--:|------|-------|
 | 0 | `round_id` | round policy identifier |
 | 1 | `issuer_name` | issuer row/name context |
-| 2 | `prev_balance_sheet_root` | LEDGER/1 issuer pre-state account root before recognition |
-| 3 | `next_balance_sheet_root` | LEDGER/1 issuer post-state account root after recognition |
-| 4 | `prev_cap_table_root` | LEDGER/1 cap-table pre-state before issuance |
-| 5 | `next_cap_table_root` | LEDGER/1 cap-table post-state after issuance |
+| 2 | `prev_balance_sheet_root` | private issuer accounting root before recognition |
+| 3 | `next_balance_sheet_root` | private issuer accounting root after recognition |
+| 4 | `prev_cap_table_root` | private capitalization root before issuance |
+| 5 | `next_cap_table_root` | private capitalization root after issuance |
 | 6 | `subscription_set_commitment` | order-binding fold over subscription atoms |
-| 7 | `transition_set_commitment` | order-binding fold over linked TRANSITION refs and journal commitments |
+| 7 | `transition_set_commitment` | order-binding fold over linked TRANSITION refs |
 | 8 | `vnet_public_commitment` | commitment to the accepted VNET/1 public input vector |
 | 9 | `bcc_set_commitment` | order-binding fold over accepted BCC/1 agreement certificate summaries |
 | 10 | `bridge_settlement_commitment` | commitment to the bridge/custody settlement report |
@@ -294,7 +244,7 @@ as trusted context.
 | 12 | `settlement_amount_total` | total accepted settlement asset amount |
 | 13 | `issued_unit_total` | total restricted units to mint or release |
 | 14 | `token_contract` | policy-bound token contract/name |
-| 15 | `context_commitment` | `unconstrained`; binds round policy, LEDGER contexts, statement policies, adapters, bridge context, profile ids |
+| 15 | `context_commitment` | `unconstrained`; binds round policy, adapters, bridge context, profile ids |
 
 Inputs marked `unconstrained` carry meaning only through the verifier's context
 checks under 3/PROOF section 5.
@@ -306,31 +256,24 @@ A conforming FUNDRAISE-CLEARING/1 verifier, in order:
 1. Resolves the target instance from deployment policy, never from the prover.
 2. Verifies the proof against the pinned instance.
 3. Resolves `round_id`, `issuer_name`, `token_contract`, and
-   `context_commitment` against the round policy and LEDGER/1 contexts.
-4. Checks that the issuer pre-state admits the declared `round_capacity`
-   statement for the selected batch.
-5. Checks the settlement adapter report for every `settlement_ref` included in
+   `context_commitment` against the round policy.
+4. Checks the settlement adapter report for every `settlement_ref` included in
    `subscription_set_commitment`.
-6. Checks the admissibility adapter report for every `admissibility_ref`.
-7. Verifies every BCC/1 agreement certificate named by `bcc_set_commitment`,
+5. Checks the admissibility adapter report for every `admissibility_ref`.
+6. Verifies every BCC/1 agreement certificate named by `bcc_set_commitment`,
    including signed transcript, cancellation opening, authenticated ECDH
    binding, and BCC finality/replay context.
-8. Checks the bridge settlement report named by
+7. Checks the bridge settlement report named by
    `bridge_settlement_commitment` against the policy's settlement chain,
    custody contract/account, asset type, deposit references, and amounts.
-9. Resolves the referenced TRANSITION/1 updates and checks the
-   `transition_set_commitment` against their accepted public inputs, including
-   LEDGER/1 previous/next roots, `journal_commitment`, and
-   `context_commitment`.
-10. Verifies that the issuer post-state admits the declared `balance_sheet`
-   statement and that the receipt mint inputs satisfy the declared
-   `receipt_issuance` statement.
-11. Verifies or resolves the VNET/1 certificate named by
+8. Resolves the referenced TRANSITION/1 updates and checks the
+   `transition_set_commitment` against their accepted public inputs.
+9. Verifies or resolves the VNET/1 certificate named by
    `vnet_public_commitment`, including VNET's transition linkage and
    zero-opening requirements.
-12. Checks every subscription nullifier against the round's accepted-nullifier
+10. Checks every subscription nullifier against the round's accepted-nullifier
    set, then records the new nullifiers atomically with acceptance.
-13. Authorizes token mint/release only for `issued_unit_total`,
+11. Authorizes token mint/release only for `issued_unit_total`,
    `mint_recipient_set_commitment`, `round_id`, `token_contract`,
    `bcc_set_commitment`, and `bridge_settlement_commitment` from this proof.
 
@@ -369,10 +312,6 @@ profile.
 A conforming instance MUST reject:
 
 - a subscription atom not included in the committed subscription set;
-- a ledger context, statement projection policy, or disclosure scope that is
-  not bound by `context_commitment`;
-- a round-capacity statement that is missing, stale, or bound to a different
-  issuer pre-state;
 - a payment or admissibility report that is not bound by `context_commitment`;
 - issue-price arithmetic that does not match the round policy;
 - any cap overflow or carrier-wraparound possibility;
@@ -385,10 +324,6 @@ A conforming instance MUST reject:
   deposit reference, investor, or amount differs from the policy/subscription;
 - a repeated or zero subscription nullifier;
 - a cap-table update whose issued units differ from the subscription set;
-- a balance-sheet statement that is not bound to the issuer post-state and
-  selected batch;
-- a receipt-issuance statement that is not bound to the issuer post-state,
-  token contract, mint recipient set, and issued-unit total;
 - a VNET certificate that is missing, references a different transition set,
   omits a fundraising journal, or lacks aggregate zero-opening;
 - a Pedersen/VNET proof over points that are not linked to posted
@@ -410,11 +345,11 @@ documents and law, not by this proof target.
 
 ## 8. Security considerations
 
-FUNDRAISE-CLEARING/1 proves internal consistency of a paid subscription batch
-as statements over committed ledger state. It does not prove the issuer's
-starting balance sheet is true. A deployment that needs truth must anchor
-`prev_balance_sheet_root` through an auditor, bank/accounting-data adapter,
-prior accepted registry state, or another trusted source.
+FUNDRAISE-CLEARING/1 proves internal consistency of a paid subscription batch.
+It does not prove the issuer's starting balance sheet is true. A deployment
+that needs truth must anchor `prev_balance_sheet_root` through an auditor,
+bank/accounting-data adapter, prior accepted registry state, or another trusted
+source.
 
 The public chain will generally see token issuance, recipient addresses if the
 token mints directly to them, and settlement amounts needed by the payment
@@ -427,7 +362,7 @@ opened by the token contract.
 The transparent demo packet checker
 [`fundraise_demo.py`](reference/fundraise_demo.py), with fixtures at
 [`FUNDRAISE-DEMO-1.json`](vectors/FUNDRAISE-DEMO-1.json), exercises one
-private-ledger fundraising transcript. The JavaScript runtime uses the
+private-balance-sheet fundraising transcript. The JavaScript runtime uses the
 dependency-free `vnet-runtime` reference verifier for `VNET-BN254-G1/1` point
 encodings, generator derivation, transition-link certificates, and aggregate
 zero-opening. The reference surfaces bind a round policy, subscriptions,

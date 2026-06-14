@@ -6,12 +6,12 @@ export const fundraiseDemoSummary = {
   round_id: 'aac-seed-2026-001',
   issuer_name: 'issuer-a.private-row',
   metrics: [
-    { value: '1500', label: 'USDC capacity statement' },
-    { value: '150', label: 'restricted SAFE receipt units selected' },
-    { value: '0', label: 'remaining capacity' },
+    { value: '1500', label: 'USDC order cap' },
+    { value: '150', label: 'restricted SAFE receipt units in batch' },
+    { value: '0', label: 'units open' },
   ],
   order: {
-    headline: 'Capacity: up to 150 restricted SAFE receipt units',
+    headline: 'Fill 150 of 150 restricted SAFE receipt units',
     price_label: '10 USDC / unit',
     settlement_asset: 'USDC',
     issued_unit: 'restricted SAFE receipt units',
@@ -60,8 +60,8 @@ export const fundraiseDemoSummary = {
   verifier: {
     accepted: true,
     status: 'accepted',
-    status_label: 'native ProveKit statement verifier accepted',
-    target_label: 'native ProveKit statement verifier',
+    status_label: 'native ProveKit verifier accepted',
+    target_label: 'native ProveKit verifier',
     verifier_id: 'aac-fundraise-demo-provekit',
     verifier_profile: 'fundraise-runtime/v1+vnet-runtime/v1',
     proof_system: 'provekit-whir',
@@ -85,8 +85,8 @@ export const fundraiseDemoSummary = {
   balance_sheet: {
     accepted: true,
     status: 'accepted',
-    status_label: 'native ProveKit balance-sheet statement accepted',
-    target_label: 'LEDGER/1 balance-sheet statement verifier',
+    status_label: 'native ProveKit verifier accepted',
+    target_label: 'native ProveKit verifier · balance sheet',
     verifier_id: 'aac-fundraise-balance-sheet-provekit',
     verifier_profile: 'fundraise-balance-sheet-demo/v1',
     proof_system: 'provekit-whir',
@@ -124,7 +124,7 @@ export const fundraiseDemoSummary = {
       { line: 'units_open', opening: 150, delta: -150, closing: 0 },
     ],
     boundary:
-      'Proves a statement over the private ledger pre-state and post-state for the selected batch; starting balance-sheet truth still needs an external anchor.',
+      'Proves private before/after state arithmetic for the selected batch; starting balance-sheet truth still needs an external anchor.',
   },
   economics: {
     settlement_amount_total: 1500,
@@ -182,9 +182,9 @@ export const fundraiseDemoSummary = {
     ],
   },
   claims: [
-    'The round-capacity statement admitted the selected subscription batch.',
-    'The ledger-transition proof and balance-sheet statement verified against the submitted public inputs.',
-    'The workflow authorized a receipt-issuance statement and the local settlement contract refused replay.',
+    'ProveKit accepted the VNET proof for the private order fill.',
+    'The workflow authorized an EVM mint bound to the order-fill receipt and recipient set.',
+    'A local settlement contract minted receipt tokens and refused replay.',
   ],
   caveats: [
     'Local settlement uses deterministic development keys unless overridden.',
