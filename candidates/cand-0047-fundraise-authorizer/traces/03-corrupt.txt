@@ -1,0 +1,1 @@
+authorizer rejects stale packets, bad recipients, and tampered receipts

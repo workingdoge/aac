@@ -375,17 +375,7 @@ The Solidity demo adapter
 consumes the runtime's EVM-shaped authorized-mint receipt, verifies an
 authorizer signature, prevents replay, and mints a minimal restricted receipt
 token. It is not a recursive verifier and does not verify the private-state
-proof on-chain.
-
-The JavaScript `fundraise-authorizer` package is the current off-chain
-authorizer seam. It verifies a fundraise packet through `fundraise-runtime`,
-binds the EVM mint authorization to deployment policy fields, and emits a
-deterministic settlement signing request/receipt for the contract authorizer
-role. It does not sign Ethereum messages, verify ProveKit proofs, run a CRE
-workflow, or compute the Solidity `settlementDigest`; those remain deployment
-obligations above the request surface.
-
-The next implementation slices should wire the authorizer seam to an actual CRE
-workflow simulation or ProveKit verifier service, then deploy the adapter to a
+proof on-chain. The next implementation slices should bind a CRE workflow or
+ProveKit verifier service to the authorizer role and deploy the adapter to a
 testnet token contract. Non-mock BCC signature and cancellation schemes are
 adapter surfaces: they fail closed unless a deployment verifier accepts them.

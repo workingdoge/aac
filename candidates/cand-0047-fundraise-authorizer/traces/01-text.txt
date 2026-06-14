@@ -1,0 +1,1 @@
+authorizer seam, signing request, runtime verifier binding, and proof/signing boundary text are present
