@@ -1,0 +1,1 @@
+PEDERSEN-VECTOR/1 carries ProveKit Grumpkin MSM profile obligations and preserves BN254 coexistence

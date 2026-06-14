@@ -190,13 +190,3 @@ No reference VNET/1 circuit or native verifier is assigned by this candidate.
 The next implementation slice should choose whether production uses this
 companion-link shape, recomputes the referenced `journal_commitment` in the VNET
 witness, or wraps the link in a separate proof object.
-
-The ProveKit-oriented commitment profile is
-[`PEDERSEN-VECTOR/1`](../profiles/PEDERSEN-VECTOR-1.md): Grumpkin
-`EmbeddedCurvePoint` commitments, domain-separated generator derivation, MSM-only
-aggregation, zero-opening as a single MSM, and bounded non-negative coordinates.
-It is motivated by a measured backend capability: ProveKit exposes the
-embedded-curve `MultiScalarMul` primitive but not `EmbeddedCurveAdd`, so
-homomorphic aggregation must be expressed as one MSM with unit scalars rather
-than as a sequence of point additions. This profile does not replace the BN254
-reference verifier; it gives the next ProveKit VNET circuit a concrete target.
