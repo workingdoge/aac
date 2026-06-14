@@ -1,3 +1,4 @@
 cargo/web/src/components/aac-fundraise-demo.ts	web/src/components/aac-fundraise-demo.ts	yes
 # landed_at: 2026-06-14T14:29:41Z
 # toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=feebb6c98bd0faef8b540a9e26c410e98caefd38b6309aaaefa5a9045adf0c3b unavailable(not-in-devshell)
+git_commit	f5ddf4a
