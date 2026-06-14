@@ -1,0 +1,39 @@
+# Reflection: cand-0079-fundraise-verifier-surface
+
+Intent: Expose the real ProveKit verifier receipt in the fundraise summary and render it as a visible verifier panel.
+Status at reflection: landed
+Reflected at: 2026-06-14T14:14:12Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0079-fundraise-verifier-surface",
+  "evaluated_at": "2026-06-14T14:13:48Z",
+  "task": "Expose the native ProveKit verifier receipt in the fundraise summary and render it visibly in the demo.",
+  "checks": {
+    "source": "pass",
+    "mutant": "pass",
+    "runner_tests": "pass",
+    "build": "pass",
+    "scope": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "80efc01d8898c7d21c00da30efa1a13a800509b0cee01f7ad47a3d1456ad3f37",
+    "traces_sha256": "d0515fe36ea60421a5f9a7f0ca188e5fc4e9c2b812b5a0cb77c4646fac276e37",
+    "body_sha256": "803c5ba694987237e9c5657ee348655837964f5ecdfc6a4904dc7bf1246cae24",
+    "attestation": "c1989f790c7a0013305abab07936e8630027243c12481ceb5e80243cc6bced5e"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.

@@ -135,19 +135,6 @@ assert.deepEqual(receipt.summary.reconciliation.rows, [
   { line: "units issued", opening: "0 units", delta: "+150 units", closing: "150 units" },
   { line: "units open", opening: "150 units", delta: "-150 units", closing: "0 units" },
 ]);
-assert.equal(receipt.summary.verifier.accepted, true);
-assert.equal(receipt.summary.verifier.status, "accepted");
-assert.equal(receipt.summary.verifier.status_label, "native ProveKit verifier accepted");
-assert.equal(receipt.summary.verifier.target_label, "native ProveKit verifier");
-assert.equal(receipt.summary.verifier.verifier_id, "aac-fundraise-demo-provekit");
-assert.equal(receipt.summary.verifier.verifier_profile, receipt.verifier_receipt.verifier_profile);
-assert.equal(receipt.summary.verifier.packet_commitment, receipt.verifier_receipt.packet_commitment);
-assert.equal(receipt.summary.verifier.public_inputs_commitment, receipt.verifier_receipt.public_inputs_commitment);
-assert.equal(receipt.summary.verifier.proof_digest, receipt.verifier_receipt.proof_digest);
-assert.equal(receipt.summary.verifier.verifier_key_digest, receipt.verifier_receipt.verifier_key_digest);
-assert.equal(receipt.summary.verifier.receipt_digest, receipt.verifier_receipt.receipt_digest);
-assert.equal(receipt.summary.verifier.timings_ms.verify, receipt.verifier_receipt.timings_ms.verify);
-assert.match(receipt.summary.verifier.boundary, /recursive\/on-chain proof verification remains/);
 assert.equal(receipt.summary.commitments.transition_set, receipt.public_inputs.transition_set_commitment);
 assert.equal(receipt.summary.proof.proof_digest, receipt.provekit.proof_digest);
 assert.equal(receipt.summary.workflow.signature_status, "pending");

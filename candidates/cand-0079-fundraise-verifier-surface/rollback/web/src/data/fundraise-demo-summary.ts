@@ -53,31 +53,6 @@ export const fundraiseDemoSummary = {
       { line: 'units open', opening: '150 units', delta: '-150 units', closing: '0 units' },
     ],
   },
-  verifier: {
-    accepted: true,
-    status: 'accepted',
-    status_label: 'native ProveKit verifier accepted',
-    target_label: 'native ProveKit verifier',
-    verifier_id: 'aac-fundraise-demo-provekit',
-    verifier_profile: 'fundraise-runtime/v1+vnet-runtime/v1',
-    proof_system: 'provekit-whir',
-    mode: 'native-cli',
-    packet_commitment: 'b9b42bcbe334e66ed0bc5b39ffcd53130688d6d37015e9bfcf33e02c2879793d',
-    public_inputs_commitment: '9a393f40bc821e3f040538c0320386f706df5837e48f5ce3b599bc40cc3ffc84',
-    proof_ref: 'provekit-whir:native-cli:proof.np',
-    proof_digest: '0xf2df8648aca89bba3f1bbf716b202480a1b5ae19015a1fd4657e5acfca5afebe',
-    verifier_key_digest:
-      '0x051a9737c6c606d65f89bee3b050cdc2f7bff86e1c691e4a0090e1ea7ba4ab92',
-    receipt_digest: '0xd4600251f9a3d9900032b2817ac363af18244e7987ef178f806f69d89e9faa90',
-    adapter_schema: 'aac.fundraise-provekit-adapter.input.v1',
-    timings_ms: {
-      prepare: 1269,
-      prove: 3419,
-      verify: 110,
-    },
-    boundary:
-      'Native ProveKit verification is live here; recursive/on-chain proof verification remains the production verifier target.',
-  },
   economics: {
     settlement_amount_total: 1500,
     issued_unit_total: 150,

@@ -1,0 +1,6 @@
+component missing visible verifier receipt lane
+component missing accepted-verifier step
+component missing public-input binding step
+component run control does not name verify
+component still hides verifier behind clearing-proof lane
+hidden-verifier mutant rejected

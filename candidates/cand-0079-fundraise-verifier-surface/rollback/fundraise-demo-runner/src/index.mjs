@@ -631,7 +631,6 @@ export function buildFundraiseDemoSummary(receipt) {
   const subscriptions = Array.isArray(packetProjection.subscriptions) ? packetProjection.subscriptions : [];
   const action = receipt.settlement_action ?? {};
   const auth = action.args?.auth ?? {};
-  const verifier = receipt.verifier_receipt ?? {};
   const local = receipt.local_settlement ?? null;
   const settled = Boolean(local?.transaction_hash);
   const settlementAsset = settlementAssetLabel(policy.settlement_asset_type_id);
@@ -710,25 +709,6 @@ export function buildFundraiseDemoSummary(receipt) {
           closing: amountWithUnit(openAfter, unitNoun),
         },
       ],
-    },
-    verifier: {
-      accepted: verifier.accepted === true,
-      status: verifier.accepted === true ? "accepted" : "not-run",
-      status_label: verifier.accepted === true ? `${verifierModeLabel(verifier.mode)} accepted` : "verifier not run",
-      target_label: verifierModeLabel(verifier.mode),
-      verifier_id: verifier.verifier_id ?? null,
-      verifier_profile: verifier.verifier_profile ?? null,
-      proof_system: verifier.proof_system ?? receipt.provekit?.proof_system ?? null,
-      mode: verifier.mode ?? receipt.provekit?.mode ?? null,
-      packet_commitment: verifier.packet_commitment ?? null,
-      public_inputs_commitment: verifier.public_inputs_commitment ?? null,
-      proof_ref: verifier.proof_ref ?? receipt.provekit?.proof_ref ?? null,
-      proof_digest: verifier.proof_digest ?? receipt.provekit?.proof_digest ?? null,
-      verifier_key_digest: verifier.verifier_key_digest ?? receipt.provekit?.verifier_key_digest ?? null,
-      receipt_digest: verifier.receipt_digest ?? receipt.workflow_receipt?.verifier_receipt_digest ?? null,
-      adapter_schema: verifier.adapter_schema ?? null,
-      timings_ms: verifier.timings_ms ?? receipt.provekit?.timings_ms ?? {},
-      boundary: "Native ProveKit verification is live here; recursive/on-chain proof verification remains the production verifier target.",
     },
     economics: {
       settlement_amount_total: settlementTotal,
@@ -851,14 +831,6 @@ function signedAmountWithUnit(value, unit) {
   const number = finiteNumber(value) ?? 0;
   const sign = number >= 0 ? "+" : "";
   return `${sign}${amountValue(number)} ${unit}`;
-}
-
-function verifierModeLabel(mode) {
-  if (mode === "native-cli") return "native ProveKit verifier";
-  if (mode === "browser-wasm") return "browser ProveKit verifier";
-  if (mode === "service") return "ProveKit verifier service";
-  if (mode === "cre-workflow") return "CRE verifier workflow";
-  return "ProveKit verifier";
 }
 
 function contractAuthorizationTuple(auth) {

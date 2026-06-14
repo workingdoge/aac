@@ -157,25 +157,6 @@ export interface FundraiseDemoSummary {
       closing: string;
     }>;
   };
-  verifier: {
-    accepted: boolean;
-    status: "accepted" | "not-run" | string;
-    status_label: string;
-    target_label: string;
-    verifier_id: string | null;
-    verifier_profile: string | null;
-    proof_system: string | null;
-    mode: string | null;
-    packet_commitment: string | null;
-    public_inputs_commitment: string | null;
-    proof_ref: string | null;
-    proof_digest: string | null;
-    verifier_key_digest: string | null;
-    receipt_digest: string | null;
-    adapter_schema: string | null;
-    timings_ms: Record<string, number>;
-    boundary: string;
-  };
   economics: {
     settlement_amount_total: number | null;
     issued_unit_total: number | null;

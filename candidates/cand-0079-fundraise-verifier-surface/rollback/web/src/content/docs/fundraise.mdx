@@ -16,9 +16,6 @@ restricted receipt units and investors fill the order. The ticket, starting
 balances, submitted fills, and reconciliation rows are rendered from the runner
 summary returned by the localhost API. The live path calls the localhost runner,
 clears the fill batch with ProveKit, and returns a fresh authorization receipt.
-The console surfaces the native ProveKit verifier receipt directly: verifier
-status, packet commitment, public-input commitment, proof digest, verifier-key
-digest, and verify timing.
 
 After the swap, the console reconciles the issuer books from summary-provided
 opening balances, fill deltas, and closing balances.
@@ -26,11 +23,10 @@ opening balances, fill deltas, and closing balances.
 <aac-fundraise-demo></aac-fundraise-demo>
 
 The issuer's balance sheet and cap table move as private roots. ProveKit clears
-the submitted fills, the native verifier accepts the proof receipt, the workflow
-authorizes the receipt-token mint, and the local settlement contract can mint
-tokens while refusing replay. The settlement contract in this demo verifies the
-authorizer signature and replay guard; recursive on-chain VNET verification
-remains the production verifier target.
+the submitted fills, the workflow authorizes the receipt-token mint, and the
+local settlement contract can mint tokens while refusing replay. The settlement
+contract in this demo verifies the authorizer signature and replay guard;
+recursive on-chain VNET verification remains the production verifier target.
 
 The live presentation mode is one origin: build the site, then run
 `aac-fundraise-demo --serve --static-dir web/dist --port 4328`. The component

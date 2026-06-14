@@ -68,19 +68,6 @@ export class AacFundraiseDemo extends LitElement {
         action_digest: null,
         signature_status: 'not-run',
       },
-      verifier: {
-        ...fundraiseDemoSummary.verifier,
-        accepted: false,
-        status: 'not-run',
-        status_label: 'verifier not run',
-        packet_commitment: null,
-        public_inputs_commitment: null,
-        proof_ref: null,
-        proof_digest: null,
-        verifier_key_digest: null,
-        receipt_digest: null,
-        timings_ms: {},
-      },
       settlement: {
         ...fundraiseDemoSummary.settlement,
         token_contract: null,
@@ -589,52 +576,6 @@ export class AacFundraiseDemo extends LitElement {
       margin-top: 15px;
     }
 
-    .verifier-card {
-      display: grid;
-      gap: 5px;
-      padding: 11px 12px;
-      margin-bottom: 13px;
-      border: 1px solid var(--aac-color-navy, #21324f);
-      background: var(--aac-color-field, #fcf9f0);
-      min-width: 0;
-    }
-
-    .verifier-card b {
-      color: var(--aac-color-navy, #21324f);
-      font-size: 15px;
-      line-height: 1.1;
-    }
-
-    .verifier-card code {
-      color: var(--aac-color-steel, #6b6b64);
-      font-family: var(--aac-mono, "IBM Plex Mono", monospace);
-      font-size: 11px;
-      overflow-wrap: anywhere;
-      background: transparent;
-      padding: 0;
-    }
-
-    .verifier-state {
-      justify-self: start;
-      border: 1px solid var(--aac-color-oxblood, #93302c);
-      color: var(--aac-color-oxblood, #93302c);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 5px 7px;
-    }
-
-    .verifier-state.accepted {
-      background: var(--aac-color-navy, #21324f);
-      border-color: var(--aac-color-navy, #21324f);
-      color: var(--aac-color-bond, #fff);
-    }
-
-    .verifier-slips {
-      margin-top: 12px;
-    }
-
     .slip {
       display: flex;
       align-items: center;
@@ -1021,14 +962,14 @@ export class AacFundraiseDemo extends LitElement {
   }
 
   private runButtonText(): string {
-    if (this.runState === 'running') return 'Proving + verifying';
-    if (this.runState === 'proved') return 'Verify again';
-    return 'Run proof + verify';
+    if (this.runState === 'running') return 'Filling order';
+    if (this.runState === 'proved') return 'Fill again';
+    return 'Fill order live';
   }
 
   private runNote(): string {
-    if (this.runState === 'running') return 'ProveKit is proving and verifying the order fill';
-    if (this.runState === 'proved') return `fresh verifier receipt · ${this.ms(this.liveElapsedMs ?? undefined)}`;
+    if (this.runState === 'running') return 'ProveKit is clearing the order fill';
+    if (this.runState === 'proved') return `fresh order-fill receipt · ${this.ms(this.liveElapsedMs ?? undefined)}`;
     if (this.runState === 'error') return `runner error · ${this.liveError}`;
     return this.sourceLabel;
   }
@@ -1042,7 +983,6 @@ export class AacFundraiseDemo extends LitElement {
     const fills = s.fills ?? [];
     const openingBalances = s.opening_balances ?? [];
     const reconciliation = s.reconciliation ?? { accepted: false, rows: [] };
-    const verifier = s.verifier ?? { accepted: false, status_label: 'verifier not run', target_label: 'ProveKit verifier', timings_ms: {} };
     const booksClose = reconciliation.accepted === true;
     const fillStatus = this.runState === 'running'
       ? 'clearing fills'
@@ -1131,27 +1071,16 @@ export class AacFundraiseDemo extends LitElement {
           </section>
 
           <section class="lane">
-            <div class="lane-title"><b>Verifier receipt</b><span>${verifier.mode ?? 'not run'}</span></div>
-            <div class="verifier-card">
-              <span class=${`verifier-state ${verifier.accepted ? 'accepted' : ''}`}>${verifier.status_label}</span>
-              <b>${verifier.target_label}</b>
-              <code>${verifier.verifier_profile ?? 'profile pending'}</code>
-            </div>
+            <div class="lane-title"><b>Clearing proof</b><span>${s.proof.proof_system ?? 'not run'}</span></div>
             <div class="spine">
-              ${this.step('V', verifier.receipt_digest ? 'Verifier accepted proof' : 'Verifier not run', verifier.receipt_digest)}
-              ${this.step('P', verifier.proof_digest ? 'Proof digest bound' : 'Proof absent', verifier.proof_digest)}
-              ${this.step('I', verifier.public_inputs_commitment ? 'Public inputs bound' : 'Inputs absent', verifier.public_inputs_commitment)}
-              ${this.step('K', verifier.verifier_key_digest ? 'Verifier key pinned' : 'Verifier key absent', verifier.verifier_key_digest)}
+              ${this.step('P', s.proof.proof_digest ? 'ProveKit cleared order' : 'ProveKit not run', s.proof.proof_digest)}
+              ${this.step('W', s.workflow.authorizer_receipt_digest ? 'Workflow authorized fill' : 'Workflow waiting', s.workflow.authorizer_receipt_digest)}
+              ${this.step('S', s.workflow.action_digest ? 'Mint action prepared' : 'Mint not prepared', s.workflow.action_digest)}
             </div>
             <div class="timings">
-              <div class="time"><b>${this.ms(verifier.timings_ms.prepare)}</b><span>prepare</span></div>
-              <div class="time"><b>${this.ms(verifier.timings_ms.prove)}</b><span>prove</span></div>
-              <div class="time"><b>${this.ms(verifier.timings_ms.verify)}</b><span>verify</span></div>
-            </div>
-            <div class="slips verifier-slips">
-              ${this.slip('packet', verifier.packet_commitment)}
-              ${this.slip('workflow', s.workflow.authorizer_receipt_digest)}
-              ${this.slip('mint action', s.workflow.action_digest)}
+              <div class="time"><b>${this.ms(s.proof.timings_ms.prepare)}</b><span>prepare</span></div>
+              <div class="time"><b>${this.ms(s.proof.timings_ms.prove)}</b><span>prove</span></div>
+              <div class="time"><b>${this.ms(s.proof.timings_ms.verify)}</b><span>verify</span></div>
             </div>
           </section>
 
@@ -1187,7 +1116,7 @@ export class AacFundraiseDemo extends LitElement {
         </div>
 
         <div class="notice">
-          <b>Boundary:</b> ${verifier.boundary ?? s.caveats[1]}
+          <b>Boundary:</b> ${s.caveats[1]}
         </div>
       </section>
     `;
@@ -1243,7 +1172,7 @@ export class AacFundraiseDemo extends LitElement {
     `;
   }
 
-  private step(mark: string, label: string, digest: string | null | undefined) {
+  private step(mark: string, label: string, digest: string) {
     return html`
       <div class="step">
         <div class="mark">${mark}</div>
