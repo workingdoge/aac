@@ -171,16 +171,23 @@ Each participant's ledger update posts its projection of the same journal:
 participant's facts from the event's legs — the parties post projections of one
 shared zero-account, not independently-matching entries.
 
-### 6.3 Amount-vector netting (VNET/1)
+### 6.3 Amount-vector netting (VNET, future)
 
-Where confidential amount netting across many posted journals is wanted,
-[VNET/1](VNET-1.md) uses **Pedersen vector commitments** with one generator per
-basis dimension — `C = Σⱼ vⱼ·Gⱼ + r·H` — and proves the aggregate opens to the
-zero value vector. It is distinct from 5/NET (channel-fact netting over ℤ[X], by
-message identity) and from this target's in-circuit hashing (where homomorphism
-is irrelevant to a Merkle root). A conforming VNET/1 proof MUST link every
-Pedersen opening back to the exact TRANSITION/1 `journal_commitment` it nets and
-MUST require a zero-opening proof, not inspection of an arbitrary group point.
+Where confidential amount netting across many receipts is wanted, a future
+VNET/1 target (or an admitted 5/NET accumulator) uses **Pedersen vector
+commitments** with one generator per basis dimension —
+`C = Σⱼ vⱼ·Gⱼ + r·H` — so a batch is balanced iff `Σ Cᴰ − Σ Cᶜ = R·H` opens to
+a pure blinding `R`. This is distinct from 5/NET (channel-fact netting over
+ℤ[X], by message identity) and from the in-circuit hashing of this target
+(which uses a circuit-native hash; the commitment's homomorphism is irrelevant
+to a Merkle root and is reserved for native cross-receipt netting). A conforming
+vector-commitment profile MUST bind generator derivation and basis order to
+`basis_commitment` and `profileId`, admit no known discrete-log relation among
+`H` and any `Gⱼ`, enforce amount ranges before or inside the proof, represent
+signed amounts as non-negative debit/credit vectors (never negative field
+elements), forbid mixing basis declarations or profile versions in one receipt,
+and require a zero-opening (aggregate-blinding) proof rather than inspection of
+an arbitrary group point.
 
 ## 7. Security considerations
 

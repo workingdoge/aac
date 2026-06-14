@@ -16,4 +16,3 @@ Deployment Register (R1).
 | target | title | status |
 |--------|-------|--------|
 | [EVENT-COMPLETE/1](EVENT-COMPLETE-1.md) | Schema-Complete Event Compilation (BalancedVectorReceipt) | Raw (promoted from Design Note 0001) |
-| [VNET/1](VNET-1.md) | Amount-Vector Netting via Pedersen Commitments | Raw (promoted from Design Note 0001 §7) |
