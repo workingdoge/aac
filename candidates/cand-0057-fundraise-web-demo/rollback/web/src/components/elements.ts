@@ -5,4 +5,3 @@ import './aac-proof';
 import './aac-transition';
 import './aac-receipt';
 import './aac-row';
-import './aac-fundraise-demo';

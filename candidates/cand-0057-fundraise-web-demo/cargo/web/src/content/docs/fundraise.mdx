@@ -1,0 +1,24 @@
+---
+title: Fundraise demo
+description: A private issuer balance sheet, ProveKit VNET proof, workflow authorization, and local settlement receipt.
+editUrl: false
+sidebar:
+  label: Fundraise demo
+  order: 4
+---
+
+import Loader from '../../components/Loader.astro';
+
+<Loader />
+
+This is the presentation console for the private treasury fundraise path: a
+captured `fundraise-demo-runner --settle-local --summary` run rendered as a
+single operational receipt.
+
+<aac-fundraise-demo></aac-fundraise-demo>
+
+The issuer's balance sheet and cap table move as private roots. ProveKit accepts
+the VNET proof, the workflow authorizes the mint, and the local settlement
+contract mints receipt tokens while refusing replay. The settlement contract in
+this demo verifies the authorizer signature and replay guard; recursive
+on-chain VNET verification remains the production verifier target.

@@ -1,0 +1,1 @@
+aac-fundraise-demo registers and consumes the summary fixture

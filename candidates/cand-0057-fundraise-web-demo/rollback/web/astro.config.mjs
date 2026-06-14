@@ -34,7 +34,7 @@ export default defineConfig({
       pagination: true,
       tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 4 },
       sidebar: [
-        { label: 'The standard', items: ['index', 'circuit', 'registry', 'fundraise', 'components'] },
+        { label: 'The standard', items: ['index', 'circuit', 'registry', 'components'] },
         { label: 'RFC suite', autogenerate: { directory: 'specs/rfc' } },
         { label: 'Registers', autogenerate: { directory: 'specs/registers' } },
       ],
