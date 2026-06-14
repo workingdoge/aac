@@ -240,17 +240,9 @@ opened by the token contract.
 
 ## 9. Implementation status (non-normative)
 
-The transparent demo packet checker
-[`fundraise_demo.py`](reference/fundraise_demo.py), with fixtures at
-[`FUNDRAISE-DEMO-1.json`](vectors/FUNDRAISE-DEMO-1.json), exercises one
-private-balance-sheet fundraising transcript. It binds a round policy,
-subscriptions, settlement/admissibility reports, VNET transition-link
-verification, and mint authorization, then rejects price, settlement, token,
-and VNET failures. It delegates amount-vector clearing to the
-`VNET-BN254-G1/1` reference checker and the VNET transition-link checker.
-
-No reference circuit, native verifier, verifier contract, token contract,
-settlement adapter, CRE workflow, Circle integration, or ProveKit integration is
-assigned by this candidate. The next implementation slices should choose the
-production VNET link strategy, then bind a demo settlement/orchestration adapter
-to a testnet token contract.
+No reference circuit, verifier contract, token contract, settlement adapter,
+admissibility adapter, or concrete VNET curve/profile is assigned by this
+candidate. The next implementation slices should choose the VNET group/profile
+and point encoding, produce conformance vectors, implement a minimal verifier
+or reference checker, and then bind a demo settlement/orchestration adapter to a
+testnet token contract.

@@ -1,0 +1,5 @@
+candidate_id: cand-0039-fundraise-demo-packet
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T03:31:17Z
+intent: Add an executable FUNDRAISE-CLEARING/1 demo packet and reference checker that bind round policy, subscriptions, settlement/admissibility reports, VNET transition-link verification, and mint authorization; include rejection fixtures for price, settlement, token, and VNET failures.
+status: landed
