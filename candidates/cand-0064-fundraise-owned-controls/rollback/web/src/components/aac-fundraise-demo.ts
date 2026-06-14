@@ -22,6 +22,7 @@ export class AacFundraiseDemo extends LitElement {
   private liveError = '';
   private liveElapsedMs: number | null = null;
   private sourceLabel = 'ready: no proof run yet';
+  private controlListenersBound = false;
 
   private readySummary(): FundraiseSummary {
     return {
@@ -526,39 +527,39 @@ export class AacFundraiseDemo extends LitElement {
     return `${base.replace(/\/+$/, '')}/api/fundraise/run`;
   }
 
-  updated() {
-    this.bindRenderedControls();
+  connectedCallback() {
+    super.connectedCallback();
+    void this.bindControlListeners();
   }
 
   disconnectedCallback() {
-    this.unbindRenderedControls();
+    this.renderRoot?.removeEventListener('click', this.handleControlClick);
+    this.controlListenersBound = false;
     super.disconnectedCallback();
   }
 
-  private bindRenderedControls() {
-    const run = this.renderRoot?.querySelector<HTMLButtonElement>('[data-fundraise-action="run-live-proof"]');
-    const capture = this.renderRoot?.querySelector<HTMLButtonElement>('[data-fundraise-action="show-capture"]');
-
-    if (run) {
-      run.onclick = () => {
-        if (run.disabled) return;
-        void this.runLiveProof();
-      };
-    }
-    if (capture) {
-      capture.onclick = () => {
-        if (capture.disabled) return;
-        this.showCapturedReceipt();
-      };
-    }
+  private async bindControlListeners() {
+    await this.updateComplete;
+    if (!this.isConnected || this.controlListenersBound) return;
+    this.renderRoot.addEventListener('click', this.handleControlClick);
+    this.controlListenersBound = true;
   }
 
-  private unbindRenderedControls() {
-    const run = this.renderRoot?.querySelector<HTMLButtonElement>('[data-fundraise-action="run-live-proof"]');
-    const capture = this.renderRoot?.querySelector<HTMLButtonElement>('[data-fundraise-action="show-capture"]');
-    if (run) run.onclick = null;
-    if (capture) capture.onclick = null;
-  }
+  private readonly handleControlClick = (event: Event) => {
+    const control = event
+      .composedPath()
+      .find((target): target is HTMLElement =>
+        target instanceof HTMLElement && target.dataset.fundraiseAction !== undefined,
+      );
+    if (!control) return;
+    if (control.dataset.fundraiseAction === 'run-live-proof') {
+      void this.runLiveProof();
+      return;
+    }
+    if (control.dataset.fundraiseAction === 'show-capture') {
+      this.showCapturedReceipt();
+    }
+  };
 
   private async runLiveProof() {
     if (this.runState === 'running') return;

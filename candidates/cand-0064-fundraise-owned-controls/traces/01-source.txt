@@ -1,0 +1,1 @@
+component owns live controls and binds rendered buttons directly
