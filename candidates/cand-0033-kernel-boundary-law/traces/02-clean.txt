@@ -1,0 +1,1 @@
+clean: kernel crates {pacioli,hash,ledger,transition,nullify} depend only on kernel crates (exit 0)

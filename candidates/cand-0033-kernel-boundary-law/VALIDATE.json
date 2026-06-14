@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0033-kernel-boundary-law",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "dc81457f8747aa88ff3ea0c55de522f5072c20e12a47d3daf7a809951ed382e6",
+    "LANDING": "c11e4c391f1265c526ab9d73b060c1fdd6c2750888e3f7482c8faf77bfcfa670",
+    "META": "6d4ba084dda3ddb459f7bdede85d9d9283ec990543e100e7ba2f0709d03ea667"
+  }
+}

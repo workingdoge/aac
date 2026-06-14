@@ -1,0 +1,9 @@
+[package]
+name = "event_complete"
+type = "bin"
+authors = ["American Accounting Company"]
+[dependencies]
+pacioli = { path = "../pacioli" }
+rulebook = { path = "../rulebook" }
+ledger = { path = "../ledger" }
+receipt = { path = "../receipt" }

@@ -1,0 +1,48 @@
+# A balanced sample transition (matches `sample()` in src/main.nr).
+# Public ABI vector (3/PROOF S4.1), reproduced by `nargo execute`.
+# Commitments are Poseidon2 (cand-0024); the witness is unchanged.
+prev_account_root   = "0x285d0a920649ed8d73b49ff24228dee78fe8dfb3e7e2c1de0ea625d9220bc13a"
+next_account_root   = "0x2de709dc001606623858291789247bd43b45e82a57b816298e620777f81f3ab8"
+prev_nullifier_root = "100"
+next_nullifier_root = "0x1ad0978e0eb29b63e52cee7b479dcc5648b74c8863f793e6594ab09757ec53c7"
+journal_commitment  = "0x2b3b2f90e4f8d2b00f20380de846810c1427a8600816fe4b5cb0fc321d02b33b"
+context_commitment  = "42"
+fact_fold           = "0x2f4c45bb0955be9c27b54fdd6ec63dc9d146eb15ad0f3e1d5ed0b70c1e0a1e41"
+fact_count          = "1"
+
+[w]
+nullifiers = ["777", "0"]
+
+[w.prev_state]
+debit  = [["0", "0", "0"], ["5", "0", "0"], ["0", "0", "0"], ["0", "0", "0"]]
+credit = [["0", "0", "0"], ["0", "0", "0"], ["3", "0", "0"], ["0", "0", "0"]]
+
+[[w.journal]]
+account = "1"
+debit   = ["10", "0", "0"]
+credit  = ["0", "0", "0"]
+
+[[w.journal]]
+account = "2"
+debit   = ["0", "0", "0"]
+credit  = ["10", "0", "0"]
+
+[[w.journal]]
+account = "0"
+debit   = ["0", "0", "0"]
+credit  = ["0", "0", "0"]
+
+[[w.journal]]
+account = "0"
+debit   = ["0", "0", "0"]
+credit  = ["0", "0", "0"]
+
+[[w.facts]]
+fact_id      = "0xabc"
+side         = "0"
+multiplicity = "1"
+
+[[w.facts]]
+fact_id      = "0"
+side         = "0"
+multiplicity = "0"

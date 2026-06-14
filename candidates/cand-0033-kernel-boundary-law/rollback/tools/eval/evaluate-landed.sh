@@ -207,8 +207,6 @@ else
     && run_suite record-judgments bash tools/record-judgment-check.sh --all
   [[ -f "$ROOT/tools/cross-surface-check.sh" ]] \
     && run_suite cross-surface bash tools/cross-surface-check.sh
-  [[ -f "$ROOT/tools/kernel-boundary-check.sh" ]] \
-    && run_suite kernel-boundary bash tools/kernel-boundary-check.sh
   [[ -f "$ROOT/tools/queue-lint.sh" ]] \
     && run_suite queue-judgments bash tools/queue-lint.sh --all
   [[ -f "$ROOT/tools/verdict-tripwire.sh" ]] \

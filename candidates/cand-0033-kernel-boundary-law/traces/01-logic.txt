@@ -1,0 +1,1 @@
+checker ROOT-relative, pins KERNEL set, mints typed witnesses, and is [[ -f ]]-guard-enrolled in evaluate-landed
