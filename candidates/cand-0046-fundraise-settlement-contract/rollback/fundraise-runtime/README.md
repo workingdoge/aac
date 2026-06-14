@@ -14,7 +14,6 @@ The app should call functions:
 - `buildFundraisePacket`
 - `verifyFundraisePacket`
 - `authorizeMint`
-- `buildEvmMintAuthorization`
 
 `FUNDRAISE-DEMO-1.json` is a fixture and audit receipt, not the core runtime.
 The Python checker under `sites/ledger/specs/applications/reference/` remains a
@@ -45,12 +44,3 @@ For non-mock BCC signatures, pass `verifyBccSignature` to
 For non-mock BCC cancellation openings, pass `verifyBccCancellation`. That
 callback receives the canonical BCC cancellation payload; VNET/ProveKit/native
 or contract verification stays outside this package.
-
-After `authorizeMint`, call `buildEvmMintAuthorization` to shape the receipt for
-the demo Solidity settlement contract. The EVM authorization carries the runtime
-authorization digest, runtime recipient-set commitment, token contract, issued
-total, and opened recipient list. The Solidity contract verifies an authorizer
-signature over those fields and enforces replay protection; it does not verify
-the private-state proof itself.
-If the round policy uses symbolic token or recipient names, pass the deployed
-token address and EVM recipient addresses before calling the contract.

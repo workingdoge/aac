@@ -1,0 +1,8 @@
+cargo/registry/src/FundraiseSettlement.sol	registry/src/FundraiseSettlement.sol
+cargo/registry/test/FundraiseSettlement.t.sol	registry/test/FundraiseSettlement.t.sol
+cargo/registry/README.md	registry/README.md
+cargo/fundraise-runtime/README.md	fundraise-runtime/README.md
+cargo/fundraise-runtime/src/index.mjs	fundraise-runtime/src/index.mjs
+cargo/fundraise-runtime/src/index.d.ts	fundraise-runtime/src/index.d.ts
+cargo/fundraise-runtime/test/run-tests.mjs	fundraise-runtime/test/run-tests.mjs
+cargo/sites/ledger/specs/applications/FUNDRAISE-CLEARING-1.md	sites/ledger/specs/applications/FUNDRAISE-CLEARING-1.md

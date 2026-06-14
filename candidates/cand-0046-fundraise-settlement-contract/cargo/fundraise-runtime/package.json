@@ -1,0 +1,21 @@
+{
+  "name": "@aac/fundraise-runtime",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Function-first JS runtime for FUNDRAISE-CLEARING/1 demo packets. Transcripts are fixtures/receipts, not the app core.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.mjs"
+    }
+  },
+  "scripts": {
+    "test": "node test/run-tests.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

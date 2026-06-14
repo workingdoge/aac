@@ -280,33 +280,6 @@ A conforming FUNDRAISE-CLEARING/1 verifier, in order:
 The proof alone conveys no minting authority. Minting authority is the result
 of proof verification plus all context checks above.
 
-### 5.1 Demo settlement adapter
-
-A deployment MAY place a thin settlement adapter after the verifier. The adapter
-MUST NOT treat a raw prover packet as mint authority. It consumes a verifier or
-orchestrator decision bound to the FUNDRAISE-CLEARING/1 public outputs.
-
-The first Solidity adapter profile accepts an authorizer signature over an EVM
-settlement digest containing:
-
-```text
-contract address
-chain id
-round_id hash
-token contract
-runtime authorization digest
-runtime mint-recipient-set commitment
-issued_unit_total
-opened recipient list hash
-```
-
-The contract checks round and token equality, rejects empty or zero-recipient
-sets, checks that opened recipient amounts sum to `issued_unit_total`, verifies
-the authorizer signature, records the settlement digest to prevent replay, and
-mints the restricted receipt token. The contract does not verify Noir/ProveKit
-proofs; that remains the authorizer/orchestrator's obligation in this demo
-profile.
-
 ## 6. Rejection requirements
 
 A conforming instance MUST reject:
@@ -370,12 +343,10 @@ settlement/admissibility reports, VNET transition-link verification, bridge
 settlement binding, BCC agreement certificates, and mint authorization, then
 reject BCC, bridge, price, settlement, token, and VNET failures.
 
-The Solidity demo adapter
-[`registry/src/FundraiseSettlement.sol`](../../../../registry/src/FundraiseSettlement.sol)
-consumes the runtime's EVM-shaped authorized-mint receipt, verifies an
-authorizer signature, prevents replay, and mints a minimal restricted receipt
-token. It is not a recursive verifier and does not verify the private-state
-proof on-chain. The next implementation slices should bind a CRE workflow or
-ProveKit verifier service to the authorizer role and deploy the adapter to a
-testnet token contract. Non-mock BCC signature and cancellation schemes are
-adapter surfaces: they fail closed unless a deployment verifier accepts them.
+No reference circuit, native verifier, verifier contract, token contract,
+settlement adapter, CRE workflow, Circle integration, or ProveKit integration is
+assigned by this candidate. The next implementation slices should choose the
+production recursive/contract VNET proof verification strategy, then bind a demo
+settlement/orchestration adapter to a testnet token contract. Non-mock BCC
+signature and cancellation schemes are adapter surfaces: they fail closed unless
+a deployment verifier accepts them.

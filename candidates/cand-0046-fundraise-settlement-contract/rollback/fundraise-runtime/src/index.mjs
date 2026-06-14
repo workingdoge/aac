@@ -327,32 +327,6 @@ export function authorizeMint(packet) {
   };
 }
 
-export function buildEvmMintAuthorization(authorization, opts = {}) {
-  if (authorization?.schema !== "aac.fundraise-runtime.authorized-mint.v1") {
-    throw new FundraiseVerificationError("authorization_schema_mismatch");
-  }
-  const token = opts.tokenContract ?? opts.token_contract ?? authorization.token_contract;
-  if (!isEvmAddress(token)) throw new FundraiseVerificationError("bad_token_contract");
-  const roundIdHash = opts.roundIdHash ?? opts.round_id_hash ?? digestHex("aac/fundraise/evm-round-id/1", authorization.round_id);
-  const recipients = authorization.recipients.map((recipient) => {
-    if (!isEvmAddress(recipient.recipient)) throw new FundraiseVerificationError("bad_mint_recipient");
-    return {
-      account: recipient.recipient,
-      amount: recipient.issued_units,
-    };
-  });
-  return {
-    schema: "aac.fundraise-runtime.evm-mint-authorization.v1",
-    round_id: authorization.round_id,
-    round_id_hash: hex32(roundIdHash),
-    token_contract: token,
-    runtime_authorization_digest: hex32(authorization.authorization_digest),
-    runtime_mint_recipient_set_commitment: hex32(authorization.mint_recipient_set_commitment),
-    issued_unit_total: authorization.issued_unit_total,
-    recipients,
-  };
-}
-
 function checkPacket(packet, opts) {
   const policy = packet.round_policy;
   const subscriptions = packet.subscriptions;
@@ -503,15 +477,4 @@ function sameVector(a, b) {
 
 function fail(reason) {
   throw new FundraiseVerificationError(reason);
-}
-
-function isEvmAddress(value) {
-  return typeof value === "string" && /^0x[0-9a-fA-F]{40}$/.test(value);
-}
-
-function hex32(value) {
-  if (typeof value !== "string") throw new FundraiseVerificationError("bad_bytes32");
-  const raw = value.startsWith("0x") ? value.slice(2) : value;
-  if (!/^[0-9a-fA-F]{64}$/.test(raw)) throw new FundraiseVerificationError("bad_bytes32");
-  return `0x${raw.toLowerCase()}`;
 }

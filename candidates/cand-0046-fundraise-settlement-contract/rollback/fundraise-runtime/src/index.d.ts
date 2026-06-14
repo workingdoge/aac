@@ -122,20 +122,6 @@ export interface AuthorizedMint {
   recipients: MintAuthorization["recipients"];
 }
 
-export interface EvmMintAuthorization {
-  schema: "aac.fundraise-runtime.evm-mint-authorization.v1";
-  round_id: string;
-  round_id_hash: string;
-  token_contract: string;
-  runtime_authorization_digest: string;
-  runtime_mint_recipient_set_commitment: string;
-  issued_unit_total: number;
-  recipients: Array<{
-    account: string;
-    amount: number;
-  }>;
-}
-
 export interface VerifyOptions {
   /**
    * Optional deployment verifier for VNET/1. If omitted, the runtime uses the
@@ -194,7 +180,3 @@ export declare function buildFundraisePacket(input: {
 }): FundraisePacket;
 export declare function verifyFundraisePacket(packet: FundraisePacket, opts?: VerifyOptions): VerificationResult;
 export declare function authorizeMint(packet: FundraisePacket): AuthorizedMint;
-export declare function buildEvmMintAuthorization(
-  authorization: AuthorizedMint,
-  opts?: { roundIdHash?: string; round_id_hash?: string; tokenContract?: string; token_contract?: string },
-): EvmMintAuthorization;

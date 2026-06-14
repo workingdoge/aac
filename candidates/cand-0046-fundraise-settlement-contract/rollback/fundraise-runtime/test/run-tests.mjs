@@ -14,7 +14,6 @@ import {
 
 import {
   authorizeMint,
-  buildEvmMintAuthorization,
   buildFundraisePacket,
   buildBccAgreements,
   buildBridgeSettlement,
@@ -201,25 +200,5 @@ assert.equal(authorized.issued_unit_total, 150);
 assert.equal(typeof authorized.authorization_digest, "string");
 assert.equal(authorized.authorization_digest.length, 64);
 assert.equal(authorized.recipients.length, 2);
-
-const evmToken = "0xAac0000000000000000000000000000000000039";
-assert.throws(() => buildEvmMintAuthorization(authorized), /bad_token_contract/);
-const evmReadyAuthorized = structuredClone(authorized);
-evmReadyAuthorized.recipients[0].recipient = "0x00000000000000000000000000000000000A11CE";
-evmReadyAuthorized.recipients[1].recipient = "0x0000000000000000000000000000000000000B0B";
-const evmAuth = buildEvmMintAuthorization(evmReadyAuthorized, { tokenContract: evmToken });
-assert.equal(evmAuth.schema, "aac.fundraise-runtime.evm-mint-authorization.v1");
-assert.equal(evmAuth.runtime_authorization_digest, `0x${authorized.authorization_digest}`);
-assert.equal(evmAuth.runtime_mint_recipient_set_commitment, `0x${authorized.mint_recipient_set_commitment}`);
-assert.equal(evmAuth.token_contract, evmToken);
-assert.equal(evmAuth.issued_unit_total, authorized.issued_unit_total);
-assert.deepEqual(evmAuth.recipients, [
-  { account: "0x00000000000000000000000000000000000A11CE", amount: 100 },
-  { account: "0x0000000000000000000000000000000000000B0B", amount: 50 },
-]);
-
-const badRecipientAuth = structuredClone(authorized);
-badRecipientAuth.recipients[0].recipient = "not-an-address";
-assert.throws(() => buildEvmMintAuthorization(badRecipientAuth, { tokenContract: evmToken }), /bad_mint_recipient/);
 
 console.log("fundraise-runtime tests: pass");
