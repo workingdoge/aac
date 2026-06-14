@@ -95,14 +95,14 @@ check_prove() {
 
 # ---- (3) cascade is scoped: kernel seam untouched, app identities changed -----
 check_cascade() {
-  local live="$ROOT/circuits/event-complete/Prover.toml" new="$CC/event-complete/Prover.toml" bad=0
+  local old="$CAND_DIR/rollback/circuits/event-complete/Prover.toml" new="$CC/event-complete/Prover.toml" bad=0
   val() { grep -E "^$1" "$2" | grep -oE '0x[0-9a-f]+'; }
   # kernel commitment (TAG_JOURNAL=3) + event commitment (TAG_EVENT=120, unmoved) byte-identical.
-  [[ "$(val journal_commitment_pub "$live")" == "$(val journal_commitment_pub "$new")" ]] || { echo "journal_commitment changed -- kernel seam NOT untouched"; bad=1; }
-  [[ "$(val event_commitment_pub "$live")" == "$(val event_commitment_pub "$new")" ]] || { echo "event_commitment changed -- TAG_EVENT=120 should be unmoved"; bad=1; }
+  [[ "$(val journal_commitment_pub "$old")" == "$(val journal_commitment_pub "$new")" ]] || { echo "journal_commitment changed -- kernel seam NOT untouched"; bad=1; }
+  [[ "$(val event_commitment_pub "$old")" == "$(val event_commitment_pub "$new")" ]] || { echo "event_commitment changed -- TAG_EVENT=120 should be unmoved"; bad=1; }
   # app identities (TAG_PARTY 124, TAG_NULL 125) DID change.
-  [[ "$(val participant_set_pub "$live")" != "$(val participant_set_pub "$new")" ]] || { echo "participant_set unchanged -- tag reassignment had no effect"; bad=1; }
-  [[ "$(val event_nullifier_pub "$live")" != "$(val event_nullifier_pub "$new")" ]] || { echo "event_nullifier unchanged -- tag reassignment had no effect"; bad=1; }
+  [[ "$(val participant_set_pub "$old")" != "$(val participant_set_pub "$new")" ]] || { echo "participant_set unchanged -- tag reassignment had no effect"; bad=1; }
+  [[ "$(val event_nullifier_pub "$old")" != "$(val event_nullifier_pub "$new")" ]] || { echo "event_nullifier unchanged -- tag reassignment had no effect"; bad=1; }
   [[ "$bad" -eq 0 ]] && echo "cascade scoped: journal_commitment + event_commitment byte-identical (kernel/120 untouched); participant_set + event_nullifier changed (tags 124/125)"
 }
 

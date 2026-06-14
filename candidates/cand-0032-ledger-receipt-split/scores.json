@@ -1,7 +1,7 @@
 {
   "schema": "boat.eval-self.v0",
   "candidate": "cand-0032-ledger-receipt-split",
-  "evaluated_at": "2026-06-14T01:28:22Z",
+  "evaluated_at": "2026-06-14T01:33:40Z",
   "task": "slim circuits/ledger to the kernel commitment seam (journal_commitment + TAG_JOURNAL=3); move the app-side receipt identities (participant_set, event_nullifier) into a new circuits/receipt lib with tags reassigned off the 122/123 collision with R1 receipt-reference block to 124/125 (3/PROOF Annex A); append R1 rows 124/125 + reconcile 120; rewire event-complete (journal_commitment from ledger, identities from receipt) and regenerate its witness; transition/nullify untouched. nargo test --workspace green (8 crates), all witnesses solve, the cascade is scoped to the app identities (kernel commitment byte-identical), and a mutant proves the slim-probe non-vacuous.",
   "checks": {
     "logic": "pass",
@@ -12,9 +12,9 @@
   "verdict": "pass"
   ,"provenance": {
     "harness": "eval-self.sh",
-    "harness_sha256": "02bca3604d7926a88a78c14a1e48aa95fdd069546f3ecec87a9adbcc89bf7e28",
-    "traces_sha256": "4ef7a33c81a75b08db04625e2b9028e9e5fa225dfb4194ec0c225e4d1d23389a",
-    "body_sha256": "51acf17a8643fad479dc0a7e62b1497747ad1a0b060349608440a72d4fca6df9",
-    "attestation": "4e7fe6bf6da18e3afa4533274b0af93546e4b09695ce60a24921967ecc159c90"
+    "harness_sha256": "21f17b945c97acb944a183461fe7dcae14ddf6a468bf7524c4e7f1b9b9f8267b",
+    "traces_sha256": "27606b53ca7ef238d4cda3bcba9fe4b024681dd675e5412a5525b86a9b5d931d",
+    "body_sha256": "7e2f0267ec70ba2b7c4e9d2de79f1f63581804f3b46d9576709789d4dd21b3d1",
+    "attestation": "698ec43e238ac39d56cc61d5b5999eab7312558b318ea8d62ab1d59e93ad7452"
   }
 }
