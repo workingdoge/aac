@@ -1,0 +1,1 @@
+signature adapter surface, fail-closed policy, and Noir composition boundary are present

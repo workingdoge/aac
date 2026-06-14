@@ -98,14 +98,6 @@ export interface FundraisePacket {
   public_inputs: Record<string, unknown>;
 }
 
-export interface BccSignatureVerifierInput {
-  certificate: any;
-  record: any;
-  signature: any;
-  typed_data: any;
-  transcript_hash: string;
-}
-
 export interface AuthorizedMint {
   schema: "aac.fundraise-runtime.authorized-mint.v1";
   round_id: string;
@@ -120,10 +112,6 @@ export interface VerifyOptions {
   verifyVnetLink?: (vnetLink: any) => { accepted: boolean; reason: string };
   seenBccFinalityTags?: Set<string>;
   seen_bcc_finality_tags?: string[];
-  verifyBccSignature?: (input: BccSignatureVerifierInput) => boolean | { accepted: boolean; reason?: string };
-  verify_bcc_signature?: (input: BccSignatureVerifierInput) => boolean | { accepted: boolean; reason?: string };
-  bccSignatureDomain?: Record<string, unknown>;
-  bcc_signature_domain?: Record<string, unknown>;
 }
 
 export declare class FundraiseVerificationError extends Error {

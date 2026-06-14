@@ -1,0 +1,1 @@
+fundraise runtime fails closed without BCC signature adapter and rejects bad signer metadata

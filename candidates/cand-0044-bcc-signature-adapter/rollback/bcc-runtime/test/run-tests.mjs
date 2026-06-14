@@ -4,25 +4,19 @@ import { resolve } from "node:path";
 
 import {
   authorizeFinality,
-  bccSignatureTypedData,
   buildBilateralCertificate,
   buildBilateralPacket,
   demoCertificate,
   demoPacket,
   demoVectors,
-  fixtureVerifyTypedDataSignature,
   verifyBilateralCertificate,
   verifyBilateralPacket,
 } from "../src/index.mjs";
 
 function verifyVector(vector) {
   const ctx = vector.verifier_context ?? {};
-  const verifySignature = ctx.signature_adapter === "fixture-eip712"
-    ? fixtureVerifyTypedDataSignature
-    : undefined;
   const result = verifyBilateralCertificate(vector.certificate, {
     seen_finality_tags: ctx.seen_finality_tags ?? [],
-    verifySignature,
   });
   assert.equal(result.accepted, vector.expect.accepted, `${vector.id} accepted`);
   assert.equal(result.reason, vector.expect.reason, `${vector.id} reason`);
@@ -52,15 +46,6 @@ assert.equal("record_blinding" in good.records[0], false);
 const goodPacket = demoPacket();
 assert.equal(verifyBilateralPacket(goodPacket).accepted, true);
 assert.equal(goodPacket.private_witness.records[0].debit[0], 3);
-
-const typed = demoVectors().vectors.find((v) => v.id === "bcc-eip712-adapter-accept").certificate;
-const typedData = bccSignatureTypedData(typed, typed.signatures[0]);
-assert.equal(typedData.schema, "aac.bcc.signature-typed-data.v1");
-assert.equal(typedData.kind, "eip712-compatible");
-assert.equal(typedData.message.transcriptHash, `0x${typed.transcript_hash}`);
-assert.equal(typedData.message.partyId, typed.signatures[0].party_id);
-assert.equal(verifyBilateralCertificate(typed).reason, "signature_verifier_missing");
-assert.equal(verifyBilateralCertificate(typed, { verifySignature: fixtureVerifyTypedDataSignature }).accepted, true);
 
 const rebuiltPacket = buildBilateralPacket({
   event: good.event,

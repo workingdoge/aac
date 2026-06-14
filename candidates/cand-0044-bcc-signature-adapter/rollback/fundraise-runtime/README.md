@@ -31,7 +31,3 @@ The expected integration path is:
 The runtime verifies BCC as an agreement certificate. It still does not prove
 private-state membership, nullifier tree updates, bridge custody, or policy
 predicates; those remain settlement-layer obligations.
-
-For non-mock BCC signatures, pass `verifyBccSignature` to
-`verifyFundraisePacket`. That callback receives the BCC typed-data payload from
-`bcc-runtime`; wallet/EIP-712/passkey verification stays outside this package.

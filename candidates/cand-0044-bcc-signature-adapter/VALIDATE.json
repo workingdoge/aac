@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0044-bcc-signature-adapter",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "7a8f69ea7417992799aaa208a120176daefb29bc650a2459e38e70525618932c",
+    "META": "dde634a4e2ac9c14596763d4f3068f0b6f14a5f10121161f3c23fc603fe47999"
+  }
+}

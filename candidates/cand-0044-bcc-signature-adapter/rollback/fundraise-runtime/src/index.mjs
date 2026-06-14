@@ -382,11 +382,7 @@ function checkPacket(packet, opts) {
     if (!bcc) fail("bcc_missing");
     const cert = bcc.certificate;
     if (bccFinalityTags.has(cert.finality.finality_tag)) fail("bcc_finality_replay");
-    const bccResult = verifyBilateralCertificate(cert, {
-      seenFinalityTags: bccFinalityTags,
-      verifySignature: opts.verifyBccSignature ?? opts.verify_bcc_signature,
-      signatureDomain: opts.bccSignatureDomain ?? opts.bcc_signature_domain,
-    });
+    const bccResult = verifyBilateralCertificate(cert, { seenFinalityTags: bccFinalityTags });
     if (!bccResult.accepted) fail(`bcc_${bccResult.reason}`);
     bccFinalityTags.add(cert.finality.finality_tag);
     checkBccContext(policy, sub, cert);

@@ -3,11 +3,6 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 import {
-  fixtureSignTypedData,
-  fixtureVerifyTypedDataSignature,
-} from "../../bcc-runtime/src/index.mjs";
-
-import {
   authorizeMint,
   buildFundraisePacket,
   buildBccAgreements,
@@ -99,27 +94,6 @@ assert.deepEqual(verifyFundraisePacket(bccRoundBad), { accepted: false, reason: 
 const bridgeAssetBad = structuredClone(rebuilt);
 bridgeAssetBad.bridge_settlement.asset_type_id = "EURC:arc-testnet:atomic";
 assert.deepEqual(verifyFundraisePacket(bridgeAssetBad), { accepted: false, reason: "bridge_asset_mismatch" });
-
-const eip712Bcc = structuredClone(rebuilt);
-for (const agreement of eip712Bcc.bcc_agreements) {
-  const cert = agreement.certificate;
-  cert.signatures = cert.signatures.map((sig) =>
-    fixtureSignTypedData({
-      certificate: cert,
-      party_id: sig.party_id,
-      public_key: sig.public_key,
-    }),
-  );
-}
-assert.deepEqual(verifyFundraisePacket(eip712Bcc), { accepted: false, reason: "bcc_signature_verifier_missing" });
-assert.equal(verifyFundraisePacket(eip712Bcc, { verifyBccSignature: fixtureVerifyTypedDataSignature }).accepted, true);
-
-const eip712BccBadSigner = structuredClone(eip712Bcc);
-eip712BccBadSigner.bcc_agreements[0].certificate.signatures[0].public_key = "wrong-signer";
-assert.deepEqual(
-  verifyFundraisePacket(eip712BccBadSigner, { verifyBccSignature: fixtureVerifyTypedDataSignature }),
-  { accepted: false, reason: "bcc_signature_mismatch" },
-);
 
 const settlementBad = structuredClone(rebuilt);
 settlementBad.settlement_report.accepted.pop();

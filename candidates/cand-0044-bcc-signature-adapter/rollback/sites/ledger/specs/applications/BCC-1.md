@@ -49,29 +49,6 @@ Consensus finalizes the state.
 Contracts bridge assets in and out.
 ```
 
-## 1.1 Noir and proof-stack boundary
-
-BCC/1 signature verification is an application/settlement verifier obligation
-unless a deployment explicitly chooses an in-circuit signature profile. The
-kernel Noir targets do not need to verify wallet signatures to compose with
-BCC/1.
-
-Noir, ProveKit, or another settlement proof composes with BCC/1 by binding the
-certificate's public artifacts:
-
-```text
-transcript_hash
-finality/nullifier refs
-transition_ref values
-journal_commitment values
-BCC set commitment
-context commitment
-```
-
-A verifier MAY pass "the BCC signatures were accepted under policy P" as trusted
-context to a proof, or MAY verify signatures inside a separate proof target. It
-MUST NOT silently treat an unchecked BCC transcript as a signed agreement.
-
 ## 2. Public certificate and private witness
 
 A BCC/1 public certificate contains commitments and references, not the private
@@ -162,40 +139,6 @@ are included in the signed transcript. The verifier MUST NOT treat a private
 ECDH-derived tag as public finality unless the deployment opens or proves the
 derivation.
 
-## 3.1 Signature adapter profile
-
-A BCC/1 runtime MAY support multiple signature schemes. The first executable
-runtime keeps `mock-signature/1` only as a fixture adapter. Any non-mock scheme
-MUST be verified by a deployment-supplied signature verifier.
-
-For wallet-style signatures, the canonical payload is the BCC typed-data
-message:
-
-```text
-BccSignatureTypedData := {
-  schema:       "aac.bcc.signature-typed-data.v1"
-  kind:         "eip712-compatible"
-  domain:       { name, version, chainId, verifyingContract, salt }
-  primaryType:  "BccCertificateSignature"
-  message: {
-    certificateSchema
-    transcriptHash
-    partyId
-    publicKey
-    signatureScheme
-    finalityTag
-    nullifier
-    logRef
-  }
-}
-```
-
-The typed-data message signs the `transcriptHash`, not a re-expanded copy of
-the private commercial record. The transcript hash already binds the event,
-typed commitments, authenticated ECDH public keys, finality refs, and state
-refs. A conforming verifier MUST reject any non-mock signature whose scheme has
-no configured verifier adapter.
-
 ## 4. Statement
 
 Given a canonical BCC/1 certificate, a conforming public verifier checks:
@@ -213,9 +156,7 @@ Given a canonical BCC/1 certificate, a conforming public verifier checks:
    zero value vector: `C_A + C_B = R * H`. Merely producing a group point is not
    enough.
 5. **Signed agreement.** Every required party signature verifies over the same
-   `transcript_hash`. Non-mock schemes verify through the deployment's
-   configured signature adapter and MUST fail closed when no adapter is
-   available.
+   `transcript_hash`.
 6. **Authenticated ECDH boundary.** If ECDH material is present, every
    ephemeral public key is bound into the signed transcript and belongs to a
    certificate party.
@@ -315,8 +256,6 @@ A conforming BCC/1 verifier MUST reject:
 - a record commitment that is malformed for the declared profile;
 - a cancellation opening that does not prove `C_A + C_B = R * H`;
 - a signature over a different transcript;
-- a non-mock signature whose verifier adapter is missing or rejects the typed
-  data payload;
 - authenticated ECDH material whose ephemeral public keys are not in the signed
   transcript or do not belong to the certificate parties;
 - a replayed finality tag or nullifier;
@@ -348,7 +287,7 @@ wallet, curve, or proving dependencies.
 
 Those mock seams are not production cryptography. Production integration should
 replace them with typed Pedersen commitments, aggregate zero-opening
-verification, wallet/EIP-712/passkey signatures over the typed-data payload,
-real authenticated ECDH handling, and separate settlement proofs or contracts
-for registry admission and asset bridging. BCC/1 does not add a base-registry
+verification, wallet/EIP-712/passkey signatures over the transcript, real
+authenticated ECDH handling, and separate settlement proofs or contracts for
+registry admission and asset bridging. BCC/1 does not add a base-registry
 condition.

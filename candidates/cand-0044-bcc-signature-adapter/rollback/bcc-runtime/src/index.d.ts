@@ -5,8 +5,6 @@ export declare const VECTOR_SCHEMA = "aac.bcc-demo.conformance.v1";
 export declare const MOCK_RECORD_COMMITMENT_SCHEME = "mock-record-commitment/1";
 export declare const MOCK_CANCELLATION_SCHEME = "mock-cancellation-opening/1";
 export declare const MOCK_SIGNATURE_SCHEME = "mock-signature/1";
-export declare const EIP712_SIGNATURE_SCHEME = "eip712-adapter/1";
-export declare const SIGNATURE_TYPED_DATA_SCHEMA = "aac.bcc.signature-typed-data.v1";
 export declare const MOCK_AUTHENTICATED_ECDH_SCHEME = "mock-authenticated-ecdh/1";
 export declare const MOCK_COMMITMENT_SCHEME = "mock-record-commitment/1";
 export declare const MOCK_DH_SCHEME = "mock-authenticated-ecdh/1";
@@ -85,41 +83,6 @@ export interface BccPacket {
   private_witness: BccPrivateWitness;
 }
 
-export interface BccSignatureTypedData {
-  schema: typeof SIGNATURE_TYPED_DATA_SCHEMA;
-  kind: "eip712-compatible";
-  domain: {
-    name: string;
-    version: string;
-    chainId: string | number;
-    verifyingContract: string;
-    salt: string;
-  };
-  primaryType: "BccCertificateSignature";
-  types: Record<string, Array<{ name: string; type: string }>>;
-  message: {
-    certificateSchema: string;
-    transcriptHash: string;
-    partyId: string;
-    publicKey: string;
-    signatureScheme: string;
-    finalityTag: string;
-    nullifier: string;
-    logRef: string;
-  };
-}
-
-export interface SignatureVerifierInput {
-  certificate: BccCertificate;
-  record: BccPublicRecord;
-  signature: BccCertificate["signatures"][number];
-  typed_data: BccSignatureTypedData;
-  transcript_hash: string;
-}
-
-export type SignatureVerifier =
-  (input: SignatureVerifierInput) => boolean | { accepted: boolean; reason?: string };
-
 export type VerificationResult =
   | { accepted: true; reason: "accepted"; authorization: Record<string, unknown> }
   | { accepted: false; reason: string };
@@ -178,18 +141,6 @@ export declare function mockSignTranscript(input: {
   public_key: string;
   transcript_hash: string;
 }): { party_id: string; public_key: string; scheme: string; signature: string };
-export declare function bccSignatureTypedData(
-  cert: BccCertificate,
-  signature: BccCertificate["signatures"][number],
-  domain?: Record<string, unknown>,
-): BccSignatureTypedData;
-export declare function fixtureSignTypedData(input?: {
-  certificate: BccCertificate;
-  party_id: string;
-  public_key: string;
-  domain?: Record<string, unknown>;
-}): { party_id: string; public_key: string; scheme: string; signature: string };
-export declare function fixtureVerifyTypedDataSignature(input: SignatureVerifierInput): boolean;
 export declare function buildFinality(input?: {
   transcript_hash?: string;
   log_ref?: string;
@@ -214,18 +165,10 @@ export declare function buildBilateralCertificate(input: Parameters<typeof build
 export declare function verifyBilateralCertificate(cert: BccCertificate, opts?: {
   seenFinalityTags?: Set<string>;
   seen_finality_tags?: string[];
-  verifySignature?: SignatureVerifier;
-  verify_signature?: SignatureVerifier;
-  signatureDomain?: Record<string, unknown>;
-  signature_domain?: Record<string, unknown>;
 }): VerificationResult;
 export declare function verifyBilateralPacket(packet: BccPacket, opts?: {
   seenFinalityTags?: Set<string>;
   seen_finality_tags?: string[];
-  verifySignature?: SignatureVerifier;
-  verify_signature?: SignatureVerifier;
-  signatureDomain?: Record<string, unknown>;
-  signature_domain?: Record<string, unknown>;
 }): VerificationResult;
 export declare function authorizeFinality(cert: BccCertificate): Record<string, unknown>;
 export declare function amountTotals(records: Array<Pick<BccPrivateRecord, "debit" | "credit">>): [number[], number[]];

@@ -7,8 +7,6 @@ export const VECTOR_SCHEMA = "aac.bcc-demo.conformance.v1";
 export const MOCK_RECORD_COMMITMENT_SCHEME = "mock-record-commitment/1";
 export const MOCK_CANCELLATION_SCHEME = "mock-cancellation-opening/1";
 export const MOCK_SIGNATURE_SCHEME = "mock-signature/1";
-export const EIP712_SIGNATURE_SCHEME = "eip712-adapter/1";
-export const SIGNATURE_TYPED_DATA_SCHEMA = "aac.bcc.signature-typed-data.v1";
 export const MOCK_AUTHENTICATED_ECDH_SCHEME = "mock-authenticated-ecdh/1";
 
 // Compatibility aliases for callers of the cand-0041 runtime.
@@ -216,62 +214,6 @@ export function mockSignTranscript({ party_id, public_key, transcript_hash }) {
   };
 }
 
-export function bccSignatureTypedData(cert, signature, domain = {}) {
-  return {
-    schema: SIGNATURE_TYPED_DATA_SCHEMA,
-    kind: "eip712-compatible",
-    domain: {
-      name: domain.name ?? "AAC Bilateral Cancellation Certificate",
-      version: domain.version ?? "1",
-      chainId: domain.chainId ?? domain.chain_id ?? "",
-      verifyingContract: domain.verifyingContract ?? domain.verifying_contract ?? "",
-      salt: domain.salt ?? "",
-    },
-    primaryType: "BccCertificateSignature",
-    types: {
-      BccCertificateSignature: [
-        { name: "certificateSchema", type: "string" },
-        { name: "transcriptHash", type: "bytes32" },
-        { name: "partyId", type: "string" },
-        { name: "publicKey", type: "string" },
-        { name: "signatureScheme", type: "string" },
-        { name: "finalityTag", type: "bytes32" },
-        { name: "nullifier", type: "bytes32" },
-        { name: "logRef", type: "string" },
-      ],
-    },
-    message: {
-      certificateSchema: cert.schema,
-      transcriptHash: `0x${cert.transcript_hash}`,
-      partyId: signature.party_id,
-      publicKey: signature.public_key,
-      signatureScheme: signature.scheme,
-      finalityTag: `0x${cert.finality.finality_tag}`,
-      nullifier: `0x${cert.finality.nullifier}`,
-      logRef: cert.finality.log_ref,
-    },
-  };
-}
-
-export function fixtureSignTypedData({ certificate, party_id, public_key, domain } = {}) {
-  const signature = {
-    party_id,
-    public_key,
-    scheme: EIP712_SIGNATURE_SCHEME,
-    signature: "",
-  };
-  const typedData = bccSignatureTypedData(certificate, signature, domain);
-  return {
-    ...signature,
-    signature: digestHex("aac/bcc/fixture-eip712-signature/1", typedData.message, typedData.domain),
-  };
-}
-
-export function fixtureVerifyTypedDataSignature({ signature, typed_data }) {
-  const want = digestHex("aac/bcc/fixture-eip712-signature/1", typed_data.message, typed_data.domain);
-  return signature.signature === want;
-}
-
 export function buildFinality({ transcript_hash, log_ref = "demo-log", nullifier } = {}) {
   const n = nullifier ?? digestHex("aac/bcc/nullifier/1", transcript_hash);
   return {
@@ -385,7 +327,12 @@ function checkCertificate(cert, opts) {
   for (const record of cert.records) {
     const sig = sigs.get(record.party_id);
     if (!sig) fail("signature_missing");
-    checkSignature(cert, record, sig, opts);
+    const want = mockSignTranscript({
+      party_id: record.party_id,
+      public_key: sig.public_key,
+      transcript_hash: cert.transcript_hash,
+    });
+    if (sig.signature !== want.signature) fail("signature_mismatch");
   }
 
   if (!cert.finality?.finality_tag || !cert.finality?.nullifier) fail("finality_missing");
@@ -397,35 +344,6 @@ function checkCertificate(cert, opts) {
   if (cert.finality.finality_tag !== wantFinality.finality_tag) fail("finality_tag_mismatch");
   const seen = opts.seenFinalityTags ?? new Set(opts.seen_finality_tags ?? []);
   if (seen.has(cert.finality.finality_tag)) fail("finality_replay");
-}
-
-function checkSignature(cert, record, sig, opts) {
-  if (sig.scheme === MOCK_SIGNATURE_SCHEME) {
-    const want = mockSignTranscript({
-      party_id: record.party_id,
-      public_key: sig.public_key,
-      transcript_hash: cert.transcript_hash,
-    });
-    if (sig.signature !== want.signature) fail("signature_mismatch");
-    return;
-  }
-
-  const verifySignature = opts.verifySignature ?? opts.verify_signature;
-  if (typeof verifySignature !== "function") fail("signature_verifier_missing");
-
-  const typed_data = bccSignatureTypedData(cert, sig, opts.signatureDomain ?? opts.signature_domain ?? {});
-  const result = verifySignature({
-    certificate: cert,
-    record,
-    signature: sig,
-    typed_data,
-    transcript_hash: cert.transcript_hash,
-  });
-  if (result === true || result?.accepted === true) return;
-  if (result && typeof result === "object" && typeof result.reason === "string") {
-    fail(result.reason.startsWith("signature_") ? result.reason : `signature_${result.reason}`);
-  }
-  fail("signature_mismatch");
 }
 
 function checkCancellationOpening(cert) {
@@ -538,17 +456,6 @@ export function demoVectors() {
   const good = goodPacket.certificate;
   const sigBad = clone(good);
   sigBad.signatures[0].signature = "bad-signature";
-  const typedDataGood = clone(good);
-  typedDataGood.signatures = typedDataGood.signatures.map((sig) =>
-    fixtureSignTypedData({
-      certificate: typedDataGood,
-      party_id: sig.party_id,
-      public_key: sig.public_key,
-    }),
-  );
-  const typedDataNoVerifier = clone(typedDataGood);
-  const typedDataBadSigner = clone(typedDataGood);
-  typedDataBadSigner.signatures[0].public_key = "wrong-signer";
 
   const falseNetPacket = buildBilateralPacket({
     event: good.event,
@@ -600,27 +507,6 @@ export function demoVectors() {
         description: "one party signature no longer matches the transcript hash",
         certificate: sigBad,
         verifier_context: { seen_finality_tags: [] },
-        expect: { accepted: false, reason: "signature_mismatch" },
-      },
-      {
-        id: "bcc-eip712-adapter-accept",
-        description: "non-mock typed-data signatures verify through the supplied signature adapter",
-        certificate: typedDataGood,
-        verifier_context: { signature_adapter: "fixture-eip712" },
-        expect: { accepted: true, reason: "accepted" },
-      },
-      {
-        id: "bcc-eip712-missing-verifier-reject",
-        description: "non-mock typed-data signatures require a verifier adapter",
-        certificate: typedDataNoVerifier,
-        verifier_context: { signature_adapter: "none" },
-        expect: { accepted: false, reason: "signature_verifier_missing" },
-      },
-      {
-        id: "bcc-eip712-bad-signer-reject",
-        description: "the supplied signature adapter rejects a signature whose signer metadata was changed",
-        certificate: typedDataBadSigner,
-        verifier_context: { signature_adapter: "fixture-eip712" },
         expect: { accepted: false, reason: "signature_mismatch" },
       },
       {

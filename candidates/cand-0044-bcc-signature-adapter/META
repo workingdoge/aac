@@ -1,0 +1,5 @@
+candidate_id: cand-0044-bcc-signature-adapter
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T06:05:42Z
+intent: Add a BCC signature adapter seam with canonical typed-data payloads and make Noir composition explicit through transcript/context commitments rather than in-kernel wallet verification.
+status: landed
