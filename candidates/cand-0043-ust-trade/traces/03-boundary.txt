@@ -1,0 +1,1 @@
+cand-0033 boundary law still passes with ust-trade + event-ust present (app-side; kernel untouched)

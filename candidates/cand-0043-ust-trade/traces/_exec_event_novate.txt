@@ -1,0 +1,2 @@
+[event_novate] Circuit witness successfully solved
+[event_novate] Witness saved to target/event_novate.gz

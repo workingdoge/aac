@@ -1,0 +1,1 @@
+nargo test --workspace green (ust_trade 1/1 + event_ust 5/5 incl. the capture->novate composition); event_ust witness solves; existing event_novate/event_complete/transition/nullify still solve (value-preserving)

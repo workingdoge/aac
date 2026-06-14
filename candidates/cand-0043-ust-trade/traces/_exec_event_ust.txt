@@ -1,0 +1,2 @@
+[event_ust] Circuit witness successfully solved
+[event_ust] Witness saved to target/event_ust.gz

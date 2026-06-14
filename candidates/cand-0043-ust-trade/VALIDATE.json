@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0043-ust-trade",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "844f3d74c59c62f10b7f79b6b0bc9b54999b5a4ac3a6685495fc0b0abe7bf1f9",
+    "LANDING": "5326bb57b17526cd6ad83e9f6900d1daca07cd45b19f4561d2631bf062bccb7d",
+    "META": "11990c01f843d01251bcda4762515614bf5b70ac7597eb0897ec12f34c34c069"
+  }
+}
