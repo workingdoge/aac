@@ -1,9 +1,9 @@
 [package]
-name = "rulebook"
-type = "lib"
+name = "transition"
+type = "bin"
 authors = ["American Accounting Company"]
 
 [dependencies]
 pacioli = { path = "../pacioli" }
+ledger = { path = "../ledger" }
 hash = { path = "../hash" }
-event_harness = { path = "../event-harness" }

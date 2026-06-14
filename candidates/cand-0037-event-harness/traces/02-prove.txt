@@ -1,0 +1,1 @@
+nargo test --workspace green (9 crates incl. event_harness 4/4); event_complete witness solves on the UNCHANGED Prover.toml (value-preserving); transition/nullify solve

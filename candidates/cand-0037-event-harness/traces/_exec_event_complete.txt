@@ -1,0 +1,2 @@
+[event_complete] Circuit witness successfully solved
+[event_complete] Witness saved to target/event_complete.gz

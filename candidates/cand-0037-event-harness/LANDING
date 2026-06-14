@@ -1,0 +1,7 @@
+cargo/circuits/event-harness/Nargo.toml circuits/event-harness/Nargo.toml
+cargo/circuits/event-harness/src/lib.nr circuits/event-harness/src/lib.nr
+cargo/circuits/rulebook/Nargo.toml circuits/rulebook/Nargo.toml
+cargo/circuits/rulebook/src/lib.nr circuits/rulebook/src/lib.nr
+cargo/circuits/event-complete/Nargo.toml circuits/event-complete/Nargo.toml
+cargo/circuits/event-complete/src/main.nr circuits/event-complete/src/main.nr
+cargo/circuits/Nargo.toml circuits/Nargo.toml

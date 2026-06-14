@@ -8,7 +8,6 @@
 //! P^n zero-account for ANY q -- balance is a theorem of the schema.
 
 use pacioli::journal_balanced;
-use event_harness::CompiledJournal;
 
 global N_BASIS: u32 = 3; // basis [USD_cents, fabric_meters, garment_units]
 global N_ROWS: u32 = 4; // the goods-receipt-invoice schema posts four rows
@@ -31,6 +30,12 @@ pub struct GoodsReceiptInvoice {
     pub fabric_meters: u64,
 }
 
+/// The compiled vector journal: account index + debit/credit vectors per row.
+pub struct CompiledJournal {
+    pub accounts: [u32; N_ROWS],
+    pub debits: [[u64; N_BASIS]; N_ROWS],
+    pub credits: [[u64; N_BASIS]; N_ROWS],
+}
 
 /// The schema's canonical event commitment over the typed quantities.
 pub fn event_commitment(e: GoodsReceiptInvoice) -> Field {
@@ -44,7 +49,7 @@ pub fn event_commitment(e: GoodsReceiptInvoice) -> Field {
 ///   row 1  Supplier * Receivable   Dr  money owed (USD)
 ///   row 2  Supplier * Inventory    Cr  goods out  (fabric)
 ///   row 3  Buyer * Payable         Cr  obligation (USD)
-pub fn compile_goods_receipt_invoice(e: GoodsReceiptInvoice) -> CompiledJournal<N_ROWS, N_BASIS> {
+pub fn compile_goods_receipt_invoice(e: GoodsReceiptInvoice) -> CompiledJournal {
     let accounts = [
         ACC_BUYER_INVENTORY,
         ACC_SUPPLIER_RECEIVABLE,

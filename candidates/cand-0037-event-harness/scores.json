@@ -1,0 +1,19 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0037-event-harness",
+  "evaluated_at": "2026-06-14T03:28:50Z",
+  "task": "factor the reusable EVENT/1 obligation harness out of event-complete into a new app lib circuits/event-harness (generic CompiledJournal<R,B> + EventPublics + discharge<R,B>); rulebook repoints its CompiledJournal there; event-complete keeps the schema-specific half and calls discharge; the public ABI param stays rulebook_id (only the internal harness API uses posting_program_id). App-side only. Witnessed: structural shape + rewiring; nargo test --workspace green (9 crates incl. the harness accept + 3 obligation-reject tests); the UNCHANGED event-complete Prover.toml still solves (value-preserving); and the cand-0033 kernel/app boundary law still passes with the new crate. Goods-receipt-invoice is the one posting program; no second schema.",
+  "checks": {
+    "logic": "pass",
+    "prove": "pass",
+    "boundary": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "b023a3a597aa978cdb2b5da945aaacf2dc2885893eb166c4e67c695c95b7cefe",
+    "traces_sha256": "2b80c9aec835d6fa29a7f6a9c16c6f3186e11f7fca13dcb690db4a79622af215",
+    "body_sha256": "f47fb96fda211c9c0798dc008c1259a5cb2f3422a070fbc3681ca5ab63eb6cbd",
+    "attestation": "61cb55c0ba8f741ddbe84a74470ed08f629387f18a701b7a46b79a636d4369dc"
+  }
+}

@@ -1,0 +1,9 @@
+warning: unused global TAG_JOURNAL
+   ┌─ transition/src/main.nr:29:8
+   │
+29 │ global TAG_JOURNAL: Field = 3;
+   │        ----------- unused global
+   │
+
+[transition] Circuit witness successfully solved
+[transition] Witness saved to target/transition.gz

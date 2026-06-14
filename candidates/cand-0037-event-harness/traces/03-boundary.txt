@@ -1,0 +1,1 @@
+cand-0033 boundary law still passes with event-harness present (kernel crates untouched; harness is app-side)

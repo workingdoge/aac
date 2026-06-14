@@ -6,4 +6,3 @@ authors = ["American Accounting Company"]
 [dependencies]
 pacioli = { path = "../pacioli" }
 hash = { path = "../hash" }
-event_harness = { path = "../event-harness" }

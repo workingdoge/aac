@@ -1,0 +1,5 @@
+decision: admit
+operator: agent:claude
+decided_at: 2026-06-14T03:29:07Z
+brief_sha256: d497af7025b3a7d9c76cd6fb22c392ae1115d487c28364a34ba0196d5c25d2b3
+note: this records the threshold decision; the chartered record is the Tusk receipt

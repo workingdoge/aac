@@ -1,0 +1,1 @@
+harness shape ok (generic CompiledJournal<R,B>/EventPublics/discharge<R,B>, app-side, reject-tests); rulebook+event-complete rewired; public ABI param stays rulebook_id; workspace updated

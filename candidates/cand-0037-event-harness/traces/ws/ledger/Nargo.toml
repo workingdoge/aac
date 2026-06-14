@@ -1,9 +1,7 @@
 [package]
-name = "rulebook"
+name = "ledger"
 type = "lib"
 authors = ["American Accounting Company"]
 
 [dependencies]
-pacioli = { path = "../pacioli" }
 hash = { path = "../hash" }
-event_harness = { path = "../event-harness" }

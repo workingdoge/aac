@@ -1,0 +1,9 @@
+cargo/circuits/event-harness/Nargo.toml	circuits/event-harness/Nargo.toml	no
+cargo/circuits/event-harness/src/lib.nr	circuits/event-harness/src/lib.nr	no
+cargo/circuits/rulebook/Nargo.toml	circuits/rulebook/Nargo.toml	yes
+cargo/circuits/rulebook/src/lib.nr	circuits/rulebook/src/lib.nr	yes
+cargo/circuits/event-complete/Nargo.toml	circuits/event-complete/Nargo.toml	yes
+cargo/circuits/event-complete/src/main.nr	circuits/event-complete/src/main.nr	yes
+cargo/circuits/Nargo.toml	circuits/Nargo.toml	yes
+# landed_at: 2026-06-14T03:29:07Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1 unavailable(not-in-devshell)

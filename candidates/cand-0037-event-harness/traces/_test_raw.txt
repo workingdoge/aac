@@ -1,0 +1,64 @@
+warning: unused global TAG_JOURNAL
+   ┌─ transition/src/main.nr:29:8
+   │
+29 │ global TAG_JOURNAL: Field = 3;
+   │        ----------- unused global
+   │
+
+[event_complete] Running 5 test functions
+[event_complete] Testing print_public_inputs ... [0m[32mok[0m
+[event_complete] Testing accepts_a_complete_receipt ... [0m[32mok[0m
+[event_complete] Testing rejects_self_dealing ... [0m[32mok[0m
+[event_complete] Testing rejects_missing_role ... [0m[32mok[0m
+[event_complete] Testing rejects_replay_under_a_foreign_nullifier ... [0m[32mok[0m
+[event_complete] [0m[32m5 tests passed[0m
+[event_harness] Running 4 test functions
+[event_harness] Testing discharge_rejects_a_wrong_party_binding ... [0m[32mok[0m
+[event_harness] Testing discharge_rejects_a_wrong_nullifier_binding ... [0m[32mok[0m
+[event_harness] Testing discharge_rejects_a_wrong_journal_commitment ... [0m[32mok[0m
+[event_harness] Testing discharge_accepts_a_consistent_receipt ... [0m[32mok[0m
+[event_harness] [0m[32m4 tests passed[0m
+[hash] Running 1 test function
+[hash] Testing deterministic_and_distinguishing ... [0m[32mok[0m
+[hash] [0m[32m1 test passed[0m
+[ledger] Running 1 test function
+[ledger] Testing journal_commitment_is_order_binding ... [0m[32mok[0m
+[ledger] [0m[32m1 test passed[0m
+[nullify] Running 10 test functions
+[nullify] Testing accepts_a_non_member_insertion ... [0m[32mok[0m
+[nullify] Testing accepts_insert_before_first ... [0m[32mok[0m
+[nullify] Testing accepts_insert_after_last ... [0m[32mok[0m
+[nullify] Testing consumes_a_fresh_nullifier ... [0m[32mok[0m
+[nullify] Testing rejects_tampered_last_root ... [0m[32mok[0m
+[nullify] Testing rejects_inserting_the_zero_sentinel ... [0m[32mok[0m
+[nullify] Testing print_public_inputs ... [0m[32mok[0m
+[nullify] Testing rejects_replaying_a_spent_nullifier ... [0m[32mok[0m
+[nullify] Testing rejects_wrong_low_index ... [0m[32mok[0m
+[nullify] Testing rejects_already_spent_nullifier ... [0m[32mok[0m
+[nullify] [0m[32m10 tests passed[0m
+[pacioli] Running 7 test functions
+[pacioli] Testing cross_addition_decides_equality ... [0m[32mok[0m
+[pacioli] Testing journal_balances_when_columns_agree ... [0m[32mok[0m
+[pacioli] Testing balanced_term_is_pacioli_equal_to_zero ... [0m[32mok[0m
+[pacioli] Testing u64_roundtrip_accepts_bounded ... [0m[32mok[0m
+[pacioli] Testing pn_vector_event_is_a_zero_account ... [0m[32mok[0m
+[pacioli] Testing u64_roundtrip_rejects_overflow ... [0m[32mok[0m
+[pacioli] Testing pn_numeraire_collapse_is_rejected ... [0m[32mok[0m
+[pacioli] [0m[32m7 tests passed[0m
+[receipt] Running 1 test function
+[receipt] Testing identities_distinguish ... [0m[32mok[0m
+[receipt] [0m[32m1 test passed[0m
+[rulebook] Running 2 test functions
+[rulebook] Testing phi_is_balanced_for_all_quantities ... [0m[32mok[0m
+[rulebook] Testing phi_reproduces_the_conformance_vector ... [0m[32mok[0m
+[rulebook] [0m[32m2 tests passed[0m
+[transition] Running 8 test functions
+[transition] Testing composition_transition_posts_the_bvr_journal ... [0m[32mok[0m
+[transition] Testing balanced_transition_accepts ... [0m[32mok[0m
+[transition] Testing print_public_inputs ... [0m[32mok[0m
+[transition] Testing unbalanced_journal_rejects ... [0m[32mok[0m
+[transition] Testing double_spend_rejects ... [0m[32mok[0m
+[transition] Testing tampered_next_root_rejects ... [0m[32mok[0m
+[transition] Testing nullifier_root_unchanged_when_no_right_consumed ... [0m[32mok[0m
+[transition] Testing zero_multiplicity_fact_rejects ... [0m[32mok[0m
+[transition] [0m[32m8 tests passed[0m

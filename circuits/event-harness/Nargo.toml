@@ -1,9 +1,9 @@
 [package]
-name = "rulebook"
+name = "event_harness"
 type = "lib"
 authors = ["American Accounting Company"]
 
 [dependencies]
 pacioli = { path = "../pacioli" }
-hash = { path = "../hash" }
-event_harness = { path = "../event-harness" }
+ledger = { path = "../ledger" }
+receipt = { path = "../receipt" }

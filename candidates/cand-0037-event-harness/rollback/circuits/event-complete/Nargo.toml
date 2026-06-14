@@ -3,7 +3,7 @@ name = "event_complete"
 type = "bin"
 authors = ["American Accounting Company"]
 [dependencies]
+pacioli = { path = "../pacioli" }
 rulebook = { path = "../rulebook" }
-receipt = { path = "../receipt" }
 ledger = { path = "../ledger" }
-event_harness = { path = "../event-harness" }
+receipt = { path = "../receipt" }
