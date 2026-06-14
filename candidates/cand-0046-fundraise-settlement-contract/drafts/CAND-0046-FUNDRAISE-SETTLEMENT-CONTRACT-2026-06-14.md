@@ -1,4 +1,4 @@
-# cand-0046-fundraise-settlement-contract (machine-drafted, DRAFT -- pre-threshold)
+# cand-0046-fundraise-settlement-contract (machine-drafted, DRAFT — pre-threshold)
 
 ```text
 CycleReceipt:
