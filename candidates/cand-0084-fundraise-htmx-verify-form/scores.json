@@ -1,21 +1,8 @@
-{
-  "schema": "boat.eval-self.v0",
-  "candidate": "cand-0084-fundraise-htmx-verify-form",
-  "evaluated_at": "2026-06-14T16:08:58Z",
-  "task": "Make fundraise verification a submitted htmx verifier form instead of a reveal.",
-  "checks": {
-    "source": "pass",
-    "runner": "pass",
-    "mutant": "pass",
-    "build": "pass",
-    "scope": "pass"
-  },
-  "verdict": "pass"
   ,"provenance": {
-    "harness": "eval-self.sh",
-    "harness_sha256": "a9397d1058acde024abaf7382d4f8c10ce4df31a2785e7e523678af1ecb6abeb",
-    "traces_sha256": "68d12b17ba046cad88ef672068a97c8ceacac45a29bd20e36a69050246df2cdc",
-    "body_sha256": "99382c734a2913e682eadd3dc07a53b0085c36e4424c89670600c995f43d9b91",
-    "attestation": "48ffc3b81f3532c5e8e45d8809c44d7be84ed571d6227c528cef07153f25bc74"
+    "harness": "evaluate-landed.sh",
+    "harness_sha256": "34f271602979a5f0473f86b5b667a65c6879198ad1fb7f8d3226f7fce5b6c1d1",
+    "traces_sha256": "38af9ba19c176411464215c280eb1e8c5f14b0e6c193a6deb890eeeda160e823",
+    "body_sha256": "08a3abc1aef02d7e917236d9c25d20356532a13d59d13c065979c15d75930fd6",
+    "attestation": "dd5c3fab33cb6c883725edbee4d1a90612ab3ba538dc67a3c87e8dc8ad1e8d77"
   }
 }
