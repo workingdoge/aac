@@ -1,21 +1,19 @@
 {
-  "schema": "boat.eval-self.v0",
+  "evaluated_at": "2026-06-14T23:49:08Z",
+  "task": "post-land conformance",
   "candidate": "cand-0089-fundraise-face-receipts",
-  "evaluated_at": "2026-06-14T23:46:09Z",
-  "task": "Generate FUNDRAISE-CLEARING/1 simplicial face receipts from the runtime packet and expose them through the demo summary.",
-  "checks": {
-    "source": "pass",
-    "landing": "pass",
-    "packages": "pass",
-    "web_build": "pass",
-    "mutant": "pass"
-  },
+  "snapshot": "d39aafd",
+  "checks": [
+    { "name": "manifest", "result": "pass" },
+    { "name": "snapshot", "result": "pass" },
+    { "name": "suite", "result": "pass" }
+  ],
   "verdict": "pass"
   ,"provenance": {
-    "harness": "eval-self.sh",
-    "harness_sha256": "f46b94f29b4a9bb7b917ba5fb5b864947995230cacafcedbef3883a292c1daf7",
-    "traces_sha256": "46f90d0220754cfdc1c2fe09d1278799db3e2b6ddcdad6abd1d1098c908b0b57",
-    "body_sha256": "22cb9c27ff732b2b6c4c50f824091a929156a62662a184a9d59b897fee8b910d",
-    "attestation": "29c16cdcf6653b753b5091f77d5ef7a1700c0703059a8b9e3f2e8efc002a8f74"
+    "harness": "evaluate-landed.sh",
+    "harness_sha256": "34f271602979a5f0473f86b5b667a65c6879198ad1fb7f8d3226f7fce5b6c1d1",
+    "traces_sha256": "29787a4f902b23115463e1a24e812424cbe0fc2baa3d45dda5ff4561b9701c77",
+    "body_sha256": "8335f7f7e248234ee3249eba525d4565cb28b23f8eb387d9b0eb2cf2c5895f26",
+    "attestation": "8c312fc5ae1316cae6b2d488332a2faf0ba3222f9f877e2aab27dc5832e210f0"
   }
 }
