@@ -16,7 +16,6 @@ export class AacFundraiseDemo extends LitElement {
     liveError: { state: true },
     liveElapsedMs: { state: true },
     sourceLabel: { state: true },
-    variableFillUnits: { state: true },
   };
 
   declare summary: FundraiseSummary;
@@ -24,11 +23,9 @@ export class AacFundraiseDemo extends LitElement {
   declare liveError: string;
   declare liveElapsedMs: number | null;
   declare sourceLabel: string;
-  declare variableFillUnits: number;
   private runControl: HTMLAnchorElement | null = null;
   private verifyControl: HTMLAnchorElement | null = null;
   private captureControl: HTMLAnchorElement | null = null;
-  private previewNonce = 0;
   private urlActionApplied = false;
 
   constructor() {
@@ -38,7 +35,6 @@ export class AacFundraiseDemo extends LitElement {
     this.liveError = '';
     this.liveElapsedMs = null;
     this.sourceLabel = 'ready: order not filled';
-    this.variableFillUnits = this.defaultVariableFillUnits(this.summary);
   }
 
   private readySummary(): FundraiseSummary {
@@ -514,58 +510,6 @@ export class AacFundraiseDemo extends LitElement {
       white-space: nowrap;
     }
 
-    .batch-control {
-      display: grid;
-      gap: 8px;
-      padding-top: 2px;
-    }
-
-    .batch-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      color: var(--aac-color-steel, #6b6b64);
-      font-family: var(--aac-mono, "IBM Plex Mono", monospace);
-      font-size: 11px;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .batch-head b {
-      color: var(--aac-color-navy, #21324f);
-      font-weight: 700;
-    }
-
-    .batch-inputs {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 68px;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .batch-inputs input[type="range"] {
-      width: 100%;
-      min-width: 0;
-      accent-color: var(--aac-color-navy, #21324f);
-    }
-
-    .batch-inputs input[type="number"] {
-      width: 100%;
-      box-sizing: border-box;
-      border: 1px solid var(--aac-color-rule2, #c9be9e);
-      background: var(--aac-color-bond, #fff);
-      color: var(--aac-color-ink, #1a1a1a);
-      font-family: var(--aac-mono, "IBM Plex Mono", monospace);
-      font-size: 12px;
-      padding: 6px 7px;
-    }
-
-    .batch-foot {
-      color: var(--aac-color-steel, #6b6b64);
-      font-family: var(--aac-mono, "IBM Plex Mono", monospace);
-      font-size: 10.5px;
-      overflow-wrap: anywhere;
-    }
-
     .flow {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.06fr) minmax(0, 1fr);
@@ -924,11 +868,6 @@ export class AacFundraiseDemo extends LitElement {
     return `${base.replace(/\/+$/, '')}/api/fundraise/run`;
   }
 
-  private apiPreviewEndpoint(): string {
-    const base = this.getAttribute('api-base') || this.defaultApiBase();
-    return `${base.replace(/\/+$/, '')}/api/fundraise/preview`;
-  }
-
   private defaultApiBase(): string {
     const host = window.location.hostname;
     if (window.location.protocol.startsWith('http') && (host === '127.0.0.1' || host === 'localhost' || host === '::1')) {
@@ -940,13 +879,6 @@ export class AacFundraiseDemo extends LitElement {
   private apiRunUrl(): string {
     const url = new URL(this.apiEndpoint());
     url.searchParams.set('settle_local', 'false');
-    url.searchParams.set('variable_fill_units', String(this.variableFillUnits));
-    return url.toString();
-  }
-
-  private apiPreviewUrl(): string {
-    const url = new URL(this.apiPreviewEndpoint());
-    url.searchParams.set('variable_fill_units', String(this.variableFillUnits));
     return url.toString();
   }
 
@@ -1052,7 +984,6 @@ export class AacFundraiseDemo extends LitElement {
         ? 'verify'
         : 'capture';
     url.searchParams.set('fundraise', target);
-    url.searchParams.set('variable_fill_units', String(this.variableFillUnits));
     url.hash = 'fundraise-demo';
     return `${url.pathname}${url.search}${url.hash}`;
   }
@@ -1060,13 +991,7 @@ export class AacFundraiseDemo extends LitElement {
   private applyUrlAction() {
     if (this.urlActionApplied) return;
     this.urlActionApplied = true;
-    const params = new URLSearchParams(window.location.search);
-    const requestedUnits = this.unitsFromSearchParams(params);
-    if (requestedUnits !== null) {
-      this.variableFillUnits = this.clampVariableFillUnits(requestedUnits);
-      void this.refreshBatchPreview();
-    }
-    const action = params.get('fundraise');
+    const action = new URLSearchParams(window.location.search).get('fundraise');
     if (action === 'run') {
       void this.runLiveProof();
     } else if (action === 'verify') {
@@ -1110,7 +1035,6 @@ export class AacFundraiseDemo extends LitElement {
         throw new Error('runner summary schema is stale; restart fundraise demo runner');
       }
       this.summary = payload.summary;
-      this.variableFillUnits = this.defaultVariableFillUnits(this.summary);
       this.liveElapsedMs = payload.elapsed_ms ?? Date.now() - started;
       this.sourceLabel = revealVerifier ? 'verifier accepted' : 'proof generated';
       this.runState = revealVerifier ? 'verified' : 'proof-ready';
@@ -1136,87 +1060,10 @@ export class AacFundraiseDemo extends LitElement {
   private showCapturedReceipt() {
     if (this.isBusy()) return;
     this.summary = fundraiseDemoSummary;
-    this.variableFillUnits = this.defaultVariableFillUnits(this.summary);
     this.liveElapsedMs = null;
     this.liveError = '';
     this.sourceLabel = 'captured fallback';
     this.runState = 'verified';
-  }
-
-  private unitsFromSearchParams(params: URLSearchParams): number | null {
-    const raw = params.get('variable_fill_units') ?? params.get('batch_units');
-    if (raw === null || raw.trim() === '') return null;
-    const value = Number(raw);
-    return Number.isSafeInteger(value) && value >= 0 ? value : null;
-  }
-
-  private defaultVariableFillUnits(summary: FundraiseSummary): number {
-    return this.numberOr(summary.fills?.[1]?.issued_units, 0);
-  }
-
-  private fixedFillUnits(summary = this.summary): number {
-    return this.numberOr(summary.fills?.[0]?.issued_units, 0);
-  }
-
-  private orderCapUnits(summary = this.summary): number {
-    return this.numberOr(summary.order?.max_issued_units, summary.economics.issued_unit_total ?? this.fixedFillUnits(summary));
-  }
-
-  private maxVariableFillUnits(summary = this.summary): number {
-    return Math.max(0, this.orderCapUnits(summary) - this.fixedFillUnits(summary));
-  }
-
-  private selectedTotalUnits(summary = this.summary): number {
-    return this.fixedFillUnits(summary) + this.variableFillUnits;
-  }
-
-  private selectedSettlementAmount(summary = this.summary): number {
-    const price = this.numberOr(summary.order?.price_per_unit, 0);
-    return this.variableFillUnits * price;
-  }
-
-  private numberOr(value: unknown, fallback: number): number {
-    return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
-  }
-
-  private clampVariableFillUnits(value: number): number {
-    const max = this.maxVariableFillUnits();
-    return Math.max(0, Math.min(max, Math.trunc(value)));
-  }
-
-  private handleVariableFillInput = (event: Event) => {
-    const target = event.currentTarget as HTMLInputElement | null;
-    if (!target) return;
-    const next = Number(target.value);
-    if (!Number.isFinite(next)) return;
-    this.variableFillUnits = this.clampVariableFillUnits(next);
-    this.runState = 'idle';
-    this.liveError = '';
-    this.liveElapsedMs = null;
-    this.sourceLabel = `ready: ${this.selectedTotalUnits()} units selected`;
-    void this.refreshBatchPreview();
-  };
-
-  private async refreshBatchPreview() {
-    const nonce = ++this.previewNonce;
-    try {
-      const response = await fetch(this.apiPreviewUrl(), { method: 'GET' });
-      const payload = await response.json().catch(() => null);
-      if (nonce !== this.previewNonce) return;
-      if (!response.ok || payload?.accepted !== true || !payload.summary) {
-        throw new Error(payload?.message || payload?.reason || `HTTP ${response.status}`);
-      }
-      if (!this.isCurrentRunnerSummary(payload.summary)) {
-        throw new Error('runner preview schema is stale; restart fundraise demo runner');
-      }
-      this.summary = payload.summary;
-      this.variableFillUnits = this.defaultVariableFillUnits(this.summary);
-      this.sourceLabel = `ready: ${this.summary.economics.issued_unit_total ?? this.selectedTotalUnits()} units selected`;
-    } catch (error) {
-      if (nonce !== this.previewNonce) return;
-      this.liveError = error instanceof Error ? error.message : 'preview failed';
-      this.sourceLabel = `preview error · ${this.liveError}`;
-    }
   }
 
   private displayStatus(status: string): string {
@@ -1326,7 +1173,6 @@ export class AacFundraiseDemo extends LitElement {
             ${fills.length
               ? fills.map((fill) => this.fillRow(fill))
               : html`<div class="empty">No submitted fills in the runner summary.</div>`}
-            ${this.batchControl()}
           </section>
         </div>
 
@@ -1505,47 +1351,6 @@ export class AacFundraiseDemo extends LitElement {
         <span class="book-cell" data-label="opening">${row.opening}</span>
         <span class="book-cell" data-label="swap delta">${row.delta}</span>
         <span class="book-cell book-close" data-label="closing">${row.closing}</span>
-      </div>
-    `;
-  }
-
-  private batchControl() {
-    const max = this.maxVariableFillUnits();
-    const fixed = this.fixedFillUnits();
-    const cap = this.orderCapUnits();
-    const total = fixed + this.variableFillUnits;
-    const open = Math.max(0, cap - total);
-    const settlementAsset = this.summary.order?.settlement_asset ?? 'USDC';
-    const unitNoun = this.summary.order?.issued_unit_noun ?? 'units';
-    return html`
-      <div class="batch-control" aria-label="Adjust second fill">
-        <div class="batch-head">
-          <span>fixed ${fixed} + variable <b>${this.variableFillUnits}</b></span>
-          <span>${total}/${cap} ${unitNoun}</span>
-        </div>
-        <div class="batch-inputs">
-          <input
-            type="range"
-            min="0"
-            max=${max}
-            step="1"
-            .value=${String(this.variableFillUnits)}
-            @input=${this.handleVariableFillInput}
-            aria-label="Investor B units"
-          />
-          <input
-            type="number"
-            min="0"
-            max=${max}
-            step="1"
-            .value=${String(this.variableFillUnits)}
-            @input=${this.handleVariableFillInput}
-            aria-label="Investor B units"
-          />
-        </div>
-        <div class="batch-foot">
-          investor A fixed · investor B pays ${this.selectedSettlementAmount()} ${settlementAsset} · ${open} ${unitNoun} open
-        </div>
       </div>
     `;
   }

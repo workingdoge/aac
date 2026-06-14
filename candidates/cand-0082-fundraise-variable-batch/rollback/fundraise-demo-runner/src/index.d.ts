@@ -10,7 +10,6 @@ export declare const DEFAULT_PROVEKIT_PROVER_KEY = "aac_vnet_provekit.pkp";
 export declare const DEFAULT_PROVEKIT_VERIFIER_KEY = "aac_vnet_provekit.pkv";
 export declare const FUNDRAISE_DEMO_SUMMARY_SCHEMA = "aac.fundraise-demo-runner.summary.v1";
 export declare const FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA = "aac.fundraise-demo-runner.local-settlement.v1";
-export declare const FUNDRAISE_DEMO_PREVIEW_SCHEMA = "aac.fundraise-demo-runner.preview.v1";
 export declare const DEFAULT_REGISTRY_PACKAGE = "registry";
 export declare const DEFAULT_LOCAL_RPC_URL = "http://127.0.0.1:8545";
 export declare const FUNDRAISE_DEMO_SERVER_SCHEMA = "aac.fundraise-demo-runner.server.v1";
@@ -57,10 +56,6 @@ export interface FundraiseDemoRunnerInput {
   token_name?: string;
   token_symbol?: string;
   foundry_command?: (command: FoundryCommand) => Promise<FoundryCommandResult>;
-  variable_fill_units?: number;
-  variableFillUnits?: number;
-  batch_units?: number;
-  batchUnits?: number;
 }
 
 export interface FundraiseDemoServerInput extends FundraiseDemoRunnerInput {
@@ -123,7 +118,7 @@ export interface FundraiseDemoReceipt {
 export interface FundraiseDemoSummary {
   schema: typeof FUNDRAISE_DEMO_SUMMARY_SCHEMA;
   accepted: boolean;
-  status: "ready-to-run" | "authorized-pending-signature" | "settled-local";
+  status: "authorized-pending-signature" | "settled-local";
   vector_id: string;
   round_id: string | null;
   issuer_name: string | null;
@@ -138,10 +133,6 @@ export interface FundraiseDemoSummary {
     issued_unit: string;
     issued_unit_noun: string;
     price_per_unit: number | null;
-    max_settlement_amount: number | null;
-    max_issued_units: number | null;
-    filled_issued_units: number | null;
-    open_issued_units: number | null;
   };
   fills: Array<{
     party: string;
@@ -266,7 +257,6 @@ export type FundraiseLocalSettlementReceipt = FundraiseDemoReceipt & {
   summary: FundraiseDemoSummary & { status: "settled-local" };
 };
 
-export declare function buildFundraiseDemoBatchPacket(packet: FundraisePacket, input?: FundraiseDemoRunnerInput): FundraisePacket;
 export declare function runFundraiseDemo(input?: FundraiseDemoRunnerInput): Promise<FundraiseDemoReceipt>;
 export declare function runFundraiseDemoServerAction(input?: FundraiseDemoServerInput, request?: {
   path?: string;
@@ -278,15 +268,6 @@ export declare function runFundraiseDemoServerAction(input?: FundraiseDemoServer
   mode: "live-proof" | "live-proof+local-settlement";
   elapsed_ms: number;
   receipt: FundraiseDemoReceipt | FundraiseLocalSettlementReceipt;
-  summary: FundraiseDemoSummary;
-}>;
-export declare function previewFundraiseDemo(input?: FundraiseDemoRunnerInput): Promise<{
-  schema: typeof FUNDRAISE_DEMO_PREVIEW_SCHEMA;
-  accepted: true;
-  reason: "accepted";
-  mode: "preview";
-  elapsed_ms: number;
-  receipt: FundraiseDemoReceipt;
   summary: FundraiseDemoSummary;
 }>;
 export declare function serveFundraiseDemo(input?: FundraiseDemoServerInput): Promise<{

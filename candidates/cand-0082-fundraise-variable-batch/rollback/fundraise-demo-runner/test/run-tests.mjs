@@ -7,13 +7,11 @@ import {
   FUNDRAISE_DEMO_RUNNER_SCHEMA,
   FUNDRAISE_DEMO_SUMMARY_SCHEMA,
   FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA,
-  buildFundraiseDemoBatchPacket,
   buildFundraiseDemoCorsHeaders,
   buildFundraiseDemoSummary,
   fundraiseStaticContentType,
   loadFundraiseDemoPacket,
   prepareProveKitWorkdir,
-  previewFundraiseDemo,
   resolveFundraiseStaticPath,
   runFundraiseDemo,
   runFundraiseDemoLocalSettlement,
@@ -95,21 +93,17 @@ assert.equal(receipt.summary.economics.settlement_amount_total, 1500);
 assert.equal(receipt.summary.economics.issued_unit_total, 150);
 assert.equal(receipt.summary.economics.recipient_count, 2);
 assert.deepEqual(receipt.summary.metrics, [
-  { value: "1500", label: "USDC order cap" },
-  { value: "150", label: "restricted SAFE receipt units in batch" },
-  { value: "0", label: "units open" },
+  { value: "1500", label: "USDC order size" },
+  { value: "150", label: "restricted SAFE receipt units" },
+  { value: "2", label: "fills in batch" },
 ]);
 assert.deepEqual(receipt.summary.order, {
-  headline: "Fill 150 of 150 restricted SAFE receipt units",
+  headline: "Sell 150 restricted SAFE receipt units",
   price_label: "10 USDC / unit",
   settlement_asset: "USDC",
   issued_unit: "restricted SAFE receipt units",
   issued_unit_noun: "units",
   price_per_unit: 10,
-  max_settlement_amount: 1500,
-  max_issued_units: 150,
-  filled_issued_units: 150,
-  open_issued_units: 0,
 });
 assert.deepEqual(receipt.summary.fills.map((item) => ({
   party: item.party,
@@ -169,64 +163,6 @@ assert.equal(receipt.workflow_receipt.accepted, true);
 assert.equal(receipt.settlement_action.method, "settle");
 assert.equal(receipt.settlement_action.args.signature, null);
 assert.equal(receipt.settlement_action.args.auth.issued_unit_total, 150);
-
-const variablePacket = buildFundraiseDemoBatchPacket(packet, { variable_fill_units: 30 });
-assert.deepEqual(
-  variablePacket.subscriptions.map((item) => [item.investor_id, item.settlement_amount, item.issued_units]),
-  [
-    ["investor-a", 1000, 100],
-    ["investor-b", 300, 30],
-  ],
-);
-assert.equal(variablePacket.round_policy.max_issued_units, 150);
-assert.equal(variablePacket.public_inputs.issued_unit_total, 130);
-assert.equal(variablePacket.public_inputs.settlement_amount_total, 1300);
-assert.throws(
-  () => buildFundraiseDemoBatchPacket(packet, { variable_fill_units: 51 }),
-  /variable_fill_cap_exceeded/,
-);
-
-const variablePreview = await previewFundraiseDemo({
-  repo_root: repoRoot,
-  variable_fill_units: 30,
-});
-assert.equal(variablePreview.schema, "aac.fundraise-demo-runner.preview.v1");
-assert.equal(variablePreview.accepted, true);
-assert.equal(variablePreview.summary.accepted, false);
-assert.equal(variablePreview.summary.status, "ready-to-run");
-assert.equal(variablePreview.summary.economics.issued_unit_total, 130);
-assert.deepEqual(variablePreview.summary.metrics, [
-  { value: "1500", label: "USDC order cap" },
-  { value: "130", label: "restricted SAFE receipt units in batch" },
-  { value: "20", label: "units open" },
-]);
-assert.deepEqual(variablePreview.summary.reconciliation.rows, [
-  { line: "USDC collected", opening: "0 USDC", delta: "+1300 USDC", closing: "1300 USDC" },
-  { line: "units issued", opening: "0 units", delta: "+130 units", closing: "130 units" },
-  { line: "units open", opening: "150 units", delta: "-130 units", closing: "20 units" },
-]);
-
-const variableReceipt = await runFundraiseDemo({
-  repo_root: repoRoot,
-  circuit_dir: resolve(fakeWork, "circuit"),
-  provekit_bin: "/nix/store/fake-provekit-cli/bin/provekit-cli",
-  variable_fill_units: 30,
-  run_command: satisfyFakeProveKitCommand,
-});
-assert.equal(variableReceipt.accepted, true);
-assert.deepEqual(
-  variableReceipt.packet_projection.subscriptions.map((item) => [item.investor_id, item.settlement_amount, item.issued_units]),
-  [
-    ["investor-a", 1000, 100],
-    ["investor-b", 300, 30],
-  ],
-);
-assert.equal(variableReceipt.summary.economics.settlement_amount_total, 1300);
-assert.equal(variableReceipt.summary.economics.issued_unit_total, 130);
-assert.equal(variableReceipt.summary.order.max_issued_units, 150);
-assert.equal(variableReceipt.summary.order.open_issued_units, 20);
-assert.equal(variableReceipt.summary.reconciliation.accepted, true);
-assert.equal(variableReceipt.settlement_action.args.auth.issued_unit_total, 130);
 
 const envProveKitCommands = [];
 const previousProveKitBin = process.env.PROVEKIT_BIN;
@@ -364,7 +300,7 @@ const serverPayload = await runFundraiseDemoServerAction({
     return { exit_code: 0, stdout: `${command.step}: ok\n` };
   },
 }, {
-  path: "/api/fundraise/run?settle_local=false&variable_fill_units=40",
+  path: "/api/fundraise/run?settle_local=false",
   body: {
     settle_local: false,
     provekit_bin: "/tmp/must-not-run",
@@ -374,8 +310,6 @@ const serverPayload = await runFundraiseDemoServerAction({
 assert.equal(serverPayload.accepted, true);
 assert.equal(serverPayload.mode, "live-proof");
 assert.equal(serverPayload.summary.status, "authorized-pending-signature");
-assert.equal(serverPayload.summary.economics.issued_unit_total, 140);
-assert.equal(serverPayload.summary.order.open_issued_units, 10);
 assert.equal(serverPayload.summary.proof.proof_system, "provekit-whir");
 assert.deepEqual(serverCommands.map((command) => command.step), ["prepare", "prove", "verify"]);
 assert.ok(serverCommands.every((command) => command.executable === "/nix/store/fake-provekit-cli/bin/provekit-cli"));

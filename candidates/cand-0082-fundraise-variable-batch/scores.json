@@ -1,0 +1,21 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0082-fundraise-variable-batch",
+  "evaluated_at": "2026-06-14T15:00:25Z",
+  "task": "Keep one fundraise fill fixed while making the second fill variable up to the 150-unit order cap.",
+  "checks": {
+    "source": "pass",
+    "runner": "pass",
+    "mutant": "pass",
+    "build": "pass",
+    "scope": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "e06067946d27c89c40072accc9eb6ca96cc11e285765ef566334d2da558663f4",
+    "traces_sha256": "d8805fadcfa442bbff349042941b8dcf9b69a92dbfba15ecb273cef9d988b69b",
+    "body_sha256": "8c57ecfd172eee7aa4e66bfc284ae05883c5f524071b2ef7fe661f1196282a9a",
+    "attestation": "86474bc965986751b17d0b12ad3527c64fc3ac9a1ff55ca5470f0ce1e241db17"
+  }
+}

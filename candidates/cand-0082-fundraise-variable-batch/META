@@ -1,0 +1,5 @@
+candidate_id: cand-0082-fundraise-variable-batch
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T14:50:47Z
+intent: Make the fundraise demo keep one fill fixed and let the second fill vary up to the order cap through the runner packet path.
+status: landed

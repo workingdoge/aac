@@ -6,21 +6,17 @@ export const fundraiseDemoSummary = {
   round_id: 'aac-seed-2026-001',
   issuer_name: 'issuer-a.private-row',
   metrics: [
-    { value: '1500', label: 'USDC order cap' },
-    { value: '150', label: 'restricted SAFE receipt units in batch' },
-    { value: '0', label: 'units open' },
+    { value: '1500', label: 'USDC order size' },
+    { value: '150', label: 'restricted SAFE receipt units' },
+    { value: '2', label: 'fills in batch' },
   ],
   order: {
-    headline: 'Fill 150 of 150 restricted SAFE receipt units',
+    headline: 'Sell 150 restricted SAFE receipt units',
     price_label: '10 USDC / unit',
     settlement_asset: 'USDC',
     issued_unit: 'restricted SAFE receipt units',
     issued_unit_noun: 'units',
     price_per_unit: 10,
-    max_settlement_amount: 1500,
-    max_issued_units: 150,
-    filled_issued_units: 150,
-    open_issued_units: 0,
   },
   fills: [
     {

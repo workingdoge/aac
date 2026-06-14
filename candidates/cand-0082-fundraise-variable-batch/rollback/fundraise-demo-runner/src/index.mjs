@@ -6,21 +6,10 @@ import { fileURLToPath } from "node:url";
 
 import { buildProveKitVerifierReceiptFromNativeCli } from "../../fundraise-provekit-adapter/src/index.mjs";
 import {
-  buildFundraisePacket as buildRuntimeFundraisePacket,
-  verifyFundraisePacket,
-} from "../../fundraise-runtime/src/index.mjs";
-import {
   authorizeFundraiseWorkflow,
   createWorkflowPolicy,
   verifyWorkflowReceipt,
 } from "../../fundraise-workflow/src/index.mjs";
-import {
-  certificateFor,
-  commitVector,
-  encodePoint,
-  foldScalar,
-  transitionReportFor,
-} from "../../vnet-runtime/src/index.mjs";
 
 export const FUNDRAISE_DEMO_RUNNER_SCHEMA = "aac.fundraise-demo-runner.receipt.v1";
 export const DEFAULT_VECTOR_ID = "fundraise-demo-good";
@@ -30,7 +19,6 @@ export const DEFAULT_PROVEKIT_PROVER_KEY = "aac_vnet_provekit.pkp";
 export const DEFAULT_PROVEKIT_VERIFIER_KEY = "aac_vnet_provekit.pkv";
 export const FUNDRAISE_DEMO_SUMMARY_SCHEMA = "aac.fundraise-demo-runner.summary.v1";
 export const FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA = "aac.fundraise-demo-runner.local-settlement.v1";
-export const FUNDRAISE_DEMO_PREVIEW_SCHEMA = "aac.fundraise-demo-runner.preview.v1";
 export const DEFAULT_REGISTRY_PACKAGE = "registry";
 export const DEFAULT_LOCAL_RPC_URL = "http://127.0.0.1:8545";
 export const FUNDRAISE_DEMO_SERVER_SCHEMA = "aac.fundraise-demo-runner.server.v1";
@@ -71,12 +59,11 @@ export async function runFundraiseDemo(input = {}) {
 export async function buildFundraiseDemoVerifierReceipt(input = {}) {
   const repoRoot = resolve(input.repo_root ?? defaultRepoRoot());
   const provekitBin = resolveFundraiseProveKitBin(input.provekit_bin, repoRoot);
-  const sourcePacket = input.packet ?? (await loadFundraiseDemoPacket({
+  const packet = input.packet ?? (await loadFundraiseDemoPacket({
     repo_root: repoRoot,
     fixture_path: input.fixture_path,
     vector_id: input.vector_id,
   }));
-  const packet = buildFundraiseDemoBatchPacket(sourcePacket, input);
   const work = await prepareProveKitWorkdir({
     repo_root: repoRoot,
     circuit_dir: input.circuit_dir,
@@ -152,27 +139,6 @@ export async function runFundraiseDemoLocalSettlement(input = {}) {
   return { ...receipt, summary: buildFundraiseDemoSummary(receipt) };
 }
 
-export async function previewFundraiseDemo(input = {}) {
-  const started = Date.now();
-  const repoRoot = resolve(input.repo_root ?? defaultRepoRoot());
-  const sourcePacket = input.packet ?? (await loadFundraiseDemoPacket({
-    repo_root: repoRoot,
-    fixture_path: input.fixture_path,
-    vector_id: input.vector_id,
-  }));
-  const packet = buildFundraiseDemoBatchPacket(sourcePacket, input);
-  const receipt = buildPreviewReceipt({ input, packet });
-  return {
-    schema: FUNDRAISE_DEMO_PREVIEW_SCHEMA,
-    accepted: true,
-    reason: "accepted",
-    mode: "preview",
-    elapsed_ms: Date.now() - started,
-    receipt,
-    summary: receipt.summary,
-  };
-}
-
 export async function serveFundraiseDemo(input = {}) {
   const host = input.host ?? DEFAULT_FUNDRAISE_DEMO_SERVER_HOST;
   const port = Number(input.port ?? DEFAULT_FUNDRAISE_DEMO_SERVER_PORT);
@@ -236,14 +202,10 @@ export async function runFundraiseDemoServerAction(input = {}, request = {}) {
   const url = new URL(request.path ?? "/api/fundraise/run", "http://localhost");
   const body = request.body ?? {};
   const settleLocal = requestSettleLocal({ body, url, fallback: input.settle_local === true });
-  const variableFillUnits = requestVariableFillUnits({ body, url });
-  const actionInput = variableFillUnits === undefined
-    ? input
-    : { ...input, variable_fill_units: variableFillUnits };
   const started = Date.now();
   const receipt = settleLocal
-    ? await runFundraiseDemoLocalSettlement(actionInput)
-    : await runFundraiseDemo(actionInput);
+    ? await runFundraiseDemoLocalSettlement(input)
+    : await runFundraiseDemo(input);
   return {
     schema: FUNDRAISE_DEMO_SERVER_SCHEMA,
     accepted: true,
@@ -280,19 +242,6 @@ async function handleFundraiseDemoRequest(request, response, input) {
     writeJson(response, 200, payload, input.cors_origin);
     return;
   }
-  if (["GET", "POST"].includes(request.method ?? "") && url.pathname === "/api/fundraise/preview") {
-    let body = {};
-    if (request.method === "POST") {
-      body = await readJsonRequest(request);
-    }
-    const urlInput = new URL(`${url.pathname}${url.search}`, "http://localhost");
-    const variableFillUnits = requestVariableFillUnits({ body, url: urlInput });
-    const payload = await previewFundraiseDemo(
-      variableFillUnits === undefined ? input : { ...input, variable_fill_units: variableFillUnits },
-    );
-    writeJson(response, 200, payload, input.cors_origin);
-    return;
-  }
   if (["GET", "HEAD"].includes(request.method ?? "") && input.static_dir) {
     const served = await writeStaticAsset(response, input.static_dir, url.pathname, {
       cors_origin: input.cors_origin,
@@ -317,24 +266,6 @@ function requestSettleLocal({ body, url, fallback }) {
   if (param === "1" || param === "true") return true;
   if (param === "0" || param === "false") return false;
   return fallback;
-}
-
-function requestVariableFillUnits({ body, url }) {
-  const bodyValue = body.variable_fill_units
-    ?? body.variableFillUnits
-    ?? body.batch_units
-    ?? body.batchUnits;
-  const param = bodyValue
-    ?? url.searchParams.get("variable_fill_units")
-    ?? url.searchParams.get("variableFillUnits")
-    ?? url.searchParams.get("batch_units")
-    ?? url.searchParams.get("batchUnits");
-  if (param === undefined || param === null || param === "") return undefined;
-  const value = typeof param === "number" ? param : Number(param);
-  if (!Number.isSafeInteger(value) || value < 0) {
-    throw new FundraiseDemoRunnerError("bad_variable_fill_units");
-  }
-  return value;
 }
 
 async function readJsonRequest(request) {
@@ -664,139 +595,6 @@ function buildDemoReceipt({ input, packet, verifier_receipt, workflow_receipt, w
   return { ...receipt, summary: buildFundraiseDemoSummary(receipt) };
 }
 
-function buildPreviewReceipt({ input, packet }) {
-  const receipt = {
-    schema: FUNDRAISE_DEMO_RUNNER_SCHEMA,
-    accepted: false,
-    reason: "ready",
-    vector_id: input.vector_id ?? DEFAULT_VECTOR_ID,
-    packet_round_id: packet.public_inputs?.round_id ?? packet.round_policy?.round_id ?? null,
-    packet_projection: buildFundraisePacketProjection(packet),
-    public_inputs: packet.public_inputs ?? {},
-    provekit: {
-      mode: null,
-      proof_system: null,
-      proof_ref: null,
-      proof_digest: null,
-      verifier_key_digest: null,
-      timings_ms: {},
-    },
-    verifier_receipt: {},
-    workflow_receipt: null,
-    settlement_action: {},
-    workdir: null,
-  };
-  return { ...receipt, summary: buildFundraiseDemoSummary(receipt) };
-}
-
-export function buildFundraiseDemoBatchPacket(packet, input = {}) {
-  const source = cloneJson(packet);
-  const subscriptions = Array.isArray(source.subscriptions) ? source.subscriptions.map((sub) => ({ ...sub })) : [];
-  if (subscriptions.length < 2) {
-    throw new FundraiseDemoRunnerError("variable_fill_missing");
-  }
-  const policy = { ...(source.round_policy ?? {}) };
-  const fixedSub = subscriptions[0];
-  const variableSub = subscriptions[1];
-  const fixedUnits = safeInt(fixedSub.issued_units, "bad_fixed_fill_units");
-  const defaultVariableUnits = safeInt(variableSub.issued_units, "bad_variable_fill_units");
-  const variableUnits = normalizeVariableFillUnits(input.variable_fill_units ?? input.variableFillUnits ?? input.batch_units ?? input.batchUnits)
-    ?? defaultVariableUnits;
-  const originalTotalUnits = safeInt(
-    source.public_inputs?.issued_unit_total ?? subscriptions.reduce((sum, sub) => sum + safeInt(sub.issued_units, "bad_issued_units"), 0),
-    "bad_order_units",
-  );
-  const maxVariableUnits = Math.max(0, originalTotalUnits - fixedUnits);
-  if (variableUnits > maxVariableUnits) {
-    throw new FundraiseDemoRunnerError("variable_fill_cap_exceeded", "variable_fill_cap_exceeded", {
-      fixed_units: fixedUnits,
-      variable_units: variableUnits,
-      max_variable_units: maxVariableUnits,
-      order_units: originalTotalUnits,
-    });
-  }
-  const settlementAmount = settlementForUnits(policy, variableUnits);
-  variableSub.issued_units = variableUnits;
-  variableSub.settlement_amount = settlementAmount;
-  policy.max_issued_units = originalTotalUnits;
-  policy.max_settlement_amount = settlementForUnits(policy, originalTotalUnits);
-  const vnetLink = rebuildFundraiseVnetLink(source.vnet_link, policy, subscriptions);
-  const rebuilt = buildRuntimeFundraisePacket({
-    policy,
-    subscriptions,
-    vnetLink,
-  });
-  const verified = verifyFundraisePacket(rebuilt);
-  if (!verified.accepted) {
-    throw new FundraiseDemoRunnerError("variable_batch_packet_rejected", verified.reason, {
-      verifier_reason: verified.reason,
-    });
-  }
-  return rebuilt;
-}
-
-function rebuildFundraiseVnetLink(vnetLink, policy, subscriptions) {
-  const link = cloneJson(vnetLink);
-  const atoms = link?.vnet?.atoms;
-  if (!Array.isArray(atoms) || atoms.length < subscriptions.length * 2) {
-    throw new FundraiseDemoRunnerError("vnet_atoms_missing");
-  }
-  for (const [index, sub] of subscriptions.entries()) {
-    const settlement = safeInt(sub.settlement_amount, "bad_settlement_amount");
-    const issued = safeInt(sub.issued_units, "bad_issued_units");
-    updateVnetAtom(atoms[index * 2], [0, issued], [settlement, 0]);
-    updateVnetAtom(atoms[index * 2 + 1], [settlement, 0], [0, issued]);
-  }
-  link.vnet.transition_set_commitment = foldScalar(
-    "aac/vnet-bn254-g1/1/transition-set",
-    atoms.map((atom) => [atom.transition_ref, atom.journal_commitment]),
-  );
-  link.vnet.commitment_set_commitment = foldScalar(
-    "aac/vnet-bn254-g1/1/commitment-set",
-    atoms.map((atom) => [atom.debit_commitment, atom.credit_commitment, atom.basis_commitment]),
-  );
-  link.transition_report = transitionReportFor(link.vnet);
-  link.link_certificates = atoms.map(certificateFor);
-  return link;
-}
-
-function updateVnetAtom(atom, debit, credit) {
-  if (!atom) throw new FundraiseDemoRunnerError("vnet_atom_missing");
-  atom.debit = debit;
-  atom.credit = credit;
-  atom.debit_commitment = encodePoint(commitVector(debit, atom.debit_blinding, atom.basis_type_ids));
-  atom.credit_commitment = encodePoint(commitVector(credit, atom.credit_blinding, atom.basis_type_ids));
-}
-
-function normalizeVariableFillUnits(value) {
-  if (value === undefined || value === null || value === "") return undefined;
-  const number = typeof value === "number" ? value : Number(value);
-  if (!Number.isSafeInteger(number) || number < 0) {
-    throw new FundraiseDemoRunnerError("bad_variable_fill_units");
-  }
-  return number;
-}
-
-function settlementForUnits(policy, units) {
-  const numerator = safeInt(policy.price_numerator, "bad_price_numerator");
-  const denominator = safeInt(policy.price_denominator, "bad_price_denominator");
-  if (denominator <= 0) throw new FundraiseDemoRunnerError("bad_price_denominator");
-  const settlement = units * numerator;
-  if (!Number.isSafeInteger(settlement) || settlement % denominator !== 0) {
-    throw new FundraiseDemoRunnerError("non_integral_variable_settlement");
-  }
-  return settlement / denominator;
-}
-
-function safeInt(value, reason) {
-  if (!Number.isSafeInteger(value)) throw new FundraiseDemoRunnerError(reason);
-  return value;
-}
-
-function cloneJson(value) {
-  return JSON.parse(JSON.stringify(value));
-}
-
 function buildFundraisePacketProjection(packet) {
   const policy = packet.round_policy ?? {};
   return {
@@ -835,7 +633,6 @@ export function buildFundraiseDemoSummary(receipt) {
   const auth = action.args?.auth ?? {};
   const verifier = receipt.verifier_receipt ?? {};
   const local = receipt.local_settlement ?? null;
-  const accepted = receipt.accepted === true;
   const settled = Boolean(local?.transaction_hash);
   const settlementAsset = settlementAssetLabel(policy.settlement_asset_type_id);
   const issuedUnit = issuedUnitLabel(policy.issued_unit_type_id);
@@ -844,12 +641,8 @@ export function buildFundraiseDemoSummary(receipt) {
   const subscriptionIssuedTotal = sumNumbers(subscriptions, "issued_units");
   const settlementTotal = firstNumber(publicInputs.settlement_amount_total, subscriptionSettlementTotal);
   const issuedTotal = firstNumber(auth.issued_unit_total, publicInputs.issued_unit_total, subscriptionIssuedTotal);
-  const orderCapacityUnits = firstNumber(policy.max_issued_units, issuedTotal);
   const recipientCount = Array.isArray(auth.recipients) ? auth.recipients.length : subscriptions.length;
   const pricePerUnit = priceFromPolicy(policy);
-  const orderCapacitySettlement = orderCapacityUnits !== null && pricePerUnit !== null
-    ? orderCapacityUnits * pricePerUnit
-    : firstNumber(policy.max_settlement_amount, settlementTotal);
   const fills = subscriptions.map((sub, index) => ({
     party: sub.investor_id ?? `fill-${index + 1}`,
     subscription_id: sub.subscription_id ?? null,
@@ -862,45 +655,38 @@ export function buildFundraiseDemoSummary(receipt) {
   }));
   const filledSettlement = sumNumbers(fills, "settlement_amount");
   const filledUnits = sumNumbers(fills, "issued_units");
-  const openAfter = Math.max(0, (orderCapacityUnits ?? issuedTotal ?? 0) - filledUnits);
+  const openAfter = Math.max(0, (issuedTotal ?? 0) - filledUnits);
   const reconciliationAccepted =
     settlementTotal !== null
     && issuedTotal !== null
-    && orderCapacityUnits !== null
     && filledSettlement === settlementTotal
     && filledUnits === issuedTotal
-    && filledUnits <= orderCapacityUnits;
+    && openAfter === 0;
   return {
     schema: FUNDRAISE_DEMO_SUMMARY_SCHEMA,
-    accepted,
-    status: accepted ? (settled ? "settled-local" : "authorized-pending-signature") : "ready-to-run",
+    accepted: receipt.accepted === true,
+    status: settled ? "settled-local" : "authorized-pending-signature",
     vector_id: receipt.vector_id,
     round_id: receipt.packet_round_id ?? publicInputs.round_id ?? null,
     issuer_name: publicInputs.issuer_name ?? null,
     metrics: [
-      { value: amountValue(orderCapacitySettlement), label: `${settlementAsset} order cap` },
-      { value: amountValue(issuedTotal), label: `${issuedUnit} in batch` },
-      { value: amountValue(openAfter), label: `${unitNoun} open` },
+      { value: amountValue(settlementTotal), label: `${settlementAsset} order size` },
+      { value: amountValue(issuedTotal), label: issuedUnit },
+      { value: amountValue(recipientCount), label: "fills in batch" },
     ],
     order: {
-      headline: orderCapacityUnits !== null && issuedTotal !== null
-        ? `Fill ${amountValue(issuedTotal)} of ${amountValue(orderCapacityUnits)} ${issuedUnit}`
-        : `Sell ${amountValue(issuedTotal)} ${issuedUnit}`,
+      headline: `Sell ${amountValue(issuedTotal)} ${issuedUnit}`,
       price_label: pricePerUnit === null ? "price unavailable" : `${amountValue(pricePerUnit)} ${settlementAsset} / ${singularUnit(unitNoun)}`,
       settlement_asset: settlementAsset,
       issued_unit: issuedUnit,
       issued_unit_noun: unitNoun,
       price_per_unit: pricePerUnit,
-      max_settlement_amount: orderCapacitySettlement,
-      max_issued_units: orderCapacityUnits,
-      filled_issued_units: issuedTotal,
-      open_issued_units: openAfter,
     },
     fills,
     opening_balances: [
       { label: `${settlementAsset} collected`, value: amountWithUnit(0, settlementAsset) },
       { label: `${unitNoun} issued`, value: amountWithUnit(0, unitNoun) },
-      { label: `${unitNoun} open`, value: amountWithUnit(orderCapacityUnits, unitNoun) },
+      { label: `${unitNoun} open`, value: amountWithUnit(issuedTotal, unitNoun) },
     ],
     reconciliation: {
       accepted: reconciliationAccepted,
@@ -919,7 +705,7 @@ export function buildFundraiseDemoSummary(receipt) {
         },
         {
           line: `${unitNoun} open`,
-          opening: amountWithUnit(orderCapacityUnits, unitNoun),
+          opening: amountWithUnit(issuedTotal, unitNoun),
           delta: signedAmountWithUnit(-filledUnits, unitNoun),
           closing: amountWithUnit(openAfter, unitNoun),
         },
@@ -989,12 +775,8 @@ export function buildFundraiseDemoSummary(receipt) {
       balances: local?.balances ?? [],
     },
     claims: [
-      accepted
-        ? "ProveKit accepted the VNET proof for the selected fundraise batch."
-        : "The selected batch has been rebuilt into a fundraise packet but not proven yet.",
-      accepted
-        ? "The workflow authorized an EVM mint bound to the proof receipt and recipient set."
-        : "Generate proof to bind the selected batch to the ProveKit receipt and workflow authorization.",
+      "ProveKit accepted the VNET proof for the fundraise packet.",
+      "The workflow authorized an EVM mint bound to the proof receipt and recipient set.",
       settled
         ? "A local settlement contract minted receipt tokens and refused replay."
         : "Settlement is pending an authorizer signature and transaction submission.",

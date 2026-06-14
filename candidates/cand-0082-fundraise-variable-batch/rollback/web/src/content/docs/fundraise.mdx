@@ -12,18 +12,16 @@ import Loader from '../../components/Loader.astro';
 <Loader />
 
 This is the presentation console for a private issuer order. The issuer offers
-up to 150 restricted receipt units; investor A stays fixed while investor B's
-batch can be changed before proof generation. The ticket, starting balances,
-submitted fills, and reconciliation rows are rendered from the runner summary
-returned by the localhost API. The live path calls the localhost runner,
-generates the selected order-fill proof packet with ProveKit, and leaves the
-verifier as a second console step. The verifier step surfaces the native ProveKit receipt:
+restricted receipt units and investors fill the order. The ticket, starting
+balances, submitted fills, and reconciliation rows are rendered from the runner
+summary returned by the localhost API. The live path calls the localhost runner,
+generates the order-fill proof packet with ProveKit, and leaves the verifier as
+a second console step. The verifier step surfaces the native ProveKit receipt:
 verifier status, packet commitment, public-input commitment, proof digest,
 verifier-key digest, and verify timing.
 
 After the swap, the console reconciles the issuer books from summary-provided
-opening balances, fill deltas, and closing balances; a partial selected batch
-leaves the remaining order capacity open rather than flagging a mismatch.
+opening balances, fill deltas, and closing balances.
 
 <aac-fundraise-demo></aac-fundraise-demo>
 
@@ -36,13 +34,12 @@ remains the production verifier target.
 
 The live presentation mode is one origin: build the site, then run
 `aac-fundraise-demo --serve --static-dir web/dist --port 4328`. The component
-calls `/api/fundraise/preview` to rebuild the selected batch without proving,
-then `/api/fundraise/run` on that same localhost origin to run ProveKit
-prepare/prove/verify for the selected order-fill packet and return a new
-summary. Local settlement remains an explicit runner mode because it requires an
-Anvil/Foundry environment. The current localhost runner returns the proof and
-verifier receipt in one response; the console separates their presentation so
-the operator sees generation before verification.
+calls `/api/fundraise/run` on that same localhost origin, runs ProveKit
+prepare/prove/verify for the order-fill packet, and returns a new summary. Local
+settlement remains an explicit runner mode because it requires an Anvil/Foundry
+environment. The current localhost runner returns the proof and verifier receipt
+in one response; the console separates their presentation so the operator sees
+generation before verification.
 
 ## Where it fits
 
