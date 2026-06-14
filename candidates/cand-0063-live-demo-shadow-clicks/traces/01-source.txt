@@ -1,0 +1,1 @@
+source binds visible button clicks inside the shadow render root

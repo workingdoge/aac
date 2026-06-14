@@ -22,7 +22,6 @@ export class AacFundraiseDemo extends LitElement {
   private liveError = '';
   private liveElapsedMs: number | null = null;
   private sourceLabel = 'ready: no proof run yet';
-  private controlListenersBound = false;
 
   private readySummary(): FundraiseSummary {
     return {
@@ -529,20 +528,12 @@ export class AacFundraiseDemo extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    void this.bindControlListeners();
+    this.addEventListener('click', this.handleControlClick);
   }
 
   disconnectedCallback() {
-    this.renderRoot?.removeEventListener('click', this.handleControlClick);
-    this.controlListenersBound = false;
+    this.removeEventListener('click', this.handleControlClick);
     super.disconnectedCallback();
-  }
-
-  private async bindControlListeners() {
-    await this.updateComplete;
-    if (!this.isConnected || this.controlListenersBound) return;
-    this.renderRoot.addEventListener('click', this.handleControlClick);
-    this.controlListenersBound = true;
   }
 
   private readonly handleControlClick = (event: Event) => {
