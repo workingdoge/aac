@@ -367,91 +367,6 @@ export class AacFundraiseDemo extends LitElement {
       white-space: nowrap;
     }
 
-    .book-check {
-      padding: 15px 20px 17px;
-      border-bottom: 1px solid var(--aac-color-rule2, #c9be9e);
-      background:
-        linear-gradient(180deg, color-mix(in srgb, var(--aac-color-navy, #21324f) 5%, transparent), transparent 58%),
-        var(--aac-color-bond, #fff);
-    }
-
-    .book-head {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 16px;
-      align-items: start;
-    }
-
-    .book-head b {
-      display: block;
-      margin-top: 5px;
-      color: var(--aac-color-ink, #1a1a1a);
-      font-size: 16px;
-      line-height: 1.2;
-    }
-
-    .book-state {
-      border: 1px solid var(--aac-color-navy, #21324f);
-      color: var(--aac-color-navy, #21324f);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.11em;
-      text-transform: uppercase;
-      padding: 6px 9px;
-      white-space: nowrap;
-    }
-
-    .book-state.verified {
-      background: var(--aac-color-navy, #21324f);
-      color: var(--aac-color-bond, #fff);
-    }
-
-    .book-grid {
-      margin-top: 12px;
-      border: 1px solid var(--aac-color-rule2, #c9be9e);
-      background: var(--aac-color-bond, #fff);
-    }
-
-    .book-row {
-      display: grid;
-      grid-template-columns: minmax(9em, 1fr) repeat(3, minmax(0, 0.72fr));
-      border-top: 1px solid var(--aac-color-rule, #e2dac4);
-      min-width: 0;
-    }
-
-    .book-row:first-child { border-top: 0; }
-
-    .book-columns {
-      background: var(--aac-color-field, #fcf9f0);
-      color: var(--aac-color-steel, #6b6b64);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .book-cell {
-      min-width: 0;
-      padding: 8px 10px;
-      border-right: 1px solid var(--aac-color-rule, #e2dac4);
-      font-family: var(--aac-mono, "IBM Plex Mono", monospace);
-      font-size: 11.5px;
-      font-variant-numeric: tabular-nums;
-      overflow-wrap: anywhere;
-    }
-
-    .book-cell:last-child { border-right: 0; }
-    .book-line {
-      color: var(--aac-color-ink, #1a1a1a);
-      font-family: var(--aac-grotesk, Inter, system-ui, sans-serif);
-      font-weight: 600;
-    }
-
-    .book-close {
-      color: var(--aac-color-navy, #21324f);
-      font-weight: 700;
-    }
-
     .fill-main {
       display: grid;
       gap: 10px;
@@ -763,26 +678,6 @@ export class AacFundraiseDemo extends LitElement {
       .price-stamp { justify-self: start; }
       .balance-row { grid-template-columns: 1fr; gap: 3px; }
       .balance-value { text-align: left; }
-      .book-head { grid-template-columns: 1fr; }
-      .book-state { justify-self: start; }
-      .book-columns { display: none; }
-      .book-row { grid-template-columns: 1fr; }
-      .book-cell {
-        border-right: 0;
-        border-bottom: 1px solid var(--aac-color-rule, #e2dac4);
-      }
-      .book-cell:last-child { border-bottom: 0; }
-      .book-cell:not(.book-line)::before {
-        content: attr(data-label);
-        display: block;
-        margin-bottom: 2px;
-        color: var(--aac-color-steel, #6b6b64);
-        font-family: var(--aac-grotesk, Inter, system-ui, sans-serif);
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-      }
       .fill-row { grid-template-columns: 1fr; gap: 4px; }
       .fill-units { white-space: normal; }
       .flow { grid-template-columns: 1fr; min-height: 0; }
@@ -976,11 +871,6 @@ export class AacFundraiseDemo extends LitElement {
     const total = s.settlement.total_supply || s.economics.issued_unit_total || 1;
     const orderUnits = s.economics.issued_unit_total || 0;
     const orderCash = s.economics.settlement_amount_total || 0;
-    const fills = this.orderFills();
-    const filledCash = fills.reduce((sum, fill) => sum + fill.cash, 0);
-    const filledUnits = fills.reduce((sum, fill) => sum + fill.units, 0);
-    const openAfter = Math.max(0, orderUnits - filledUnits);
-    const booksClose = filledCash === orderCash && filledUnits === orderUnits && openAfter === 0;
     const price = orderUnits ? orderCash / orderUnits : 0;
     const fillStatus = this.runState === 'running'
       ? 'clearing fills'
@@ -1028,30 +918,9 @@ export class AacFundraiseDemo extends LitElement {
           </section>
           <section class="fill-main">
             <div class="ticket-label">Submitted fills</div>
-            ${fills.map((fill) => this.fillRow(fill.party, fill.cash, fill.units))}
+            ${this.orderFills().map((fill) => this.fillRow(fill.party, fill.cash, fill.units))}
           </section>
         </div>
-
-        <section class="book-check" aria-label="Book verification">
-          <div class="book-head">
-            <div>
-              <div class="ticket-label">Book verification</div>
-              <b>Opening books + swap deltas close the issuer row.</b>
-            </div>
-            <span class=${`book-state ${s.accepted && booksClose ? 'verified' : ''}`}>
-              ${this.bookVerificationState(s.accepted, booksClose)}
-            </span>
-          </div>
-          <div class="book-grid">
-            <div class="book-row book-columns" aria-hidden="true">
-              <span class="book-cell">line</span>
-              <span class="book-cell">opening</span>
-              <span class="book-cell">swap delta</span>
-              <span class="book-cell">closing</span>
-            </div>
-            ${this.bookRows(orderUnits, filledCash, filledUnits, openAfter).map((row) => this.bookRow(row))}
-          </div>
-        </section>
 
         <div class="flow">
           <section class="lane">
@@ -1151,47 +1020,6 @@ export class AacFundraiseDemo extends LitElement {
       <div class="balance-row">
         <span class="balance-label">${label}</span>
         <span class="balance-value">${value}</span>
-      </div>
-    `;
-  }
-
-  private bookVerificationState(accepted: boolean, booksClose: boolean): string {
-    if (this.runState === 'running') return 'checking books';
-    if (accepted && booksClose) return 'books verified';
-    if (accepted) return 'mismatch flagged';
-    return 'ready to verify';
-  }
-
-  private bookRows(orderUnits: number, filledCash: number, filledUnits: number, openAfter: number) {
-    return [
-      {
-        line: 'USDC collected',
-        opening: '0 USDC',
-        delta: `+${filledCash} USDC`,
-        closing: `${filledCash} USDC`,
-      },
-      {
-        line: 'receipt units issued',
-        opening: '0 units',
-        delta: `+${filledUnits} units`,
-        closing: `${filledUnits} units`,
-      },
-      {
-        line: 'order units open',
-        opening: `${orderUnits} units`,
-        delta: `-${filledUnits} units`,
-        closing: `${openAfter} units`,
-      },
-    ];
-  }
-
-  private bookRow(row: { line: string; opening: string; delta: string; closing: string }) {
-    return html`
-      <div class="book-row">
-        <span class="book-cell book-line">${row.line}</span>
-        <span class="book-cell" data-label="opening">${row.opening}</span>
-        <span class="book-cell" data-label="swap delta">${row.delta}</span>
-        <span class="book-cell book-close" data-label="closing">${row.closing}</span>
       </div>
     `;
   }

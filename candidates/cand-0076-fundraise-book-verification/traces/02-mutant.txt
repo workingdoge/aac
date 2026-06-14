@@ -1,0 +1,5 @@
+component missing book verification label
+component missing reconciliation thesis
+component missing verified state
+component missing swap delta column
+book-verification mutant rejected
