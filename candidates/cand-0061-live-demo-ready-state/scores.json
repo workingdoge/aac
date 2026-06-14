@@ -1,0 +1,19 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0061-live-demo-ready-state",
+  "evaluated_at": "2026-06-14T11:12:16Z",
+  "task": "Make the fundraise demo open in a ready-to-run state with an explicit captured fallback.",
+  "checks": {
+    "source": "pass",
+    "build": "pass",
+    "scope": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "e8ca861db8c187a18b28aaaa90ddbd51daeb3537a405b5ef984c4e43f4faf5e7",
+    "traces_sha256": "33586573c96efc72994eef9cd5f3c4f27008c4474e5857cc01cba77f8f3d6f61",
+    "body_sha256": "e016df4be51cee318781a0b360db94f9b31c93db096f2761aa789b330768d2f5",
+    "attestation": "f327699e2661339d1ed55c6fd4ebe370ff80c6211357ab09ac879493c54596da"
+  }
+}

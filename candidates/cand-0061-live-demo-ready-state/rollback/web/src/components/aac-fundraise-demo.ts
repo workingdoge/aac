@@ -17,61 +17,11 @@ export class AacFundraiseDemo extends LitElement {
     sourceLabel: { state: true },
   };
 
-  private summary: FundraiseSummary = this.readySummary();
+  private summary: FundraiseSummary = fundraiseDemoSummary;
   private runState: RunState = 'idle';
   private liveError = '';
   private liveElapsedMs: number | null = null;
-  private sourceLabel = 'ready: no proof run yet';
-
-  private readySummary(): FundraiseSummary {
-    return {
-      ...fundraiseDemoSummary,
-      accepted: false,
-      status: 'ready-to-run',
-      commitments: {
-        ...fundraiseDemoSummary.commitments,
-        transition_set: null,
-        vnet_public: null,
-        subscription_set: null,
-        bcc_set: null,
-        bridge_settlement: null,
-        mint_recipient_set: null,
-        prev_balance_sheet_root: null,
-        next_balance_sheet_root: null,
-        prev_cap_table_root: null,
-        next_cap_table_root: null,
-      },
-      proof: {
-        mode: null,
-        proof_system: null,
-        proof_digest: null,
-        verifier_key_digest: null,
-        timings_ms: {},
-      },
-      workflow: {
-        ...fundraiseDemoSummary.workflow,
-        verifier_receipt_digest: null,
-        authorizer_receipt_digest: null,
-        action_digest: null,
-        signature_status: 'not-run',
-      },
-      settlement: {
-        ...fundraiseDemoSummary.settlement,
-        token_contract: null,
-        settlement_contract: null,
-        authorizer: null,
-        settlement_digest: null,
-        transaction_hash: null,
-        total_supply: null,
-        balances: [],
-      },
-      claims: ['No proof has been run in this browser session yet.'],
-      caveats: [
-        'Press Run live proof to call the localhost ProveKit runner.',
-        fundraiseDemoSummary.caveats[1],
-      ],
-    } as unknown as FundraiseSummary;
-  }
+  private sourceLabel = 'captured settlement';
 
   private short(value: string | null | undefined, head = 6, tail = 4): string {
     if (!value) return 'none';
@@ -157,17 +107,11 @@ export class AacFundraiseDemo extends LitElement {
       gap: 9px;
     }
 
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      gap: 7px;
-    }
-
-    button.run,
-    button.ghost {
+    button.run {
       appearance: none;
       border: 1px solid var(--aac-color-navy, #21324f);
+      background: var(--aac-color-navy, #21324f);
+      color: var(--aac-color-bond, #fff);
       border-radius: var(--aac-radius-r, 2px);
       padding: 9px 11px;
       font: inherit;
@@ -178,23 +122,10 @@ export class AacFundraiseDemo extends LitElement {
       cursor: pointer;
     }
 
-    button.run {
-      background: var(--aac-color-navy, #21324f);
-      color: var(--aac-color-bond, #fff);
-    }
-
-    button.ghost {
-      background: transparent;
-      color: var(--aac-color-navy, #21324f);
-    }
-
     button.run:hover:not(:disabled),
-    button.run:focus-visible:not(:disabled),
-    button.ghost:hover:not(:disabled),
-    button.ghost:focus-visible:not(:disabled) {
+    button.run:focus-visible:not(:disabled) {
       background: var(--aac-color-oxblood, #93302c);
       border-color: var(--aac-color-oxblood, #93302c);
-      color: var(--aac-color-bond, #fff);
       outline: none;
     }
 
@@ -508,7 +439,6 @@ export class AacFundraiseDemo extends LitElement {
       .mast { grid-template-columns: 1fr; }
       .status { justify-self: start; }
       .live-box { justify-items: start; }
-      .actions { justify-content: flex-start; }
       .live-note { text-align: left; }
       .numbers { grid-template-columns: 1fr; }
       .num { border-right: 0; border-bottom: 1px solid var(--aac-color-rule, #e2dac4); }
@@ -552,19 +482,6 @@ export class AacFundraiseDemo extends LitElement {
     }
   }
 
-  private showCapturedReceipt() {
-    if (this.runState === 'running') return;
-    this.summary = fundraiseDemoSummary;
-    this.liveElapsedMs = null;
-    this.liveError = '';
-    this.sourceLabel = 'captured fallback';
-    this.runState = 'idle';
-  }
-
-  private displayStatus(status: string): string {
-    return status.replaceAll('-', ' ');
-  }
-
   private runButtonText(): string {
     if (this.runState === 'running') return 'Running proof';
     if (this.runState === 'proved') return 'Run again';
@@ -587,27 +504,22 @@ export class AacFundraiseDemo extends LitElement {
         <div class="mast">
           <div>
             <div class="eyebrow">Private treasury issuance</div>
-            <h2>${this.runState === 'idle' && !s.accepted ? 'Private fundraise ready to prove.' : 'Seed round settled against private books.'}</h2>
+            <h2>Seed round settled against private books.</h2>
             <div class="issuer">${s.issuer_name} · ${s.round_id}</div>
           </div>
           <div class="live-box">
-            <div class="status">${this.displayStatus(s.status)}</div>
-            <div class="actions">
-              <button class="run" type="button" ?disabled=${this.runState === 'running'} @click=${() => this.runLiveProof()}>
-                ${this.runButtonText()}
-              </button>
-              <button class="ghost" type="button" ?disabled=${this.runState === 'running'} @click=${() => this.showCapturedReceipt()}>
-                Show capture
-              </button>
-            </div>
+            <div class="status">${s.status.replace('-', ' ')}</div>
+            <button class="run" type="button" ?disabled=${this.runState === 'running'} @click=${this.runLiveProof}>
+              ${this.runButtonText()}
+            </button>
             <div class=${`live-note ${this.runState === 'error' ? 'error' : ''}`}>${this.runNote()}</div>
           </div>
         </div>
 
         <div class="numbers">
-          <div class="num"><b>${s.economics.settlement_amount_total}</b><span>target cash</span></div>
-          <div class="num"><b>${s.economics.issued_unit_total}</b><span>target receipt units</span></div>
-          <div class="num"><b>${s.economics.recipient_count}</b><span>subscribers in packet</span></div>
+          <div class="num"><b>${s.economics.settlement_amount_total}</b><span>private cash committed</span></div>
+          <div class="num"><b>${s.economics.issued_unit_total}</b><span>receipt units issued</span></div>
+          <div class="num"><b>${s.economics.recipient_count}</b><span>investors paid in</span></div>
         </div>
 
         <div class="flow">
@@ -624,11 +536,11 @@ export class AacFundraiseDemo extends LitElement {
           </section>
 
           <section class="lane">
-            <div class="lane-title"><b>Proof spine</b><span>${s.proof.proof_system ?? 'not run'}</span></div>
+            <div class="lane-title"><b>Proof spine</b><span>${s.proof.proof_system}</span></div>
             <div class="spine">
-              ${this.step('P', s.proof.proof_digest ? 'ProveKit accepted VNET' : 'ProveKit not run', s.proof.proof_digest)}
-              ${this.step('W', s.workflow.authorizer_receipt_digest ? 'Workflow authorized mint' : 'Workflow waiting', s.workflow.authorizer_receipt_digest)}
-              ${this.step('S', s.workflow.action_digest ? 'Settlement action prepared' : 'Settlement not prepared', s.workflow.action_digest)}
+              ${this.step('P', 'ProveKit accepted VNET', s.proof.proof_digest)}
+              ${this.step('W', 'Workflow authorized mint', s.workflow.authorizer_receipt_digest)}
+              ${this.step('S', 'Settlement action submitted', s.workflow.action_digest)}
             </div>
             <div class="timings">
               <div class="time"><b>${this.ms(s.proof.timings_ms.prepare)}</b><span>prepare</span></div>
