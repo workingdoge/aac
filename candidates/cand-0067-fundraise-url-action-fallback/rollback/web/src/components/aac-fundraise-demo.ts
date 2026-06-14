@@ -22,9 +22,8 @@ export class AacFundraiseDemo extends LitElement {
   private liveError = '';
   private liveElapsedMs: number | null = null;
   private sourceLabel = 'ready: no proof run yet';
-  private runControl: HTMLAnchorElement | null = null;
-  private captureControl: HTMLAnchorElement | null = null;
-  private urlActionApplied = false;
+  private runControl: HTMLButtonElement | null = null;
+  private captureControl: HTMLButtonElement | null = null;
 
   private readySummary(): FundraiseSummary {
     return {
@@ -167,13 +166,10 @@ export class AacFundraiseDemo extends LitElement {
       gap: 7px;
     }
 
-    ::slotted(a) {
+    ::slotted(button) {
       appearance: none;
       border: 1px solid var(--aac-color-navy, #21324f);
       border-radius: var(--aac-radius-r, 2px);
-      display: inline-flex;
-      align-items: center;
-      min-height: 39px;
       padding: 9px 11px;
       font: inherit;
       font-size: 11px;
@@ -181,28 +177,27 @@ export class AacFundraiseDemo extends LitElement {
       letter-spacing: 0.1em;
       text-transform: uppercase;
       cursor: pointer;
-      text-decoration: none;
     }
 
-    ::slotted(a[data-fundraise-action="run-live-proof"]) {
+    ::slotted(button[data-fundraise-action="run-live-proof"]) {
       background: var(--aac-color-navy, #21324f);
       color: var(--aac-color-bond, #fff);
     }
 
-    ::slotted(a[data-fundraise-action="show-capture"]) {
+    ::slotted(button[data-fundraise-action="show-capture"]) {
       background: transparent;
       color: var(--aac-color-navy, #21324f);
     }
 
-    ::slotted(a:hover),
-    ::slotted(a:focus-visible) {
+    ::slotted(button:hover),
+    ::slotted(button:focus-visible) {
       background: var(--aac-color-oxblood, #93302c);
       border-color: var(--aac-color-oxblood, #93302c);
       color: var(--aac-color-bond, #fff);
       outline: none;
     }
 
-    ::slotted(a[aria-disabled="true"]) {
+    ::slotted(button:disabled) {
       cursor: wait;
       opacity: 0.72;
     }
@@ -534,7 +529,6 @@ export class AacFundraiseDemo extends LitElement {
     super.connectedCallback();
     this.ensureOwnedControls();
     this.syncOwnedControls();
-    this.applyUrlAction();
   }
 
   updated() {
@@ -565,15 +559,14 @@ export class AacFundraiseDemo extends LitElement {
     }
   }
 
-  private ownedButton(action: string, slot: string, className: string): HTMLAnchorElement {
+  private ownedButton(action: string, slot: string, className: string): HTMLButtonElement {
     const existing = Array.from(this.children).find(
-      (child): child is HTMLAnchorElement =>
-        child instanceof HTMLAnchorElement && child.dataset.fundraiseAction === action,
+      (child): child is HTMLButtonElement =>
+        child instanceof HTMLButtonElement && child.dataset.fundraiseAction === action,
     );
     if (existing) return existing;
-    const button = document.createElement('a');
-    button.href = this.fallbackHref(action);
-    button.role = 'button';
+    const button = document.createElement('button');
+    button.type = 'button';
     button.slot = slot;
     button.className = className;
     button.dataset.fundraiseAction = action;
@@ -581,7 +574,7 @@ export class AacFundraiseDemo extends LitElement {
     return button;
   }
 
-  private bindControlHandlers(button: HTMLAnchorElement, handler: (event?: Event) => void) {
+  private bindControlHandlers(button: HTMLButtonElement, handler: (event?: Event) => void) {
     button.onclick = handler;
     button.onpointerup = handler;
     button.onkeydown = (event: KeyboardEvent) => {
@@ -589,7 +582,7 @@ export class AacFundraiseDemo extends LitElement {
     };
   }
 
-  private clearControlHandlers(button: HTMLAnchorElement | null) {
+  private clearControlHandlers(button: HTMLButtonElement | null) {
     if (!button) return;
     button.onclick = null;
     button.onpointerup = null;
@@ -600,31 +593,11 @@ export class AacFundraiseDemo extends LitElement {
     this.ensureOwnedControls();
     if (this.runControl) {
       this.runControl.textContent = this.runButtonText();
-      this.runControl.href = this.fallbackHref('run-live-proof');
-      this.runControl.setAttribute('aria-disabled', this.runState === 'running' ? 'true' : 'false');
+      this.runControl.disabled = this.runState === 'running';
     }
     if (this.captureControl) {
       this.captureControl.textContent = 'Show capture';
-      this.captureControl.href = this.fallbackHref('show-capture');
-      this.captureControl.setAttribute('aria-disabled', this.runState === 'running' ? 'true' : 'false');
-    }
-  }
-
-  private fallbackHref(action: string): string {
-    const url = new URL(window.location.href);
-    url.searchParams.set('fundraise', action === 'run-live-proof' ? 'run' : 'capture');
-    url.hash = 'fundraise-demo';
-    return `${url.pathname}${url.search}${url.hash}`;
-  }
-
-  private applyUrlAction() {
-    if (this.urlActionApplied) return;
-    this.urlActionApplied = true;
-    const action = new URLSearchParams(window.location.search).get('fundraise');
-    if (action === 'run') {
-      void this.runLiveProof();
-    } else if (action === 'capture') {
-      this.showCapturedReceipt();
+      this.captureControl.disabled = this.runState === 'running';
     }
   }
 

@@ -1,0 +1,1 @@
+component owns anchor controls with URL action fallback
