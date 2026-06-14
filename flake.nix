@@ -30,6 +30,19 @@
       url = "github:noir-lang/noir-bignum-paramgen";
       flake = false;
     };
+    # ProveKit (worldfnd/ProveKit) — the WHIR-based Noir proving stack used
+    # for the World Mini App client-side receipt proof (world-app/). Built
+    # from source (no prebuilt release binaries) via crane, with the pinned
+    # nightly the repo's rust-toolchain.toml requires. Commit-pinned.
+    crane.url = "github:ipetkov/crane";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    provekit-src = {
+      url = "github:worldfnd/ProveKit/b0cb124685bcf24cc0deaa7b191032f58875a47a";
+      flake = false;
+    };
   };
 
   outputs =
@@ -42,12 +55,21 @@
       noir-src,
       co-snarks-src,
       bignum-paramgen-src,
+      crane,
+      rust-overlay,
+      provekit-src,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs {
+          inherit system;
+          # rust-overlay adds `pkgs.rust-bin.*` (the pinned nightly the
+          # ProveKit build needs); it is additive and does not alter the
+          # stable rustPlatform the co-snarks build uses.
+          overlays = [ (import rust-overlay) ];
+        };
         lib = pkgs.lib;
 
         # bb (Barretenberg) — the UltraHonk prover/verifier, fetched as the
@@ -326,6 +348,87 @@
           };
         });
 
+        # ── ProveKit CLI (worldfnd/ProveKit) ────────────────────────────
+        # The WHIR proving stack: `provekit-cli {prepare,prove,verify}`
+        # (ACIR -> R1CS -> WHIR; default Merkle hash Skyscraper). This is
+        # the client-side proving path for the World Mini App receipt
+        # circuit (world-app/provekit-circuit, Noir beta.19) — SEPARATE
+        # from the bb/UltraHonk beta.14 `circuits/` workspace + 4/REG path.
+        # Built from source via crane with the repo's pinned nightly.
+        # Kept OFF the default dev-shell; reach it via `nix build .#provekit`
+        # then `./result/bin/provekit-cli`.
+        provekitToolchain = pkgs.rust-bin.nightly."2026-03-04".minimal;
+        provekitCraneLib = (crane.mkLib pkgs).overrideToolchain (_: provekitToolchain);
+        provekitNoirSrc = pkgs.fetchFromGitHub {
+          owner = "noir-lang";
+          repo = "noir";
+          rev = "74d6be658e1ad252f87943292ba09bdd4da80bd4";
+          hash = "sha256-Plp1ARY6cMUhsqczwYNfIWltgxZ3yHle74af+ZCnUYY=";
+        };
+        provekitCommonArgs = {
+          pname = "provekit-cli";
+          version = "1.0.0";
+          src = provekit-src;
+          strictDeps = true;
+          # Build only the CLI's closure (the full-workspace cargo build is
+          # proven, but -p keeps the gnark/wasm members out of the picture).
+          # ProveKit's lockfile needs Cargo's offline refresh under this
+          # pinned nightly, so use crane's vendored sources instead of
+          # `--locked`.
+          cargoExtraArgs = "--offline -p provekit-cli";
+          doCheck = false;
+          # Vendored noir (beta.19) build.rs uses `build_data` for git info,
+          # which fails in the sandbox; it short-circuits when GIT_COMMIT is
+          # already set — the same escape hatch the co-snarks build uses.
+          GIT_COMMIT = "74d6be658e1ad252f87943292ba09bdd4da80bd4";
+          GIT_DIRTY = "false";
+          nativeBuildInputs = [ pkgs.pkg-config ];
+          buildInputs = lib.optionals pkgs.stdenv.isDarwin [ pkgs.libiconv ];
+        };
+        provekitCargoVendorDir = provekitCraneLib.vendorCargoDeps (
+          provekitCommonArgs
+          // {
+            overrideVendorGitCheckout = ps: drv:
+              if lib.any (p: p.name == "noirc_driver") ps then
+                pkgs.runCommand "provekit-noir-git-deps" { } ''
+                  mkdir -p "$out"
+                  cp -R ${drv}/. "$out/"
+                  chmod -R u+w "$out"
+                  for crate in "$out"/noirc_driver-*; do
+                    cp -R ${provekitNoirSrc}/noir_stdlib "$crate/noir_stdlib"
+                    substituteInPlace "$crate/build.rs" \
+                      --replace-fail '../../noir_stdlib/' 'noir_stdlib/' \
+                      --replace-fail \
+                        'rerun_if_stdlib_changes(stdlib_src_dir);' \
+                        'if stdlib_src_dir.exists() { rerun_if_stdlib_changes(stdlib_src_dir); }'
+                    substituteInPlace "$crate/src/stdlib.rs" \
+                      --replace-fail '../../noir_stdlib/src' 'noir_stdlib/src' \
+                      --replace-fail '../../../noir_stdlib/Nargo.toml' '../noir_stdlib/Nargo.toml'
+                  done
+                ''
+              else
+                drv;
+          }
+        );
+        provekitBuildArgs = provekitCommonArgs // {
+          cargoVendorDir = provekitCargoVendorDir;
+        };
+        provekit = provekitCraneLib.buildPackage (
+          provekitBuildArgs
+          // {
+            # Cache the (heavy) dependency compile separately so iterating on
+            # the final package step doesn't recompile noir/whir/arkworks.
+            cargoArtifacts = provekitCraneLib.buildDepsOnly provekitBuildArgs;
+            meta = {
+              description = "ProveKit CLI -- WHIR-based Noir prover/verifier (prepare/prove/verify).";
+              homepage = "https://github.com/worldfnd/ProveKit";
+              license = lib.licenses.mit;
+              mainProgram = "provekit-cli";
+              platforms = lib.platforms.unix;
+            };
+          }
+        );
+
         noirToolchainPackages =
           [
             nargo
@@ -346,7 +449,7 @@
         packages =
           {
             default = nargo;
-            inherit nargo nargo19 bignum-paramgen;
+            inherit nargo nargo19 bignum-paramgen provekit;
           }
           // lib.optionalAttrs pkgs.stdenv.isLinux {
             inherit co-snarks;
