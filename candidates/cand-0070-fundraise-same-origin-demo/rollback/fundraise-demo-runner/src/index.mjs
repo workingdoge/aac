@@ -1,4 +1,4 @@
-import { cp, mkdir, mkdtemp, readFile, rm, stat } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { basename, dirname, relative, resolve, sep } from "node:path";
@@ -165,13 +165,11 @@ export async function serveFundraiseDemo(input = {}) {
     token_symbol: input.token_symbol,
     foundry_command: input.foundry_command,
   };
-  const staticDir = input.static_dir ? resolve(input.static_dir) : null;
   const server = createServer((request, response) => {
     handleFundraiseDemoRequest(request, response, {
       ...baseInput,
       settle_local: input.settle_local === true,
       cors_origin: input.cors_origin,
-      static_dir: staticDir,
     }).catch((error) => {
       writeJson(response, 500, normalizeServerError(error), input.cors_origin);
     });
@@ -232,23 +230,7 @@ async function handleFundraiseDemoRequest(request, response, input) {
     }, input.cors_origin);
     return;
   }
-  if (["GET", "POST"].includes(request.method ?? "") && url.pathname === "/api/fundraise/run") {
-    let body = {};
-    if (request.method === "POST") {
-      body = await readJsonRequest(request);
-    }
-    const payload = await runFundraiseDemoServerAction(input, { body, path: `${url.pathname}${url.search}` });
-    writeJson(response, 200, payload, input.cors_origin);
-    return;
-  }
-  if (["GET", "HEAD"].includes(request.method ?? "") && input.static_dir) {
-    const served = await writeStaticAsset(response, input.static_dir, url.pathname, {
-      cors_origin: input.cors_origin,
-      omit_body: request.method === "HEAD",
-    });
-    if (served) return;
-  }
-  {
+  if (!["GET", "POST"].includes(request.method ?? "") || url.pathname !== "/api/fundraise/run") {
     writeJson(response, 404, {
       schema: FUNDRAISE_DEMO_SERVER_SCHEMA,
       accepted: false,
@@ -256,6 +238,13 @@ async function handleFundraiseDemoRequest(request, response, input) {
     }, input.cors_origin);
     return;
   }
+
+  let body = {};
+  if (request.method === "POST") {
+    body = await readJsonRequest(request);
+  }
+  const payload = await runFundraiseDemoServerAction(input, { body, path: `${url.pathname}${url.search}` });
+  writeJson(response, 200, payload, input.cors_origin);
 }
 
 function requestSettleLocal({ body, url, fallback }) {
@@ -301,72 +290,6 @@ function writeJson(response, status, body, corsOrigin) {
     ...corsHeaders(corsOrigin),
   });
   response.end(`${JSON.stringify(body, null, 2)}\n`);
-}
-
-async function writeStaticAsset(response, staticDir, pathname, options = {}) {
-  const filePath = await resolveFundraiseStaticPath(staticDir, pathname);
-  if (!filePath) return false;
-  const body = await readFile(filePath);
-  response.writeHead(200, {
-    "content-type": fundraiseStaticContentType(filePath),
-    "cache-control": filePath.endsWith("index.html") ? "no-store" : "public, max-age=31536000, immutable",
-    ...corsHeaders(options.cors_origin),
-  });
-  response.end(options.omit_body ? undefined : body);
-  return true;
-}
-
-export async function resolveFundraiseStaticPath(staticDir, pathname) {
-  const root = resolve(staticDir);
-  let decoded;
-  try {
-    decoded = decodeURIComponent(pathname || "/");
-  } catch {
-    return null;
-  }
-  const stripped = decoded.replace(/^\/+/, "");
-  const candidate = resolve(root, stripped);
-  if (!pathInside(root, candidate)) return null;
-  const direct = await fileIfExists(candidate);
-  if (direct) return direct;
-  const indexed = await fileIfExists(resolve(candidate, "index.html"));
-  if (indexed) return indexed;
-  return null;
-}
-
-async function fileIfExists(candidate) {
-  try {
-    const info = await stat(candidate);
-    if (info.isFile()) return candidate;
-    if (info.isDirectory()) {
-      const indexPath = resolve(candidate, "index.html");
-      const indexInfo = await stat(indexPath);
-      return indexInfo.isFile() ? indexPath : null;
-    }
-  } catch {
-    return null;
-  }
-  return null;
-}
-
-function pathInside(root, candidate) {
-  const rel = relative(root, candidate);
-  return rel === "" || (!rel.startsWith("..") && !rel.startsWith(sep));
-}
-
-export function fundraiseStaticContentType(pathname) {
-  if (pathname.endsWith(".html")) return "text/html; charset=utf-8";
-  if (pathname.endsWith(".js")) return "text/javascript; charset=utf-8";
-  if (pathname.endsWith(".css")) return "text/css; charset=utf-8";
-  if (pathname.endsWith(".json")) return "application/json; charset=utf-8";
-  if (pathname.endsWith(".svg")) return "image/svg+xml";
-  if (pathname.endsWith(".xml")) return "application/xml; charset=utf-8";
-  if (pathname.endsWith(".txt")) return "text/plain; charset=utf-8";
-  if (pathname.endsWith(".wasm")) return "application/wasm";
-  if (pathname.endsWith(".png")) return "image/png";
-  if (pathname.endsWith(".jpg") || pathname.endsWith(".jpeg")) return "image/jpeg";
-  if (pathname.endsWith(".woff2")) return "font/woff2";
-  return "application/octet-stream";
 }
 
 export function buildFundraiseDemoCorsHeaders(corsOrigin) {

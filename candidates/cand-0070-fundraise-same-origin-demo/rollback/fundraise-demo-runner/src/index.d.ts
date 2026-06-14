@@ -61,14 +61,11 @@ export interface FundraiseDemoRunnerInput {
 export interface FundraiseDemoServerInput extends FundraiseDemoRunnerInput {
   host?: string;
   port?: number;
-  static_dir?: string;
   cors_origin?: string;
   settle_local?: boolean;
 }
 
 export declare function buildFundraiseDemoCorsHeaders(cors_origin?: string): Record<string, string>;
-export declare function resolveFundraiseStaticPath(static_dir: string, pathname: string): Promise<string | null>;
-export declare function fundraiseStaticContentType(pathname: string): string;
 
 export interface FundraiseDemoReceipt {
   schema: typeof FUNDRAISE_DEMO_RUNNER_SCHEMA;

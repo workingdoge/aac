@@ -9,10 +9,8 @@ import {
   FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA,
   buildFundraiseDemoCorsHeaders,
   buildFundraiseDemoSummary,
-  fundraiseStaticContentType,
   loadFundraiseDemoPacket,
   prepareProveKitWorkdir,
-  resolveFundraiseStaticPath,
   runFundraiseDemo,
   runFundraiseDemoLocalSettlement,
   runFundraiseDemoServerAction,
@@ -30,22 +28,6 @@ const fakeWork = await mkdtemp(resolve(tmpdir(), "aac-demo-runner-test."));
 await mkdir(resolve(fakeWork, "circuit"), { recursive: true });
 await writeFile(resolve(fakeWork, "circuit", "Nargo.toml"), "[package]\nname = \"fake\"\n");
 await writeFile(resolve(fakeWork, "circuit", "Prover.toml.example"), "accepted = true\n");
-await mkdir(resolve(fakeWork, "static", "fundraise"), { recursive: true });
-await mkdir(resolve(fakeWork, "static", "_astro"), { recursive: true });
-await writeFile(resolve(fakeWork, "static", "index.html"), "<aac-fundraise-demo></aac-fundraise-demo>\n");
-await writeFile(resolve(fakeWork, "static", "fundraise", "index.html"), "<h1>fundraise</h1>\n");
-await writeFile(resolve(fakeWork, "static", "_astro", "app.js"), "console.log('demo');\n");
-assert.equal(
-  await resolveFundraiseStaticPath(resolve(fakeWork, "static"), "/fundraise/"),
-  resolve(fakeWork, "static", "fundraise", "index.html"),
-);
-assert.equal(
-  await resolveFundraiseStaticPath(resolve(fakeWork, "static"), "/_astro/app.js"),
-  resolve(fakeWork, "static", "_astro", "app.js"),
-);
-assert.equal(await resolveFundraiseStaticPath(resolve(fakeWork, "static"), "/../secret"), null);
-assert.equal(fundraiseStaticContentType("index.html"), "text/html; charset=utf-8");
-assert.equal(fundraiseStaticContentType("app.js"), "text/javascript; charset=utf-8");
 const commands = [];
 const receipt = await runFundraiseDemo({
   repo_root: repoRoot,

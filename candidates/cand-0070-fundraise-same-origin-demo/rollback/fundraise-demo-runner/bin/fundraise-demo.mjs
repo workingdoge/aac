@@ -8,7 +8,7 @@ if (args.help) {
   process.stdout.write(`Usage: aac-fundraise-demo [--repo-root PATH] [--provekit-bin PATH] [--out PATH] [--keep-workdir]
        aac-fundraise-demo --summary [--settle-local] [--out PATH]
        aac-fundraise-demo --settle-local --rpc-url URL [--forge-bin PATH] [--cast-bin PATH] [--solc-bin PATH]
-       aac-fundraise-demo --serve [--host HOST] [--port PORT] [--static-dir PATH] [--settle-local]\n`);
+       aac-fundraise-demo --serve [--host HOST] [--port PORT] [--settle-local]\n`);
   process.exit(0);
 }
 
@@ -25,7 +25,6 @@ const input = {
   authorizer_private_key: args.authorizerPrivateKey,
   host: args.host,
   port: args.port,
-  static_dir: args.staticDir,
   cors_origin: args.corsOrigin,
   settle_local: args.settleLocal,
 };
@@ -34,7 +33,6 @@ if (args.serve) {
   process.stdout.write(`aac-fundraise-demo listening on ${service.url}\n`);
   process.stdout.write(`health: ${service.url}/health\n`);
   process.stdout.write(`run:    ${service.url}/api/fundraise/run\n`);
-  if (args.staticDir) process.stdout.write(`static: ${service.url}/\n`);
   const shutdown = async () => {
     await service.close();
     process.exit(0);
@@ -74,7 +72,6 @@ function parseArgs(argv) {
     else if (arg === "--authorizer-private-key") out.authorizerPrivateKey = needValue(argv, ++i, arg);
     else if (arg === "--host") out.host = needValue(argv, ++i, arg);
     else if (arg === "--port") out.port = Number(needValue(argv, ++i, arg));
-    else if (arg === "--static-dir") out.staticDir = needValue(argv, ++i, arg);
     else if (arg === "--cors-origin") out.corsOrigin = needValue(argv, ++i, arg);
     else if (arg === "--out") out.out = needValue(argv, ++i, arg);
     else throw new Error(`unknown argument: ${arg}`);

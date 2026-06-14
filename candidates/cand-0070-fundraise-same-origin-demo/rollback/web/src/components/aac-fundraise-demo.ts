@@ -526,16 +526,8 @@ export class AacFundraiseDemo extends LitElement {
   `;
 
   private apiEndpoint(): string {
-    const base = this.getAttribute('api-base') || this.defaultApiBase();
+    const base = this.getAttribute('api-base') || 'http://127.0.0.1:8787';
     return `${base.replace(/\/+$/, '')}/api/fundraise/run`;
-  }
-
-  private defaultApiBase(): string {
-    const host = window.location.hostname;
-    if (window.location.protocol.startsWith('http') && (host === '127.0.0.1' || host === 'localhost' || host === '::1')) {
-      return window.location.origin;
-    }
-    return 'http://127.0.0.1:8787';
   }
 
   private apiRunUrl(): string {

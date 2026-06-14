@@ -1,0 +1,5 @@
+candidate_id: cand-0070-fundraise-same-origin-demo
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T12:12:36Z
+intent: Serve the fundraise static UI and proof API from one localhost origin so the live component can complete in browser environments that block cross-port local fetches.
+status: landed

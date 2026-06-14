@@ -1,0 +1,1 @@
+runner serves static UI, component defaults to same-origin localhost API
