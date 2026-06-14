@@ -1,4 +1,4 @@
-# cand-0044-bcc-signature-adapter (machine-drafted, DRAFT -- pre-threshold)
+# cand-0044-bcc-signature-adapter (machine-drafted, DRAFT — pre-threshold)
 
 ```text
 CycleReceipt:
