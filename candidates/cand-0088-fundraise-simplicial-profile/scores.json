@@ -1,22 +1,19 @@
 {
-  "schema": "boat.eval-self.v0",
+  "evaluated_at": "2026-06-14T20:56:26Z",
+  "task": "post-land conformance",
   "candidate": "cand-0088-fundraise-simplicial-profile",
-  "evaluated_at": "2026-06-14T20:55:28Z",
-  "task": "Define FUNDRAISE-CLEARING/1 as a simplicial statement profile over LEDGER/1 state.",
-  "checks": {
-    "profile": "pass",
-    "faces": "pass",
-    "verifier": "pass",
-    "abi": "pass",
-    "landing": "pass",
-    "build": "pass"
-  },
+  "snapshot": "5712e98",
+  "checks": [
+    { "name": "manifest", "result": "pass" },
+    { "name": "snapshot", "result": "pass" },
+    { "name": "suite", "result": "pass" }
+  ],
   "verdict": "pass"
   ,"provenance": {
-    "harness": "eval-self.sh",
-    "harness_sha256": "e3fc6c91144e13374ffa44e2a9b892568965639cf057e5a104677d39f77f7153",
-    "traces_sha256": "3aabf6b508bc82794d5dc1cbf1eb993fc3d942fb1601df231b054f26c330a246",
-    "body_sha256": "38aaded4ab2df9c7a0c81822bc34eb12ee8545d980813bc599c86ed18037fea7",
-    "attestation": "ec853662c4b457f32f4c085aea533094b67fb13f2b460d13edebf39097ae26f6"
+    "harness": "evaluate-landed.sh",
+    "harness_sha256": "34f271602979a5f0473f86b5b667a65c6879198ad1fb7f8d3226f7fce5b6c1d1",
+    "traces_sha256": "e71b69cf7972fb7235bb3880f8e3b0d820bee39bb843a3ab6ce922dc287674b6",
+    "body_sha256": "bf45eabdc5e8d1ad998eeee8d3bd84ac8bf278c1b1e57cea0cd53aa32ed2637b",
+    "attestation": "5aaac6d74194715786870072c1d6872c0d9cbf1188a1849fe8c73cc09cada6f5"
   }
 }
