@@ -1,0 +1,1 @@
+mutant rejected when the MSM-only (no EmbeddedCurveAdd) constraint is removed

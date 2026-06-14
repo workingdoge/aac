@@ -1,0 +1,1 @@
+PEDERSEN-VECTOR/1 carries group, generators, MSM-only aggregation, single-MSM zero opening, bounded coordinates, conformance vectors, and target identity

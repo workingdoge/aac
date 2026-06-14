@@ -45,12 +45,6 @@ A VNET/1 profile fixes:
 - subgroup and point-validation rules for every public and witnessed point;
 - an amount carrier bound compatible with the referenced TRANSITION/1 profile.
 
-The concrete profile assigned for the reference implementation is
-[PEDERSEN-VECTOR/1](../profiles/PEDERSEN-VECTOR-1.md): the Grumpkin group, a
-domain-separated try-and-increment generator rule, and an **MSM-only**
-aggregation discipline (point addition is not assumed available on the proving
-backend; see PEDERSEN-VECTOR/1 §4, §9).
-
 For a non-negative amount vector `v` over basis `B`, the commitment is:
 
 ```
@@ -176,22 +170,9 @@ application target that composes with 5/NET rather than replacing it.
 
 ## 9. Implementation status (non-normative)
 
-The concrete vector-commitment profile is assigned:
-[PEDERSEN-VECTOR/1](../profiles/PEDERSEN-VECTOR-1.md) (Grumpkin, domain-separated
-generator derivation, MSM-only aggregation, zero-opening as a single MSM,
-bounded non-negative coordinates). It fixes the group, point encoding, generator
-rule, and aggregation discipline VNET/1 §2 left open.
-
-The profile's MSM-only rule is grounded in a measured backend capability: on the
-ProveKit WHIR backend the embedded-curve `MultiScalarMul` primitive is available
-but `EmbeddedCurveAdd` is not, so all aggregation (including summing committed
-points) is expressed as a single multi-scalar multiplication. A toy three-MSM
-circuit proved and verified end-to-end on that backend (~15k R1CS constraints,
-~1.0 s prove, arm64-darwin), establishing that the homomorphic netting identity
-is provable in this substrate.
-
-A reference VNET/1 circuit and its conformance vectors remain the next
-implementation slice. Per PEDERSEN-VECTOR/1 §7 the suite MUST cover: accepted
-zero-opening, mismatched basis rejection, missing transition-link rejection, an
-out-of-bound coordinate rejection, and -- the canonical soundness case -- a
-false net rejected even when the aggregate point is well-formed.
+No reference VNET/1 circuit or native verifier is assigned by this candidate.
+The next implementation slice should choose the group/profile, define the exact
+point encoding and hash-to-curve rule, and produce conformance vectors that
+cover: accepted zero-opening, mismatched basis rejection, missing transition
+link rejection, and a false net rejected even when the aggregate point is
+well-formed.

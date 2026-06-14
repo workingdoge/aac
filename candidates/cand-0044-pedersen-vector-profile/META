@@ -1,0 +1,5 @@
+candidate_id: cand-0044-pedersen-vector-profile
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T07:32:57Z
+intent: Concretize VNET/1 into the PEDERSEN-VECTOR/1 profile: Grumpkin group, domain-separated per-basis generators, MSM-only aggregation (ProveKit has no EmbeddedCurveAdd), zero-opening as a single MSM, bounded non-negative coordinates, conformance vectors. The homomorphic commitment decomposition enabling confidential netting.
+status: landed

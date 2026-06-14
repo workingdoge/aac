@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0044-pedersen-vector-profile",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "7dcb7e419412036c541ebb96faea9b408682bca7dc0f48d4eec877236c08b0d8",
+    "META": "779949f5b0b49a814227ac2cca9c714284d359b5d75e49059a5720460ac227dd"
+  }
+}
