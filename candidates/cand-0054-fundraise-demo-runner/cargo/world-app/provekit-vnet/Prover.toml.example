@@ -1,0 +1,21 @@
+# Prover.toml.example -- a true-net VNET witness over basis [USD, fabric, shares].
+#
+# Recompute the public inputs after circuit edits with:
+#   nix run .#nargo19 -- test --show-output print_public_inputs
+#
+# Private witness:
+debit = [["100", "0", "0"], ["0", "50", "0"]]
+credit = [["0", "50", "0"], ["100", "0", "0"]]
+r_debit = ["11", "13"]
+r_credit = ["17", "19"]
+
+# Public inputs:
+journal_commitments_pub = [
+  "0x1954e5cc33780be8646e73e066d5e4fa6777454ba133cba74e4ebf2ce0bb1e87",
+  "0x12ec609f776f7694164a22064e8f66fcad5bf9f148740e9f4070c662f3dba75e",
+]
+transition_set_commitment_pub = "0x14a94b4b9a511bbb36a024081fbc0edbbc41d71ac630962feb053bd004107a24"
+generator_set_id_pub = "0x184127cf9ef264e4be95cf3bd518eac486117cc564c895861043aa775e6a29cc"
+aggregate_opening_x_pub = "0x11a6a0193f74d35ed8d23be9cc94985cd3fc6ed4d06be175358fe109c37aac44"
+aggregate_opening_y_pub = "0x24cf2fbb1603cc7904c853897da323808784b8bec50d12ea51bff584d2fd9f1a"
+aggregate_opening_is_infinite_pub = false
