@@ -17,23 +17,14 @@ export class AacFundraiseDemo extends LitElement {
     sourceLabel: { state: true },
   };
 
-  declare summary: FundraiseSummary;
-  declare runState: RunState;
-  declare liveError: string;
-  declare liveElapsedMs: number | null;
-  declare sourceLabel: string;
+  private summary: FundraiseSummary = this.readySummary();
+  private runState: RunState = 'idle';
+  private liveError = '';
+  private liveElapsedMs: number | null = null;
+  private sourceLabel = 'ready: no proof run yet';
   private runControl: HTMLAnchorElement | null = null;
   private captureControl: HTMLAnchorElement | null = null;
   private urlActionApplied = false;
-
-  constructor() {
-    super();
-    this.summary = this.readySummary();
-    this.runState = 'idle';
-    this.liveError = '';
-    this.liveElapsedMs = null;
-    this.sourceLabel = 'ready: no proof run yet';
-  }
 
   private readySummary(): FundraiseSummary {
     return {

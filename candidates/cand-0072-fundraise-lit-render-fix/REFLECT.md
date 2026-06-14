@@ -1,0 +1,38 @@
+# Reflection: cand-0072-fundraise-lit-render-fix
+
+Intent: Fix the fundraise Lit component render failure by moving reactive field initializers into the constructor.
+Status at reflection: landed
+Reflected at: 2026-06-14T12:35:13Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0072-fundraise-lit-render-fix",
+  "evaluated_at": "2026-06-14T12:35:05Z",
+  "task": "Fix the fundraise Lit component render failure by moving reactive field initializers into the constructor.",
+  "checks": {
+    "source": "pass",
+    "mutant": "pass",
+    "build": "pass",
+    "scope": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "92e4fb13c967ce5ff87e308a84c71eb1feab6cba79a33014fcfb979bb4eb90b4",
+    "traces_sha256": "41f07ca72fc58f327216c6eed9361d27bd5c6d2d1e12b32cc161f79b2b0120a6",
+    "body_sha256": "6e9ad22c3e35872a6c2420cb4680562d0ba6eb69d3ce5451a9ff72ade96bd9af",
+    "attestation": "c84124508bf4b06693102edc8d827dd7f4d99c5758f090702b24b4ff28f86ce6"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.
