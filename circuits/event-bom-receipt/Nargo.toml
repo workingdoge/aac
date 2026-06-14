@@ -1,0 +1,9 @@
+[package]
+name = "event_bom_receipt"
+type = "bin"
+authors = ["American Accounting Company"]
+[dependencies]
+bom_receipt = { path = "../bom-receipt" }
+receipt = { path = "../receipt" }
+ledger = { path = "../ledger" }
+event_harness = { path = "../event-harness" }

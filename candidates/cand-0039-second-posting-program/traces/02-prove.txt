@@ -1,0 +1,1 @@
+nargo test --workspace green (bom_receipt 2/2 + event_bom_receipt 6/6); event_bom_receipt witness solves; existing event_complete/transition/nullify still solve (value-preserving)

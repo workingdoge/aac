@@ -1,0 +1,1 @@
+structural ok: B=4 kit-receipt schema (tag 126), bin reuses discharge (glue not re-implemented), workspace + R1 updated

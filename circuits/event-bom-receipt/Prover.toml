@@ -1,0 +1,14 @@
+# Witness for the materials-kit-receipt EVENT/1 proof.
+# Public commitments from `nargo test --show-output print_public_inputs`.
+usd_cents = "10000"
+fabric_meters = "50"
+thread_spools = "8"
+trim_units = "120"
+buyer_id = "111"
+supplier_id = "222"
+
+posting_program_id = "9"
+event_commitment_pub = "0x20f290776cad01f45ff68e494a7d769054c6f3622d0072a3ce171f98c396cf9f"
+participant_set_pub = "0x2be2070bf701535452f715ebd9898b4fb71a09732ae2401e05a698b227459667"
+journal_commitment_pub = "0x1beab5b77211586d99cc5b94069adf47ef1fd1fb0dcfb28768e626bd0e4cbd75"
+event_nullifier_pub = "0x1be4413107a852a5e882add55f5e0b63a5a7b6138c13ce8ec5d11e8c026052e0"

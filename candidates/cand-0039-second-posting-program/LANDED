@@ -1,0 +1,9 @@
+cargo/circuits/Nargo.toml	circuits/Nargo.toml	yes
+cargo/circuits/bom-receipt/Nargo.toml	circuits/bom-receipt/Nargo.toml	no
+cargo/circuits/bom-receipt/src/lib.nr	circuits/bom-receipt/src/lib.nr	no
+cargo/circuits/event-bom-receipt/Nargo.toml	circuits/event-bom-receipt/Nargo.toml	no
+cargo/circuits/event-bom-receipt/src/main.nr	circuits/event-bom-receipt/src/main.nr	no
+cargo/circuits/event-bom-receipt/Prover.toml	circuits/event-bom-receipt/Prover.toml	no
+cargo/sites/ledger/specs/registers/R1.md	sites/ledger/specs/registers/R1.md	yes
+# landed_at: 2026-06-14T05:32:17Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1 unavailable(not-in-devshell)

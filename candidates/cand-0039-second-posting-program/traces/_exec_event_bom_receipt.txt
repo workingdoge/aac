@@ -1,0 +1,2 @@
+[event_bom_receipt] Circuit witness successfully solved
+[event_bom_receipt] Witness saved to target/event_bom_receipt.gz

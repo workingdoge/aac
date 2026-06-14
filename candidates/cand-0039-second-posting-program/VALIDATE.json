@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0039-second-posting-program",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "844f3d74c59c62f10b7f79b6b0bc9b54999b5a4ac3a6685495fc0b0abe7bf1f9",
+    "LANDING": "b4631e3320a7c5f4f4c98b2b4c31a4e8e66b940c40af500de6f27951b8f548a8",
+    "META": "53548e3d1cfc74a1eeacc0e7f06384e3c22c23fd05c3e2a0f3598c440f5e8ed4"
+  }
+}

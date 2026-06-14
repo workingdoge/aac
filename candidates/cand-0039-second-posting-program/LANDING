@@ -1,0 +1,8 @@
+# SRC (candidate-relative)                                DEST (root-relative)
+cargo/circuits/Nargo.toml                                 circuits/Nargo.toml
+cargo/circuits/bom-receipt/Nargo.toml                     circuits/bom-receipt/Nargo.toml
+cargo/circuits/bom-receipt/src/lib.nr                     circuits/bom-receipt/src/lib.nr
+cargo/circuits/event-bom-receipt/Nargo.toml               circuits/event-bom-receipt/Nargo.toml
+cargo/circuits/event-bom-receipt/src/main.nr              circuits/event-bom-receipt/src/main.nr
+cargo/circuits/event-bom-receipt/Prover.toml              circuits/event-bom-receipt/Prover.toml
+cargo/sites/ledger/specs/registers/R1.md                  sites/ledger/specs/registers/R1.md

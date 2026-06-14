@@ -1,0 +1,9 @@
+[package]
+name = "bom_receipt"
+type = "lib"
+authors = ["American Accounting Company"]
+
+[dependencies]
+pacioli = { path = "../pacioli" }
+hash = { path = "../hash" }
+event_harness = { path = "../event-harness" }
