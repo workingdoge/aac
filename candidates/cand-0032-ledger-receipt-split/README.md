@@ -1,0 +1,5 @@
+# cand-0032-ledger-receipt-split
+
+Intent: Slim circuits/ledger to the KERNEL commitment seam (journal_commitment + TAG_JOURNAL=3) and move the app-side receipt identities (participant_set, event_nullifier) into a new circuits/receipt lib. Reassign their colliding tags TAG_PARTY 122->124 and TAG_NULL 123->125 off R1's receipt-reference block (3/PROOF Annex A app range 120-255); append R1 rows 124/125; reconcile TAG_EVENT=120 in R1 (the receipt-reference leaf, realized by rulebook event_commitment -- no code change). event-complete imports journal_commitment from ledger and participant_set/event_nullifier from receipt; its witness/Prover.toml regenerated (participant_set/event_nullifier values change). transition/nullify untouched -- the kernel consumes nullifiers OPAQUELY, so no on-chain registry change (recompute-vs-consume seam rule). nargo test green workspace-wide; resolves the 122/123 tag-collision soundness concern (3/PROOF Annex A: tag reuse across structures is a soundness failure). Web aac-receipt value cascade queued as a follow-up.
+
+Status: open (pre-threshold).

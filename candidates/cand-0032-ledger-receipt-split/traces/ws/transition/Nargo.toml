@@ -1,9 +1,9 @@
 [package]
-name = "event_complete"
+name = "transition"
 type = "bin"
 authors = ["American Accounting Company"]
+
 [dependencies]
 pacioli = { path = "../pacioli" }
-rulebook = { path = "../rulebook" }
 ledger = { path = "../ledger" }
-receipt = { path = "../receipt" }
+hash = { path = "../hash" }

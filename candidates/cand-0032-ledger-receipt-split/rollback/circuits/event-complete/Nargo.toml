@@ -6,4 +6,3 @@ authors = ["American Accounting Company"]
 pacioli = { path = "../pacioli" }
 rulebook = { path = "../rulebook" }
 ledger = { path = "../ledger" }
-receipt = { path = "../receipt" }

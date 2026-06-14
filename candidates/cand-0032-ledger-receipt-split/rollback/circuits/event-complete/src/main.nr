@@ -22,8 +22,7 @@
 
 use pacioli::journal_balanced;
 use rulebook::{compile_goods_receipt_invoice, event_commitment, GoodsReceiptInvoice};
-use ledger::journal_commitment;
-use receipt::{event_nullifier, participant_set};
+use ledger::{event_nullifier, journal_commitment, participant_set};
 
 fn main(
     rulebook_id: pub Field,

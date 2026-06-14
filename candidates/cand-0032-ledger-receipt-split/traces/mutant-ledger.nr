@@ -43,3 +43,5 @@ fn journal_commitment_is_order_binding() {
     let c2: [[u64; 2]; 2] = [[5, 0], [0, 5]];
     assert(journal_commitment(a, d, c) != journal_commitment(a2, d2, c2), "fold is not order-binding");
 }
+
+pub fn event_nullifier(a: Field) -> Field { a }
