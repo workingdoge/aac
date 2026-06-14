@@ -16,8 +16,6 @@ export interface RoundPolicy {
   max_settlement_amount: number;
   max_issued_units: number;
   token_contract: string;
-  settlement_chain: string;
-  vault_or_contract: string;
   transfer_policy_hash: string;
   admissibility_policy_hash: string;
   settlement_adapter_hash: string;
@@ -41,20 +39,6 @@ export interface SettlementReport {
     settlement_ref: string;
     investor_id: string;
     asset_type_id: string;
-    amount: number;
-  }>;
-}
-
-export interface BridgeSettlement {
-  schema: "aac.fundraise-demo.bridge-settlement.v1";
-  settlement_chain: string;
-  vault_or_contract: string;
-  asset_type_id: string;
-  accepted: Array<{
-    subscription_id: string;
-    investor_id: string;
-    settlement_ref: string;
-    deposit_ref: string;
     amount: number;
   }>;
 }
@@ -85,12 +69,6 @@ export interface MintAuthorization {
 export interface FundraisePacket {
   round_policy: RoundPolicy;
   subscriptions: Subscription[];
-  bcc_agreements: Array<{
-    schema: "aac.fundraise-demo.bcc-agreement.v1";
-    subscription_id: string;
-    certificate: any;
-  }>;
-  bridge_settlement: BridgeSettlement;
   settlement_report: SettlementReport;
   admissibility_report: AdmissibilityReport;
   vnet_link: any;
@@ -110,8 +88,6 @@ export interface AuthorizedMint {
 
 export interface VerifyOptions {
   verifyVnetLink?: (vnetLink: any) => { accepted: boolean; reason: string };
-  seenBccFinalityTags?: Set<string>;
-  seen_bcc_finality_tags?: string[];
 }
 
 export declare class FundraiseVerificationError extends Error {
@@ -124,31 +100,20 @@ export declare function digestHex(label: string, ...parts: unknown[]): string;
 export declare function createRoundPolicy(overrides?: Partial<RoundPolicy>): RoundPolicy;
 export declare function createSubscription(input: Subscription): Subscription;
 export declare function buildSettlementReport(policy: RoundPolicy, subscriptions: Subscription[]): SettlementReport;
-export declare function buildBridgeSettlement(policy: RoundPolicy, subscriptions: Subscription[]): BridgeSettlement;
 export declare function buildAdmissibilityReport(policy: RoundPolicy, subscriptions: Subscription[]): AdmissibilityReport;
 export declare function buildMintAuthorization(policy: RoundPolicy, subscriptions: Subscription[]): MintAuthorization;
 export declare function vnetPublic(vnetLink: any): Record<string, unknown>;
-export declare function bccPublic(agreement: FundraisePacket["bcc_agreements"][number]): Record<string, unknown>;
-export declare function buildBccAgreements(
-  policy: RoundPolicy,
-  subscriptions: Subscription[],
-  vnetLink: any,
-): FundraisePacket["bcc_agreements"];
 export declare function vnetAmountTotals(vnetLink: any): [number[], number[]];
 export declare function buildPublicInputs(
   policy: RoundPolicy,
   subscriptions: Subscription[],
   vnetLink: any,
   mintAuthorization: MintAuthorization,
-  bccAgreements: FundraisePacket["bcc_agreements"],
-  bridgeSettlement: BridgeSettlement,
 ): Record<string, unknown>;
 export declare function buildFundraisePacket(input: {
   policy?: RoundPolicy;
   subscriptions: Subscription[];
   vnetLink: any;
-  bccAgreements?: FundraisePacket["bcc_agreements"];
-  bridgeSettlement?: BridgeSettlement;
   settlementReport?: SettlementReport;
   admissibilityReport?: AdmissibilityReport;
   mintAuthorization?: MintAuthorization;

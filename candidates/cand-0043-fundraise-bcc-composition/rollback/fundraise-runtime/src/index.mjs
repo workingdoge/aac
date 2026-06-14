@@ -1,8 +1,4 @@
 import { createHash } from "node:crypto";
-import {
-  buildBilateralPacket,
-  verifyBilateralCertificate,
-} from "../../bcc-runtime/src/index.mjs";
 
 export const SCHEMA = "aac.fundraise-demo.conformance.v1";
 export const SETTLEMENT_ASSET = "USDC:arc-testnet:atomic";
@@ -53,8 +49,6 @@ export function createRoundPolicy(overrides = {}) {
     max_settlement_amount: 2_000,
     max_issued_units: 200,
     token_contract: "0xAac000000000000000000000000000000000039",
-    settlement_chain: "arc-testnet",
-    vault_or_contract: "0xVa01700000000000000000000000000000000039",
     transfer_policy_hash: digestHex("aac/demo/transfer-policy", "restricted-safe"),
     admissibility_policy_hash: digestHex("aac/demo/admissibility-policy", "allowlist"),
     settlement_adapter_hash: digestHex("aac/demo/settlement-adapter", "arc-usdc-report"),
@@ -95,22 +89,6 @@ export function buildSettlementReport(policy, subscriptions) {
       settlement_ref: sub.settlement_ref,
       investor_id: sub.investor_id,
       asset_type_id: policy.settlement_asset_type_id,
-      amount: sub.settlement_amount,
-    })),
-  };
-}
-
-export function buildBridgeSettlement(policy, subscriptions) {
-  return {
-    schema: "aac.fundraise-demo.bridge-settlement.v1",
-    settlement_chain: policy.settlement_chain,
-    vault_or_contract: policy.vault_or_contract,
-    asset_type_id: policy.settlement_asset_type_id,
-    accepted: subscriptions.map((sub) => ({
-      subscription_id: sub.subscription_id,
-      investor_id: sub.investor_id,
-      settlement_ref: sub.settlement_ref,
-      deposit_ref: sub.settlement_ref,
       amount: sub.settlement_amount,
     })),
   };
@@ -158,84 +136,7 @@ export function vnetPublic(vnetLink) {
   };
 }
 
-export function bccPublic(agreement) {
-  const cert = agreement.certificate;
-  return {
-    subscription_id: agreement.subscription_id,
-    transcript_hash: cert.transcript_hash,
-    finality_tag: cert.finality.finality_tag,
-    nullifier: cert.finality.nullifier,
-    parties: cert.records.map((record) => record.party_id),
-    record_commitments: cert.records.map((record) => record.record_commitment.value),
-  };
-}
-
-export function buildBccAgreements(policy, subscriptions, vnetLink) {
-  const atoms = vnetLink.vnet.atoms;
-  return subscriptions.map((sub, index) => {
-    const investorAtom = atoms[index * 2];
-    const issuerAtom = atoms[index * 2 + 1];
-    const event = {
-      event_id: `fundraise:${policy.round_id}:${sub.subscription_id}`,
-      description: `Investor ${sub.investor_id} subscribes to ${sub.issued_units} issued units for ${sub.settlement_amount} settlement units.`,
-      basis_type_ids: [policy.settlement_asset_type_id, policy.issued_unit_type_id],
-      state_refs: {
-        investor_row: investorAtom.transition_ref,
-        issuer_row: issuerAtom.transition_ref,
-      },
-      fundraise_context: {
-        round_id: policy.round_id,
-        issuer_name: policy.issuer_name,
-        investor_id: sub.investor_id,
-        subscription_id: sub.subscription_id,
-        settlement_ref: sub.settlement_ref,
-        settlement_amount: sub.settlement_amount,
-        issued_units: sub.issued_units,
-        token_contract: policy.token_contract,
-      },
-      bridge_context: {
-        asset: policy.settlement_asset_type_id,
-        settlement_chain: policy.settlement_chain,
-        vault_or_contract: policy.vault_or_contract,
-        deposit_ref: sub.settlement_ref,
-      },
-    };
-    const packet = buildBilateralPacket({
-      event,
-      records: [
-        {
-          party_id: sub.investor_id,
-          role: "investor",
-          transition_ref: investorAtom.transition_ref,
-          journal_commitment: investorAtom.journal_commitment,
-          basis_type_ids: event.basis_type_ids,
-          debit: [0, sub.issued_units],
-          credit: [sub.settlement_amount, 0],
-        },
-        {
-          party_id: policy.issuer_name,
-          role: "issuer",
-          transition_ref: issuerAtom.transition_ref,
-          journal_commitment: issuerAtom.journal_commitment,
-          basis_type_ids: event.basis_type_ids,
-          debit: [sub.settlement_amount, 0],
-          credit: [0, sub.issued_units],
-        },
-      ],
-      finality_context: {
-        log_ref: `fundraise:${policy.round_id}`,
-        nullifier: sub.subscription_nullifier,
-      },
-    });
-    return {
-      schema: "aac.fundraise-demo.bcc-agreement.v1",
-      subscription_id: sub.subscription_id,
-      certificate: packet.certificate,
-    };
-  });
-}
-
-export function buildPublicInputs(policy, subscriptions, vnetLink, mintAuthorization, bccAgreements, bridgeSettlement) {
+export function buildPublicInputs(policy, subscriptions, vnetLink, mintAuthorization) {
   const settlementReport = buildSettlementReport(policy, subscriptions);
   const admissibilityReport = buildAdmissibilityReport(policy, subscriptions);
   const transitions = vnetPublic(vnetLink).transition_refs;
@@ -251,13 +152,11 @@ export function buildPublicInputs(policy, subscriptions, vnetLink, mintAuthoriza
     subscription_set_commitment: digestHex("aac/fundraise/subscriptions/1", subscriptions),
     transition_set_commitment: digestHex("aac/fundraise/transitions/1", transitions),
     vnet_public_commitment: digestHex("aac/fundraise/vnet-public/1", vnetPublic(vnetLink)),
-    bcc_set_commitment: digestHex("aac/fundraise/bcc-agreements/1", bccAgreements.map(bccPublic)),
-    bridge_settlement_commitment: digestHex("aac/fundraise/bridge-settlement/1", bridgeSettlement),
     mint_recipient_set_commitment: mintAuthorization.mint_recipient_set_commitment,
     settlement_amount_total: settlementTotal,
     issued_unit_total: issuedTotal,
     token_contract: mintAuthorization.token_contract,
-    context_commitment: digestHex("aac/fundraise/context/1", policy, settlementReport, admissibilityReport, bridgeSettlement),
+    context_commitment: digestHex("aac/fundraise/context/1", policy, settlementReport, admissibilityReport),
   };
 }
 
@@ -265,8 +164,6 @@ export function buildFundraisePacket({
   policy,
   subscriptions,
   vnetLink,
-  bccAgreements,
-  bridgeSettlement,
   settlementReport,
   admissibilityReport,
   mintAuthorization,
@@ -274,18 +171,14 @@ export function buildFundraisePacket({
   const normalizedPolicy = policy ?? createRoundPolicy();
   const normalizedSubscriptions = subscriptions.map(createSubscription);
   const mint = mintAuthorization ?? buildMintAuthorization(normalizedPolicy, normalizedSubscriptions);
-  const bridge = bridgeSettlement ?? buildBridgeSettlement(normalizedPolicy, normalizedSubscriptions);
-  const bcc = bccAgreements ?? buildBccAgreements(normalizedPolicy, normalizedSubscriptions, vnetLink);
   return {
     round_policy: normalizedPolicy,
     subscriptions: normalizedSubscriptions,
-    bcc_agreements: bcc,
-    bridge_settlement: bridge,
     settlement_report: settlementReport ?? buildSettlementReport(normalizedPolicy, normalizedSubscriptions),
     admissibility_report: admissibilityReport ?? buildAdmissibilityReport(normalizedPolicy, normalizedSubscriptions),
     vnet_link: clone(vnetLink),
     mint_authorization: mint,
-    public_inputs: buildPublicInputs(normalizedPolicy, normalizedSubscriptions, vnetLink, mint, bcc, bridge),
+    public_inputs: buildPublicInputs(normalizedPolicy, normalizedSubscriptions, vnetLink, mint),
   };
 }
 
@@ -316,8 +209,6 @@ export function authorizeMint(packet) {
       issued_unit_total: pub.issued_unit_total,
       mint_recipient_set_commitment: pub.mint_recipient_set_commitment,
       vnet_public_commitment: pub.vnet_public_commitment,
-      bcc_set_commitment: pub.bcc_set_commitment,
-      bridge_settlement_commitment: pub.bridge_settlement_commitment,
       context_commitment: pub.context_commitment,
     }),
     recipients: clone(mint.recipients),
@@ -329,25 +220,15 @@ function checkPacket(packet, opts) {
   const subscriptions = packet.subscriptions;
   const pub = packet.public_inputs;
   const mint = packet.mint_authorization;
-  const bccAgreements = packet.bcc_agreements;
-  const bridge = packet.bridge_settlement;
 
   if (pub.round_id !== policy.round_id) fail("round_id_mismatch");
   if (pub.token_contract !== mint.token_contract) fail("public_token_mismatch");
   if (mint.round_id !== policy.round_id) fail("mint_round_mismatch");
   if (mint.token_contract !== policy.token_contract) fail("token_contract_mismatch");
-  if (!Array.isArray(bccAgreements) || bccAgreements.length !== subscriptions.length) fail("bcc_missing");
-  if (!bridge || bridge.schema !== "aac.fundraise-demo.bridge-settlement.v1") fail("bridge_missing");
-  if (bridge.settlement_chain !== policy.settlement_chain) fail("bridge_chain_mismatch");
-  if (bridge.vault_or_contract !== policy.vault_or_contract) fail("bridge_contract_mismatch");
-  if (bridge.asset_type_id !== policy.settlement_asset_type_id) fail("bridge_asset_mismatch");
 
   const settlement = new Map(packet.settlement_report.accepted.map((item) => [item.settlement_ref, item]));
   const admissibility = new Map(packet.admissibility_report.accepted.map((item) => [item.admissibility_ref, item]));
-  const bccBySubscription = new Map(bccAgreements.map((item) => [item.subscription_id, item]));
-  const bridgeBySubscription = new Map(bridge.accepted.map((item) => [item.subscription_id, item]));
   const nullifiers = new Set();
-  const bccFinalityTags = new Set(opts.seenBccFinalityTags ?? opts.seen_bcc_finality_tags ?? []);
   let settlementTotal = 0;
   let issuedTotal = 0;
 
@@ -370,22 +251,6 @@ function checkPacket(packet, opts) {
     const admitted = admissibility.get(sub.admissibility_ref);
     if (!admitted || admitted.accepted !== true) fail("admissibility_missing");
     if (admitted.investor_id !== sub.investor_id) fail("admissibility_mismatch");
-
-    const bridgeItem = bridgeBySubscription.get(sub.subscription_id);
-    if (!bridgeItem) fail("bridge_settlement_missing");
-    if (bridgeItem.investor_id !== sub.investor_id) fail("bridge_settlement_mismatch");
-    if (bridgeItem.settlement_ref !== sub.settlement_ref) fail("bridge_settlement_mismatch");
-    if (bridgeItem.deposit_ref !== sub.settlement_ref) fail("bridge_deposit_mismatch");
-    if (bridgeItem.amount !== sub.settlement_amount) fail("bridge_amount_mismatch");
-
-    const bcc = bccBySubscription.get(sub.subscription_id);
-    if (!bcc) fail("bcc_missing");
-    const cert = bcc.certificate;
-    if (bccFinalityTags.has(cert.finality.finality_tag)) fail("bcc_finality_replay");
-    const bccResult = verifyBilateralCertificate(cert, { seenFinalityTags: bccFinalityTags });
-    if (!bccResult.accepted) fail(`bcc_${bccResult.reason}`);
-    bccFinalityTags.add(cert.finality.finality_tag);
-    checkBccContext(policy, sub, cert);
 
     settlementTotal += sub.settlement_amount;
     issuedTotal += sub.issued_units;
@@ -413,12 +278,6 @@ function checkPacket(packet, opts) {
   if (pub.vnet_public_commitment !== digestHex("aac/fundraise/vnet-public/1", vnetPublic(packet.vnet_link))) {
     fail("vnet_public_commitment_mismatch");
   }
-  if (pub.bcc_set_commitment !== digestHex("aac/fundraise/bcc-agreements/1", bccAgreements.map(bccPublic))) {
-    fail("bcc_set_commitment_mismatch");
-  }
-  if (pub.bridge_settlement_commitment !== digestHex("aac/fundraise/bridge-settlement/1", bridge)) {
-    fail("bridge_settlement_commitment_mismatch");
-  }
 
   const vnet = opts.verifyVnetLink?.(packet.vnet_link) ?? transparentVnetCheck(packet.vnet_link);
   if (!vnet.accepted) fail(`vnet_${vnet.reason}`);
@@ -428,25 +287,6 @@ function checkPacket(packet, opts) {
   if (!sameVector(debit, expected) || !sameVector(credit, expected)) {
     fail("vnet_amount_total_mismatch");
   }
-}
-
-function checkBccContext(policy, sub, cert) {
-  const ctx = cert.event?.fundraise_context;
-  if (!ctx) fail("bcc_context_missing");
-  if (ctx.round_id !== policy.round_id) fail("bcc_round_mismatch");
-  if (ctx.subscription_id !== sub.subscription_id) fail("bcc_subscription_mismatch");
-  if (ctx.investor_id !== sub.investor_id) fail("bcc_investor_mismatch");
-  if (ctx.issuer_name !== policy.issuer_name) fail("bcc_issuer_mismatch");
-  if (ctx.settlement_ref !== sub.settlement_ref) fail("bcc_settlement_ref_mismatch");
-  if (ctx.settlement_amount !== sub.settlement_amount) fail("bcc_settlement_amount_mismatch");
-  if (ctx.issued_units !== sub.issued_units) fail("bcc_issued_units_mismatch");
-  if (ctx.token_contract !== policy.token_contract) fail("bcc_token_contract_mismatch");
-  const bridge = cert.event?.bridge_context;
-  if (!bridge) fail("bcc_bridge_context_missing");
-  if (bridge.asset !== policy.settlement_asset_type_id) fail("bcc_bridge_asset_mismatch");
-  if (bridge.settlement_chain !== policy.settlement_chain) fail("bcc_bridge_chain_mismatch");
-  if (bridge.vault_or_contract !== policy.vault_or_contract) fail("bcc_bridge_contract_mismatch");
-  if (bridge.deposit_ref !== sub.settlement_ref) fail("bcc_bridge_deposit_mismatch");
 }
 
 function transparentVnetCheck(vnetLink) {

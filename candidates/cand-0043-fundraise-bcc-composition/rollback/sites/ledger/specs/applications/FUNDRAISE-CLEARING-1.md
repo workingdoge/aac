@@ -2,7 +2,7 @@
 
 - Name: FUNDRAISE-CLEARING/1 . Status: Raw . **Application target (not enshrined)**
 - Editor: Arjun Velagapudi <arjun@aac.sh>
-- License: GPL-3.0-or-later. RFC 2119 applies. Cites: 1/PACI, 2/FACT, 3/PROOF, 4/REG, 5/NET, BCC/1, VNET/1.
+- License: GPL-3.0-or-later. RFC 2119 applies. Cites: 1/PACI, 2/FACT, 3/PROOF, 4/REG, 5/NET, VNET/1.
 
 This specification defines a non-enshrined target for a paid fundraising
 round: approved subscription settlements update an issuer's private balance
@@ -28,7 +28,6 @@ target a registry precondition.
 TRANSITION/1          posts private issuer/cap-table journals
 NULLIFY/1             prevents replay of subscription or issuance rights
 NET/1                 closes channel facts when a deployment emits them
-BCC/1                 records investor/issuer co-signed agreement certificates
 VNET/1                proves selected posted journals net as amount vectors
 FUNDRAISE-CLEARING/1  binds paid subscriptions to private books and token mint
 ```
@@ -57,8 +56,6 @@ RoundPolicy := {
   transfer_policy_hash:     scalar
   admissibility_policy_hash: scalar
   settlement_adapter_hash:  scalar
-  settlement_chain:         chain_or_domain id
-  vault_or_contract:        custody/bridge contract or account
 }
 ```
 
@@ -86,69 +83,7 @@ cross-chain settlement report, a workflow report, or another admissible
 payment certificate. The proof does not make that reference true; the verifier
 checks it against the round's settlement adapter.
 
-### 2.3 BCC agreement
-
-Each subscription MUST name a BCC/1 agreement certificate between the investor
-and issuer. The BCC certificate is the agreement surface: it binds the parties,
-the subscription event, the typed commitments, authenticated ECDH material, and
-the finality/nullifier reference. It is not the private-state settlement proof.
-
-For subscription `s`, the BCC event context includes at minimum:
-
-```text
-BccFundraiseContext := {
-  round_id
-  issuer_name
-  investor_id
-  subscription_id
-  settlement_ref
-  settlement_amount
-  issued_units
-  token_contract
-}
-```
-
-The BCC bridge context includes:
-
-```text
-BccBridgeContext := {
-  asset
-  settlement_chain
-  vault_or_contract
-  deposit_ref
-}
-```
-
-The FUNDRAISE-CLEARING/1 verifier checks that these contexts match the round
-policy and subscription atom before it treats the BCC as admitted.
-
-### 2.4 Bridge settlement
-
-A bridge settlement report is the verifier's view of public custody:
-
-```text
-BridgeSettlement := {
-  settlement_chain
-  vault_or_contract
-  asset_type_id
-  accepted: [
-    {
-      subscription_id
-      investor_id
-      settlement_ref
-      deposit_ref
-      amount
-    }
-  ]
-}
-```
-
-The report may be produced by a contract indexer, settlement adapter, CRE
-workflow, or another trusted deployment-specific source. The proof does not
-make the deposit true; the verifier checks the report against the configured
-bridge/custody surface.
-
-### 2.5 Issuer journal
+### 2.3 Issuer journal
 
 The issuer recognizes each accepted subscription as a balanced private journal.
 The canonical minimum journal has:
@@ -181,45 +116,32 @@ proves:
 2. **Payment/admissibility context.** Every subscription atom is in the
    settlement/admissibility report accepted by the verifier's trusted context.
    The proof binds the report commitments; the verifier checks the reports.
-3. **BCC agreement binding.** Every subscription atom has a BCC/1 agreement
-   certificate whose signed event context matches the round, issuer, investor,
-   subscription id, settlement reference, amount, issued units, token contract,
-   and bridge context. The verifier checks BCC signatures, cancellation
-   opening, authenticated ECDH transcript binding, and BCC finality replay
-   context before using the certificate.
-4. **Bridge settlement binding.** Every subscription atom appears in the
-   bridge settlement report for the policy's `settlement_chain`,
-   `vault_or_contract`, and `settlement_asset_type_id`, with a matching
-   deposit reference and amount.
-5. **Issue-price arithmetic.** For every atom,
+3. **Issue-price arithmetic.** For every atom,
    `settlement_amount * price_denominator = issued_units * price_numerator`
    unless the round policy explicitly admits a rounding rule. Any rounding rule
    MUST be deterministic, monotone, and included in `context_commitment`.
-6. **Round caps.** The accumulated settlement amount and issued units do not
+4. **Round caps.** The accumulated settlement amount and issued units do not
    exceed `max_settlement_amount` or `max_issued_units`.
-7. **Private issuer accounting.** The private witness contains issuer journals
+5. **Private issuer accounting.** The private witness contains issuer journals
    that recognize the subscription amounts and issued units under the round
    policy's account vocabulary. Those journals connect the claimed old and new
    private roots through TRANSITION/1-compatible state arithmetic.
-8. **Cap-table root update.** The private witness updates the cap-table root
+6. **Cap-table root update.** The private witness updates the cap-table root
    from `prev_cap_table_root` to `next_cap_table_root` by inserting or
    increasing the investors' allocations exactly by the issued units in the
    subscription set.
-9. **VNET amount closure.** The posted fundraising journals are linked to a
+7. **VNET amount closure.** The posted fundraising journals are linked to a
    VNET/1 instance whose atoms reference the exact TRANSITION/1
    `journal_commitment` values for the issuer and cap-table movements. The
    VNET/1 proof MUST establish aggregate zero-opening; inspecting a Pedersen
    aggregate point is not sufficient.
-10. **Nullifier discipline.** Each `subscription_nullifier` is nonzero and is
+8. **Nullifier discipline.** Each `subscription_nullifier` is nonzero and is
    consumed at most once. The verifier MUST reject a nullifier already accepted
-   for the same round or policy context. BCC finality tags are also checked
-   against the deployment replay surface before acceptance.
-11. **Token issuance binding.** The public `mint_recipient_set_commitment`,
-   `issued_unit_total`, `token_contract`, `round_id`,
-   `bcc_set_commitment`, and `bridge_settlement_commitment` are exactly the
-   values that a minting policy will use. A verifier MUST NOT authorize token
-   issuance from a proof that is not bound to the token contract, round policy,
-   BCC agreement set, and bridge settlement context.
+   for the same round or policy context.
+9. **Token issuance binding.** The public `mint_recipient_set_commitment`,
+   `issued_unit_total`, `token_contract`, and `round_id` are exactly the values
+   that a minting policy will use. A verifier MUST NOT authorize token issuance
+   from a proof that is not bound to the token contract and round policy.
 
 The proof binds accounting consistency. It does not prove the external payment
 settlement or investor admissibility unless those checks are separately supplied
@@ -238,13 +160,11 @@ as trusted context.
 | 6 | `subscription_set_commitment` | order-binding fold over subscription atoms |
 | 7 | `transition_set_commitment` | order-binding fold over linked TRANSITION refs |
 | 8 | `vnet_public_commitment` | commitment to the accepted VNET/1 public input vector |
-| 9 | `bcc_set_commitment` | order-binding fold over accepted BCC/1 agreement certificate summaries |
-| 10 | `bridge_settlement_commitment` | commitment to the bridge/custody settlement report |
-| 11 | `mint_recipient_set_commitment` | order-binding fold over public or committed mint recipients |
-| 12 | `settlement_amount_total` | total accepted settlement asset amount |
-| 13 | `issued_unit_total` | total restricted units to mint or release |
-| 14 | `token_contract` | policy-bound token contract/name |
-| 15 | `context_commitment` | `unconstrained`; binds round policy, adapters, bridge context, profile ids |
+| 9 | `mint_recipient_set_commitment` | order-binding fold over public or committed mint recipients |
+| 10 | `settlement_amount_total` | total accepted settlement asset amount |
+| 11 | `issued_unit_total` | total restricted units to mint or release |
+| 12 | `token_contract` | policy-bound token contract/name |
+| 13 | `context_commitment` | `unconstrained`; binds round policy, adapters, profile ids |
 
 Inputs marked `unconstrained` carry meaning only through the verifier's context
 checks under 3/PROOF section 5.
@@ -260,22 +180,16 @@ A conforming FUNDRAISE-CLEARING/1 verifier, in order:
 4. Checks the settlement adapter report for every `settlement_ref` included in
    `subscription_set_commitment`.
 5. Checks the admissibility adapter report for every `admissibility_ref`.
-6. Verifies every BCC/1 agreement certificate named by `bcc_set_commitment`,
-   including signed transcript, cancellation opening, authenticated ECDH
-   binding, and BCC finality/replay context.
-7. Checks the bridge settlement report named by
-   `bridge_settlement_commitment` against the policy's settlement chain,
-   custody contract/account, asset type, deposit references, and amounts.
-8. Resolves the referenced TRANSITION/1 updates and checks the
+6. Resolves the referenced TRANSITION/1 updates and checks the
    `transition_set_commitment` against their accepted public inputs.
-9. Verifies or resolves the VNET/1 certificate named by
+7. Verifies or resolves the VNET/1 certificate named by
    `vnet_public_commitment`, including VNET's transition linkage and
    zero-opening requirements.
-10. Checks every subscription nullifier against the round's accepted-nullifier
+8. Checks every subscription nullifier against the round's accepted-nullifier
    set, then records the new nullifiers atomically with acceptance.
-11. Authorizes token mint/release only for `issued_unit_total`,
-   `mint_recipient_set_commitment`, `round_id`, `token_contract`,
-   `bcc_set_commitment`, and `bridge_settlement_commitment` from this proof.
+9. Authorizes token mint/release only for `issued_unit_total`,
+   `mint_recipient_set_commitment`, `round_id`, and `token_contract` from this
+   proof.
 
 The proof alone conveys no minting authority. Minting authority is the result
 of proof verification plus all context checks above.
@@ -289,12 +203,6 @@ A conforming instance MUST reject:
 - issue-price arithmetic that does not match the round policy;
 - any cap overflow or carrier-wraparound possibility;
 - a token contract or round id that differs from the policy context;
-- a missing BCC/1 agreement certificate for any subscription;
-- a BCC/1 certificate with invalid signature, cancellation opening,
-  authenticated ECDH binding, replayed finality tag, or context that differs
-  from the subscription or round policy;
-- a bridge settlement report whose chain, custody contract/account, asset,
-  deposit reference, investor, or amount differs from the policy/subscription;
 - a repeated or zero subscription nullifier;
 - a cap-table update whose issued units differ from the subscription set;
 - a VNET certificate that is missing, references a different transition set,
@@ -337,13 +245,12 @@ The transparent demo packet checker
 [`FUNDRAISE-DEMO-1.json`](vectors/FUNDRAISE-DEMO-1.json), exercises one
 private-balance-sheet fundraising transcript. It binds a round policy,
 subscriptions, settlement/admissibility reports, VNET transition-link
-verification, bridge settlement binding, BCC agreement certificates, and mint
-authorization, then rejects BCC, bridge, price, settlement, token, and VNET
-failures. It delegates amount-vector clearing to the `VNET-BN254-G1/1`
-reference checker and the VNET transition-link checker.
+verification, and mint authorization, then rejects price, settlement, token,
+and VNET failures. It delegates amount-vector clearing to the
+`VNET-BN254-G1/1` reference checker and the VNET transition-link checker.
 
 No reference circuit, native verifier, verifier contract, token contract,
 settlement adapter, CRE workflow, Circle integration, or ProveKit integration is
 assigned by this candidate. The next implementation slices should choose the
-production VNET link strategy, replace the mock BCC signature/commitment seams,
-then bind a demo settlement/orchestration adapter to a testnet token contract.
+production VNET link strategy, then bind a demo settlement/orchestration adapter
+to a testnet token contract.

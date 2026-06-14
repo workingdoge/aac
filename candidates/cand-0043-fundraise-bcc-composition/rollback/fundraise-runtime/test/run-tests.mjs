@@ -5,8 +5,6 @@ import { resolve } from "node:path";
 import {
   authorizeMint,
   buildFundraisePacket,
-  buildBccAgreements,
-  buildBridgeSettlement,
   buildMintAuthorization,
   buildSettlementReport,
   createRoundPolicy,
@@ -54,46 +52,13 @@ const rebuilt = buildFundraisePacket({
   vnetLink: good.vnet_link,
 });
 assert.deepEqual(rebuilt.settlement_report, buildSettlementReport(policy, subscriptions));
-assert.deepEqual(rebuilt.bridge_settlement, buildBridgeSettlement(policy, subscriptions));
 assert.deepEqual(rebuilt.mint_authorization, buildMintAuthorization(policy, subscriptions));
 assert.equal(verifyFundraisePacket(rebuilt).accepted, true);
-assert.equal(rebuilt.bcc_agreements.length, 2);
-assert.equal(rebuilt.bcc_agreements[0].certificate.event.fundraise_context.round_id, policy.round_id);
-assert.equal(rebuilt.public_inputs.bcc_set_commitment.length, 64);
-assert.equal(rebuilt.public_inputs.bridge_settlement_commitment.length, 64);
 
 const tokenBad = structuredClone(rebuilt);
 tokenBad.mint_authorization.token_contract = "0xBad0000000000000000000000000000000000039";
 tokenBad.public_inputs.token_contract = tokenBad.mint_authorization.token_contract;
 assert.deepEqual(verifyFundraisePacket(tokenBad), { accepted: false, reason: "token_contract_mismatch" });
-
-const missingBcc = structuredClone(rebuilt);
-missingBcc.bcc_agreements.pop();
-assert.deepEqual(verifyFundraisePacket(missingBcc), { accepted: false, reason: "bcc_missing" });
-
-const bccSigBad = structuredClone(rebuilt);
-bccSigBad.bcc_agreements[0].certificate.signatures[0].signature = "bad-signature";
-assert.deepEqual(verifyFundraisePacket(bccSigBad), { accepted: false, reason: "bcc_signature_mismatch" });
-
-const bccReplayBad = structuredClone(rebuilt);
-assert.deepEqual(
-  verifyFundraisePacket(bccReplayBad, {
-    seenBccFinalityTags: new Set([bccReplayBad.bcc_agreements[0].certificate.finality.finality_tag]),
-  }),
-  { accepted: false, reason: "bcc_finality_replay" },
-);
-
-const bccRoundBad = structuredClone(rebuilt);
-bccRoundBad.bcc_agreements[0] = buildBccAgreements(
-  createRoundPolicy({ round_id: "wrong-round" }),
-  subscriptions,
-  good.vnet_link,
-)[0];
-assert.deepEqual(verifyFundraisePacket(bccRoundBad), { accepted: false, reason: "bcc_round_mismatch" });
-
-const bridgeAssetBad = structuredClone(rebuilt);
-bridgeAssetBad.bridge_settlement.asset_type_id = "EURC:arc-testnet:atomic";
-assert.deepEqual(verifyFundraisePacket(bridgeAssetBad), { accepted: false, reason: "bridge_asset_mismatch" });
 
 const settlementBad = structuredClone(rebuilt);
 settlementBad.settlement_report.accepted.pop();
@@ -116,6 +81,5 @@ assert.equal(authorized.token_contract, policy.token_contract);
 assert.equal(authorized.issued_unit_total, 150);
 assert.equal(typeof authorized.authorization_digest, "string");
 assert.equal(authorized.authorization_digest.length, 64);
-assert.equal(authorized.recipients.length, 2);
 
 console.log("fundraise-runtime tests: pass");

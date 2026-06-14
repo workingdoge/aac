@@ -1,0 +1,5 @@
+candidate_id: cand-0043-fundraise-bcc-composition
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T05:54:22Z
+intent: Bind BCC agreement certificates into FUNDRAISE-CLEARING/1 runtime packets and mint authorization, while keeping bridge settlement as a separate context boundary.
+status: landed
