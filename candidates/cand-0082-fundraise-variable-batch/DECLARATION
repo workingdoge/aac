@@ -1,0 +1,4 @@
+layer: artifact
+implements: variable fundraise batch selection for proof runner and presentation console
+preserves: none
+compares_to: cand-0081-fundraise-split-verify-step

@@ -1,0 +1,5 @@
+candidate_id: cand-0079-fundraise-verifier-surface
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T14:09:44Z
+intent: Expose the real ProveKit verifier receipt in the fundraise summary and render it as a visible verifier panel.
+status: landed

@@ -1,0 +1,5 @@
+candidate_id: cand-0084-fundraise-htmx-verify-form
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T15:59:14Z
+intent: Make fundraise verification a submitted htmx verifier form instead of a reveal.
+status: landed

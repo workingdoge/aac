@@ -1,0 +1,1 @@
+astro build OK; htmx verifier form bundled

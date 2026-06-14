@@ -1,0 +1,7 @@
+match: cargo/fundraise-demo-runner/src/index.mjs == fundraise-demo-runner/src/index.mjs
+match: cargo/fundraise-demo-runner/src/index.d.ts == fundraise-demo-runner/src/index.d.ts
+match: cargo/fundraise-demo-runner/test/run-tests.mjs == fundraise-demo-runner/test/run-tests.mjs
+match: cargo/web/src/components/aac-htmx.ts == web/src/components/aac-htmx.ts
+match: cargo/web/src/components/aac-fundraise-demo.ts == web/src/components/aac-fundraise-demo.ts
+match: cargo/web/src/components/elements.ts == web/src/components/elements.ts
+match: cargo/web/src/content/docs/fundraise.mdx == web/src/content/docs/fundraise.mdx

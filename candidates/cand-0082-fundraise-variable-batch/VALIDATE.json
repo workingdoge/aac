@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0082-fundraise-variable-batch",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3e91cc99e0202d8bd79ff62bfe86c3c082dd821df30b2525331a79e1f50e9bae",
+    "LANDING": "ae54af8bfadede47e257b28ac22b40ddc58958a94913932222623334959c7634",
+    "META": "3a6d7645cdf5715371bc1dcdac09dceb7ff100b512438af60212832b163d72cf"
+  }
+}

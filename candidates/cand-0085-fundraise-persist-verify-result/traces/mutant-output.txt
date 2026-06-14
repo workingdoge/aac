@@ -1,0 +1,1 @@
+verify-result target does not render persisted state

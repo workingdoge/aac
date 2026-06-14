@@ -1,0 +1,19 @@
+statement: record-judgments-v0.md
+  result: accepted
+fixture: record-meta-telescope-pass-v0.md
+  result: accepted
+fixture: record-meta-telescope-fail-v0.md
+  result: accepted
+fixture: record-scores-sigma-pass-v0.md
+  result: accepted
+fixture: record-scores-sigma-fail-v0.md
+  result: accepted
+fixture: record-queue-checking-mode-pass-v0.md
+  result: accepted
+fixture: record-queue-checking-mode-fail-v0.md
+  result: accepted
+fixture: record-landing-receipt-pass-v0.md
+  result: accepted
+fixture: record-vocab-atom-fail-v0.md
+  result: accepted
+record-judgment-check: ok

@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0083-fundraise-balance-sheet-proof",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "d1847ff58ae81a31d1092d30f9da1b3a8f760ed293ee049b7adc5aef434c68ba",
+    "LANDING": "5cb5ad94a5e34182941b7c405c82bc9c6e7d60975ee00c560918da2467de7467",
+    "META": "77871262811a600c4bbd108c42958ed254bd300eeb21312c232d93274d103e27"
+  }
+}

@@ -1,0 +1,10 @@
+cargo/fundraise-demo-runner/src/index.mjs	fundraise-demo-runner/src/index.mjs	yes
+cargo/fundraise-demo-runner/src/index.d.ts	fundraise-demo-runner/src/index.d.ts	yes
+cargo/fundraise-demo-runner/test/run-tests.mjs	fundraise-demo-runner/test/run-tests.mjs	yes
+cargo/web/src/components/aac-htmx.ts	web/src/components/aac-htmx.ts	no
+cargo/web/src/components/aac-fundraise-demo.ts	web/src/components/aac-fundraise-demo.ts	yes
+cargo/web/src/components/elements.ts	web/src/components/elements.ts	yes
+cargo/web/src/content/docs/fundraise.mdx	web/src/content/docs/fundraise.mdx	yes
+# landed_at: 2026-06-14T16:09:11Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=feebb6c98bd0faef8b540a9e26c410e98caefd38b6309aaaefa5a9045adf0c3b unavailable(not-in-devshell)
+git_commit	b9e7280

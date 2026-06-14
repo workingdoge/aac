@@ -1,0 +1,4 @@
+layer: artifact
+implements: persistent htmx verifier result display
+preserves: none
+compares_to: cand-0084-fundraise-htmx-verify-form

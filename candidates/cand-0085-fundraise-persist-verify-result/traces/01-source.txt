@@ -1,0 +1,1 @@
+source persists htmx verifier result across component re-render

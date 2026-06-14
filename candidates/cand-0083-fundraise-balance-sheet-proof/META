@@ -1,0 +1,5 @@
+candidate_id: cand-0083-fundraise-balance-sheet-proof
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T15:13:01Z
+intent: Add a live ProveKit balance-sheet before/after proof to the fundraise demo, tied to the selected batch.
+status: landed

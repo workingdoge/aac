@@ -1,0 +1,5 @@
+candidate_id: cand-0081-fundraise-split-verify-step
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T14:36:32Z
+intent: Separate fundraise proof generation from the visible verifier step in the demo UI.
+status: landed

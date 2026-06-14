@@ -1,0 +1,39 @@
+# Reflection: cand-0084-fundraise-htmx-verify-form
+
+Intent: Make fundraise verification a submitted htmx verifier form instead of a reveal.
+Status at reflection: landed
+Reflected at: 2026-06-14T16:09:11Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0084-fundraise-htmx-verify-form",
+  "evaluated_at": "2026-06-14T16:08:58Z",
+  "task": "Make fundraise verification a submitted htmx verifier form instead of a reveal.",
+  "checks": {
+    "source": "pass",
+    "runner": "pass",
+    "mutant": "pass",
+    "build": "pass",
+    "scope": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "a9397d1058acde024abaf7382d4f8c10ce4df31a2785e7e523678af1ecb6abeb",
+    "traces_sha256": "68d12b17ba046cad88ef672068a97c8ceacac45a29bd20e36a69050246df2cdc",
+    "body_sha256": "99382c734a2913e682eadd3dc07a53b0085c36e4424c89670600c995f43d9b91",
+    "attestation": "48ffc3b81f3532c5e8e45d8809c44d7be84ed571d6227c528cef07153f25bc74"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.
