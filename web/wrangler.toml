@@ -1,0 +1,9 @@
+name = "specs-aac-sh"
+compatibility_date = "2026-06-14"
+
+[assets]
+directory = "./dist"
+
+[[routes]]
+pattern = "specs.aac.sh"
+custom_domain = true
