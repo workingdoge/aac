@@ -1,54 +1,60 @@
-//! VNET/1 netting circuit (PEDERSEN-VECTOR/1 profile), right-sized for the demo.
+//! VNET/1 netting circuit for ProveKit (PEDERSEN-VECTOR/1 profile).
 //!
-//! Proves a SET of posted journals nets to zero per basis dimension WITHOUT
-//! revealing amounts, via homomorphic Grumpkin Pedersen commitments. This is the
-//! confidential multilateral-clearing differentiator: each atom's debit/credit
-//! coordinates stay private (witness); only the Pedersen commitments and the
-//! aggregate opening are public.
-//!
-//! MSM-ONLY (PEDERSEN-VECTOR/1 S4): ProveKit implements `MultiScalarMul` over
-//! Grumpkin but NOT `EmbeddedCurveAdd`, so the aggregate `sum C_debit - sum
-//! C_credit` is one unit-scalar MSM, with point subtraction done by the FREE
-//! coordinate negation (x, -y) -- never a point-add opcode.
-//!
-//! Demo shape: N_ATOMS posted journals over a fixed N_BASIS basis. The canonical
-//! case is a novation/clearing chain (A->C, C->B) where the intermediary nets
-//! flat: every basis dimension's debits and credits cancel across the set.
+//! This proves that a selected batch of posted journal atoms clears per basis
+//! dimension while keeping the amount vectors private. The public surface is the
+//! transition-link commitments, the profile/generator-set id, the aggregate
+//! zero-opening point, and the Pedersen commitments returned by the circuit.
+
 use std::embedded_curve_ops::{multi_scalar_mul, EmbeddedCurvePoint, EmbeddedCurveScalar};
 
 mod hash;
 
 global N_ATOMS: u32 = 2;
 global N_BASIS: u32 = 3;
+global MAX_COORD: u64 = 1000000000000;
+global PROFILE_TAG: Field = 5205201;
 
 fn sc(x: Field) -> EmbeddedCurveScalar {
     EmbeddedCurveScalar::from_field(x)
 }
 
-// Point subtraction helper: -P = (x, -y). Free (no EmbeddedCurveAdd / blackbox).
 fn neg(p: EmbeddedCurvePoint) -> EmbeddedCurvePoint {
     EmbeddedCurvePoint { x: p.x, y: -p.y, is_infinite: p.is_infinite }
 }
 
-// DEMO stand-in generators. A real deployment derives DL-INDEPENDENT per-basis
-// generators offline by PEDERSEN-VECTOR/1 S2 (domain-separated hash-to-curve),
-// pinned and verifier-checked. These stand-ins have known DL relations, so the
-// zero-opening alone would NOT certify the net here -- which is exactly why the
-// circuit ALSO asserts the per-basis net is zero from the witness (below). With
-// profile-grade generators the witness assertion becomes redundant and the
-// zero-opening certifies the net with amounts never revealed.
 fn generators() -> ([EmbeddedCurvePoint; N_BASIS], EmbeddedCurvePoint) {
-    let g = EmbeddedCurvePoint::generator();
-    let gs = [
-        multi_scalar_mul([g], [sc(101)]),
-        multi_scalar_mul([g], [sc(103)]),
-        multi_scalar_mul([g], [sc(107)]),
-    ];
-    let h = multi_scalar_mul([g], [sc(7)]);
-    (gs, h)
+    let points: [EmbeddedCurvePoint; N_BASIS + 1] =
+        std::hash::derive_generators("AAC_PEDERSEN_VECTOR_VNET_1".as_bytes(), 0);
+    ([points[0], points[1], points[2]], points[3])
 }
 
-// Commit_B(v, r) = sum_j v_j * G_j + r * H -- one MSM (PEDERSEN-VECTOR/1 S3).
+fn generator_set_id() -> Field {
+    hash::hash([PROFILE_TAG, N_ATOMS as Field, N_BASIS as Field, MAX_COORD as Field])
+}
+
+fn assert_coord(x: u64) {
+    assert(x <= MAX_COORD, "coordinate exceeds PEDERSEN-VECTOR/1 profile bound");
+}
+
+fn journal_commitment(debit: [u64; N_BASIS], credit: [u64; N_BASIS]) -> Field {
+    hash::hash([
+        debit[0] as Field,
+        debit[1] as Field,
+        debit[2] as Field,
+        credit[0] as Field,
+        credit[1] as Field,
+        credit[2] as Field,
+    ])
+}
+
+fn transition_set_commitment(journal_commitments: [Field; N_ATOMS]) -> Field {
+    let mut fold: Field = 0;
+    for i in 0..N_ATOMS {
+        fold = hash::hash2(fold, journal_commitments[i]);
+    }
+    fold
+}
+
 fn commit(
     gs: [EmbeddedCurvePoint; N_BASIS],
     h: EmbeddedCurvePoint,
@@ -61,86 +67,210 @@ fn commit(
     )
 }
 
+fn aggregate_opening(
+    c_debit: [EmbeddedCurvePoint; N_ATOMS],
+    c_credit: [EmbeddedCurvePoint; N_ATOMS],
+) -> EmbeddedCurvePoint {
+    multi_scalar_mul(
+        [c_debit[0], c_debit[1], neg(c_credit[0]), neg(c_credit[1])],
+        [sc(1), sc(1), sc(1), sc(1)],
+    )
+}
+
+fn blinding_opening(
+    h: EmbeddedCurvePoint,
+    r_debit: [Field; N_ATOMS],
+    r_credit: [Field; N_ATOMS],
+) -> EmbeddedCurvePoint {
+    multi_scalar_mul(
+        [h, h, neg(h), neg(h)],
+        [sc(r_debit[0]), sc(r_debit[1]), sc(r_credit[0]), sc(r_credit[1])],
+    )
+}
+
 fn main(
-    // Private witness: per-atom per-basis debit/credit coordinates + blindings.
+    journal_commitments_pub: pub [Field; N_ATOMS],
+    transition_set_commitment_pub: pub Field,
+    generator_set_id_pub: pub Field,
+    aggregate_opening_x_pub: pub Field,
+    aggregate_opening_y_pub: pub Field,
+    aggregate_opening_is_infinite_pub: pub bool,
     debit: [[u64; N_BASIS]; N_ATOMS],
     credit: [[u64; N_BASIS]; N_ATOMS],
     r_debit: [Field; N_ATOMS],
     r_credit: [Field; N_ATOMS],
-) -> pub (
-    [EmbeddedCurvePoint; N_ATOMS], // published debit commitments
-    [EmbeddedCurvePoint; N_ATOMS], // published credit commitments
-    EmbeddedCurvePoint,            // aggregate opening A = sum C_D - sum C_C
-    Field,                         // transition_set_commitment (journal linkage)
-) {
-    let (gs, h) = generators();
+) -> pub ([EmbeddedCurvePoint; N_ATOMS], [EmbeddedCurvePoint; N_ATOMS]) {
+    assert(generator_set_id_pub == generator_set_id(), "wrong PEDERSEN-VECTOR/1 generator set");
+    assert(
+        transition_set_commitment_pub == transition_set_commitment(journal_commitments_pub),
+        "transition_set_commitment does not fold the supplied journals",
+    );
 
-    // Per-atom Pedersen commitments (the points a clearing venue would publish).
+    let (gs, h) = generators();
     let mut c_debit: [EmbeddedCurvePoint; N_ATOMS] =
         [EmbeddedCurvePoint::point_at_infinity(); N_ATOMS];
     let mut c_credit: [EmbeddedCurvePoint; N_ATOMS] =
         [EmbeddedCurvePoint::point_at_infinity(); N_ATOMS];
+
     for i in 0..N_ATOMS {
+        for j in 0..N_BASIS {
+            assert_coord(debit[i][j]);
+            assert_coord(credit[i][j]);
+        }
+
+        let jc = journal_commitment(debit[i], credit[i]);
+        assert(jc == journal_commitments_pub[i], "journal commitment does not match atom vector");
+
         c_debit[i] = commit(gs, h, debit[i], r_debit[i]);
         c_credit[i] = commit(gs, h, credit[i], r_credit[i]);
     }
 
-    // P^n zero-account: every basis dimension nets to zero (1/PACI, no numeraire).
-    // Sound regardless of generator independence (asserted from the witness).
     for j in 0..N_BASIS {
         let mut net: Field = 0;
         for i in 0..N_ATOMS {
             net += debit[i][j] as Field - credit[i][j] as Field;
         }
-        assert(net == 0);
+        assert(net == 0, "basis dimension does not net to zero");
     }
 
-    // Aggregate A = sum C_debit - sum C_credit as a SINGLE MSM with unit scalars
-    // (point subtraction via neg()). No EmbeddedCurveAdd.
-    let a = multi_scalar_mul(
-        [c_debit[0], c_debit[1], neg(c_credit[0]), neg(c_credit[1])],
-        [sc(1), sc(1), sc(1), sc(1)],
+    let a = aggregate_opening(c_debit, c_credit);
+    assert(a.x == aggregate_opening_x_pub, "aggregate opening x mismatch");
+    assert(a.y == aggregate_opening_y_pub, "aggregate opening y mismatch");
+    assert(
+        a.is_infinite == aggregate_opening_is_infinite_pub,
+        "aggregate opening infinity flag mismatch",
     );
 
-    // Zero opening: with every net_j = 0 the value generators cancel, so A must
-    // open to pure blinding. Build that H-only opening with the SAME curve-group
-    // arithmetic as `a` (scalar-muls + point negation), NOT a Field subtraction
-    // of blindings: Noir's Field is Grumpkin's BASE field, whose order differs
-    // from Grumpkin's SCALAR field, so a negative Field difference would not
-    // match the group scalar that point negation produces.
-    let r_h = multi_scalar_mul(
-        [h, h, neg(h), neg(h)],
-        [sc(r_debit[0]), sc(r_debit[1]), sc(r_credit[0]), sc(r_credit[1])],
-    );
-    assert(a.x == r_h.x);
-    assert(a.y == r_h.y);
+    let r_h = blinding_opening(h, r_debit, r_credit);
+    assert(a.x == r_h.x, "aggregate opening is not a pure blinding commitment");
+    assert(a.y == r_h.y, "aggregate opening is not a pure blinding commitment");
+    assert(a.is_infinite == r_h.is_infinite, "aggregate opening infinity mismatch");
 
-    // Transition linkage: fold each atom's journal_commitment (Poseidon2 over its
-    // coordinates) so a verifier knows which posted journals were netted.
-    let mut fold: Field = 0;
+    (c_debit, c_credit)
+}
+
+fn sample_debit() -> [[u64; N_BASIS]; N_ATOMS] {
+    [[100, 0, 0], [0, 50, 0]]
+}
+
+fn sample_credit() -> [[u64; N_BASIS]; N_ATOMS] {
+    [[0, 50, 0], [100, 0, 0]]
+}
+
+fn sample_publics(
+    debit: [[u64; N_BASIS]; N_ATOMS],
+    credit: [[u64; N_BASIS]; N_ATOMS],
+    r_debit: [Field; N_ATOMS],
+    r_credit: [Field; N_ATOMS],
+) -> ([Field; N_ATOMS], Field, Field, EmbeddedCurvePoint) {
+    let (gs, h) = generators();
+    let mut jcs: [Field; N_ATOMS] = [0; N_ATOMS];
+    let mut c_debit: [EmbeddedCurvePoint; N_ATOMS] =
+        [EmbeddedCurvePoint::point_at_infinity(); N_ATOMS];
+    let mut c_credit: [EmbeddedCurvePoint; N_ATOMS] =
+        [EmbeddedCurvePoint::point_at_infinity(); N_ATOMS];
     for i in 0..N_ATOMS {
-        let jc = hash::hash([
-            debit[i][0] as Field, debit[i][1] as Field, debit[i][2] as Field,
-            credit[i][0] as Field, credit[i][1] as Field, credit[i][2] as Field,
-        ]);
-        fold = hash::hash2(fold, jc);
+        jcs[i] = journal_commitment(debit[i], credit[i]);
+        c_debit[i] = commit(gs, h, debit[i], r_debit[i]);
+        c_credit[i] = commit(gs, h, credit[i], r_credit[i]);
     }
-
-    (c_debit, c_credit, a, fold)
+    (jcs, transition_set_commitment(jcs), generator_set_id(), aggregate_opening(c_debit, c_credit))
 }
 
 #[test]
 fn accepts_true_net() {
-    // Novation chain: atom 0 = A->C, atom 1 = C->B; the intermediary nets flat.
-    let debit = [[100, 0, 0], [0, 50, 0]];
-    let credit = [[0, 50, 0], [100, 0, 0]];
-    let _ = main(debit, credit, [11, 13], [17, 19]);
+    let debit = sample_debit();
+    let credit = sample_credit();
+    let r_debit = [11, 13];
+    let r_credit = [17, 19];
+    let (jcs, fold, gid, a) = sample_publics(debit, credit, r_debit, r_credit);
+    let _ = main(jcs, fold, gid, a.x, a.y, a.is_infinite, debit, credit, r_debit, r_credit);
 }
 
-#[test(should_fail)]
+#[test(should_fail_with = "basis dimension does not net to zero")]
 fn rejects_false_net() {
-    // Tamper: atom 0 debit on basis 0 becomes 101 -> net_0 = 1 (not zero).
     let debit = [[101, 0, 0], [0, 50, 0]];
-    let credit = [[0, 50, 0], [100, 0, 0]];
-    let _ = main(debit, credit, [11, 13], [17, 19]);
+    let credit = sample_credit();
+    let r_debit = [11, 13];
+    let r_credit = [17, 19];
+    let (jcs, fold, gid, a) = sample_publics(debit, credit, r_debit, r_credit);
+    let _ = main(jcs, fold, gid, a.x, a.y, a.is_infinite, debit, credit, r_debit, r_credit);
+}
+
+#[test(should_fail_with = "journal commitment does not match atom vector")]
+fn rejects_mismatched_transition_link() {
+    let debit = sample_debit();
+    let credit = sample_credit();
+    let r_debit = [11, 13];
+    let r_credit = [17, 19];
+    let (mut jcs, _fold, gid, a) = sample_publics(debit, credit, r_debit, r_credit);
+    jcs[0] += 1;
+    let _ = main(
+        jcs,
+        transition_set_commitment(jcs),
+        gid,
+        a.x,
+        a.y,
+        a.is_infinite,
+        debit,
+        credit,
+        r_debit,
+        r_credit,
+    );
+}
+
+#[test(should_fail_with = "transition_set_commitment does not fold the supplied journals")]
+fn rejects_mismatched_transition_set_commitment() {
+    let debit = sample_debit();
+    let credit = sample_credit();
+    let r_debit = [11, 13];
+    let r_credit = [17, 19];
+    let (jcs, fold, gid, a) = sample_publics(debit, credit, r_debit, r_credit);
+    let _ = main(jcs, fold + 1, gid, a.x, a.y, a.is_infinite, debit, credit, r_debit, r_credit);
+}
+
+#[test(should_fail_with = "wrong PEDERSEN-VECTOR/1 generator set")]
+fn rejects_wrong_generator_set_id() {
+    let debit = sample_debit();
+    let credit = sample_credit();
+    let r_debit = [11, 13];
+    let r_credit = [17, 19];
+    let (jcs, fold, gid, a) = sample_publics(debit, credit, r_debit, r_credit);
+    let _ = main(jcs, fold, gid + 1, a.x, a.y, a.is_infinite, debit, credit, r_debit, r_credit);
+}
+
+#[test(should_fail_with = "aggregate opening x mismatch")]
+fn rejects_bad_opening() {
+    let debit = sample_debit();
+    let credit = sample_credit();
+    let r_debit = [11, 13];
+    let r_credit = [17, 19];
+    let (jcs, fold, gid, a) = sample_publics(debit, credit, r_debit, r_credit);
+    let _ = main(jcs, fold, gid, a.x + 1, a.y, a.is_infinite, debit, credit, r_debit, r_credit);
+}
+
+#[test(should_fail_with = "coordinate exceeds PEDERSEN-VECTOR/1 profile bound")]
+fn rejects_out_of_bound_coordinate() {
+    let debit = [[MAX_COORD + 1, 0, 0], [0, 50, 0]];
+    let credit = [[0, 50, 0], [MAX_COORD + 1, 0, 0]];
+    let r_debit = [11, 13];
+    let r_credit = [17, 19];
+    let (jcs, fold, gid, a) = sample_publics(debit, credit, r_debit, r_credit);
+    let _ = main(jcs, fold, gid, a.x, a.y, a.is_infinite, debit, credit, r_debit, r_credit);
+}
+
+#[test]
+fn print_public_inputs() {
+    let debit = sample_debit();
+    let credit = sample_credit();
+    let r_debit = [11, 13];
+    let r_credit = [17, 19];
+    let (jcs, fold, gid, a) = sample_publics(debit, credit, r_debit, r_credit);
+    println(jcs[0]);
+    println(jcs[1]);
+    println(fold);
+    println(gid);
+    println(a.x);
+    println(a.y);
+    println(a.is_infinite);
 }

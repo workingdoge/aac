@@ -1,0 +1,1443 @@
+{
+  "schema": "aac.bcc-demo.conformance.v1",
+  "vectors": [
+    {
+      "id": "bcc-good-goods-for-cash",
+      "description": "public certificate carries only commitments, cancellation opening, authenticated ECDH material, signatures, and finality refs",
+      "certificate": {
+        "schema": "aac.bcc.certificate.v1",
+        "event": {
+          "event_id": "goods-for-cash-001",
+          "description": "Buyer receives 3 goods units and seller receives 10 USD units.",
+          "basis_type_ids": [
+            "GOOD:demo-widget:unit",
+            "USD:arc-testnet:atomic"
+          ],
+          "state_refs": {
+            "buyer_row": "buyer-row/transition/7",
+            "seller_row": "seller-row/transition/12"
+          },
+          "bridge_context": {
+            "registry": "demo-private-state-registry",
+            "settlement_contract": "demo-bridge-vault",
+            "asset": "USDC:arc-testnet"
+          }
+        },
+        "basis_type_ids": [
+          "GOOD:demo-widget:unit",
+          "USD:arc-testnet:atomic"
+        ],
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "transition_ref": "buyer-row/transition/7",
+            "journal_commitment": "17171717171717171717171717171717",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "250a9368d6ee36246e050aff9e0f2af40f051c93d2c96dd7b2f43eea772814f3"
+            }
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "transition_ref": "seller-row/transition/12",
+            "journal_commitment": "29292929292929292929292929292929",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "f8440728a5b103c4e9cbd577d99e57953e7d69d151e4b9af6791c520a0d4b1f4"
+            }
+          }
+        ],
+        "cancellation_opening": {
+          "scheme": "mock-cancellation-opening/1",
+          "commitment_scheme": "mock-record-commitment/1",
+          "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743",
+          "zero_opening": true,
+          "proof_digest": "d5dd8958c296b8212b61d2334001d442120e57e5831ebeed3c3c91a61a385838",
+          "record_count": 2
+        },
+        "authenticated_dh": {
+          "scheme": "mock-authenticated-ecdh/1",
+          "ephemeral_public_keys": {
+            "buyer.example": "buyer-ephemeral-x25519",
+            "seller.example": "seller-ephemeral-x25519"
+          },
+          "kdf": "hkdf-sha256",
+          "transcript_binding": "ephemeral keys are signed inside transcript_hash",
+          "public_edge_tag": "c3bb97c4bb4f9727c6328f1bbf090996c41c6d28fb058207054b24752eeb872f"
+        },
+        "finality": {
+          "scheme": "bcc-finality-tag/1",
+          "log_ref": "demo-log",
+          "nullifier": "08afdd3a7fec53a5376ca44070802b86f733a2b26166ea8f1cf1e05ac117dd56",
+          "finality_tag": "1f35aed305acea373836d221387f842bfc73b3a5f1b75a92b38bec37f2276741"
+        },
+        "transcript_hash": "a9e9da424aa2d44584647811b4338828e78b60d0b812ccfd18b373d1897ddf92",
+        "signatures": [
+          {
+            "party_id": "buyer.example",
+            "public_key": "buyer.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "9b3e89b751a0c2bf1f2cf096ae11cefec34a543bb476d34778af3f53afa7b069"
+          },
+          {
+            "party_id": "seller.example",
+            "public_key": "seller.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "86abc7b15460b6188631a497ac21469a78097cd2f5091a43ccee038e3f240ec7"
+          }
+        ]
+      },
+      "private_witness": {
+        "schema": "aac.bcc.private-witness.v1",
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "debit": [
+              3,
+              0
+            ],
+            "credit": [
+              0,
+              10
+            ],
+            "record_blinding": "buyer.example:record"
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "debit": [
+              0,
+              10
+            ],
+            "credit": [
+              3,
+              0
+            ],
+            "record_blinding": "seller.example:record"
+          }
+        ],
+        "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743"
+      },
+      "verifier_context": {
+        "seen_finality_tags": []
+      },
+      "expect": {
+        "accepted": true,
+        "reason": "accepted"
+      }
+    },
+    {
+      "id": "bcc-signature-mismatch-reject",
+      "description": "one party signature no longer matches the transcript hash",
+      "certificate": {
+        "schema": "aac.bcc.certificate.v1",
+        "event": {
+          "event_id": "goods-for-cash-001",
+          "description": "Buyer receives 3 goods units and seller receives 10 USD units.",
+          "basis_type_ids": [
+            "GOOD:demo-widget:unit",
+            "USD:arc-testnet:atomic"
+          ],
+          "state_refs": {
+            "buyer_row": "buyer-row/transition/7",
+            "seller_row": "seller-row/transition/12"
+          },
+          "bridge_context": {
+            "registry": "demo-private-state-registry",
+            "settlement_contract": "demo-bridge-vault",
+            "asset": "USDC:arc-testnet"
+          }
+        },
+        "basis_type_ids": [
+          "GOOD:demo-widget:unit",
+          "USD:arc-testnet:atomic"
+        ],
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "transition_ref": "buyer-row/transition/7",
+            "journal_commitment": "17171717171717171717171717171717",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "250a9368d6ee36246e050aff9e0f2af40f051c93d2c96dd7b2f43eea772814f3"
+            }
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "transition_ref": "seller-row/transition/12",
+            "journal_commitment": "29292929292929292929292929292929",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "f8440728a5b103c4e9cbd577d99e57953e7d69d151e4b9af6791c520a0d4b1f4"
+            }
+          }
+        ],
+        "cancellation_opening": {
+          "scheme": "mock-cancellation-opening/1",
+          "commitment_scheme": "mock-record-commitment/1",
+          "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743",
+          "zero_opening": true,
+          "proof_digest": "d5dd8958c296b8212b61d2334001d442120e57e5831ebeed3c3c91a61a385838",
+          "record_count": 2
+        },
+        "authenticated_dh": {
+          "scheme": "mock-authenticated-ecdh/1",
+          "ephemeral_public_keys": {
+            "buyer.example": "buyer-ephemeral-x25519",
+            "seller.example": "seller-ephemeral-x25519"
+          },
+          "kdf": "hkdf-sha256",
+          "transcript_binding": "ephemeral keys are signed inside transcript_hash",
+          "public_edge_tag": "c3bb97c4bb4f9727c6328f1bbf090996c41c6d28fb058207054b24752eeb872f"
+        },
+        "finality": {
+          "scheme": "bcc-finality-tag/1",
+          "log_ref": "demo-log",
+          "nullifier": "08afdd3a7fec53a5376ca44070802b86f733a2b26166ea8f1cf1e05ac117dd56",
+          "finality_tag": "1f35aed305acea373836d221387f842bfc73b3a5f1b75a92b38bec37f2276741"
+        },
+        "transcript_hash": "a9e9da424aa2d44584647811b4338828e78b60d0b812ccfd18b373d1897ddf92",
+        "signatures": [
+          {
+            "party_id": "buyer.example",
+            "public_key": "buyer.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "bad-signature"
+          },
+          {
+            "party_id": "seller.example",
+            "public_key": "seller.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "86abc7b15460b6188631a497ac21469a78097cd2f5091a43ccee038e3f240ec7"
+          }
+        ]
+      },
+      "verifier_context": {
+        "seen_finality_tags": []
+      },
+      "expect": {
+        "accepted": false,
+        "reason": "signature_mismatch"
+      }
+    },
+    {
+      "id": "bcc-eip712-adapter-accept",
+      "description": "non-mock typed-data signatures verify through the supplied signature adapter",
+      "certificate": {
+        "schema": "aac.bcc.certificate.v1",
+        "event": {
+          "event_id": "goods-for-cash-001",
+          "description": "Buyer receives 3 goods units and seller receives 10 USD units.",
+          "basis_type_ids": [
+            "GOOD:demo-widget:unit",
+            "USD:arc-testnet:atomic"
+          ],
+          "state_refs": {
+            "buyer_row": "buyer-row/transition/7",
+            "seller_row": "seller-row/transition/12"
+          },
+          "bridge_context": {
+            "registry": "demo-private-state-registry",
+            "settlement_contract": "demo-bridge-vault",
+            "asset": "USDC:arc-testnet"
+          }
+        },
+        "basis_type_ids": [
+          "GOOD:demo-widget:unit",
+          "USD:arc-testnet:atomic"
+        ],
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "transition_ref": "buyer-row/transition/7",
+            "journal_commitment": "17171717171717171717171717171717",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "250a9368d6ee36246e050aff9e0f2af40f051c93d2c96dd7b2f43eea772814f3"
+            }
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "transition_ref": "seller-row/transition/12",
+            "journal_commitment": "29292929292929292929292929292929",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "f8440728a5b103c4e9cbd577d99e57953e7d69d151e4b9af6791c520a0d4b1f4"
+            }
+          }
+        ],
+        "cancellation_opening": {
+          "scheme": "mock-cancellation-opening/1",
+          "commitment_scheme": "mock-record-commitment/1",
+          "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743",
+          "zero_opening": true,
+          "proof_digest": "d5dd8958c296b8212b61d2334001d442120e57e5831ebeed3c3c91a61a385838",
+          "record_count": 2
+        },
+        "authenticated_dh": {
+          "scheme": "mock-authenticated-ecdh/1",
+          "ephemeral_public_keys": {
+            "buyer.example": "buyer-ephemeral-x25519",
+            "seller.example": "seller-ephemeral-x25519"
+          },
+          "kdf": "hkdf-sha256",
+          "transcript_binding": "ephemeral keys are signed inside transcript_hash",
+          "public_edge_tag": "c3bb97c4bb4f9727c6328f1bbf090996c41c6d28fb058207054b24752eeb872f"
+        },
+        "finality": {
+          "scheme": "bcc-finality-tag/1",
+          "log_ref": "demo-log",
+          "nullifier": "08afdd3a7fec53a5376ca44070802b86f733a2b26166ea8f1cf1e05ac117dd56",
+          "finality_tag": "1f35aed305acea373836d221387f842bfc73b3a5f1b75a92b38bec37f2276741"
+        },
+        "transcript_hash": "a9e9da424aa2d44584647811b4338828e78b60d0b812ccfd18b373d1897ddf92",
+        "signatures": [
+          {
+            "party_id": "buyer.example",
+            "public_key": "buyer.example:pub",
+            "scheme": "eip712-adapter/1",
+            "signature": "308060aa79938ecfa8aa5f503b45764fee5e37b4346f6ecb0ee44681f602650e"
+          },
+          {
+            "party_id": "seller.example",
+            "public_key": "seller.example:pub",
+            "scheme": "eip712-adapter/1",
+            "signature": "2ecf3bfc8579eff8de014264d424020c772f00a290d99ce413a0ee1cca0d7d9c"
+          }
+        ]
+      },
+      "verifier_context": {
+        "signature_adapter": "fixture-eip712"
+      },
+      "expect": {
+        "accepted": true,
+        "reason": "accepted"
+      }
+    },
+    {
+      "id": "bcc-eip712-missing-verifier-reject",
+      "description": "non-mock typed-data signatures require a verifier adapter",
+      "certificate": {
+        "schema": "aac.bcc.certificate.v1",
+        "event": {
+          "event_id": "goods-for-cash-001",
+          "description": "Buyer receives 3 goods units and seller receives 10 USD units.",
+          "basis_type_ids": [
+            "GOOD:demo-widget:unit",
+            "USD:arc-testnet:atomic"
+          ],
+          "state_refs": {
+            "buyer_row": "buyer-row/transition/7",
+            "seller_row": "seller-row/transition/12"
+          },
+          "bridge_context": {
+            "registry": "demo-private-state-registry",
+            "settlement_contract": "demo-bridge-vault",
+            "asset": "USDC:arc-testnet"
+          }
+        },
+        "basis_type_ids": [
+          "GOOD:demo-widget:unit",
+          "USD:arc-testnet:atomic"
+        ],
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "transition_ref": "buyer-row/transition/7",
+            "journal_commitment": "17171717171717171717171717171717",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "250a9368d6ee36246e050aff9e0f2af40f051c93d2c96dd7b2f43eea772814f3"
+            }
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "transition_ref": "seller-row/transition/12",
+            "journal_commitment": "29292929292929292929292929292929",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "f8440728a5b103c4e9cbd577d99e57953e7d69d151e4b9af6791c520a0d4b1f4"
+            }
+          }
+        ],
+        "cancellation_opening": {
+          "scheme": "mock-cancellation-opening/1",
+          "commitment_scheme": "mock-record-commitment/1",
+          "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743",
+          "zero_opening": true,
+          "proof_digest": "d5dd8958c296b8212b61d2334001d442120e57e5831ebeed3c3c91a61a385838",
+          "record_count": 2
+        },
+        "authenticated_dh": {
+          "scheme": "mock-authenticated-ecdh/1",
+          "ephemeral_public_keys": {
+            "buyer.example": "buyer-ephemeral-x25519",
+            "seller.example": "seller-ephemeral-x25519"
+          },
+          "kdf": "hkdf-sha256",
+          "transcript_binding": "ephemeral keys are signed inside transcript_hash",
+          "public_edge_tag": "c3bb97c4bb4f9727c6328f1bbf090996c41c6d28fb058207054b24752eeb872f"
+        },
+        "finality": {
+          "scheme": "bcc-finality-tag/1",
+          "log_ref": "demo-log",
+          "nullifier": "08afdd3a7fec53a5376ca44070802b86f733a2b26166ea8f1cf1e05ac117dd56",
+          "finality_tag": "1f35aed305acea373836d221387f842bfc73b3a5f1b75a92b38bec37f2276741"
+        },
+        "transcript_hash": "a9e9da424aa2d44584647811b4338828e78b60d0b812ccfd18b373d1897ddf92",
+        "signatures": [
+          {
+            "party_id": "buyer.example",
+            "public_key": "buyer.example:pub",
+            "scheme": "eip712-adapter/1",
+            "signature": "308060aa79938ecfa8aa5f503b45764fee5e37b4346f6ecb0ee44681f602650e"
+          },
+          {
+            "party_id": "seller.example",
+            "public_key": "seller.example:pub",
+            "scheme": "eip712-adapter/1",
+            "signature": "2ecf3bfc8579eff8de014264d424020c772f00a290d99ce413a0ee1cca0d7d9c"
+          }
+        ]
+      },
+      "verifier_context": {
+        "signature_adapter": "none"
+      },
+      "expect": {
+        "accepted": false,
+        "reason": "signature_verifier_missing"
+      }
+    },
+    {
+      "id": "bcc-eip712-bad-signer-reject",
+      "description": "the supplied signature adapter rejects a signature whose signer metadata was changed",
+      "certificate": {
+        "schema": "aac.bcc.certificate.v1",
+        "event": {
+          "event_id": "goods-for-cash-001",
+          "description": "Buyer receives 3 goods units and seller receives 10 USD units.",
+          "basis_type_ids": [
+            "GOOD:demo-widget:unit",
+            "USD:arc-testnet:atomic"
+          ],
+          "state_refs": {
+            "buyer_row": "buyer-row/transition/7",
+            "seller_row": "seller-row/transition/12"
+          },
+          "bridge_context": {
+            "registry": "demo-private-state-registry",
+            "settlement_contract": "demo-bridge-vault",
+            "asset": "USDC:arc-testnet"
+          }
+        },
+        "basis_type_ids": [
+          "GOOD:demo-widget:unit",
+          "USD:arc-testnet:atomic"
+        ],
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "transition_ref": "buyer-row/transition/7",
+            "journal_commitment": "17171717171717171717171717171717",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "250a9368d6ee36246e050aff9e0f2af40f051c93d2c96dd7b2f43eea772814f3"
+            }
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "transition_ref": "seller-row/transition/12",
+            "journal_commitment": "29292929292929292929292929292929",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "f8440728a5b103c4e9cbd577d99e57953e7d69d151e4b9af6791c520a0d4b1f4"
+            }
+          }
+        ],
+        "cancellation_opening": {
+          "scheme": "mock-cancellation-opening/1",
+          "commitment_scheme": "mock-record-commitment/1",
+          "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743",
+          "zero_opening": true,
+          "proof_digest": "d5dd8958c296b8212b61d2334001d442120e57e5831ebeed3c3c91a61a385838",
+          "record_count": 2
+        },
+        "authenticated_dh": {
+          "scheme": "mock-authenticated-ecdh/1",
+          "ephemeral_public_keys": {
+            "buyer.example": "buyer-ephemeral-x25519",
+            "seller.example": "seller-ephemeral-x25519"
+          },
+          "kdf": "hkdf-sha256",
+          "transcript_binding": "ephemeral keys are signed inside transcript_hash",
+          "public_edge_tag": "c3bb97c4bb4f9727c6328f1bbf090996c41c6d28fb058207054b24752eeb872f"
+        },
+        "finality": {
+          "scheme": "bcc-finality-tag/1",
+          "log_ref": "demo-log",
+          "nullifier": "08afdd3a7fec53a5376ca44070802b86f733a2b26166ea8f1cf1e05ac117dd56",
+          "finality_tag": "1f35aed305acea373836d221387f842bfc73b3a5f1b75a92b38bec37f2276741"
+        },
+        "transcript_hash": "a9e9da424aa2d44584647811b4338828e78b60d0b812ccfd18b373d1897ddf92",
+        "signatures": [
+          {
+            "party_id": "buyer.example",
+            "public_key": "wrong-signer",
+            "scheme": "eip712-adapter/1",
+            "signature": "308060aa79938ecfa8aa5f503b45764fee5e37b4346f6ecb0ee44681f602650e"
+          },
+          {
+            "party_id": "seller.example",
+            "public_key": "seller.example:pub",
+            "scheme": "eip712-adapter/1",
+            "signature": "2ecf3bfc8579eff8de014264d424020c772f00a290d99ce413a0ee1cca0d7d9c"
+          }
+        ]
+      },
+      "verifier_context": {
+        "signature_adapter": "fixture-eip712"
+      },
+      "expect": {
+        "accepted": false,
+        "reason": "signature_mismatch"
+      }
+    },
+    {
+      "id": "bcc-vnet-cancellation-adapter-accept",
+      "description": "non-mock cancellation openings verify through the supplied cancellation adapter",
+      "certificate": {
+        "schema": "aac.bcc.certificate.v1",
+        "event": {
+          "event_id": "goods-for-cash-001",
+          "description": "Buyer receives 3 goods units and seller receives 10 USD units.",
+          "basis_type_ids": [
+            "GOOD:demo-widget:unit",
+            "USD:arc-testnet:atomic"
+          ],
+          "state_refs": {
+            "buyer_row": "buyer-row/transition/7",
+            "seller_row": "seller-row/transition/12"
+          },
+          "bridge_context": {
+            "registry": "demo-private-state-registry",
+            "settlement_contract": "demo-bridge-vault",
+            "asset": "USDC:arc-testnet"
+          }
+        },
+        "basis_type_ids": [
+          "GOOD:demo-widget:unit",
+          "USD:arc-testnet:atomic"
+        ],
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "transition_ref": "buyer-row/transition/7",
+            "journal_commitment": "17171717171717171717171717171717",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "250a9368d6ee36246e050aff9e0f2af40f051c93d2c96dd7b2f43eea772814f3"
+            }
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "transition_ref": "seller-row/transition/12",
+            "journal_commitment": "29292929292929292929292929292929",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "f8440728a5b103c4e9cbd577d99e57953e7d69d151e4b9af6791c520a0d4b1f4"
+            }
+          }
+        ],
+        "cancellation_opening": {
+          "scheme": "fixture-vnet-cancellation/1",
+          "commitment_scheme": "vnet-bn254-g1/1",
+          "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743",
+          "zero_opening": true,
+          "proof_digest": "01bb545314efe57b1407074c6f86711c20c0fd95fade1835e208ca9b74ddda4a",
+          "record_count": 2
+        },
+        "authenticated_dh": {
+          "scheme": "mock-authenticated-ecdh/1",
+          "ephemeral_public_keys": {
+            "buyer.example": "buyer-ephemeral-x25519",
+            "seller.example": "seller-ephemeral-x25519"
+          },
+          "kdf": "hkdf-sha256",
+          "transcript_binding": "ephemeral keys are signed inside transcript_hash",
+          "public_edge_tag": "c3bb97c4bb4f9727c6328f1bbf090996c41c6d28fb058207054b24752eeb872f"
+        },
+        "finality": {
+          "scheme": "bcc-finality-tag/1",
+          "log_ref": "demo-log",
+          "nullifier": "08afdd3a7fec53a5376ca44070802b86f733a2b26166ea8f1cf1e05ac117dd56",
+          "finality_tag": "f563c5b7bcdf1ba2e79454b72003324a012cc2941a7e782d2106d47b38b45058"
+        },
+        "transcript_hash": "dbe218225e88a6444a35d0f81319083d477965ae26dde3e5fc6c1dcb5603b87c",
+        "signatures": [
+          {
+            "party_id": "buyer.example",
+            "public_key": "buyer.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "751f63bc2d497e0af041096bc97733f1a0d2bdc1064cec90d1e000b4b5a60971"
+          },
+          {
+            "party_id": "seller.example",
+            "public_key": "seller.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "d377378508bd0630362b6ed7ed5d3da7a5198ed2957911e6d10540b8fc463f64"
+          }
+        ]
+      },
+      "verifier_context": {
+        "cancellation_adapter": "fixture-vnet"
+      },
+      "expect": {
+        "accepted": true,
+        "reason": "accepted"
+      }
+    },
+    {
+      "id": "bcc-vnet-cancellation-missing-verifier-reject",
+      "description": "non-mock cancellation openings require a verifier adapter",
+      "certificate": {
+        "schema": "aac.bcc.certificate.v1",
+        "event": {
+          "event_id": "goods-for-cash-001",
+          "description": "Buyer receives 3 goods units and seller receives 10 USD units.",
+          "basis_type_ids": [
+            "GOOD:demo-widget:unit",
+            "USD:arc-testnet:atomic"
+          ],
+          "state_refs": {
+            "buyer_row": "buyer-row/transition/7",
+            "seller_row": "seller-row/transition/12"
+          },
+          "bridge_context": {
+            "registry": "demo-private-state-registry",
+            "settlement_contract": "demo-bridge-vault",
+            "asset": "USDC:arc-testnet"
+          }
+        },
+        "basis_type_ids": [
+          "GOOD:demo-widget:unit",
+          "USD:arc-testnet:atomic"
+        ],
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "transition_ref": "buyer-row/transition/7",
+            "journal_commitment": "17171717171717171717171717171717",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "250a9368d6ee36246e050aff9e0f2af40f051c93d2c96dd7b2f43eea772814f3"
+            }
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "transition_ref": "seller-row/transition/12",
+            "journal_commitment": "29292929292929292929292929292929",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "f8440728a5b103c4e9cbd577d99e57953e7d69d151e4b9af6791c520a0d4b1f4"
+            }
+          }
+        ],
+        "cancellation_opening": {
+          "scheme": "fixture-vnet-cancellation/1",
+          "commitment_scheme": "vnet-bn254-g1/1",
+          "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743",
+          "zero_opening": true,
+          "proof_digest": "01bb545314efe57b1407074c6f86711c20c0fd95fade1835e208ca9b74ddda4a",
+          "record_count": 2
+        },
+        "authenticated_dh": {
+          "scheme": "mock-authenticated-ecdh/1",
+          "ephemeral_public_keys": {
+            "buyer.example": "buyer-ephemeral-x25519",
+            "seller.example": "seller-ephemeral-x25519"
+          },
+          "kdf": "hkdf-sha256",
+          "transcript_binding": "ephemeral keys are signed inside transcript_hash",
+          "public_edge_tag": "c3bb97c4bb4f9727c6328f1bbf090996c41c6d28fb058207054b24752eeb872f"
+        },
+        "finality": {
+          "scheme": "bcc-finality-tag/1",
+          "log_ref": "demo-log",
+          "nullifier": "08afdd3a7fec53a5376ca44070802b86f733a2b26166ea8f1cf1e05ac117dd56",
+          "finality_tag": "f563c5b7bcdf1ba2e79454b72003324a012cc2941a7e782d2106d47b38b45058"
+        },
+        "transcript_hash": "dbe218225e88a6444a35d0f81319083d477965ae26dde3e5fc6c1dcb5603b87c",
+        "signatures": [
+          {
+            "party_id": "buyer.example",
+            "public_key": "buyer.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "751f63bc2d497e0af041096bc97733f1a0d2bdc1064cec90d1e000b4b5a60971"
+          },
+          {
+            "party_id": "seller.example",
+            "public_key": "seller.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "d377378508bd0630362b6ed7ed5d3da7a5198ed2957911e6d10540b8fc463f64"
+          }
+        ]
+      },
+      "verifier_context": {
+        "cancellation_adapter": "none"
+      },
+      "expect": {
+        "accepted": false,
+        "reason": "cancellation_verifier_missing"
+      }
+    },
+    {
+      "id": "bcc-vnet-cancellation-bad-proof-reject",
+      "description": "the supplied cancellation adapter rejects an invalid cancellation proof digest",
+      "certificate": {
+        "schema": "aac.bcc.certificate.v1",
+        "event": {
+          "event_id": "goods-for-cash-001",
+          "description": "Buyer receives 3 goods units and seller receives 10 USD units.",
+          "basis_type_ids": [
+            "GOOD:demo-widget:unit",
+            "USD:arc-testnet:atomic"
+          ],
+          "state_refs": {
+            "buyer_row": "buyer-row/transition/7",
+            "seller_row": "seller-row/transition/12"
+          },
+          "bridge_context": {
+            "registry": "demo-private-state-registry",
+            "settlement_contract": "demo-bridge-vault",
+            "asset": "USDC:arc-testnet"
+          }
+        },
+        "basis_type_ids": [
+          "GOOD:demo-widget:unit",
+          "USD:arc-testnet:atomic"
+        ],
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "transition_ref": "buyer-row/transition/7",
+            "journal_commitment": "17171717171717171717171717171717",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "250a9368d6ee36246e050aff9e0f2af40f051c93d2c96dd7b2f43eea772814f3"
+            }
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "transition_ref": "seller-row/transition/12",
+            "journal_commitment": "29292929292929292929292929292929",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "f8440728a5b103c4e9cbd577d99e57953e7d69d151e4b9af6791c520a0d4b1f4"
+            }
+          }
+        ],
+        "cancellation_opening": {
+          "scheme": "fixture-vnet-cancellation/1",
+          "commitment_scheme": "vnet-bn254-g1/1",
+          "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743",
+          "zero_opening": true,
+          "proof_digest": "bad-proof",
+          "record_count": 2
+        },
+        "authenticated_dh": {
+          "scheme": "mock-authenticated-ecdh/1",
+          "ephemeral_public_keys": {
+            "buyer.example": "buyer-ephemeral-x25519",
+            "seller.example": "seller-ephemeral-x25519"
+          },
+          "kdf": "hkdf-sha256",
+          "transcript_binding": "ephemeral keys are signed inside transcript_hash",
+          "public_edge_tag": "c3bb97c4bb4f9727c6328f1bbf090996c41c6d28fb058207054b24752eeb872f"
+        },
+        "finality": {
+          "scheme": "bcc-finality-tag/1",
+          "log_ref": "demo-log",
+          "nullifier": "08afdd3a7fec53a5376ca44070802b86f733a2b26166ea8f1cf1e05ac117dd56",
+          "finality_tag": "f563c5b7bcdf1ba2e79454b72003324a012cc2941a7e782d2106d47b38b45058"
+        },
+        "transcript_hash": "dbe218225e88a6444a35d0f81319083d477965ae26dde3e5fc6c1dcb5603b87c",
+        "signatures": [
+          {
+            "party_id": "buyer.example",
+            "public_key": "buyer.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "751f63bc2d497e0af041096bc97733f1a0d2bdc1064cec90d1e000b4b5a60971"
+          },
+          {
+            "party_id": "seller.example",
+            "public_key": "seller.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "d377378508bd0630362b6ed7ed5d3da7a5198ed2957911e6d10540b8fc463f64"
+          }
+        ]
+      },
+      "verifier_context": {
+        "cancellation_adapter": "fixture-vnet"
+      },
+      "expect": {
+        "accepted": false,
+        "reason": "cancellation_proof_mismatch"
+      }
+    },
+    {
+      "id": "bcc-cancellation-false-net-reject",
+      "description": "records are signed but the cancellation opening says the committed records do not net to zero",
+      "certificate": {
+        "schema": "aac.bcc.certificate.v1",
+        "event": {
+          "event_id": "goods-for-cash-001",
+          "description": "Buyer receives 3 goods units and seller receives 10 USD units.",
+          "basis_type_ids": [
+            "GOOD:demo-widget:unit",
+            "USD:arc-testnet:atomic"
+          ],
+          "state_refs": {
+            "buyer_row": "buyer-row/transition/7",
+            "seller_row": "seller-row/transition/12"
+          },
+          "bridge_context": {
+            "registry": "demo-private-state-registry",
+            "settlement_contract": "demo-bridge-vault",
+            "asset": "USDC:arc-testnet"
+          }
+        },
+        "basis_type_ids": [
+          "GOOD:demo-widget:unit",
+          "USD:arc-testnet:atomic"
+        ],
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "transition_ref": "buyer-row/transition/7",
+            "journal_commitment": "17171717171717171717171717171717",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "dee3a5750b1fd57cb0fb6df825058af8127f9b1639296d270c298871916aee0a"
+            }
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "transition_ref": "seller-row/transition/12",
+            "journal_commitment": "29292929292929292929292929292929",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "f8440728a5b103c4e9cbd577d99e57953e7d69d151e4b9af6791c520a0d4b1f4"
+            }
+          }
+        ],
+        "cancellation_opening": {
+          "scheme": "mock-cancellation-opening/1",
+          "commitment_scheme": "mock-record-commitment/1",
+          "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743",
+          "zero_opening": false,
+          "proof_digest": "71086083aa3cf638de178c8c5b9d697a9a2f96fec8aedaa5b6a0bfa6baefbc4c",
+          "record_count": 2
+        },
+        "authenticated_dh": {
+          "scheme": "mock-authenticated-ecdh/1",
+          "ephemeral_public_keys": {
+            "buyer.example": "buyer-ephemeral-x25519",
+            "seller.example": "seller-ephemeral-x25519"
+          },
+          "kdf": "hkdf-sha256",
+          "transcript_binding": "ephemeral keys are signed inside transcript_hash",
+          "public_edge_tag": "c3bb97c4bb4f9727c6328f1bbf090996c41c6d28fb058207054b24752eeb872f"
+        },
+        "finality": {
+          "scheme": "bcc-finality-tag/1",
+          "log_ref": "demo-log",
+          "nullifier": "2d3b81e0479fbde21c9f104e58dab4b194c9e3e9a137e7c00e82df93a303e8e2",
+          "finality_tag": "234ae79f992254cf8f2a3ab63a5706dd07b7a0dac2d87df692f677fbc6254af7"
+        },
+        "transcript_hash": "6d49e09d90b7fbf90f48f5c8271234f4605d649bbc3dbd2845e5a0405ac4c2eb",
+        "signatures": [
+          {
+            "party_id": "buyer.example",
+            "public_key": "buyer.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "71229281063754a72f17adc3729d0c8bf608c2ddec4c47f46e6a41408c20aede"
+          },
+          {
+            "party_id": "seller.example",
+            "public_key": "seller.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "851644aaf3860973509cb94aa155d6a85fb327dfdce340fc75db41776c18b066"
+          }
+        ]
+      },
+      "private_witness": {
+        "schema": "aac.bcc.private-witness.v1",
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "debit": [
+              3,
+              0
+            ],
+            "credit": [
+              0,
+              11
+            ],
+            "record_blinding": "buyer.example:record"
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "debit": [
+              0,
+              10
+            ],
+            "credit": [
+              3,
+              0
+            ],
+            "record_blinding": "seller.example:record"
+          }
+        ],
+        "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743"
+      },
+      "verifier_context": {
+        "seen_finality_tags": []
+      },
+      "expect": {
+        "accepted": false,
+        "reason": "cancellation_zero_opening"
+      }
+    },
+    {
+      "id": "bcc-transcript-mismatch-reject",
+      "description": "event text changes after signatures and transcript hash are fixed",
+      "certificate": {
+        "schema": "aac.bcc.certificate.v1",
+        "event": {
+          "event_id": "goods-for-cash-001",
+          "description": "tampered after signing",
+          "basis_type_ids": [
+            "GOOD:demo-widget:unit",
+            "USD:arc-testnet:atomic"
+          ],
+          "state_refs": {
+            "buyer_row": "buyer-row/transition/7",
+            "seller_row": "seller-row/transition/12"
+          },
+          "bridge_context": {
+            "registry": "demo-private-state-registry",
+            "settlement_contract": "demo-bridge-vault",
+            "asset": "USDC:arc-testnet"
+          }
+        },
+        "basis_type_ids": [
+          "GOOD:demo-widget:unit",
+          "USD:arc-testnet:atomic"
+        ],
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "transition_ref": "buyer-row/transition/7",
+            "journal_commitment": "17171717171717171717171717171717",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "250a9368d6ee36246e050aff9e0f2af40f051c93d2c96dd7b2f43eea772814f3"
+            }
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "transition_ref": "seller-row/transition/12",
+            "journal_commitment": "29292929292929292929292929292929",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "f8440728a5b103c4e9cbd577d99e57953e7d69d151e4b9af6791c520a0d4b1f4"
+            }
+          }
+        ],
+        "cancellation_opening": {
+          "scheme": "mock-cancellation-opening/1",
+          "commitment_scheme": "mock-record-commitment/1",
+          "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743",
+          "zero_opening": true,
+          "proof_digest": "d5dd8958c296b8212b61d2334001d442120e57e5831ebeed3c3c91a61a385838",
+          "record_count": 2
+        },
+        "authenticated_dh": {
+          "scheme": "mock-authenticated-ecdh/1",
+          "ephemeral_public_keys": {
+            "buyer.example": "buyer-ephemeral-x25519",
+            "seller.example": "seller-ephemeral-x25519"
+          },
+          "kdf": "hkdf-sha256",
+          "transcript_binding": "ephemeral keys are signed inside transcript_hash",
+          "public_edge_tag": "c3bb97c4bb4f9727c6328f1bbf090996c41c6d28fb058207054b24752eeb872f"
+        },
+        "finality": {
+          "scheme": "bcc-finality-tag/1",
+          "log_ref": "demo-log",
+          "nullifier": "08afdd3a7fec53a5376ca44070802b86f733a2b26166ea8f1cf1e05ac117dd56",
+          "finality_tag": "1f35aed305acea373836d221387f842bfc73b3a5f1b75a92b38bec37f2276741"
+        },
+        "transcript_hash": "a9e9da424aa2d44584647811b4338828e78b60d0b812ccfd18b373d1897ddf92",
+        "signatures": [
+          {
+            "party_id": "buyer.example",
+            "public_key": "buyer.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "9b3e89b751a0c2bf1f2cf096ae11cefec34a543bb476d34778af3f53afa7b069"
+          },
+          {
+            "party_id": "seller.example",
+            "public_key": "seller.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "86abc7b15460b6188631a497ac21469a78097cd2f5091a43ccee038e3f240ec7"
+          }
+        ]
+      },
+      "verifier_context": {
+        "seen_finality_tags": []
+      },
+      "expect": {
+        "accepted": false,
+        "reason": "transcript_hash_mismatch"
+      }
+    },
+    {
+      "id": "bcc-authenticated-ecdh-mismatch-reject",
+      "description": "authenticated ECDH public edge tag no longer matches the signed ephemeral keys",
+      "certificate": {
+        "schema": "aac.bcc.certificate.v1",
+        "event": {
+          "event_id": "goods-for-cash-001",
+          "description": "Buyer receives 3 goods units and seller receives 10 USD units.",
+          "basis_type_ids": [
+            "GOOD:demo-widget:unit",
+            "USD:arc-testnet:atomic"
+          ],
+          "state_refs": {
+            "buyer_row": "buyer-row/transition/7",
+            "seller_row": "seller-row/transition/12"
+          },
+          "bridge_context": {
+            "registry": "demo-private-state-registry",
+            "settlement_contract": "demo-bridge-vault",
+            "asset": "USDC:arc-testnet"
+          }
+        },
+        "basis_type_ids": [
+          "GOOD:demo-widget:unit",
+          "USD:arc-testnet:atomic"
+        ],
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "transition_ref": "buyer-row/transition/7",
+            "journal_commitment": "17171717171717171717171717171717",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "250a9368d6ee36246e050aff9e0f2af40f051c93d2c96dd7b2f43eea772814f3"
+            }
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "transition_ref": "seller-row/transition/12",
+            "journal_commitment": "29292929292929292929292929292929",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "f8440728a5b103c4e9cbd577d99e57953e7d69d151e4b9af6791c520a0d4b1f4"
+            }
+          }
+        ],
+        "cancellation_opening": {
+          "scheme": "mock-cancellation-opening/1",
+          "commitment_scheme": "mock-record-commitment/1",
+          "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743",
+          "zero_opening": true,
+          "proof_digest": "d5dd8958c296b8212b61d2334001d442120e57e5831ebeed3c3c91a61a385838",
+          "record_count": 2
+        },
+        "authenticated_dh": {
+          "scheme": "mock-authenticated-ecdh/1",
+          "ephemeral_public_keys": {
+            "buyer.example": "buyer-ephemeral-x25519",
+            "seller.example": "seller-ephemeral-x25519"
+          },
+          "kdf": "hkdf-sha256",
+          "transcript_binding": "ephemeral keys are signed inside transcript_hash",
+          "public_edge_tag": "bad-edge-tag"
+        },
+        "finality": {
+          "scheme": "bcc-finality-tag/1",
+          "log_ref": "demo-log",
+          "nullifier": "08afdd3a7fec53a5376ca44070802b86f733a2b26166ea8f1cf1e05ac117dd56",
+          "finality_tag": "1f35aed305acea373836d221387f842bfc73b3a5f1b75a92b38bec37f2276741"
+        },
+        "transcript_hash": "a9e9da424aa2d44584647811b4338828e78b60d0b812ccfd18b373d1897ddf92",
+        "signatures": [
+          {
+            "party_id": "buyer.example",
+            "public_key": "buyer.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "9b3e89b751a0c2bf1f2cf096ae11cefec34a543bb476d34778af3f53afa7b069"
+          },
+          {
+            "party_id": "seller.example",
+            "public_key": "seller.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "86abc7b15460b6188631a497ac21469a78097cd2f5091a43ccee038e3f240ec7"
+          }
+        ]
+      },
+      "verifier_context": {
+        "seen_finality_tags": []
+      },
+      "expect": {
+        "accepted": false,
+        "reason": "authenticated_dh_mismatch"
+      }
+    },
+    {
+      "id": "bcc-private-witness-leak-reject",
+      "description": "public certificates must not carry private debit/credit vectors",
+      "certificate": {
+        "schema": "aac.bcc.certificate.v1",
+        "event": {
+          "event_id": "goods-for-cash-001",
+          "description": "Buyer receives 3 goods units and seller receives 10 USD units.",
+          "basis_type_ids": [
+            "GOOD:demo-widget:unit",
+            "USD:arc-testnet:atomic"
+          ],
+          "state_refs": {
+            "buyer_row": "buyer-row/transition/7",
+            "seller_row": "seller-row/transition/12"
+          },
+          "bridge_context": {
+            "registry": "demo-private-state-registry",
+            "settlement_contract": "demo-bridge-vault",
+            "asset": "USDC:arc-testnet"
+          }
+        },
+        "basis_type_ids": [
+          "GOOD:demo-widget:unit",
+          "USD:arc-testnet:atomic"
+        ],
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "transition_ref": "buyer-row/transition/7",
+            "journal_commitment": "17171717171717171717171717171717",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "250a9368d6ee36246e050aff9e0f2af40f051c93d2c96dd7b2f43eea772814f3"
+            },
+            "debit": [
+              3,
+              0
+            ]
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "transition_ref": "seller-row/transition/12",
+            "journal_commitment": "29292929292929292929292929292929",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "f8440728a5b103c4e9cbd577d99e57953e7d69d151e4b9af6791c520a0d4b1f4"
+            }
+          }
+        ],
+        "cancellation_opening": {
+          "scheme": "mock-cancellation-opening/1",
+          "commitment_scheme": "mock-record-commitment/1",
+          "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743",
+          "zero_opening": true,
+          "proof_digest": "d5dd8958c296b8212b61d2334001d442120e57e5831ebeed3c3c91a61a385838",
+          "record_count": 2
+        },
+        "authenticated_dh": {
+          "scheme": "mock-authenticated-ecdh/1",
+          "ephemeral_public_keys": {
+            "buyer.example": "buyer-ephemeral-x25519",
+            "seller.example": "seller-ephemeral-x25519"
+          },
+          "kdf": "hkdf-sha256",
+          "transcript_binding": "ephemeral keys are signed inside transcript_hash",
+          "public_edge_tag": "c3bb97c4bb4f9727c6328f1bbf090996c41c6d28fb058207054b24752eeb872f"
+        },
+        "finality": {
+          "scheme": "bcc-finality-tag/1",
+          "log_ref": "demo-log",
+          "nullifier": "08afdd3a7fec53a5376ca44070802b86f733a2b26166ea8f1cf1e05ac117dd56",
+          "finality_tag": "1f35aed305acea373836d221387f842bfc73b3a5f1b75a92b38bec37f2276741"
+        },
+        "transcript_hash": "a9e9da424aa2d44584647811b4338828e78b60d0b812ccfd18b373d1897ddf92",
+        "signatures": [
+          {
+            "party_id": "buyer.example",
+            "public_key": "buyer.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "9b3e89b751a0c2bf1f2cf096ae11cefec34a543bb476d34778af3f53afa7b069"
+          },
+          {
+            "party_id": "seller.example",
+            "public_key": "seller.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "86abc7b15460b6188631a497ac21469a78097cd2f5091a43ccee038e3f240ec7"
+          }
+        ]
+      },
+      "verifier_context": {
+        "seen_finality_tags": []
+      },
+      "expect": {
+        "accepted": false,
+        "reason": "private_witness_leak"
+      }
+    },
+    {
+      "id": "bcc-finality-replay-reject",
+      "description": "otherwise valid certificate repeats an already accepted finality tag",
+      "certificate": {
+        "schema": "aac.bcc.certificate.v1",
+        "event": {
+          "event_id": "goods-for-cash-001",
+          "description": "Buyer receives 3 goods units and seller receives 10 USD units.",
+          "basis_type_ids": [
+            "GOOD:demo-widget:unit",
+            "USD:arc-testnet:atomic"
+          ],
+          "state_refs": {
+            "buyer_row": "buyer-row/transition/7",
+            "seller_row": "seller-row/transition/12"
+          },
+          "bridge_context": {
+            "registry": "demo-private-state-registry",
+            "settlement_contract": "demo-bridge-vault",
+            "asset": "USDC:arc-testnet"
+          }
+        },
+        "basis_type_ids": [
+          "GOOD:demo-widget:unit",
+          "USD:arc-testnet:atomic"
+        ],
+        "records": [
+          {
+            "party_id": "buyer.example",
+            "role": "buyer",
+            "transition_ref": "buyer-row/transition/7",
+            "journal_commitment": "17171717171717171717171717171717",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "250a9368d6ee36246e050aff9e0f2af40f051c93d2c96dd7b2f43eea772814f3"
+            }
+          },
+          {
+            "party_id": "seller.example",
+            "role": "seller",
+            "transition_ref": "seller-row/transition/12",
+            "journal_commitment": "29292929292929292929292929292929",
+            "basis_type_ids": [
+              "GOOD:demo-widget:unit",
+              "USD:arc-testnet:atomic"
+            ],
+            "record_commitment": {
+              "scheme": "mock-record-commitment/1",
+              "value": "f8440728a5b103c4e9cbd577d99e57953e7d69d151e4b9af6791c520a0d4b1f4"
+            }
+          }
+        ],
+        "cancellation_opening": {
+          "scheme": "mock-cancellation-opening/1",
+          "commitment_scheme": "mock-record-commitment/1",
+          "aggregate_opening": "ca8acba846567abc56a013b62a4e229d7da224779434e1c6816828221ae2e743",
+          "zero_opening": true,
+          "proof_digest": "d5dd8958c296b8212b61d2334001d442120e57e5831ebeed3c3c91a61a385838",
+          "record_count": 2
+        },
+        "authenticated_dh": {
+          "scheme": "mock-authenticated-ecdh/1",
+          "ephemeral_public_keys": {
+            "buyer.example": "buyer-ephemeral-x25519",
+            "seller.example": "seller-ephemeral-x25519"
+          },
+          "kdf": "hkdf-sha256",
+          "transcript_binding": "ephemeral keys are signed inside transcript_hash",
+          "public_edge_tag": "c3bb97c4bb4f9727c6328f1bbf090996c41c6d28fb058207054b24752eeb872f"
+        },
+        "finality": {
+          "scheme": "bcc-finality-tag/1",
+          "log_ref": "demo-log",
+          "nullifier": "08afdd3a7fec53a5376ca44070802b86f733a2b26166ea8f1cf1e05ac117dd56",
+          "finality_tag": "1f35aed305acea373836d221387f842bfc73b3a5f1b75a92b38bec37f2276741"
+        },
+        "transcript_hash": "a9e9da424aa2d44584647811b4338828e78b60d0b812ccfd18b373d1897ddf92",
+        "signatures": [
+          {
+            "party_id": "buyer.example",
+            "public_key": "buyer.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "9b3e89b751a0c2bf1f2cf096ae11cefec34a543bb476d34778af3f53afa7b069"
+          },
+          {
+            "party_id": "seller.example",
+            "public_key": "seller.example:pub",
+            "scheme": "mock-signature/1",
+            "signature": "86abc7b15460b6188631a497ac21469a78097cd2f5091a43ccee038e3f240ec7"
+          }
+        ]
+      },
+      "verifier_context": {
+        "seen_finality_tags": [
+          "1f35aed305acea373836d221387f842bfc73b3a5f1b75a92b38bec37f2276741"
+        ]
+      },
+      "expect": {
+        "accepted": false,
+        "reason": "finality_replay"
+      }
+    }
+  ]
+}

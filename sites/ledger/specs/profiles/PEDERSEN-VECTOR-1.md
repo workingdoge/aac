@@ -8,16 +8,18 @@
   capability (see §9): the in-circuit primitive available is multi-scalar
   multiplication, not point addition.
 
-This profile fixes the concrete vector-commitment substrate VNET/1 §2 leaves
-open: the prime-order group, point encoding, generator derivation, and -- the
-load-bearing constraint of this profile -- the rule that **every aggregation is
-expressed as a single multi-scalar multiplication (MSM), never as a sequence of
-point additions.**
+This profile fixes a ProveKit-oriented vector-commitment substrate VNET/1 §2
+leaves open: the prime-order group, point encoding, generator derivation, and --
+the load-bearing constraint of this profile -- the rule that **every aggregation
+is expressed as a single multi-scalar multiplication (MSM), never as a sequence
+of point additions.**
 
 It does not change VNET/1's statement, ABI, or verifier contract. It binds them
 to a substrate that proves on an embedded-curve-MSM backend (the kind ProveKit
-exposes; see §9). The Poseidon2 identity commitment TRANSITION/1 recomputes is
-untouched -- PEDERSEN-VECTOR/1 is the *value* layer, additive alongside it.
+exposes; see §9). The existing VNET-BN254-G1/1 profile remains the BN254
+reference/JS-verifier substrate; PEDERSEN-VECTOR/1 is the ProveKit circuit
+profile. The Poseidon2 identity commitment TRANSITION/1 recomputes is untouched
+-- PEDERSEN-VECTOR/1 is the *value* layer, additive alongside it.
 
 ## 1. Group and point encoding
 

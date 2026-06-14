@@ -1,0 +1,21 @@
+{
+  "name": "@aac/fundraise-workflow",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Workflow core that composes verifier receipts with the FUNDRAISE-CLEARING/1 authorizer seam.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.mjs"
+    }
+  },
+  "scripts": {
+    "test": "node test/run-tests.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
