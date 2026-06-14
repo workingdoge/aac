@@ -1,15 +1,15 @@
 # Threshold Brief: cand-0050-provekit-flake-import
 
-Generated: 2026-06-14T07:35:04Z
-Status: validated
+Generated: 2026-06-14T08:12:12Z
+Status: landed
 Intent: import ProveKit flake package from main into vnet fundraising workspace
-Toolchain (pinned): nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1
+Toolchain (pinned): nixpkgs_rev=ac62194c3917 flake_lock_sha256=feebb6c98bd0faef8b540a9e26c410e98caefd38b6309aaaefa5a9045adf0c3b
 
 ## Cargo (what lands if admitted)
 
-- `cargo/root/flake.nix` replaces `flake.nix`: +122/-2 lines vs live
-- `cargo/root/flake.lock` replaces `flake.lock`: +56/-1 lines vs live
-- `cargo/world-app/.gitignore` replaces `world-app/.gitignore`: +3/-0 lines vs live
+- `cargo/root/flake.nix` replaces `flake.nix`: +0/-0 lines vs live
+- `cargo/root/flake.lock` replaces `flake.lock`: +0/-0 lines vs live
+- `cargo/world-app/.gitignore` replaces `world-app/.gitignore`: +0/-0 lines vs live
 
 ## Witnessed behavioral delta (task: Import the ProveKit flake package into the vnet fundraising worktree without landing generated proof artifacts.)
 

@@ -27,7 +27,15 @@ check_flake_import() {
   grep -q 'github:oxalica/rust-overlay' "$flake" || { echo "missing rust-overlay input"; bad=1; }
   grep -q 'github:worldfnd/ProveKit/b0cb124685bcf24cc0deaa7b191032f58875a47a' "$flake" || { echo "missing pinned provekit source"; bad=1; }
   grep -q 'provekitToolchain = pkgs.rust-bin.nightly."2026-03-04".minimal' "$flake" || { echo "missing pinned ProveKit toolchain"; bad=1; }
-  grep -q 'cargoExtraArgs = "--locked -p provekit-cli"' "$flake" || { echo "missing CLI package restriction"; bad=1; }
+  grep -q 'provekitNoirSrc = pkgs.fetchFromGitHub' "$flake" || { echo "missing pinned Noir stdlib source"; bad=1; }
+  grep -q 'hash = "sha256-Plp1ARY6cMUhsqczwYNfIWltgxZ3yHle74af+ZCnUYY="' "$flake" || { echo "missing Noir stdlib source hash"; bad=1; }
+  grep -q 'cargoExtraArgs = "--offline -p provekit-cli"' "$flake" || { echo "missing CLI offline package restriction"; bad=1; }
+  grep -q 'overrideVendorGitCheckout = ps: drv:' "$flake" || { echo "missing vendored git checkout override"; bad=1; }
+  grep -q 'p.name == "noirc_driver"' "$flake" || { echo "missing noirc_driver vendor patch target"; bad=1; }
+  grep -q 'cp -R ${provekitNoirSrc}/noir_stdlib "$crate/noir_stdlib"' "$flake" || { echo "missing local noirc_driver stdlib copy"; bad=1; }
+  grep -q "'../../noir_stdlib/src' 'noir_stdlib/src'" "$flake" || { echo "missing noirc_driver embed path patch"; bad=1; }
+  grep -q 'if stdlib_src_dir.exists() { rerun_if_stdlib_changes(stdlib_src_dir); }' "$flake" || { echo "missing noirc_driver stdlib guard patch"; bad=1; }
+  grep -q 'cargoVendorDir = provekitCargoVendorDir' "$flake" || { echo "missing patched vendor dir binding"; bad=1; }
   grep -q 'mainProgram = "provekit-cli"' "$flake" || { echo "missing CLI mainProgram"; bad=1; }
   grep -q 'inherit nargo nargo19 bignum-paramgen provekit' "$flake" || { echo "provekit not exported as a package"; bad=1; }
   grep -q '"crane_2"' "$lock" || { echo "missing lock node crane_2"; bad=1; }

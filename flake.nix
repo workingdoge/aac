@@ -359,6 +359,12 @@
         # then `./result/bin/provekit-cli`.
         provekitToolchain = pkgs.rust-bin.nightly."2026-03-04".minimal;
         provekitCraneLib = (crane.mkLib pkgs).overrideToolchain (_: provekitToolchain);
+        provekitNoirSrc = pkgs.fetchFromGitHub {
+          owner = "noir-lang";
+          repo = "noir";
+          rev = "74d6be658e1ad252f87943292ba09bdd4da80bd4";
+          hash = "sha256-Plp1ARY6cMUhsqczwYNfIWltgxZ3yHle74af+ZCnUYY=";
+        };
         provekitCommonArgs = {
           pname = "provekit-cli";
           version = "1.0.0";
@@ -366,7 +372,10 @@
           strictDeps = true;
           # Build only the CLI's closure (the full-workspace cargo build is
           # proven, but -p keeps the gnark/wasm members out of the picture).
-          cargoExtraArgs = "--locked -p provekit-cli";
+          # ProveKit's lockfile needs Cargo's offline refresh under this
+          # pinned nightly, so use crane's vendored sources instead of
+          # `--locked`.
+          cargoExtraArgs = "--offline -p provekit-cli";
           doCheck = false;
           # Vendored noir (beta.19) build.rs uses `build_data` for git info,
           # which fails in the sandbox; it short-circuits when GIT_COMMIT is
@@ -376,12 +385,40 @@
           nativeBuildInputs = [ pkgs.pkg-config ];
           buildInputs = lib.optionals pkgs.stdenv.isDarwin [ pkgs.libiconv ];
         };
-        provekit = provekitCraneLib.buildPackage (
+        provekitCargoVendorDir = provekitCraneLib.vendorCargoDeps (
           provekitCommonArgs
+          // {
+            overrideVendorGitCheckout = ps: drv:
+              if lib.any (p: p.name == "noirc_driver") ps then
+                pkgs.runCommand "provekit-noir-git-deps" { } ''
+                  mkdir -p "$out"
+                  cp -R ${drv}/. "$out/"
+                  chmod -R u+w "$out"
+                  for crate in "$out"/noirc_driver-*; do
+                    cp -R ${provekitNoirSrc}/noir_stdlib "$crate/noir_stdlib"
+                    substituteInPlace "$crate/build.rs" \
+                      --replace-fail '../../noir_stdlib/' 'noir_stdlib/' \
+                      --replace-fail \
+                        'rerun_if_stdlib_changes(stdlib_src_dir);' \
+                        'if stdlib_src_dir.exists() { rerun_if_stdlib_changes(stdlib_src_dir); }'
+                    substituteInPlace "$crate/src/stdlib.rs" \
+                      --replace-fail '../../noir_stdlib/src' 'noir_stdlib/src' \
+                      --replace-fail '../../../noir_stdlib/Nargo.toml' '../noir_stdlib/Nargo.toml'
+                  done
+                ''
+              else
+                drv;
+          }
+        );
+        provekitBuildArgs = provekitCommonArgs // {
+          cargoVendorDir = provekitCargoVendorDir;
+        };
+        provekit = provekitCraneLib.buildPackage (
+          provekitBuildArgs
           // {
             # Cache the (heavy) dependency compile separately so iterating on
             # the final package step doesn't recompile noir/whir/arkworks.
-            cargoArtifacts = provekitCraneLib.buildDepsOnly provekitCommonArgs;
+            cargoArtifacts = provekitCraneLib.buildDepsOnly provekitBuildArgs;
             meta = {
               description = "ProveKit CLI -- WHIR-based Noir prover/verifier (prepare/prove/verify).";
               homepage = "https://github.com/worldfnd/ProveKit";
