@@ -5,11 +5,9 @@ import { resolve } from "node:path";
 
 import {
   FUNDRAISE_DEMO_RUNNER_SCHEMA,
-  FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA,
   loadFundraiseDemoPacket,
   prepareProveKitWorkdir,
   runFundraiseDemo,
-  runFundraiseDemoLocalSettlement,
 } from "../src/index.mjs";
 
 const repoRoot = resolve(import.meta.dirname, "../..");
@@ -52,75 +50,6 @@ assert.equal(receipt.workflow_receipt.accepted, true);
 assert.equal(receipt.settlement_action.method, "settle");
 assert.equal(receipt.settlement_action.args.signature, null);
 assert.equal(receipt.settlement_action.args.auth.issued_unit_total, 150);
-
-const foundryCommands = [];
-let balanceCalls = 0;
-const local = await runFundraiseDemoLocalSettlement({
-  repo_root: repoRoot,
-  circuit_dir: resolve(fakeWork, "circuit"),
-  provekit_bin: "/nix/store/fake-provekit-cli/bin/provekit-cli",
-  run_command: async (command) => {
-    if (command.step === "prepare") {
-      await writeFile(command.args[command.args.indexOf("-p") + 1], new Uint8Array([1, 2, 3]));
-      await writeFile(command.args[command.args.indexOf("-v") + 1], new Uint8Array([4, 5, 6]));
-    }
-    if (command.step === "prove") {
-      await writeFile(command.args[command.args.indexOf("-o") + 1], new Uint8Array([7, 8, 9]));
-    }
-    return { exit_code: 0, stdout: `${command.step}: ok\n` };
-  },
-  foundry_command: async (command) => {
-    foundryCommands.push(command);
-    const joined = command.args.join(" ");
-    if (joined.includes("wallet address")) {
-      return { stdout: "0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7\n" };
-    }
-    if (command.executable.endsWith("forge") && joined.includes("FundraiseReceiptToken")) {
-      return {
-        stdout: JSON.stringify({
-          deployedTo: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-          transactionHash: "0x" + "11".repeat(32),
-        }),
-      };
-    }
-    if (command.executable.endsWith("forge") && joined.includes("FundraiseMintSettlement")) {
-      return {
-        stdout: JSON.stringify({
-          deployedTo: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-          transactionHash: "0x" + "22".repeat(32),
-        }),
-      };
-    }
-    if (joined.includes("settlementDigest")) {
-      return { stdout: "0x" + "33".repeat(32) + "\n" };
-    }
-    if (joined.includes("wallet sign")) {
-      return { stdout: "0x" + "44".repeat(65) + "\n" };
-    }
-    if (joined.includes("balanceOf")) {
-      balanceCalls += 1;
-      return { stdout: `${balanceCalls === 1 ? 100 : 50}\n` };
-    }
-    if (joined.includes("totalSupply")) {
-      return { stdout: "150\n" };
-    }
-    if (joined.includes("setMinter") || joined.includes("settle(")) {
-      return { stdout: JSON.stringify({ transactionHash: "0x" + "55".repeat(32) }) };
-    }
-    throw new Error(`unexpected foundry command: ${command.executable} ${joined}`);
-  },
-  forge_bin: "/nix/store/fake-foundry/bin/forge",
-  cast_bin: "/nix/store/fake-foundry/bin/cast",
-  solc_bin: "/nix/store/fake-solc/bin/solc",
-});
-assert.equal(local.schema, FUNDRAISE_DEMO_RUNNER_SCHEMA);
-assert.equal(local.local_settlement.schema, FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA);
-assert.equal(local.local_settlement.total_supply, 150);
-assert.deepEqual(local.local_settlement.balances.map((item) => item.amount), [100, 50]);
-assert.equal(local.local_settlement.transaction_hash, "0x" + "55".repeat(32));
-assert.equal(foundryCommands.filter((command) => command.executable.endsWith("forge")).length, 2);
-assert.ok(foundryCommands.some((command) => command.args.includes("setMinter(address)")));
-assert.ok(foundryCommands.some((command) => command.args.includes("settle((bytes32,address,bytes32,bytes32,uint256,(address,uint256)[]),bytes)")));
 
 await assert.rejects(
   () =>

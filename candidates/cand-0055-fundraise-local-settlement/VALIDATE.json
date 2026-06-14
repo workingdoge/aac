@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0055-fundraise-local-settlement",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "63ea0b07c383e3f72a4860d7dd7bfcedb40cae16b63a991d832a56233ffce565",
+    "META": "0c384ba0a5d96ba539b2526cb72be1a59086533931fb859145f9870424517e97"
+  }
+}
