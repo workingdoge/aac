@@ -526,32 +526,6 @@ export class AacFundraiseDemo extends LitElement {
     return `${base.replace(/\/+$/, '')}/api/fundraise/run`;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.addEventListener('click', this.handleControlClick);
-  }
-
-  disconnectedCallback() {
-    this.removeEventListener('click', this.handleControlClick);
-    super.disconnectedCallback();
-  }
-
-  private readonly handleControlClick = (event: Event) => {
-    const control = event
-      .composedPath()
-      .find((target): target is HTMLElement =>
-        target instanceof HTMLElement && target.dataset.fundraiseAction !== undefined,
-      );
-    if (!control) return;
-    if (control.dataset.fundraiseAction === 'run-live-proof') {
-      void this.runLiveProof();
-      return;
-    }
-    if (control.dataset.fundraiseAction === 'show-capture') {
-      this.showCapturedReceipt();
-    }
-  };
-
   private async runLiveProof() {
     if (this.runState === 'running') return;
     const started = Date.now();
@@ -619,10 +593,10 @@ export class AacFundraiseDemo extends LitElement {
           <div class="live-box">
             <div class="status">${this.displayStatus(s.status)}</div>
             <div class="actions">
-              <button class="run" type="button" data-fundraise-action="run-live-proof" ?disabled=${this.runState === 'running'}>
+              <button class="run" type="button" ?disabled=${this.runState === 'running'} @click=${() => this.runLiveProof()}>
                 ${this.runButtonText()}
               </button>
-              <button class="ghost" type="button" data-fundraise-action="show-capture" ?disabled=${this.runState === 'running'}>
+              <button class="ghost" type="button" ?disabled=${this.runState === 'running'} @click=${() => this.showCapturedReceipt()}>
                 Show capture
               </button>
             </div>
