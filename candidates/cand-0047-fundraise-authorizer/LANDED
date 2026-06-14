@@ -6,3 +6,4 @@ cargo/fundraise-authorizer/test/run-tests.mjs	fundraise-authorizer/test/run-test
 cargo/sites/ledger/specs/applications/FUNDRAISE-CLEARING-1.md	sites/ledger/specs/applications/FUNDRAISE-CLEARING-1.md	yes
 # landed_at: 2026-06-14T07:05:17Z
 # toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1 unavailable(not-in-devshell)
+git_commit	b681553
