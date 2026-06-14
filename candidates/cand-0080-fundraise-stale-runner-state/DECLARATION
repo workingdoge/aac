@@ -1,0 +1,4 @@
+layer: artifact
+implements: fundraise demo live-runner display contract
+preserves: none
+compares_to: none

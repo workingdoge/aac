@@ -423,11 +423,6 @@ export class AacFundraiseDemo extends LitElement {
       color: var(--aac-color-bond, #fff);
     }
 
-    .book-state.unavailable {
-      border-style: dashed;
-      color: var(--aac-color-steel, #6b6b64);
-    }
-
     .book-grid {
       margin-top: 12px;
       border: 1px solid var(--aac-color-rule2, #c9be9e);
@@ -1002,9 +997,6 @@ export class AacFundraiseDemo extends LitElement {
       if (!response.ok || payload?.accepted !== true || !payload.summary) {
         throw new Error(payload?.message || payload?.reason || `HTTP ${response.status}`);
       }
-      if (!this.isCurrentRunnerSummary(payload.summary)) {
-        throw new Error('runner summary schema is stale; restart fundraise demo runner');
-      }
       this.summary = payload.summary;
       this.liveElapsedMs = payload.elapsed_ms ?? Date.now() - started;
       this.sourceLabel = 'live proof';
@@ -1013,19 +1005,6 @@ export class AacFundraiseDemo extends LitElement {
       this.runState = 'error';
       this.liveError = error instanceof Error ? error.message : 'live runner failed';
     }
-  }
-
-  private isCurrentRunnerSummary(summary: unknown): summary is FundraiseSummary {
-    if (!summary || typeof summary !== 'object') return false;
-    const candidate = summary as Record<string, unknown>;
-    const reconciliation = candidate.reconciliation as Record<string, unknown> | null | undefined;
-    return Array.isArray(candidate.fills)
-      && Array.isArray(candidate.opening_balances)
-      && !!candidate.verifier
-      && typeof candidate.verifier === 'object'
-      && !!reconciliation
-      && typeof reconciliation === 'object'
-      && Array.isArray(reconciliation.rows);
   }
 
   private showCapturedReceipt() {
@@ -1062,16 +1041,9 @@ export class AacFundraiseDemo extends LitElement {
     const order = s.order ?? { headline: 'Order unavailable', price_label: 'price unavailable' };
     const fills = s.fills ?? [];
     const openingBalances = s.opening_balances ?? [];
-    const reconciliation = s.reconciliation ?? null;
-    const reconciliationAvailable = Array.isArray(reconciliation?.rows);
-    const reconciliationRows = reconciliation?.rows ?? [];
+    const reconciliation = s.reconciliation ?? { accepted: false, rows: [] };
     const verifier = s.verifier ?? { accepted: false, status_label: 'verifier not run', target_label: 'ProveKit verifier', timings_ms: {} };
-    const booksClose = reconciliationAvailable && reconciliation?.accepted === true;
-    const bookStateClass = [
-      'book-state',
-      s.accepted && booksClose ? 'reconciled' : '',
-      s.accepted && !reconciliationAvailable ? 'unavailable' : '',
-    ].filter(Boolean).join(' ');
+    const booksClose = reconciliation.accepted === true;
     const fillStatus = this.runState === 'running'
       ? 'clearing fills'
       : s.accepted
@@ -1130,8 +1102,8 @@ export class AacFundraiseDemo extends LitElement {
               <div class="ticket-label">Book reconciliation</div>
               <b>Opening books + swap deltas close the issuer row.</b>
             </div>
-            <span class=${bookStateClass}>
-              ${this.bookReconciliationState(s.accepted, reconciliationAvailable, booksClose)}
+            <span class=${`book-state ${s.accepted && booksClose ? 'reconciled' : ''}`}>
+              ${this.bookReconciliationState(s.accepted, booksClose)}
             </span>
           </div>
           <div class="book-grid">
@@ -1141,9 +1113,7 @@ export class AacFundraiseDemo extends LitElement {
               <span class="book-cell">swap delta</span>
               <span class="book-cell">closing</span>
             </div>
-            ${reconciliationRows.length
-              ? reconciliationRows.map((row) => this.bookRow(row))
-              : html`<div class="empty">${this.reconciliationEmptyMessage(s.accepted, reconciliationAvailable)}</div>`}
+            ${reconciliation.rows.map((row) => this.bookRow(row))}
           </div>
         </section>
 
@@ -1245,19 +1215,11 @@ export class AacFundraiseDemo extends LitElement {
     `;
   }
 
-  private bookReconciliationState(accepted: boolean, reconciliationAvailable: boolean, booksClose: boolean): string {
+  private bookReconciliationState(accepted: boolean, booksClose: boolean): string {
     if (this.runState === 'running') return 'reconciling books';
-    if (accepted && !reconciliationAvailable) return 'runner schema stale';
     if (accepted && booksClose) return 'books reconciled';
     if (accepted) return 'mismatch flagged';
     return 'ready to reconcile';
-  }
-
-  private reconciliationEmptyMessage(accepted: boolean, reconciliationAvailable: boolean): string {
-    if (accepted && !reconciliationAvailable) {
-      return 'Accepted proof response did not include reconciliation rows. Restart the fundraise demo runner so the UI and API use the same summary schema.';
-    }
-    return 'No reconciliation rows in the runner summary.';
   }
 
   private bookRow(row: { line: string; opening: string; delta: string; closing: string }) {
