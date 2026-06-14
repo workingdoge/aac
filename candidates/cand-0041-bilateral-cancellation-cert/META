@@ -1,0 +1,5 @@
+candidate_id: cand-0041-bilateral-cancellation-cert
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T05:00:31Z
+intent: Add BCC/1, a bilateral cancellation certificate primitive: two signed opposite committed records, VNET-style zero-sum verification, optional DH edge material, replay/finality tags, executable vectors, and a JS runtime for building/verifying certificates.
+status: landed

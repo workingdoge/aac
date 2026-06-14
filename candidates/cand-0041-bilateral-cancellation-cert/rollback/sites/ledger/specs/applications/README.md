@@ -16,7 +16,6 @@ Deployment Register (R1).
 
 | target | title | status |
 |--------|-------|--------|
-| [BCC/1](BCC-1.md) | Bilateral Cancellation Certificate | Raw |
 | [EVENT-COMPLETE/1](EVENT-COMPLETE-1.md) | Schema-Complete Event Compilation (BalancedVectorReceipt) | Raw (promoted from Design Note 0001) |
 | [FUNDRAISE-CLEARING/1](FUNDRAISE-CLEARING-1.md) | Private Balance-Sheet Fundraising Settlement | Raw |
 | [VNET/1](VNET-1.md) | Amount-Vector Netting via Pedersen Commitments | Raw (promoted from Design Note 0001 section 7) |
