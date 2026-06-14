@@ -1,0 +1,4 @@
+statement: queue-judgments-v0.md
+  result: accepted
+fixtures: accepted
+queue-lint: ok (status vocabulary clean; 0 report-only finding(s))
