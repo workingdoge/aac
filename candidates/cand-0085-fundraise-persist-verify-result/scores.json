@@ -1,20 +1,8 @@
-{
-  "schema": "boat.eval-self.v0",
-  "candidate": "cand-0085-fundraise-persist-verify-result",
-  "evaluated_at": "2026-06-14T16:19:42Z",
-  "task": "Preserve htmx verifier form result across Lit re-render.",
-  "checks": {
-    "source": "pass",
-    "build": "pass",
-    "mutant": "pass",
-    "scope": "pass"
-  },
-  "verdict": "pass"
   ,"provenance": {
-    "harness": "eval-self.sh",
-    "harness_sha256": "0d1c807998c3aeaa3f8ca3569208c655e954ea1a1e1d916219158fd33af0bc2d",
-    "traces_sha256": "bc60e30777907d418432a85a8223430018f8dae1afc8ce766ac46630f73443f8",
-    "body_sha256": "21c0c62375679e86d9d5c01debe3f81e12eb97d1d2108732e944b2b9cce9c71e",
-    "attestation": "0b51e01e9ca18335704582c716dbfab02dc42fcbbbcef10135aef83a7a18a137"
+    "harness": "evaluate-landed.sh",
+    "harness_sha256": "34f271602979a5f0473f86b5b667a65c6879198ad1fb7f8d3226f7fce5b6c1d1",
+    "traces_sha256": "16dce7e1378a078839405ada437eb17f23d98147cd159c81ef6065ef97de8738",
+    "body_sha256": "6a2ffc7d6df34969c8d7f738209c85f72bd6b041fc89a216e2ffcd90dabb0bcc",
+    "attestation": "977966524559310ea8ae7ebfdf3c96ffd25debb0b9c56ee6b94ede8c887b5a1e"
   }
 }
