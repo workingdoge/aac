@@ -393,16 +393,8 @@ not import the CRE SDK, verify ProveKit proofs, sign transactions, submit
 transactions, or manage keys. A real CRE workflow or ProveKit verifier service
 is expected to produce the verifier receipt and consume the workflow output.
 
-The JavaScript `fundraise-provekit-adapter` package is the current normalized
-verifier-receipt producer for ProveKit paths. It does not run ProveKit or verify
-proofs itself; instead, it takes an already-accepted ProveKit WHIR/Groth16
-verification result and binds proof metadata, public inputs, verifier-key digest,
-timings, and packet commitment into the receipt consumed by `fundraise-workflow`.
-This is the intended handoff from a native CLI, browser-WASM wrapper, verifier
-service, or CRE workflow into the settlement workflow.
-
-The next implementation slices should replace the adapter's caller with an
-actual CRE workflow simulation or ProveKit verifier service, then deploy the
-adapter to a testnet token contract. Non-mock BCC signature and cancellation
-schemes are adapter surfaces: they fail closed unless a deployment verifier
-accepts them.
+The next implementation slices should replace the normalized verifier receipt
+producer with an actual CRE workflow simulation or ProveKit verifier service,
+then deploy the adapter to a testnet token contract. Non-mock BCC signature and
+cancellation schemes are adapter surfaces: they fail closed unless a deployment
+verifier accepts them.
