@@ -1,0 +1,12 @@
+# VNET/1 netting circuit -- realizes the PEDERSEN-VECTOR/1 profile
+# (sites/ledger/specs/profiles/PEDERSEN-VECTOR-1.md) on the ProveKit toolchain.
+#
+# TOOLCHAIN PIN -- Noir v1.0.0-beta.19 (ProveKit's pin). Standalone package, like
+# world-app/provekit-circuit; NOT part of the beta.14 circuits/ workspace. Build
+# the prover via `nix build .#provekit` then prepare/prove/verify here.
+[package]
+name = "aac_vnet_provekit"
+type = "bin"
+authors = ["American Accounting Company"]
+
+[dependencies]

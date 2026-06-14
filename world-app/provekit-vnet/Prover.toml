@@ -1,0 +1,8 @@
+# A true-net witness: a novation/clearing chain over basis [USD, fabric, garment].
+# Atom 0 (A->C): debit 100 USD, credit 50 fabric.
+# Atom 1 (C->B): debit 50 fabric, credit 100 USD.
+# Every basis dimension cancels across the set -> the intermediary nets flat.
+debit  = [["100", "0", "0"], ["0", "50", "0"]]
+credit = [["0", "50", "0"], ["100", "0", "0"]]
+r_debit  = ["11", "13"]
+r_credit = ["17", "19"]
