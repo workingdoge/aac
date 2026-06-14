@@ -20,17 +20,6 @@ import {
 
 const repoRoot = resolve(import.meta.dirname, "../..");
 
-async function satisfyFakeProveKitCommand(command) {
-  if (command.step === "prepare") {
-    await writeFile(command.args[command.args.indexOf("-p") + 1], new Uint8Array([1, 2, 3]));
-    await writeFile(command.args[command.args.indexOf("-v") + 1], new Uint8Array([4, 5, 6]));
-  }
-  if (command.step === "prove") {
-    await writeFile(command.args[command.args.indexOf("-o") + 1], new Uint8Array([7, 8, 9]));
-  }
-  return { exit_code: 0, stdout: `${command.step}: ok\n` };
-}
-
 const packet = await loadFundraiseDemoPacket({ repo_root: repoRoot });
 assert.equal(packet.public_inputs.issued_unit_total, 150);
 
@@ -99,29 +88,6 @@ assert.equal(receipt.workflow_receipt.accepted, true);
 assert.equal(receipt.settlement_action.method, "settle");
 assert.equal(receipt.settlement_action.args.signature, null);
 assert.equal(receipt.settlement_action.args.auth.issued_unit_total, 150);
-
-const envProveKitCommands = [];
-const previousProveKitBin = process.env.PROVEKIT_BIN;
-process.env.PROVEKIT_BIN = "./result/bin/provekit-cli";
-try {
-  await runFundraiseDemo({
-    repo_root: repoRoot,
-    circuit_dir: resolve(fakeWork, "circuit"),
-    run_command: async (command) => {
-      envProveKitCommands.push(command);
-      return satisfyFakeProveKitCommand(command);
-    },
-  });
-} finally {
-  if (previousProveKitBin === undefined) {
-    delete process.env.PROVEKIT_BIN;
-  } else {
-    process.env.PROVEKIT_BIN = previousProveKitBin;
-  }
-}
-assert.deepEqual(envProveKitCommands.map((command) => command.step), ["prepare", "prove", "verify"]);
-assert.ok(envProveKitCommands.every((command) => command.executable === resolve(repoRoot, "result/bin/provekit-cli")));
-assert.ok(envProveKitCommands.every((command) => command.cwd !== repoRoot));
 
 const foundryCommands = [];
 let balanceCalls = 0;

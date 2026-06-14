@@ -1,0 +1,18 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert.ok(envProveKitCommands.every((command) => command.executable === resolve(repoRoot, "result/bin/provekit-cli")))
+
+    at file:///private/tmp/aac-provekit-bin-path.3DVWc1/fundraise-demo-runner/test/run-tests.mjs:123:8 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.14.0

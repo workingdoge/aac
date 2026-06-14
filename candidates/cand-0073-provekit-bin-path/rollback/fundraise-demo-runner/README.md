@@ -15,14 +15,8 @@ deploy contracts, or verify a recursive proof on-chain. Those are explicit
 deployment steps.
 
 ```sh
-nix build .#provekit
 PROVEKIT_BIN=./result/bin/provekit-cli node fundraise-demo-runner/bin/fundraise-demo.mjs
 ```
-
-`PROVEKIT_BIN` may be an executable name on `PATH`, an absolute path, or a
-repo-relative path like `./result/bin/provekit-cli`. The runner resolves
-path-like relative values against `--repo-root` before copying the circuit into
-its temporary proving directory.
 
 The output is JSON suitable for the presentation: proof digest, verifier-key
 digest, workflow receipt, and the settlement action that needs an authorizer
@@ -31,7 +25,6 @@ signature before on-chain settlement.
 For a smaller presentation/UI artifact, use:
 
 ```sh
-nix build .#provekit
 PROVEKIT_BIN=./result/bin/provekit-cli node fundraise-demo-runner/bin/fundraise-demo.mjs --summary
 ```
 
@@ -49,7 +42,6 @@ contracts, sign the contract digest with a demo authorizer key, submit
 
 ```sh
 anvil
-nix build .#provekit
 PROVEKIT_BIN=./result/bin/provekit-cli \
   node fundraise-demo-runner/bin/fundraise-demo.mjs \
     --settle-local \

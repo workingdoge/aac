@@ -1,7 +1,7 @@
 import { cp, mkdir, mkdtemp, readFile, rm, stat } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
-import { basename, dirname, isAbsolute, relative, resolve, sep } from "node:path";
+import { basename, dirname, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { buildProveKitVerifierReceiptFromNativeCli } from "../../fundraise-provekit-adapter/src/index.mjs";
@@ -58,7 +58,6 @@ export async function runFundraiseDemo(input = {}) {
 
 export async function buildFundraiseDemoVerifierReceipt(input = {}) {
   const repoRoot = resolve(input.repo_root ?? defaultRepoRoot());
-  const provekitBin = resolveFundraiseProveKitBin(input.provekit_bin, repoRoot);
   const packet = input.packet ?? (await loadFundraiseDemoPacket({
     repo_root: repoRoot,
     fixture_path: input.fixture_path,
@@ -74,7 +73,7 @@ export async function buildFundraiseDemoVerifierReceipt(input = {}) {
     const verifierReceipt = await buildProveKitVerifierReceiptFromNativeCli({
       packet,
       cli: {
-        provekit_bin: provekitBin,
+        provekit_bin: input.provekit_bin,
         circuit_dir: work.circuit_dir,
         cwd: work.circuit_dir,
         prover_toml: "Prover.toml",
@@ -353,18 +352,6 @@ async function fileIfExists(candidate) {
 function pathInside(root, candidate) {
   const rel = relative(root, candidate);
   return rel === "" || (!rel.startsWith("..") && !rel.startsWith(sep));
-}
-
-function resolveFundraiseProveKitBin(inputProveKitBin, repoRoot) {
-  const provekitBin = inputProveKitBin ?? process.env.PROVEKIT_BIN;
-  if (provekitBin === undefined || provekitBin === null) return undefined;
-  if (typeof provekitBin !== "string" || provekitBin.length === 0) return provekitBin;
-  if (isAbsolute(provekitBin) || !looksLikeExecutablePath(provekitBin)) return provekitBin;
-  return resolve(repoRoot, provekitBin);
-}
-
-function looksLikeExecutablePath(value) {
-  return value.startsWith(".") || value.includes("/") || value.includes("\\");
 }
 
 export function fundraiseStaticContentType(pathname) {
