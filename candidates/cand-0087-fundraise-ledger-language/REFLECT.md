@@ -1,0 +1,39 @@
+# Reflection: cand-0087-fundraise-ledger-language
+
+Intent: Bind FUNDRAISE-CLEARING/1 and the fundraise demo presentation to LEDGER/1 ledger-state and statement vocabulary.
+Status at reflection: landed
+Reflected at: 2026-06-14T20:37:37Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0087-fundraise-ledger-language",
+  "evaluated_at": "2026-06-14T20:37:15Z",
+  "task": "Bind FUNDRAISE-CLEARING/1 and the fundraise demo presentation to LEDGER/1 ledger-state and statement vocabulary.",
+  "checks": {
+    "spec": "pass",
+    "presentation": "pass",
+    "stale_language": "pass",
+    "landing": "pass",
+    "build": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "5ecad603a9754c4dc40ade85ba387b88e522f588e9c7111e7a15050bfae34879",
+    "traces_sha256": "bddb89d9ee47b5175edda985128653bde14bf106176a46a2d2feb9b70a7660ac",
+    "body_sha256": "7aa66235067b417ef8eb438e545d0fcc9034f2efaef917d52c00431962a55a00",
+    "attestation": "614a81ee578f4832a022b5afb4afd3df78a0878f97cb58f6005b6fa5fe78fc05"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.
