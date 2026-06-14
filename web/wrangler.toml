@@ -1,8 +1,11 @@
 name = "specs-aac-sh"
+main = "./src/worker.js"
 compatibility_date = "2026-06-14"
 
 [assets]
 directory = "./dist"
+binding = "ASSETS"
+run_worker_first = true
 
 [[routes]]
 pattern = "specs.aac.sh"
@@ -10,4 +13,8 @@ custom_domain = true
 
 [[routes]]
 pattern = "www.aac.sh"
+custom_domain = true
+
+[[routes]]
+pattern = "demo.aac.sh"
 custom_domain = true
