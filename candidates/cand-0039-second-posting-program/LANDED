@@ -7,3 +7,4 @@ cargo/circuits/event-bom-receipt/Prover.toml	circuits/event-bom-receipt/Prover.t
 cargo/sites/ledger/specs/registers/R1.md	sites/ledger/specs/registers/R1.md	yes
 # landed_at: 2026-06-14T05:32:17Z
 # toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1 unavailable(not-in-devshell)
+git_commit	2474d6d
