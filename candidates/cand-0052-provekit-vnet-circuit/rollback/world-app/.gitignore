@@ -13,9 +13,3 @@ provekit-circuit/proof.np
 provekit-circuit/public.json
 provekit-circuit/*.pkp
 provekit-circuit/*.pkv
-provekit-vnet/Prover.toml
-provekit-vnet/proof.bin
-provekit-vnet/proof.np
-provekit-vnet/public.json
-provekit-vnet/*.pkp
-provekit-vnet/*.pkv

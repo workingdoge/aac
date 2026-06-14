@@ -1,0 +1,5 @@
+candidate_id: cand-0052-provekit-vnet-circuit
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T08:58:01Z
+intent: standalone ProveKit VNET/1 reference circuit using Noir MSM commitments
+status: landed

@@ -1,0 +1,1 @@
+landing scope is source/docs/witness template only; generated artifacts stay out

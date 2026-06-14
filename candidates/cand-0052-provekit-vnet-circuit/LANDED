@@ -1,0 +1,8 @@
+cargo/world-app/.gitignore	world-app/.gitignore	yes
+cargo/world-app/provekit-vnet/Nargo.toml	world-app/provekit-vnet/Nargo.toml	no
+cargo/world-app/provekit-vnet/Prover.toml.example	world-app/provekit-vnet/Prover.toml.example	no
+cargo/world-app/provekit-vnet/README.md	world-app/provekit-vnet/README.md	no
+cargo/world-app/provekit-vnet/src/hash.nr	world-app/provekit-vnet/src/hash.nr	no
+cargo/world-app/provekit-vnet/src/main.nr	world-app/provekit-vnet/src/main.nr	no
+# landed_at: 2026-06-14T09:09:12Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=feebb6c98bd0faef8b540a9e26c410e98caefd38b6309aaaefa5a9045adf0c3b unavailable(not-in-devshell)
