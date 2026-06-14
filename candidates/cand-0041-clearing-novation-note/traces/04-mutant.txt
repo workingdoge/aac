@@ -1,0 +1,1 @@
+mutant caught: a note stripped of NOVATE/1 fails the content-probe (non-vacuous)

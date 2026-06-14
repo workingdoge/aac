@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0041-clearing-novation-note",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "844f3d74c59c62f10b7f79b6b0bc9b54999b5a4ac3a6685495fc0b0abe7bf1f9",
+    "LANDING": "3474c5ad9a5205c6c2a6aca927bcbd50bc7448b3bc9f131f39121879cc23eed0",
+    "META": "cbc4206c16a3a43e86d6cb3c5249dcfb6d96aa86ba1397e0daf6bd1ba5931406"
+  }
+}

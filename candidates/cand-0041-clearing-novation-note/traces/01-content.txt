@@ -1,0 +1,1 @@
+note carries: non-normative marker, the privacy-CCP thesis, the novation interposition (CCP flat), application-layer placement (policy-gated, 4/REG §5), the matched-book closure, the privacy differentiator, the non-goals

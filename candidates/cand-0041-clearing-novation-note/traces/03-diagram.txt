@@ -1,0 +1,1 @@
+diagram carries the four stages + the five primitives (EVENT/NOVATE/NET/VNET/TRANSITION) + the novation zoom, as an SVG

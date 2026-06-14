@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AAC — the clearing pipeline (Design Note 0004)</title>
+<script>
+  (function () {
+    const saved = localStorage.getItem('aac-clearing-theme');
+    const dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.classList.toggle('dark', dark);
+  })();
+</script>
+<style>
+  :root {
+    --bg: #FAF9F5; --surface: #FFFFFF; --surface2: #F0EEE6;
+    --ink: #141413; --body: #3D3D3A; --muted: #87867F;
+    --line: #D1CFC5; --line-soft: #E6E3DA;
+    --clay: #D97757; --clay-soft: rgba(217,119,87,0.12);
+    --olive: #6E8B4E; --olive-soft: rgba(110,139,78,0.14);
+    --gold: #B58A3C; --gold-soft: rgba(181,138,60,0.14);
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  html.dark {
+    --bg: #141413; --surface: #1F1F1D; --surface2: #2A2A28;
+    --ink: #FAF9F5; --body: #D1CFC5; --muted: #8B8A82;
+    --line: #3D3D3A; --line-soft: #2A2A28;
+    --clay: #E48A6E; --clay-soft: rgba(228,138,110,0.18);
+    --olive: #9DB07C; --olive-soft: rgba(157,176,124,0.20);
+    --gold: #D4B36F; --gold-soft: rgba(212,179,111,0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg); color: var(--body); font-family: var(--sans);
+    -webkit-font-smoothing: antialiased; display: flex; flex-direction: column;
+    min-height: 100%; padding: 28px clamp(16px, 4vw, 56px);
+  }
+  header { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 4px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(20px, 2.6vw, 30px); color: var(--ink); letter-spacing: -0.01em; }
+  .sub { color: var(--muted); font-size: 14px; }
+  .toggle { margin-left: auto; border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+    border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 13px; cursor: pointer; }
+  .toggle:hover { color: var(--ink); border-color: var(--muted); }
+  .wrap { flex: 1; display: flex; align-items: center; justify-content: center; }
+  svg { width: 100%; height: auto; max-width: 1180px; }
+  text { font-family: var(--sans); fill: var(--body); }
+  .stage-t { font-family: var(--serif); fill: var(--ink); font-size: 18px; font-weight: 600; }
+  .num { font-family: var(--serif); fill: var(--muted); font-size: 13px; font-weight: 600; }
+  .act { fill: var(--body); font-size: 12.5px; }
+  .actm { fill: var(--muted); font-size: 11.5px; }
+  .chip-t { font-size: 12.5px; font-weight: 600; }
+  .chip-s { font-size: 10.5px; }
+  .rail-t { fill: var(--ink); font-size: 13px; font-weight: 600; font-family: var(--serif); }
+  .rail-s { fill: var(--muted); font-size: 12px; }
+  .node { font-family: var(--serif); font-size: 15px; font-weight: 600; }
+  .flow { font-size: 11px; fill: var(--muted); font-family: var(--mono); }
+  .cap { fill: var(--body); font-size: 13.5px; }
+  .capi { fill: var(--ink); font-weight: 600; }
+  .lg { font-size: 11.5px; fill: var(--muted); }
+  .foot { color: var(--muted); font-size: 12.5px; margin-top: 10px; }
+  .foot a { color: var(--clay); }
+</style>
+</head>
+<body>
+<header>
+  <h1>AAC as a privacy-preserving CCP</h1>
+  <span class="sub">the clearing pipeline · Design Note 0004</span>
+  <button class="toggle" onclick="(function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem('aac-clearing-theme',d?'dark':'light');})()">◐ theme</button>
+</header>
+
+<div class="wrap">
+<svg viewBox="0 0 1180 660" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="The FICC/DTCC clearing pipeline mapped to AAC primitives: trade capture (EVENT/1), novation (NOVATE/1, proposed), multilateral net (NET/1 + VNET/1), net DVP settlement (TRANSITION/1).">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--clay)"/>
+    </marker>
+    <marker id="thin" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/>
+    </marker>
+  </defs>
+
+  <!-- ===================== Row 1: the four stages ===================== -->
+  <!-- card geometry: x = 0, 305, 610, 915 ; width 265 ; y 36 ; h 150 -->
+  <g>
+    <!-- stage 1: trade capture -->
+    <rect x="0" y="36" width="265" height="150" rx="12" fill="var(--surface)" stroke="var(--line)"/>
+    <text class="num" x="18" y="62">01</text>
+    <text class="stage-t" x="18" y="80">Trade capture</text>
+    <text class="act" x="18" y="104">A ⇄ B : securities ⇄ cash</text>
+    <text class="actm" x="18" y="122">a balanced Pⁿ journal per trade</text>
+    <text class="actm" x="18" y="138">(repo, trade-goods, UST, TBA…)</text>
+    <rect x="18" y="150" width="150" height="24" rx="12" fill="var(--olive-soft)" stroke="var(--olive)"/>
+    <text class="chip-t" x="28" y="166" fill="var(--olive)">EVENT/1 · live</text>
+
+    <!-- stage 2: novation -->
+    <rect x="305" y="36" width="265" height="150" rx="12" fill="var(--surface)" stroke="var(--clay)" stroke-dasharray="4 3"/>
+    <text class="num" x="323" y="62">02</text>
+    <text class="stage-t" x="323" y="80">Novation</text>
+    <text class="act" x="323" y="104">interpose the CCP C</text>
+    <text class="actm" x="323" y="122">A⇄B → A⇄C + C⇄B, summing</text>
+    <text class="actm" x="323" y="138">back to A⇄B; C left flat</text>
+    <rect x="323" y="150" width="190" height="24" rx="12" fill="var(--clay-soft)" stroke="var(--clay)"/>
+    <text class="chip-t" x="333" y="166" fill="var(--clay)">NOVATE/1 · proposed</text>
+
+    <!-- stage 3: multilateral net -->
+    <rect x="610" y="36" width="265" height="150" rx="12" fill="var(--surface)" stroke="var(--line)"/>
+    <text class="num" x="628" y="62">03</text>
+    <text class="stage-t" x="628" y="80">Multilateral net</text>
+    <text class="act" x="628" y="104">Σ over C's legs →</text>
+    <text class="actm" x="628" y="122">one net position per member</text>
+    <text class="actm" x="628" y="138">/ security / settlement date</text>
+    <rect x="628" y="150" width="118" height="24" rx="12" fill="var(--olive-soft)" stroke="var(--olive)"/>
+    <text class="chip-t" x="638" y="166" fill="var(--olive)">NET/1 · live</text>
+    <rect x="752" y="150" width="106" height="24" rx="12" fill="var(--gold-soft)" stroke="var(--gold)"/>
+    <text class="chip-t" x="762" y="166" fill="var(--gold)">VNET/1 · priv</text>
+
+    <!-- stage 4: net DVP settle -->
+    <rect x="915" y="36" width="265" height="150" rx="12" fill="var(--surface)" stroke="var(--line)"/>
+    <text class="num" x="933" y="62">04</text>
+    <text class="stage-t" x="933" y="80">Net DVP settle</text>
+    <text class="act" x="933" y="104">deliver net sec vs net cash,</text>
+    <text class="actm" x="933" y="122">atomically; the registry refuses</text>
+    <text class="actm" x="933" y="138">an unmatched book</text>
+    <rect x="933" y="150" width="200" height="24" rx="12" fill="var(--olive-soft)" stroke="var(--olive)"/>
+    <text class="chip-t" x="943" y="166" fill="var(--olive)">TRANSITION/1 · 4/REG</text>
+
+    <!-- arrows between stages -->
+    <line x1="270" y1="111" x2="300" y2="111" stroke="var(--clay)" stroke-width="2" marker-end="url(#arrow)"/>
+    <line x1="575" y1="111" x2="605" y2="111" stroke="var(--clay)" stroke-width="2" marker-end="url(#arrow)"/>
+    <line x1="880" y1="111" x2="910" y2="111" stroke="var(--clay)" stroke-width="2" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- ===================== Row 2: the novation zoom ===================== -->
+  <rect x="0" y="214" width="1180" height="170" rx="12" fill="var(--surface2)" stroke="var(--line-soft)"/>
+  <text class="num" x="20" y="240">zoom · stage 02</text>
+  <text class="stage-t" x="20" y="262" font-size="16">Novation is a conservation-preserving decomposition</text>
+
+  <!-- before: A ⇄ B -->
+  <text class="rail-s" x="150" y="296" text-anchor="middle">before</text>
+  <circle cx="95" cy="332" r="20" fill="var(--surface)" stroke="var(--line)"/>
+  <text class="node" x="95" y="337" text-anchor="middle" fill="var(--ink)">A</text>
+  <circle cx="205" cy="332" r="20" fill="var(--surface)" stroke="var(--line)"/>
+  <text class="node" x="205" y="337" text-anchor="middle" fill="var(--ink)">B</text>
+  <line x1="118" y1="324" x2="182" y2="324" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#thin)"/>
+  <text class="flow" x="150" y="318" text-anchor="middle">sec →</text>
+  <line x1="182" y1="342" x2="118" y2="342" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#thin)"/>
+  <text class="flow" x="150" y="358" text-anchor="middle">← cash</text>
+
+  <text x="300" y="338" text-anchor="middle" font-family="var(--serif)" font-size="22" fill="var(--clay)">⇒</text>
+
+  <!-- after: A ⇄ C ⇄ B -->
+  <text class="rail-s" x="620" y="296" text-anchor="middle">after — every trade faces C</text>
+  <circle cx="430" cy="332" r="20" fill="var(--surface)" stroke="var(--line)"/>
+  <text class="node" x="430" y="337" text-anchor="middle" fill="var(--ink)">A</text>
+  <circle cx="620" cy="332" r="26" fill="var(--clay-soft)" stroke="var(--clay)" stroke-width="1.6"/>
+  <text class="node" x="620" y="330" text-anchor="middle" fill="var(--clay)">C</text>
+  <text x="620" y="346" text-anchor="middle" font-size="9.5" fill="var(--clay)">CCP · flat</text>
+  <circle cx="810" cy="332" r="20" fill="var(--surface)" stroke="var(--line)"/>
+  <text class="node" x="810" y="337" text-anchor="middle" fill="var(--ink)">B</text>
+  <!-- A<->C -->
+  <line x1="453" y1="324" x2="591" y2="324" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#thin)"/>
+  <text class="flow" x="522" y="318" text-anchor="middle">sec →</text>
+  <line x1="591" y1="342" x2="453" y2="342" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#thin)"/>
+  <text class="flow" x="522" y="358" text-anchor="middle">← cash</text>
+  <!-- C<->B -->
+  <line x1="649" y1="324" x2="787" y2="324" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#thin)"/>
+  <text class="flow" x="718" y="318" text-anchor="middle">sec →</text>
+  <line x1="787" y1="342" x2="649" y2="342" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#thin)"/>
+  <text class="flow" x="718" y="358" text-anchor="middle">← cash</text>
+
+  <!-- the two invariants -->
+  <line x1="880" y1="232" x2="880" y2="366" stroke="var(--line)" stroke-dasharray="3 3"/>
+  <text class="act" x="900" y="290" fill="var(--ink)" font-weight="600">J(A⇄C) ⊕ J(C⇄B) ≡ J(A⇄B)</text>
+  <text class="actm" x="900" y="308">conservation — nothing created or destroyed</text>
+  <text class="act" x="900" y="334" fill="var(--ink)" font-weight="600">C net = 0 in every dimension</text>
+  <text class="actm" x="900" y="352">matched book at the single trade</text>
+
+  <!-- ===================== conservation rail ===================== -->
+  <rect x="0" y="404" width="1180" height="52" rx="10" fill="var(--olive-soft)" stroke="var(--olive)"/>
+  <text class="rail-t" x="20" y="428">Pⁿ zero-account · the invariant under every stage</text>
+  <text class="rail-s" x="20" y="446">each incommensurable dimension conserved (1/PACI); netting preserves balance; the registry refuses an unmatched book (4/REG). Haircut / valuation / margin ride OUTSIDE the zero-account (12/OTC).</text>
+
+  <!-- ===================== closure caption ===================== -->
+  <text class="cap" x="0" y="500"><tspan class="capi">The closure:</tspan> a CCP is a participant whose matched book the registry forces to balance; novation is the conservation-preserving interposition that makes every</text>
+  <text class="cap" x="0" y="520">trade face it; netting is the private multilateral compression of the membership's positions against it. FICC audits the matched book — AAC <tspan class="capi">proves</tspan> it, without revealing the trades.</text>
+
+  <!-- ===================== legend ===================== -->
+  <g transform="translate(0,548)">
+    <rect x="0" y="0" width="14" height="14" rx="4" fill="var(--olive-soft)" stroke="var(--olive)"/>
+    <text class="lg" x="22" y="11">live / enshrined (EVENT·NET·TRANSITION·4/REG)</text>
+    <rect x="360" y="0" width="14" height="14" rx="4" fill="var(--gold-soft)" stroke="var(--gold)"/>
+    <text class="lg" x="382" y="11">VNET/1 — amount-vector net, private (operator's work)</text>
+    <rect x="760" y="0" width="14" height="14" rx="4" fill="var(--clay-soft)" stroke="var(--clay)" stroke-dasharray="3 2"/>
+    <text class="lg" x="782" y="11">NOVATE/1 — proposed in this note, unbuilt</text>
+  </g>
+</svg>
+</div>
+
+<div class="foot">
+  Non-normative. The normative text is the RFC suite under <span style="font-family:var(--mono)">sites/ledger/specs</span>;
+  this diagram accompanies <a href="0004-clearing-novation-ccp.md">Design Note 0004</a>.
+</div>
+</body>
+</html>

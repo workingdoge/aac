@@ -1,0 +1,1 @@
+all referenced artifacts resolve (DN0001, the diagram, circuits/repo + event-repo-open, 5/NET, 4/REG, applications/README, R1); README indexes 0004 + the diagram
