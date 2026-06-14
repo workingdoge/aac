@@ -1,0 +1,7 @@
+[aac_balance_sheet_provekit] Running 5 test functions
+[aac_balance_sheet_provekit] Testing rejects_unbound_packet ... [0m[32mok[0m
+[aac_balance_sheet_provekit] Testing accepts_full_fill ... [0m[32mok[0m
+[aac_balance_sheet_provekit] Testing rejects_overfill ... [0m[32mok[0m
+[aac_balance_sheet_provekit] Testing accepts_partial_fill ... [0m[32mok[0m
+[aac_balance_sheet_provekit] Testing rejects_false_closing_root ... [0m[32mok[0m
+[aac_balance_sheet_provekit] [0m[32m5 tests passed[0m

@@ -86,25 +86,6 @@ export class AacFundraiseDemo extends LitElement {
         receipt_digest: null,
         timings_ms: {},
       },
-      balance_sheet: {
-        ...fundraiseDemoSummary.balance_sheet,
-        accepted: false,
-        status: 'not-run',
-        status_label: 'balance-sheet verifier not run',
-        target_label: 'ProveKit balance-sheet verifier',
-        verifier_id: null,
-        verifier_profile: null,
-        proof_system: null,
-        mode: null,
-        packet_commitment: null,
-        public_inputs_commitment: null,
-        proof_ref: null,
-        proof_digest: null,
-        verifier_key_digest: null,
-        receipt_digest: null,
-        adapter_schema: null,
-        timings_ms: {},
-      },
       settlement: {
         ...fundraiseDemoSummary.settlement,
         token_contract: null,
@@ -696,20 +677,6 @@ export class AacFundraiseDemo extends LitElement {
       padding: 0;
     }
 
-    .state-card {
-      margin-top: 12px;
-      margin-bottom: 13px;
-      border-color: var(--aac-color-rule2, #c9be9e);
-      background: var(--aac-color-bond, #fff);
-    }
-
-    .state-card .state-roots {
-      color: var(--aac-color-steel, #6b6b64);
-      font-family: var(--aac-mono, "IBM Plex Mono", monospace);
-      font-size: 11px;
-      overflow-wrap: anywhere;
-    }
-
     .verifier-state {
       justify-self: start;
       border: 1px solid var(--aac-color-oxblood, #93302c);
@@ -1161,8 +1128,6 @@ export class AacFundraiseDemo extends LitElement {
       && Array.isArray(candidate.opening_balances)
       && !!candidate.verifier
       && typeof candidate.verifier === 'object'
-      && !!candidate.balance_sheet
-      && typeof candidate.balance_sheet === 'object'
       && !!reconciliation
       && typeof reconciliation === 'object'
       && Array.isArray(reconciliation.rows);
@@ -1305,7 +1270,6 @@ export class AacFundraiseDemo extends LitElement {
     const reconciliationAvailable = Array.isArray(reconciliation?.rows);
     const reconciliationRows = reconciliation?.rows ?? [];
     const verifier = this.displayVerifier(s, verifierVisible, proofGenerated);
-    const balanceSheet = this.displayBalanceSheetVerifier(s, verifierVisible, proofGenerated);
     const booksClose = reconciliationAvailable && reconciliation?.accepted === true;
     const bookStateClass = [
       'book-state',
@@ -1394,7 +1358,6 @@ export class AacFundraiseDemo extends LitElement {
             <div class="lane-title"><b>Private books</b><span>roots move</span></div>
             ${this.rootRow('balance sheet', s.commitments.prev_balance_sheet_root, s.commitments.next_balance_sheet_root)}
             ${this.rootRow('cap table', s.commitments.prev_cap_table_root, s.commitments.next_cap_table_root)}
-            ${this.balanceSheetProofCard(balanceSheet)}
             <div class="slips">
               ${this.slip('transition set', s.commitments.transition_set)}
               ${this.slip('subscription set', s.commitments.subscription_set)}
@@ -1508,53 +1471,6 @@ export class AacFundraiseDemo extends LitElement {
       boundary: summary.verifier?.boundary ?? summary.caveats[1],
     };
     return verifierVisible ? summary.verifier ?? fallback : fallback;
-  }
-
-  private displayBalanceSheetVerifier(summary: FundraiseSummary, verifierVisible: boolean, proofGenerated: boolean) {
-    const source = (summary.balance_sheet ?? {}) as any;
-    const roots = source.roots ?? {
-      prev_balance_sheet_root: summary.commitments?.prev_balance_sheet_root ?? null,
-      next_balance_sheet_root: summary.commitments?.next_balance_sheet_root ?? null,
-    };
-    const fallback = {
-      accepted: false,
-      status_label: proofGenerated ? 'balance proof generated' : 'state verifier not run',
-      target_label: proofGenerated ? 'before/after state packet ready' : 'ProveKit balance-sheet verifier',
-      verifier_profile: source.verifier_profile ?? 'fundraise-balance-sheet-demo/v1',
-      mode: summary.proof.mode ?? source.mode ?? null,
-      proof_digest: proofGenerated ? source.proof_digest : null,
-      verifier_key_digest: null,
-      receipt_digest: null,
-      public_inputs_commitment: null,
-      packet_commitment: null,
-      fundraise_packet_commitment: source.fundraise_packet_commitment ?? null,
-      timings_ms: proofGenerated ? {
-        prepare: source.timings_ms?.prepare,
-        prove: source.timings_ms?.prove,
-      } : {},
-      roots,
-      boundary: source.boundary ?? 'Balance-sheet state proof not run.',
-    };
-    return verifierVisible ? source ?? fallback : fallback;
-  }
-
-  private balanceSheetProofCard(balanceSheet: any) {
-    const roots = balanceSheet.roots ?? {};
-    return html`
-      <div class="verifier-card state-card">
-        <span class=${`verifier-state ${balanceSheet.accepted ? 'accepted' : ''}`}>${balanceSheet.status_label}</span>
-        <b>Before/after state proof</b>
-        <code>${balanceSheet.verifier_profile ?? 'fundraise-balance-sheet-demo/v1'}</code>
-        <div class="state-roots">
-          ${this.short(roots.prev_balance_sheet_root, 8, 6)} → ${this.short(roots.next_balance_sheet_root, 8, 6)}
-        </div>
-        <div class="slips verifier-slips">
-          ${this.slip('state proof', balanceSheet.proof_digest)}
-          ${this.slip('state receipt', balanceSheet.receipt_digest)}
-          ${this.slip('batch binding', balanceSheet.fundraise_packet_commitment)}
-        </div>
-      </div>
-    `;
   }
 
   private demoHeadline(accepted: boolean, verifierVisible: boolean): string {

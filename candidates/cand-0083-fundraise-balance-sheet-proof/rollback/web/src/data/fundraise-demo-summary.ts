@@ -82,50 +82,6 @@ export const fundraiseDemoSummary = {
     boundary:
       'Native ProveKit verification is live here; recursive/on-chain proof verification remains the production verifier target.',
   },
-  balance_sheet: {
-    accepted: true,
-    status: 'accepted',
-    status_label: 'native ProveKit verifier accepted',
-    target_label: 'native ProveKit verifier · balance sheet',
-    verifier_id: 'aac-fundraise-balance-sheet-provekit',
-    verifier_profile: 'fundraise-balance-sheet-demo/v1',
-    proof_system: 'provekit-whir',
-    mode: 'native-cli',
-    fundraise_packet_commitment:
-      'b9b42bcbe334e66ed0bc5b39ffcd53130688d6d37015e9bfcf33e02c2879793d',
-    packet_commitment: '4f91f868d89d1bbfd210c10d217ba52d358a7ec0970cf31bf12de1a96366377a',
-    public_inputs_commitment: '16df8e780fc747e364c7da306fc11f3098e97dd50319168a94ec1a9f1379dd78',
-    proof_ref: 'provekit-whir:native-cli:balance-sheet-proof.np',
-    proof_digest: '0x0c1ea1a4e68d0f13671b2aceb81aa02fecf394f91b0491b2e29af282ccf0c083',
-    verifier_key_digest:
-      '0x4eb6214ff59f46170e77a42e163694412fc2a85125a946f06ef1ac84f370904a',
-    receipt_digest: '0x6d3d779cabcc2c5cbdc6fb0aa53922eda661a6850f6d237e2c7b78ac5393fb8c',
-    adapter_schema: 'aac.fundraise-provekit-adapter.input.v1',
-    timings_ms: {
-      prepare: 1160,
-      prove: 430,
-      verify: 46,
-    },
-    roots: {
-      prev_balance_sheet_root: '424416853989',
-      next_balance_sheet_root: '425916857889',
-    },
-    public_inputs: {
-      prev_balance_sheet_root: '424416853989',
-      next_balance_sheet_root: '425916857889',
-      settlement_amount_total: '1500',
-      issued_unit_total: '150',
-      order_cap_units: '150',
-      fundraise_packet_commitment: '123456789',
-    },
-    rows: [
-      { line: 'cash_collected', opening: 0, delta: 1500, closing: 1500 },
-      { line: 'units_issued', opening: 0, delta: 150, closing: 150 },
-      { line: 'units_open', opening: 150, delta: -150, closing: 0 },
-    ],
-    boundary:
-      'Proves private before/after state arithmetic for the selected batch; starting balance-sheet truth still needs an external anchor.',
-  },
   economics: {
     settlement_amount_total: 1500,
     issued_unit_total: 150,

@@ -17,28 +17,22 @@ batch can be changed before proof generation. The ticket, starting balances,
 submitted fills, and reconciliation rows are rendered from the runner summary
 returned by the localhost API. The live path calls the localhost runner,
 generates the selected order-fill proof packet with ProveKit, and leaves the
-verifier as a second console step. The verifier step surfaces the native
-ProveKit receipt: verifier status, packet commitment, public-input commitment,
-proof digest, verifier-key digest, and verify timing.
+verifier as a second console step. The verifier step surfaces the native ProveKit receipt:
+verifier status, packet commitment, public-input commitment, proof digest,
+verifier-key digest, and verify timing.
 
 After the swap, the console reconciles the issuer books from summary-provided
 opening balances, fill deltas, and closing balances; a partial selected batch
-leaves the remaining order capacity open rather than flagging a mismatch. The
-runner also generates a separate ProveKit receipt for the issuer balance sheet:
-it proves the private opening of the previous root, applies the selected batch,
-and proves the next root opens to the resulting row.
+leaves the remaining order capacity open rather than flagging a mismatch.
 
 <aac-fundraise-demo></aac-fundraise-demo>
 
 The issuer's balance sheet and cap table move as private roots. ProveKit clears
-the submitted fills, a separate ProveKit balance-sheet verifier accepts the
-before/after state proof, the workflow authorizes the receipt-token mint, and
-the local settlement contract can mint tokens while refusing replay. The
-settlement contract in this demo verifies the authorizer signature and replay
-guard; recursive on-chain VNET verification remains the production verifier
-target. The balance-sheet proof is a state-arithmetic receipt, not an external
-audit of the starting balance sheet; production use still needs an anchored
-prior root, auditor signature, or registry log.
+the submitted fills, the native verifier accepts the proof receipt, the workflow
+authorizes the receipt-token mint, and the local settlement contract can mint
+tokens while refusing replay. The settlement contract in this demo verifies the
+authorizer signature and replay guard; recursive on-chain VNET verification
+remains the production verifier target.
 
 The live presentation mode is one origin: build the site, then run
 `aac-fundraise-demo --serve --static-dir web/dist --port 4328`. The component
@@ -48,9 +42,7 @@ prepare/prove/verify for the selected order-fill packet and return a new
 summary. Local settlement remains an explicit runner mode because it requires an
 Anvil/Foundry environment. The current localhost runner returns the proof and
 verifier receipt in one response; the console separates their presentation so
-the operator sees generation before verification. The runner writes a fresh
-Prover.toml for the balance-sheet circuit for each selected batch, so changing
-the second fill changes the state roots and the state-verifier public inputs.
+the operator sees generation before verification.
 
 ## Where it fits
 

@@ -1,14 +1,10 @@
-import { cp, mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, rm, stat } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { basename, dirname, isAbsolute, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import {
-  buildProveKitVerifierReceipt,
-  buildProveKitVerifierReceiptFromNativeCli,
-  runProveKitNativeCli,
-} from "../../fundraise-provekit-adapter/src/index.mjs";
+import { buildProveKitVerifierReceiptFromNativeCli } from "../../fundraise-provekit-adapter/src/index.mjs";
 import {
   buildFundraisePacket as buildRuntimeFundraisePacket,
   verifyFundraisePacket,
@@ -16,7 +12,6 @@ import {
 import {
   authorizeFundraiseWorkflow,
   createWorkflowPolicy,
-  packetCommitment,
   verifyWorkflowReceipt,
 } from "../../fundraise-workflow/src/index.mjs";
 import {
@@ -33,11 +28,6 @@ export const DEFAULT_PROVEKIT_PACKAGE = "world-app/provekit-vnet";
 export const DEFAULT_PROVEKIT_PROOF = "proof.np";
 export const DEFAULT_PROVEKIT_PROVER_KEY = "aac_vnet_provekit.pkp";
 export const DEFAULT_PROVEKIT_VERIFIER_KEY = "aac_vnet_provekit.pkv";
-export const DEFAULT_BALANCE_SHEET_PROVEKIT_PACKAGE = "world-app/provekit-balance-sheet";
-export const DEFAULT_BALANCE_SHEET_PROOF = "balance-sheet-proof.np";
-export const DEFAULT_BALANCE_SHEET_PROVER_KEY = "aac_balance_sheet_provekit.pkp";
-export const DEFAULT_BALANCE_SHEET_VERIFIER_KEY = "aac_balance_sheet_provekit.pkv";
-export const FUNDRAISE_BALANCE_SHEET_PACKET_SCHEMA = "aac.fundraise-demo.balance-sheet-proof-packet.v1";
 export const FUNDRAISE_DEMO_SUMMARY_SCHEMA = "aac.fundraise-demo-runner.summary.v1";
 export const FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA = "aac.fundraise-demo-runner.local-settlement.v1";
 export const FUNDRAISE_DEMO_PREVIEW_SCHEMA = "aac.fundraise-demo-runner.preview.v1";
@@ -50,15 +40,6 @@ export const DEFAULT_ANVIL_DEPLOYER_PRIVATE_KEY =
   "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
 export const DEFAULT_DEMO_AUTHORIZER_PRIVATE_KEY =
   "0x00000000000000000000000000000000000000000000000000000000000a11ce";
-
-const BN254_FIELD_MODULUS =
-  21888242871839275222246405745257275088548364400416034343698204186575808495617n;
-const DEFAULT_BALANCE_SHEET_STATE_SALT = 424242n;
-const BALANCE_SHEET_TAG = 8303001n;
-const BALANCE_SHEET_CASH_COEFF = 1000003n;
-const BALANCE_SHEET_ISSUED_COEFF = 1000033n;
-const BALANCE_SHEET_OPEN_COEFF = 1000037n;
-const BALANCE_SHEET_SALT_COEFF = 1000039n;
 
 export class FundraiseDemoRunnerError extends Error {
   constructor(reason, message = reason, detail = {}) {
@@ -82,12 +63,8 @@ export async function runFundraiseDemo(input = {}) {
     input,
     packet: proof.packet,
     verifier_receipt: proof.verifier_receipt,
-    balance_sheet_packet: proof.balance_sheet_packet,
-    balance_sheet_verifier_receipt: proof.balance_sheet_verifier_receipt,
-    balance_sheet_state: proof.balance_sheet_state,
     workflow_receipt: workflowReceipt,
     workdir: proof.workdir,
-    balance_sheet_workdir: proof.balance_sheet_workdir,
   });
 }
 
@@ -124,20 +101,10 @@ export async function buildFundraiseDemoVerifierReceipt(input = {}) {
       },
       verifier_id: input.verifier_id ?? "aac-fundraise-demo-provekit",
     });
-    const balanceSheet = await buildBalanceSheetVerifierReceipt({
-      input,
-      packet,
-      repo_root: repoRoot,
-      provekit_bin: provekitBin,
-    });
     return {
       packet,
       verifier_receipt: verifierReceipt,
-      balance_sheet_packet: balanceSheet.packet,
-      balance_sheet_verifier_receipt: balanceSheet.verifier_receipt,
-      balance_sheet_state: balanceSheet.state,
       workdir: input.keep_workdir ? work.work_dir : null,
-      balance_sheet_workdir: balanceSheet.workdir,
     };
   } finally {
     if (!input.keep_workdir) {
@@ -178,11 +145,7 @@ export async function runFundraiseDemoLocalSettlement(input = {}) {
       packet: proof.packet,
       verifier_receipt: proof.verifier_receipt,
       workflow_receipt: workflowReceipt,
-      balance_sheet_packet: proof.balance_sheet_packet,
-      balance_sheet_verifier_receipt: proof.balance_sheet_verifier_receipt,
-      balance_sheet_state: proof.balance_sheet_state,
       workdir: proof.workdir,
-      balance_sheet_workdir: proof.balance_sheet_workdir,
     }),
     local_settlement: execution,
   };
@@ -676,78 +639,7 @@ function buildLiveWorkflowReceipt({
   return workflowReceipt;
 }
 
-async function buildBalanceSheetVerifierReceipt({ input, packet, repo_root, provekit_bin }) {
-  const proofInput = buildBalanceSheetProofInput(packet, input);
-  const balancePacket = buildBalanceSheetProofPacket(packet, proofInput);
-  const work = await prepareProveKitWorkdir({
-    repo_root,
-    circuit_dir: input.balance_sheet_circuit_dir ?? DEFAULT_BALANCE_SHEET_PROVEKIT_PACKAGE,
-    work_dir: input.balance_sheet_work_dir,
-    keep_workdir: input.keep_workdir,
-  });
-  try {
-    await writeFile(resolve(work.circuit_dir, "Prover.toml"), buildBalanceSheetProverToml(proofInput));
-    const provekit = await runProveKitNativeCli({
-      public_inputs: balancePacket.public_inputs,
-      provekit_bin,
-      circuit_dir: work.circuit_dir,
-      cwd: work.circuit_dir,
-      prover_toml: "Prover.toml",
-      prover_key: input.balance_sheet_prover_key ?? DEFAULT_BALANCE_SHEET_PROVER_KEY,
-      verifier_key: input.balance_sheet_verifier_key ?? DEFAULT_BALANCE_SHEET_VERIFIER_KEY,
-      proof: input.balance_sheet_proof ?? DEFAULT_BALANCE_SHEET_PROOF,
-      proof_ref: input.balance_sheet_proof_ref,
-      timeout_ms: input.timeout_ms ?? 300_000,
-      env: { HOME: work.home_dir, ...(input.env ?? {}) },
-      run_command: input.run_command,
-    });
-    const verifierReceipt = buildProveKitVerifierReceipt({
-      packet: balancePacket,
-      provekit,
-      verifier_id: input.balance_sheet_verifier_id ?? "aac-fundraise-balance-sheet-provekit",
-      verifier_profile: input.balance_sheet_verifier_profile ?? "fundraise-balance-sheet-demo/v1",
-    });
-    return {
-      packet: balancePacket,
-      verifier_receipt: verifierReceipt,
-      state: publicBalanceSheetState(proofInput),
-      workdir: input.keep_workdir ? work.work_dir : null,
-    };
-  } finally {
-    if (!input.keep_workdir) {
-      await rm(work.work_dir, { recursive: true, force: true });
-    }
-  }
-}
-
-function buildDemoReceipt({
-  input,
-  packet,
-  verifier_receipt,
-  balance_sheet_packet,
-  balance_sheet_verifier_receipt,
-  balance_sheet_state,
-  workflow_receipt,
-  workdir,
-  balance_sheet_workdir,
-}) {
-  const balanceSheetProvekit = balance_sheet_verifier_receipt
-    ? {
-        mode: balance_sheet_verifier_receipt.mode,
-        proof_system: balance_sheet_verifier_receipt.proof_system,
-        proof_ref: balance_sheet_verifier_receipt.proof_ref,
-        proof_digest: balance_sheet_verifier_receipt.proof_digest,
-        verifier_key_digest: balance_sheet_verifier_receipt.verifier_key_digest,
-        timings_ms: balance_sheet_verifier_receipt.timings_ms,
-      }
-    : {
-        mode: null,
-        proof_system: null,
-        proof_ref: null,
-        proof_digest: null,
-        verifier_key_digest: null,
-        timings_ms: {},
-      };
+function buildDemoReceipt({ input, packet, verifier_receipt, workflow_receipt, workdir }) {
   const receipt = {
     schema: FUNDRAISE_DEMO_RUNNER_SCHEMA,
     accepted: true,
@@ -765,21 +657,14 @@ function buildDemoReceipt({
       timings_ms: verifier_receipt.timings_ms,
     },
     verifier_receipt,
-    balance_sheet_packet,
-    balance_sheet_verifier_receipt,
-    balance_sheet_state,
-    balance_sheet_provekit: balanceSheetProvekit,
     workflow_receipt,
     settlement_action: workflow_receipt.settlement_action,
     workdir,
-    balance_sheet_workdir,
   };
   return { ...receipt, summary: buildFundraiseDemoSummary(receipt) };
 }
 
 function buildPreviewReceipt({ input, packet }) {
-  const proofInput = buildBalanceSheetProofInput(packet, input);
-  const balanceSheetPacket = buildBalanceSheetProofPacket(packet, proofInput);
   const receipt = {
     schema: FUNDRAISE_DEMO_RUNNER_SCHEMA,
     accepted: false,
@@ -797,21 +682,9 @@ function buildPreviewReceipt({ input, packet }) {
       timings_ms: {},
     },
     verifier_receipt: {},
-    balance_sheet_packet: balanceSheetPacket,
-    balance_sheet_verifier_receipt: {},
-    balance_sheet_state: publicBalanceSheetState(proofInput),
-    balance_sheet_provekit: {
-      mode: null,
-      proof_system: null,
-      proof_ref: null,
-      proof_digest: null,
-      verifier_key_digest: null,
-      timings_ms: {},
-    },
     workflow_receipt: null,
     settlement_action: {},
     workdir: null,
-    balance_sheet_workdir: null,
   };
   return { ...receipt, summary: buildFundraiseDemoSummary(receipt) };
 }
@@ -859,175 +732,7 @@ export function buildFundraiseDemoBatchPacket(packet, input = {}) {
       verifier_reason: verified.reason,
     });
   }
-  return attachFundraiseBalanceSheetRoots(rebuilt, input);
-}
-
-export function attachFundraiseBalanceSheetRoots(packet, input = {}) {
-  const next = cloneJson(packet);
-  const roots = buildBalanceSheetRootState(next, input);
-  next.public_inputs.prev_balance_sheet_root = roots.public_inputs.prev_balance_sheet_root;
-  next.public_inputs.next_balance_sheet_root = roots.public_inputs.next_balance_sheet_root;
-  return next;
-}
-
-export function buildBalanceSheetProofPacket(packet, proofInput = buildBalanceSheetProofInput(packet)) {
-  const commitment = packetCommitment(packet);
-  return {
-    schema: FUNDRAISE_BALANCE_SHEET_PACKET_SCHEMA,
-    profile_id: "fundraise-balance-sheet-demo/v1",
-    commitment_profile: "aac.demo.balance-sheet-linear-commitment/1",
-    round_id: packet.public_inputs?.round_id ?? packet.round_policy?.round_id ?? null,
-    issuer_name: packet.public_inputs?.issuer_name ?? packet.round_policy?.issuer_name ?? null,
-    fundraise_packet_commitment: commitment,
-    public_inputs: proofInput.public_inputs,
-    roots: proofInput.roots,
-    rows: proofInput.rows,
-    boundary:
-      "Proves private before/after state arithmetic for the selected batch; starting balance-sheet truth still needs an external anchor.",
-  };
-}
-
-export function buildBalanceSheetProofInput(packet, input = {}) {
-  const rootState = buildBalanceSheetRootState(packet, input);
-  const commitmentField = fieldString(fieldFromHexDigest(packetCommitment(packet)));
-  return {
-    ...rootState,
-    public_inputs: {
-      ...rootState.public_inputs,
-      fundraise_packet_commitment: commitmentField,
-    },
-    witness: {
-      opening_cash_collected: fieldString(rootState.opening.cash_collected),
-      opening_units_issued: fieldString(rootState.opening.units_issued),
-      opening_units_open: fieldString(rootState.opening.units_open),
-      state_salt: fieldString(rootState.salt),
-      expected_fundraise_packet_commitment: commitmentField,
-    },
-  };
-}
-
-function buildBalanceSheetRootState(packet, input = {}) {
-  const pub = packet.public_inputs ?? {};
-  const policy = packet.round_policy ?? {};
-  const settlementTotal = safeInt(pub.settlement_amount_total, "bad_balance_sheet_settlement_total");
-  const issuedTotal = safeInt(pub.issued_unit_total, "bad_balance_sheet_issued_total");
-  const orderCap = safeInt(policy.max_issued_units, "bad_balance_sheet_order_cap");
-  if (issuedTotal > orderCap) {
-    throw new FundraiseDemoRunnerError("balance_sheet_overfill");
-  }
-  const salt = normalizeField(input.balance_sheet_salt ?? DEFAULT_BALANCE_SHEET_STATE_SALT, "bad_balance_sheet_salt");
-  const opening = {
-    cash_collected: 0n,
-    units_issued: 0n,
-    units_open: BigInt(orderCap),
-  };
-  const delta = {
-    cash_collected: BigInt(settlementTotal),
-    units_issued: BigInt(issuedTotal),
-    units_open: -BigInt(issuedTotal),
-  };
-  const closing = {
-    cash_collected: opening.cash_collected + delta.cash_collected,
-    units_issued: opening.units_issued + delta.units_issued,
-    units_open: opening.units_open + delta.units_open,
-  };
-  const prevRoot = balanceSheetRoot(opening, salt);
-  const nextRoot = balanceSheetRoot(closing, salt);
-  return {
-    salt,
-    opening,
-    delta,
-    closing,
-    roots: {
-      prev_balance_sheet_root: fieldString(prevRoot),
-      next_balance_sheet_root: fieldString(nextRoot),
-    },
-    public_inputs: {
-      prev_balance_sheet_root: fieldString(prevRoot),
-      next_balance_sheet_root: fieldString(nextRoot),
-      settlement_amount_total: fieldString(settlementTotal),
-      issued_unit_total: fieldString(issuedTotal),
-      order_cap_units: fieldString(orderCap),
-    },
-    rows: [
-      {
-        line: "cash_collected",
-        opening: numberFromBigInt(opening.cash_collected),
-        delta: numberFromBigInt(delta.cash_collected),
-        closing: numberFromBigInt(closing.cash_collected),
-      },
-      {
-        line: "units_issued",
-        opening: numberFromBigInt(opening.units_issued),
-        delta: numberFromBigInt(delta.units_issued),
-        closing: numberFromBigInt(closing.units_issued),
-      },
-      {
-        line: "units_open",
-        opening: numberFromBigInt(opening.units_open),
-        delta: numberFromBigInt(delta.units_open),
-        closing: numberFromBigInt(closing.units_open),
-      },
-    ],
-  };
-}
-
-function publicBalanceSheetState(proofInput) {
-  return {
-    commitment_profile: "aac.demo.balance-sheet-linear-commitment/1",
-    roots: proofInput.roots,
-    public_inputs: proofInput.public_inputs,
-    rows: proofInput.rows,
-  };
-}
-
-function buildBalanceSheetProverToml(proofInput) {
-  const values = {
-    ...proofInput.public_inputs,
-    ...proofInput.witness,
-  };
-  return `${Object.entries(values)
-    .map(([key, value]) => `${key} = "${value}"`)
-    .join("\n")}\n`;
-}
-
-function balanceSheetRoot(row, salt) {
-  return (
-    BALANCE_SHEET_TAG
-    + row.cash_collected * BALANCE_SHEET_CASH_COEFF
-    + row.units_issued * BALANCE_SHEET_ISSUED_COEFF
-    + row.units_open * BALANCE_SHEET_OPEN_COEFF
-    + salt * BALANCE_SHEET_SALT_COEFF
-  ) % BN254_FIELD_MODULUS;
-}
-
-function fieldFromHexDigest(value) {
-  if (typeof value !== "string") throw new FundraiseDemoRunnerError("bad_hex_digest");
-  const raw = value.startsWith("0x") ? value.slice(2) : value;
-  if (!/^[0-9a-fA-F]+$/.test(raw)) throw new FundraiseDemoRunnerError("bad_hex_digest");
-  return BigInt(`0x${raw}`) % BN254_FIELD_MODULUS;
-}
-
-function normalizeField(value, reason) {
-  try {
-    if (typeof value === "bigint") return value;
-    if (typeof value === "number" && Number.isSafeInteger(value) && value >= 0) return BigInt(value);
-    if (typeof value === "string" && /^[0-9]+$/.test(value)) return BigInt(value);
-  } catch {
-    // fall through to the typed error below
-  }
-  throw new FundraiseDemoRunnerError(reason);
-}
-
-function fieldString(value) {
-  return typeof value === "bigint" ? value.toString(10) : String(value);
-}
-
-function numberFromBigInt(value) {
-  if (value > BigInt(Number.MAX_SAFE_INTEGER) || value < BigInt(Number.MIN_SAFE_INTEGER)) {
-    throw new FundraiseDemoRunnerError("balance_sheet_number_overflow");
-  }
-  return Number(value);
+  return rebuilt;
 }
 
 function rebuildFundraiseVnetLink(vnetLink, policy, subscriptions) {
@@ -1129,9 +834,6 @@ export function buildFundraiseDemoSummary(receipt) {
   const action = receipt.settlement_action ?? {};
   const auth = action.args?.auth ?? {};
   const verifier = receipt.verifier_receipt ?? {};
-  const balanceSheetVerifier = receipt.balance_sheet_verifier_receipt ?? {};
-  const balanceSheetPacket = receipt.balance_sheet_packet ?? null;
-  const balanceSheetState = receipt.balance_sheet_state ?? null;
   const local = receipt.local_settlement ?? null;
   const accepted = receipt.accepted === true;
   const settled = Boolean(local?.transaction_hash);
@@ -1241,39 +943,6 @@ export function buildFundraiseDemoSummary(receipt) {
       adapter_schema: verifier.adapter_schema ?? null,
       timings_ms: verifier.timings_ms ?? receipt.provekit?.timings_ms ?? {},
       boundary: "Native ProveKit verification is live here; recursive/on-chain proof verification remains the production verifier target.",
-    },
-    balance_sheet: {
-      accepted: balanceSheetVerifier.accepted === true,
-      status: balanceSheetVerifier.accepted === true ? "accepted" : "not-run",
-      status_label: balanceSheetVerifier.accepted === true
-        ? `${verifierModeLabel(balanceSheetVerifier.mode)} accepted`
-        : "balance-sheet verifier not run",
-      target_label: balanceSheetVerifier.mode
-        ? `${verifierModeLabel(balanceSheetVerifier.mode)} · balance sheet`
-        : "ProveKit balance-sheet verifier",
-      verifier_id: balanceSheetVerifier.verifier_id ?? null,
-      verifier_profile: balanceSheetVerifier.verifier_profile ?? null,
-      proof_system: balanceSheetVerifier.proof_system ?? receipt.balance_sheet_provekit?.proof_system ?? null,
-      mode: balanceSheetVerifier.mode ?? receipt.balance_sheet_provekit?.mode ?? null,
-      fundraise_packet_commitment: balanceSheetPacket?.fundraise_packet_commitment ?? null,
-      packet_commitment: balanceSheetVerifier.packet_commitment ?? null,
-      public_inputs_commitment: balanceSheetVerifier.public_inputs_commitment ?? null,
-      proof_ref: balanceSheetVerifier.proof_ref ?? receipt.balance_sheet_provekit?.proof_ref ?? null,
-      proof_digest: balanceSheetVerifier.proof_digest ?? receipt.balance_sheet_provekit?.proof_digest ?? null,
-      verifier_key_digest: balanceSheetVerifier.verifier_key_digest
-        ?? receipt.balance_sheet_provekit?.verifier_key_digest
-        ?? null,
-      receipt_digest: balanceSheetVerifier.receipt_digest ?? null,
-      adapter_schema: balanceSheetVerifier.adapter_schema ?? null,
-      timings_ms: balanceSheetVerifier.timings_ms ?? receipt.balance_sheet_provekit?.timings_ms ?? {},
-      roots: balanceSheetState?.roots ?? {
-        prev_balance_sheet_root: publicInputs.prev_balance_sheet_root ?? null,
-        next_balance_sheet_root: publicInputs.next_balance_sheet_root ?? null,
-      },
-      public_inputs: balanceSheetState?.public_inputs ?? balanceSheetPacket?.public_inputs ?? {},
-      rows: balanceSheetState?.rows ?? balanceSheetPacket?.rows ?? [],
-      boundary: balanceSheetPacket?.boundary
-        ?? "Proves private before/after state arithmetic for the selected batch; starting balance-sheet truth still needs an external anchor.",
     },
     economics: {
       settlement_amount_total: settlementTotal,
@@ -1593,12 +1262,9 @@ function shouldCopyCircuitPath(source, src) {
     "Prover.toml",
     "proof.bin",
     "proof.np",
-    DEFAULT_BALANCE_SHEET_PROOF,
     "public.json",
     DEFAULT_PROVEKIT_PROVER_KEY,
     DEFAULT_PROVEKIT_VERIFIER_KEY,
-    DEFAULT_BALANCE_SHEET_PROVER_KEY,
-    DEFAULT_BALANCE_SHEET_VERIFIER_KEY,
   ].includes(name);
 }
 

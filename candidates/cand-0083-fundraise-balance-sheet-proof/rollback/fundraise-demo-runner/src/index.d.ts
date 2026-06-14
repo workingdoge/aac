@@ -8,12 +8,6 @@ export declare const DEFAULT_PROVEKIT_PACKAGE = "world-app/provekit-vnet";
 export declare const DEFAULT_PROVEKIT_PROOF = "proof.np";
 export declare const DEFAULT_PROVEKIT_PROVER_KEY = "aac_vnet_provekit.pkp";
 export declare const DEFAULT_PROVEKIT_VERIFIER_KEY = "aac_vnet_provekit.pkv";
-export declare const DEFAULT_BALANCE_SHEET_PROVEKIT_PACKAGE = "world-app/provekit-balance-sheet";
-export declare const DEFAULT_BALANCE_SHEET_PROOF = "balance-sheet-proof.np";
-export declare const DEFAULT_BALANCE_SHEET_PROVER_KEY = "aac_balance_sheet_provekit.pkp";
-export declare const DEFAULT_BALANCE_SHEET_VERIFIER_KEY = "aac_balance_sheet_provekit.pkv";
-export declare const FUNDRAISE_BALANCE_SHEET_PACKET_SCHEMA =
-  "aac.fundraise-demo.balance-sheet-proof-packet.v1";
 export declare const FUNDRAISE_DEMO_SUMMARY_SCHEMA = "aac.fundraise-demo-runner.summary.v1";
 export declare const FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA = "aac.fundraise-demo-runner.local-settlement.v1";
 export declare const FUNDRAISE_DEMO_PREVIEW_SCHEMA = "aac.fundraise-demo-runner.preview.v1";
@@ -46,15 +40,6 @@ export interface FundraiseDemoRunnerInput {
   verifier_key?: string;
   proof?: string;
   proof_ref?: string;
-  balance_sheet_circuit_dir?: string;
-  balance_sheet_work_dir?: string;
-  balance_sheet_prover_key?: string;
-  balance_sheet_verifier_key?: string;
-  balance_sheet_proof?: string;
-  balance_sheet_proof_ref?: string;
-  balance_sheet_verifier_id?: string;
-  balance_sheet_verifier_profile?: string;
-  balance_sheet_salt?: number | string | bigint;
   timeout_ms?: number;
   env?: Record<string, string | undefined>;
   run_command?: (command: ProveKitNativeCliCommand) => Promise<ProveKitNativeCliCommandResult>;
@@ -89,24 +74,6 @@ export interface FundraiseDemoServerInput extends FundraiseDemoRunnerInput {
 export declare function buildFundraiseDemoCorsHeaders(cors_origin?: string): Record<string, string>;
 export declare function resolveFundraiseStaticPath(static_dir: string, pathname: string): Promise<string | null>;
 export declare function fundraiseStaticContentType(pathname: string): string;
-export declare function attachFundraiseBalanceSheetRoots(packet: FundraisePacket, input?: FundraiseDemoRunnerInput): FundraisePacket;
-export declare function buildBalanceSheetProofPacket(
-  packet: FundraisePacket,
-  proof_input?: Record<string, unknown>,
-): FundraiseBalanceSheetProofPacket;
-
-export interface FundraiseBalanceSheetProofPacket {
-  schema: typeof FUNDRAISE_BALANCE_SHEET_PACKET_SCHEMA;
-  profile_id: string;
-  commitment_profile: string;
-  round_id: string | null;
-  issuer_name: string | null;
-  fundraise_packet_commitment: string;
-  public_inputs: Record<string, string>;
-  roots: Record<string, string>;
-  rows: Array<Record<string, string | number>>;
-  boundary: string;
-}
 
 export interface FundraiseDemoReceipt {
   schema: typeof FUNDRAISE_DEMO_RUNNER_SCHEMA;
@@ -145,20 +112,6 @@ export interface FundraiseDemoReceipt {
   };
   verifier_receipt: VerifierReceipt & {
     verifier_key_digest: string;
-    timings_ms: Record<string, number>;
-  };
-  balance_sheet_packet: FundraiseBalanceSheetProofPacket;
-  balance_sheet_verifier_receipt: VerifierReceipt & {
-    verifier_key_digest: string;
-    timings_ms: Record<string, number>;
-  };
-  balance_sheet_state: Record<string, unknown>;
-  balance_sheet_provekit: {
-    mode: string | null;
-    proof_system: string | null;
-    proof_ref: string | null;
-    proof_digest: string | null;
-    verifier_key_digest: string | null;
     timings_ms: Record<string, number>;
   };
   workflow_receipt: WorkflowReceipt & { accepted: true };
@@ -230,29 +183,6 @@ export interface FundraiseDemoSummary {
     receipt_digest: string | null;
     adapter_schema: string | null;
     timings_ms: Record<string, number>;
-    boundary: string;
-  };
-  balance_sheet: {
-    accepted: boolean;
-    status: "accepted" | "not-run" | string;
-    status_label: string;
-    target_label: string;
-    verifier_id: string | null;
-    verifier_profile: string | null;
-    proof_system: string | null;
-    mode: string | null;
-    fundraise_packet_commitment: string | null;
-    packet_commitment: string | null;
-    public_inputs_commitment: string | null;
-    proof_ref: string | null;
-    proof_digest: string | null;
-    verifier_key_digest: string | null;
-    receipt_digest: string | null;
-    adapter_schema: string | null;
-    timings_ms: Record<string, number>;
-    roots: Record<string, string | null>;
-    public_inputs: Record<string, unknown>;
-    rows: Array<Record<string, string | number>>;
     boundary: string;
   };
   economics: {

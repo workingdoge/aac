@@ -7,7 +7,6 @@ import {
   FUNDRAISE_DEMO_RUNNER_SCHEMA,
   FUNDRAISE_DEMO_SUMMARY_SCHEMA,
   FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA,
-  buildBalanceSheetProofPacket,
   buildFundraiseDemoBatchPacket,
   buildFundraiseDemoCorsHeaders,
   buildFundraiseDemoSummary,
@@ -64,7 +63,6 @@ const commands = [];
 const receipt = await runFundraiseDemo({
   repo_root: repoRoot,
   circuit_dir: resolve(fakeWork, "circuit"),
-  balance_sheet_circuit_dir: resolve(fakeWork, "circuit"),
   provekit_bin: "/nix/store/fake-provekit-cli/bin/provekit-cli",
   run_command: async (command) => {
     commands.push(command);
@@ -156,28 +154,13 @@ assert.equal(receipt.summary.verifier.verifier_key_digest, receipt.verifier_rece
 assert.equal(receipt.summary.verifier.receipt_digest, receipt.verifier_receipt.receipt_digest);
 assert.equal(receipt.summary.verifier.timings_ms.verify, receipt.verifier_receipt.timings_ms.verify);
 assert.match(receipt.summary.verifier.boundary, /recursive\/on-chain proof verification remains/);
-assert.equal(receipt.summary.balance_sheet.accepted, true);
-assert.equal(receipt.summary.balance_sheet.status, "accepted");
-assert.equal(receipt.summary.balance_sheet.verifier_id, "aac-fundraise-balance-sheet-provekit");
-assert.equal(receipt.summary.balance_sheet.verifier_profile, "fundraise-balance-sheet-demo/v1");
-assert.equal(receipt.summary.balance_sheet.fundraise_packet_commitment, receipt.balance_sheet_packet.fundraise_packet_commitment);
-assert.equal(receipt.summary.balance_sheet.packet_commitment, receipt.balance_sheet_verifier_receipt.packet_commitment);
-assert.equal(receipt.summary.balance_sheet.proof_digest, receipt.balance_sheet_verifier_receipt.proof_digest);
-assert.equal(receipt.summary.balance_sheet.receipt_digest, receipt.balance_sheet_verifier_receipt.receipt_digest);
-assert.equal(receipt.summary.balance_sheet.roots.prev_balance_sheet_root, receipt.public_inputs.prev_balance_sheet_root);
-assert.equal(receipt.summary.balance_sheet.roots.next_balance_sheet_root, receipt.public_inputs.next_balance_sheet_root);
-assert.deepEqual(receipt.summary.balance_sheet.rows, [
-  { line: "cash_collected", opening: 0, delta: 1500, closing: 1500 },
-  { line: "units_issued", opening: 0, delta: 150, closing: 150 },
-  { line: "units_open", opening: 150, delta: -150, closing: 0 },
-]);
 assert.equal(receipt.summary.commitments.transition_set, receipt.public_inputs.transition_set_commitment);
 assert.equal(receipt.summary.proof.proof_digest, receipt.provekit.proof_digest);
 assert.equal(receipt.summary.workflow.signature_status, "pending");
 assert.equal(receipt.summary.settlement.total_supply, null);
 assert.ok(receipt.summary.caveats.some((item) => item.includes("production recursive/on-chain VNET")));
 assert.deepEqual(buildFundraiseDemoSummary(receipt), receipt.summary);
-assert.deepEqual(commands.map((command) => command.step), ["prepare", "prove", "verify", "prepare", "prove", "verify"]);
+assert.deepEqual(commands.map((command) => command.step), ["prepare", "prove", "verify"]);
 assert.equal(receipt.provekit.mode, "native-cli");
 assert.equal(receipt.provekit.proof_system, "provekit-whir");
 assert.match(receipt.provekit.proof_digest, /^0x[0-9a-f]{64}$/);
@@ -198,12 +181,6 @@ assert.deepEqual(
 assert.equal(variablePacket.round_policy.max_issued_units, 150);
 assert.equal(variablePacket.public_inputs.issued_unit_total, 130);
 assert.equal(variablePacket.public_inputs.settlement_amount_total, 1300);
-assert.equal(variablePacket.public_inputs.prev_balance_sheet_root, "424416853989");
-assert.equal(variablePacket.public_inputs.next_balance_sheet_root, "425716857369");
-const variableBalancePacket = buildBalanceSheetProofPacket(variablePacket);
-assert.equal(variableBalancePacket.public_inputs.settlement_amount_total, "1300");
-assert.equal(variableBalancePacket.public_inputs.issued_unit_total, "130");
-assert.equal(variableBalancePacket.roots.next_balance_sheet_root, "425716857369");
 assert.throws(
   () => buildFundraiseDemoBatchPacket(packet, { variable_fill_units: 51 }),
   /variable_fill_cap_exceeded/,
@@ -228,19 +205,10 @@ assert.deepEqual(variablePreview.summary.reconciliation.rows, [
   { line: "units issued", opening: "0 units", delta: "+130 units", closing: "130 units" },
   { line: "units open", opening: "150 units", delta: "-130 units", closing: "20 units" },
 ]);
-assert.equal(variablePreview.summary.balance_sheet.accepted, false);
-assert.equal(variablePreview.summary.balance_sheet.status, "not-run");
-assert.equal(variablePreview.summary.balance_sheet.roots.next_balance_sheet_root, "425716857369");
-assert.deepEqual(variablePreview.summary.balance_sheet.rows, [
-  { line: "cash_collected", opening: 0, delta: 1300, closing: 1300 },
-  { line: "units_issued", opening: 0, delta: 130, closing: 130 },
-  { line: "units_open", opening: 150, delta: -130, closing: 20 },
-]);
 
 const variableReceipt = await runFundraiseDemo({
   repo_root: repoRoot,
   circuit_dir: resolve(fakeWork, "circuit"),
-  balance_sheet_circuit_dir: resolve(fakeWork, "circuit"),
   provekit_bin: "/nix/store/fake-provekit-cli/bin/provekit-cli",
   variable_fill_units: 30,
   run_command: satisfyFakeProveKitCommand,
@@ -258,8 +226,6 @@ assert.equal(variableReceipt.summary.economics.issued_unit_total, 130);
 assert.equal(variableReceipt.summary.order.max_issued_units, 150);
 assert.equal(variableReceipt.summary.order.open_issued_units, 20);
 assert.equal(variableReceipt.summary.reconciliation.accepted, true);
-assert.equal(variableReceipt.summary.balance_sheet.accepted, true);
-assert.equal(variableReceipt.summary.balance_sheet.roots.next_balance_sheet_root, "425716857369");
 assert.equal(variableReceipt.settlement_action.args.auth.issued_unit_total, 130);
 
 const envProveKitCommands = [];
@@ -269,7 +235,6 @@ try {
   await runFundraiseDemo({
     repo_root: repoRoot,
     circuit_dir: resolve(fakeWork, "circuit"),
-    balance_sheet_circuit_dir: resolve(fakeWork, "circuit"),
     run_command: async (command) => {
       envProveKitCommands.push(command);
       return satisfyFakeProveKitCommand(command);
@@ -282,7 +247,7 @@ try {
     process.env.PROVEKIT_BIN = previousProveKitBin;
   }
 }
-assert.deepEqual(envProveKitCommands.map((command) => command.step), ["prepare", "prove", "verify", "prepare", "prove", "verify"]);
+assert.deepEqual(envProveKitCommands.map((command) => command.step), ["prepare", "prove", "verify"]);
 assert.ok(envProveKitCommands.every((command) => command.executable === resolve(repoRoot, "result/bin/provekit-cli")));
 assert.ok(envProveKitCommands.every((command) => command.cwd !== repoRoot));
 
@@ -291,7 +256,6 @@ let balanceCalls = 0;
 const local = await runFundraiseDemoLocalSettlement({
   repo_root: repoRoot,
   circuit_dir: resolve(fakeWork, "circuit"),
-  balance_sheet_circuit_dir: resolve(fakeWork, "circuit"),
   provekit_bin: "/nix/store/fake-provekit-cli/bin/provekit-cli",
   run_command: async (command) => {
     if (command.step === "prepare") {
@@ -368,7 +332,6 @@ await assert.rejects(
     runFundraiseDemo({
       repo_root: repoRoot,
       circuit_dir: resolve(fakeWork, "circuit"),
-      balance_sheet_circuit_dir: resolve(fakeWork, "circuit"),
       provekit_bin: "/nix/store/fake-provekit-cli/bin/provekit-cli",
       run_command: async (command) => {
         if (command.step === "prepare") {
@@ -388,7 +351,6 @@ const serverCommands = [];
 const serverPayload = await runFundraiseDemoServerAction({
   repo_root: repoRoot,
   circuit_dir: resolve(fakeWork, "circuit"),
-  balance_sheet_circuit_dir: resolve(fakeWork, "circuit"),
   provekit_bin: "/nix/store/fake-provekit-cli/bin/provekit-cli",
   run_command: async (command) => {
     serverCommands.push(command);
@@ -415,7 +377,7 @@ assert.equal(serverPayload.summary.status, "authorized-pending-signature");
 assert.equal(serverPayload.summary.economics.issued_unit_total, 140);
 assert.equal(serverPayload.summary.order.open_issued_units, 10);
 assert.equal(serverPayload.summary.proof.proof_system, "provekit-whir");
-assert.deepEqual(serverCommands.map((command) => command.step), ["prepare", "prove", "verify", "prepare", "prove", "verify"]);
+assert.deepEqual(serverCommands.map((command) => command.step), ["prepare", "prove", "verify"]);
 assert.ok(serverCommands.every((command) => command.executable === "/nix/store/fake-provekit-cli/bin/provekit-cli"));
 
 const corsHeaders = buildFundraiseDemoCorsHeaders("http://127.0.0.1:4328");
