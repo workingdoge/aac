@@ -1,10 +1,10 @@
-# cand-0043-fundraise-bcc-composition (machine-drafted, DRAFT -- pre-threshold)
+# cand-0043-fundraise-bcc-composition (machine-drafted, DRAFT — pre-threshold)
 
 ```text
 CycleReceipt:
   receipt_id: CR-cand-0043-fundraise-bcc-composition-aac-2026-06-13-0001
   cycle_id: aac-2026-06-13
-  cargo: Bind BCC/1 agreement certificates into FUNDRAISE-CLEARING/1 packets and mint authorization; add bridge settlement context; extend JS runtime, Python oracle, vectors, and spec rejection cases.
+  cargo: Bind BCC agreement certificates into FUNDRAISE-CLEARING/1 runtime packets and mint authorization, while keeping bridge settlement as a separate context boundary.
   source: candidates/cand-0043-fundraise-bcc-composition/ (META, scores.json, traces/)
   selected_material: TODO-review
   left_behind: TODO-review
