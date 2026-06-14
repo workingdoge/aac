@@ -6,3 +6,4 @@ cargo/web/src/data/fundraise-demo-summary.ts	web/src/data/fundraise-demo-summary
 cargo/web/src/content/docs/fundraise.mdx	web/src/content/docs/fundraise.mdx	yes
 # landed_at: 2026-06-14T13:53:58Z
 # toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=feebb6c98bd0faef8b540a9e26c410e98caefd38b6309aaaefa5a9045adf0c3b unavailable(not-in-devshell)
+git_commit	52f0f36
