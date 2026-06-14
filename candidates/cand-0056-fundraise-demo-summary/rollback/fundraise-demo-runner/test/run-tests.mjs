@@ -5,9 +5,7 @@ import { resolve } from "node:path";
 
 import {
   FUNDRAISE_DEMO_RUNNER_SCHEMA,
-  FUNDRAISE_DEMO_SUMMARY_SCHEMA,
   FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA,
-  buildFundraiseDemoSummary,
   loadFundraiseDemoPacket,
   prepareProveKitWorkdir,
   runFundraiseDemo,
@@ -45,20 +43,6 @@ const receipt = await runFundraiseDemo({
 });
 assert.equal(receipt.schema, FUNDRAISE_DEMO_RUNNER_SCHEMA);
 assert.equal(receipt.accepted, true);
-assert.equal(receipt.public_inputs.round_id, "aac-seed-2026-001");
-assert.equal(receipt.summary.schema, FUNDRAISE_DEMO_SUMMARY_SCHEMA);
-assert.equal(receipt.summary.status, "authorized-pending-signature");
-assert.equal(receipt.summary.round_id, "aac-seed-2026-001");
-assert.equal(receipt.summary.issuer_name, "issuer-a.private-row");
-assert.equal(receipt.summary.economics.settlement_amount_total, 1500);
-assert.equal(receipt.summary.economics.issued_unit_total, 150);
-assert.equal(receipt.summary.economics.recipient_count, 2);
-assert.equal(receipt.summary.commitments.transition_set, receipt.public_inputs.transition_set_commitment);
-assert.equal(receipt.summary.proof.proof_digest, receipt.provekit.proof_digest);
-assert.equal(receipt.summary.workflow.signature_status, "pending");
-assert.equal(receipt.summary.settlement.total_supply, null);
-assert.ok(receipt.summary.caveats.some((item) => item.includes("production recursive/on-chain VNET")));
-assert.deepEqual(buildFundraiseDemoSummary(receipt), receipt.summary);
 assert.deepEqual(commands.map((command) => command.step), ["prepare", "prove", "verify"]);
 assert.equal(receipt.provekit.mode, "native-cli");
 assert.equal(receipt.provekit.proof_system, "provekit-whir");
@@ -131,16 +115,9 @@ const local = await runFundraiseDemoLocalSettlement({
 });
 assert.equal(local.schema, FUNDRAISE_DEMO_RUNNER_SCHEMA);
 assert.equal(local.local_settlement.schema, FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA);
-assert.equal(local.summary.schema, FUNDRAISE_DEMO_SUMMARY_SCHEMA);
-assert.equal(local.summary.status, "settled-local");
-assert.equal(local.summary.workflow.signature_status, "submitted");
 assert.equal(local.local_settlement.total_supply, 150);
-assert.equal(local.summary.settlement.total_supply, 150);
 assert.deepEqual(local.local_settlement.balances.map((item) => item.amount), [100, 50]);
-assert.deepEqual(local.summary.settlement.balances.map((item) => item.amount), [100, 50]);
 assert.equal(local.local_settlement.transaction_hash, "0x" + "55".repeat(32));
-assert.equal(local.summary.settlement.transaction_hash, "0x" + "55".repeat(32));
-assert.ok(local.summary.claims.some((item) => item.includes("refused replay")));
 assert.equal(foundryCommands.filter((command) => command.executable.endsWith("forge")).length, 2);
 assert.ok(foundryCommands.some((command) => command.args.includes("setMinter(address)")));
 assert.ok(foundryCommands.some((command) => command.args.includes("settle((bytes32,address,bytes32,bytes32,uint256,(address,uint256)[]),bytes)")));

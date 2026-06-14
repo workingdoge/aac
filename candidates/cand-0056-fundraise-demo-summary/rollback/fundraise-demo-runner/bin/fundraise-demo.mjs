@@ -6,7 +6,6 @@ import { runFundraiseDemo, runFundraiseDemoLocalSettlement } from "../src/index.
 const args = parseArgs(process.argv.slice(2));
 if (args.help) {
   process.stdout.write(`Usage: aac-fundraise-demo [--repo-root PATH] [--provekit-bin PATH] [--out PATH] [--keep-workdir]
-       aac-fundraise-demo --summary [--settle-local] [--out PATH]
        aac-fundraise-demo --settle-local --rpc-url URL [--forge-bin PATH] [--cast-bin PATH] [--solc-bin PATH]\n`);
   process.exit(0);
 }
@@ -26,8 +25,7 @@ const input = {
 const result = args.settleLocal
   ? await runFundraiseDemoLocalSettlement(input)
   : await runFundraiseDemo(input);
-const output = args.summary ? result.summary : result;
-const json = `${JSON.stringify(output, null, 2)}\n`;
+const json = `${JSON.stringify(result, null, 2)}\n`;
 if (args.out) {
   await writeFile(args.out, json);
 } else {
@@ -41,7 +39,6 @@ function parseArgs(argv) {
     if (arg === "--help" || arg === "-h") out.help = true;
     else if (arg === "--keep-workdir") out.keepWorkdir = true;
     else if (arg === "--settle-local") out.settleLocal = true;
-    else if (arg === "--summary") out.summary = true;
     else if (arg === "--repo-root") out.repoRoot = needValue(argv, ++i, arg);
     else if (arg === "--provekit-bin") out.provekitBin = needValue(argv, ++i, arg);
     else if (arg === "--registry-dir") out.registryDir = needValue(argv, ++i, arg);

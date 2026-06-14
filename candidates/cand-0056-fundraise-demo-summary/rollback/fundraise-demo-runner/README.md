@@ -7,12 +7,10 @@ This package runs the real demo path for the fundraising story:
 3. run the native ProveKit CLI `prepare`, `prove`, and `verify` flow;
 4. build a live-proof verifier receipt;
 5. run `fundraise-workflow` with `require_live_proof: true`;
-6. emit the pending `FundraiseMintSettlement.settle(auth, signature)` action;
-7. attach a compact summary artifact for presentation and UI callers.
+6. emit the pending `FundraiseMintSettlement.settle(auth, signature)` action.
 
-The default mode does not sign the authorizer request, submit a transaction,
-deploy contracts, or verify a recursive proof on-chain. Those are explicit
-deployment steps.
+It does not sign the authorizer request, submit a transaction, deploy contracts,
+or verify a recursive proof on-chain. Those are the next deployment steps.
 
 ```sh
 PROVEKIT_BIN=./result/bin/provekit-cli node fundraise-demo-runner/bin/fundraise-demo.mjs
@@ -21,18 +19,6 @@ PROVEKIT_BIN=./result/bin/provekit-cli node fundraise-demo-runner/bin/fundraise-
 The output is JSON suitable for the presentation: proof digest, verifier-key
 digest, workflow receipt, and the settlement action that needs an authorizer
 signature before on-chain settlement.
-
-For a smaller presentation/UI artifact, use:
-
-```sh
-PROVEKIT_BIN=./result/bin/provekit-cli node fundraise-demo-runner/bin/fundraise-demo.mjs --summary
-```
-
-The summary is a deterministic projection of the receipt. It includes the round,
-issuer, public roots/commitments, ProveKit proof digest, workflow digests,
-settlement status, balances when available, and an explicit caveat that the
-current settlement contract verifies the authorizer signature and replay guard;
-production recursive/on-chain VNET proof verification remains a separate target.
 
 ## Local Settlement
 
@@ -45,7 +31,6 @@ anvil
 PROVEKIT_BIN=./result/bin/provekit-cli \
   node fundraise-demo-runner/bin/fundraise-demo.mjs \
     --settle-local \
-    --summary \
     --rpc-url http://127.0.0.1:8545 \
     --forge-bin "$(command -v forge)" \
     --cast-bin "$(command -v cast)" \

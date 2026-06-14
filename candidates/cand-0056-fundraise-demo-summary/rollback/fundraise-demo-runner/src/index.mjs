@@ -16,7 +16,6 @@ export const DEFAULT_PROVEKIT_PACKAGE = "world-app/provekit-vnet";
 export const DEFAULT_PROVEKIT_PROOF = "proof.np";
 export const DEFAULT_PROVEKIT_PROVER_KEY = "aac_vnet_provekit.pkp";
 export const DEFAULT_PROVEKIT_VERIFIER_KEY = "aac_vnet_provekit.pkv";
-export const FUNDRAISE_DEMO_SUMMARY_SCHEMA = "aac.fundraise-demo-runner.summary.v1";
 export const FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA = "aac.fundraise-demo-runner.local-settlement.v1";
 export const DEFAULT_REGISTRY_PACKAGE = "registry";
 export const DEFAULT_LOCAL_RPC_URL = "http://127.0.0.1:8545";
@@ -121,7 +120,7 @@ export async function runFundraiseDemoLocalSettlement(input = {}) {
     ...foundry,
     settlement_action: workflowReceipt.settlement_action,
   });
-  const receipt = {
+  return {
     ...buildDemoReceipt({
       input,
       packet: proof.packet,
@@ -131,7 +130,6 @@ export async function runFundraiseDemoLocalSettlement(input = {}) {
     }),
     local_settlement: execution,
   };
-  return { ...receipt, summary: buildFundraiseDemoSummary(receipt) };
 }
 
 export async function prepareFoundrySettlement(input = {}) {
@@ -299,13 +297,12 @@ function buildLiveWorkflowReceipt({
 }
 
 function buildDemoReceipt({ input, packet, verifier_receipt, workflow_receipt, workdir }) {
-  const receipt = {
+  return {
     schema: FUNDRAISE_DEMO_RUNNER_SCHEMA,
     accepted: true,
     reason: "accepted",
     vector_id: input.vector_id ?? DEFAULT_VECTOR_ID,
     packet_round_id: packet.public_inputs?.round_id ?? packet.round_policy?.round_id ?? null,
-    public_inputs: packet.public_inputs ?? {},
     provekit: {
       mode: verifier_receipt.mode,
       proof_system: verifier_receipt.proof_system,
@@ -318,81 +315,6 @@ function buildDemoReceipt({ input, packet, verifier_receipt, workflow_receipt, w
     workflow_receipt,
     settlement_action: workflow_receipt.settlement_action,
     workdir,
-  };
-  return { ...receipt, summary: buildFundraiseDemoSummary(receipt) };
-}
-
-export function buildFundraiseDemoSummary(receipt) {
-  if (!receipt || receipt.schema !== FUNDRAISE_DEMO_RUNNER_SCHEMA) {
-    throw new FundraiseDemoRunnerError("receipt_schema_mismatch");
-  }
-  const publicInputs = receipt.public_inputs ?? {};
-  const action = receipt.settlement_action ?? {};
-  const auth = action.args?.auth ?? {};
-  const local = receipt.local_settlement ?? null;
-  const settled = Boolean(local?.transaction_hash);
-  return {
-    schema: FUNDRAISE_DEMO_SUMMARY_SCHEMA,
-    accepted: receipt.accepted === true,
-    status: settled ? "settled-local" : "authorized-pending-signature",
-    vector_id: receipt.vector_id,
-    round_id: receipt.packet_round_id ?? publicInputs.round_id ?? null,
-    issuer_name: publicInputs.issuer_name ?? null,
-    economics: {
-      settlement_amount_total: publicInputs.settlement_amount_total ?? null,
-      issued_unit_total: auth.issued_unit_total ?? publicInputs.issued_unit_total ?? null,
-      recipient_count: Array.isArray(auth.recipients) ? auth.recipients.length : 0,
-    },
-    commitments: {
-      transition_set: publicInputs.transition_set_commitment ?? null,
-      vnet_public: publicInputs.vnet_public_commitment ?? null,
-      subscription_set: publicInputs.subscription_set_commitment ?? null,
-      bcc_set: publicInputs.bcc_set_commitment ?? null,
-      bridge_settlement: publicInputs.bridge_settlement_commitment ?? null,
-      mint_recipient_set: auth.runtime_mint_recipient_set_commitment
-        ?? publicInputs.mint_recipient_set_commitment
-        ?? null,
-      prev_balance_sheet_root: publicInputs.prev_balance_sheet_root ?? null,
-      next_balance_sheet_root: publicInputs.next_balance_sheet_root ?? null,
-      prev_cap_table_root: publicInputs.prev_cap_table_root ?? null,
-      next_cap_table_root: publicInputs.next_cap_table_root ?? null,
-    },
-    proof: {
-      mode: receipt.provekit?.mode ?? null,
-      proof_system: receipt.provekit?.proof_system ?? null,
-      proof_digest: receipt.provekit?.proof_digest ?? null,
-      verifier_key_digest: receipt.provekit?.verifier_key_digest ?? null,
-      timings_ms: receipt.provekit?.timings_ms ?? {},
-    },
-    workflow: {
-      workflow_id: receipt.workflow_receipt?.workflow_id ?? null,
-      workflow_engine: receipt.workflow_receipt?.workflow_engine ?? null,
-      verifier_receipt_digest: receipt.workflow_receipt?.verifier_receipt_digest ?? null,
-      authorizer_receipt_digest: receipt.workflow_receipt?.authorizer_receipt_digest ?? null,
-      action_digest: action.action_digest ?? null,
-      signature_status: settled ? "submitted" : action.signature_status ?? "pending",
-    },
-    settlement: {
-      chain_id: action.chain_id ?? null,
-      token_contract: local?.token_contract ?? auth.token_contract ?? null,
-      settlement_contract: local?.settlement_contract ?? action.contract ?? null,
-      authorizer: local?.authorizer ?? null,
-      settlement_digest: local?.settlement_digest ?? null,
-      transaction_hash: local?.transaction_hash ?? null,
-      total_supply: local?.total_supply ?? null,
-      balances: local?.balances ?? [],
-    },
-    claims: [
-      "ProveKit accepted the VNET proof for the fundraise packet.",
-      "The workflow authorized an EVM mint bound to the proof receipt and recipient set.",
-      settled
-        ? "A local settlement contract minted receipt tokens and refused replay."
-        : "Settlement is pending an authorizer signature and transaction submission.",
-    ],
-    caveats: [
-      "Local settlement uses deterministic development keys unless overridden.",
-      "The current contract path verifies the authorizer signature and replay guard; production recursive/on-chain VNET proof verification remains a separate target.",
-    ],
   };
 }
 

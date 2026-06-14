@@ -8,7 +8,6 @@ export declare const DEFAULT_PROVEKIT_PACKAGE = "world-app/provekit-vnet";
 export declare const DEFAULT_PROVEKIT_PROOF = "proof.np";
 export declare const DEFAULT_PROVEKIT_PROVER_KEY = "aac_vnet_provekit.pkp";
 export declare const DEFAULT_PROVEKIT_VERIFIER_KEY = "aac_vnet_provekit.pkv";
-export declare const FUNDRAISE_DEMO_SUMMARY_SCHEMA = "aac.fundraise-demo-runner.summary.v1";
 export declare const FUNDRAISE_LOCAL_SETTLEMENT_SCHEMA = "aac.fundraise-demo-runner.local-settlement.v1";
 export declare const DEFAULT_REGISTRY_PACKAGE = "registry";
 export declare const DEFAULT_LOCAL_RPC_URL = "http://127.0.0.1:8545";
@@ -61,7 +60,6 @@ export interface FundraiseDemoReceipt {
   reason: "accepted";
   vector_id: string;
   packet_round_id: string | null;
-  public_inputs: Record<string, unknown>;
   provekit: {
     mode: string;
     proof_system: string;
@@ -77,60 +75,6 @@ export interface FundraiseDemoReceipt {
   workflow_receipt: WorkflowReceipt & { accepted: true };
   settlement_action: SettlementAction;
   workdir: string | null;
-  summary: FundraiseDemoSummary;
-}
-
-export interface FundraiseDemoSummary {
-  schema: typeof FUNDRAISE_DEMO_SUMMARY_SCHEMA;
-  accepted: boolean;
-  status: "authorized-pending-signature" | "settled-local";
-  vector_id: string;
-  round_id: string | null;
-  issuer_name: string | null;
-  economics: {
-    settlement_amount_total: number | null;
-    issued_unit_total: number | null;
-    recipient_count: number;
-  };
-  commitments: {
-    transition_set: string | null;
-    vnet_public: string | null;
-    subscription_set: string | null;
-    bcc_set: string | null;
-    bridge_settlement: string | null;
-    mint_recipient_set: string | null;
-    prev_balance_sheet_root: string | null;
-    next_balance_sheet_root: string | null;
-    prev_cap_table_root: string | null;
-    next_cap_table_root: string | null;
-  };
-  proof: {
-    mode: string | null;
-    proof_system: string | null;
-    proof_digest: string | null;
-    verifier_key_digest: string | null;
-    timings_ms: Record<string, number>;
-  };
-  workflow: {
-    workflow_id: string | null;
-    workflow_engine: string | null;
-    verifier_receipt_digest: string | null;
-    authorizer_receipt_digest: string | null;
-    action_digest: string | null;
-    signature_status: "pending" | "submitted" | string;
-  };
-  settlement: {
-    chain_id: number | null;
-    token_contract: string | null;
-    settlement_contract: string | null;
-    authorizer: string | null;
-    settlement_digest: string | null;
-    transaction_hash: string | null;
-    total_supply: number | null;
-    balances: Array<{ account: string; amount: number }>;
-  };
-  claims: string[];
-  caveats: string[];
 }
 
 export interface FoundryCommand {
@@ -165,7 +109,6 @@ export interface LocalSettlementExecution {
 
 export type FundraiseLocalSettlementReceipt = FundraiseDemoReceipt & {
   local_settlement: LocalSettlementExecution;
-  summary: FundraiseDemoSummary & { status: "settled-local" };
 };
 
 export declare function runFundraiseDemo(input?: FundraiseDemoRunnerInput): Promise<FundraiseDemoReceipt>;
@@ -180,7 +123,6 @@ export declare function buildFundraiseDemoVerifierReceipt(input?: FundraiseDemoR
 export declare function runFundraiseDemoLocalSettlement(
   input?: FundraiseDemoRunnerInput,
 ): Promise<FundraiseLocalSettlementReceipt>;
-export declare function buildFundraiseDemoSummary(receipt: FundraiseDemoReceipt): FundraiseDemoSummary;
 export declare function prepareFoundrySettlement(input?: FundraiseDemoRunnerInput): Promise<{
   rpc_url: string;
   registry_dir: string;
