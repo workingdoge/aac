@@ -1,0 +1,19 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0058-fundraise-root-layout-polish",
+  "evaluated_at": "2026-06-14T10:27:03Z",
+  "task": "Polish /fundraise private-root rows so before/after commitments do not wrap vertically at desktop widths.",
+  "checks": {
+    "scope": "pass",
+    "layout": "pass",
+    "build": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "9374934f6c25f32db3cefe5e0ea33f49ef567bd465d6f64cabdaa0c2c32a0b6f",
+    "traces_sha256": "0691a55dfad4708962fded4ab4a7e7f54be4146ab257dff124f122a5a410c750",
+    "body_sha256": "a9bde9775c6381b1d537b41b17585210c7348864b19dbfc6815618e0ec190f6d",
+    "attestation": "845a9cbb36e46eaa465e381a7a7999ccd98ec4b0d197ba273b64d99403287dd7"
+  }
+}

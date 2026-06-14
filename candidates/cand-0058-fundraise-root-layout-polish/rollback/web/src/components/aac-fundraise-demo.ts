@@ -165,17 +165,6 @@ export class AacFundraiseDemo extends LitElement {
       border-bottom: 1px solid var(--aac-color-rule, #e2dac4);
     }
 
-    .root-row {
-      grid-template-columns: 1fr;
-      gap: 4px;
-    }
-
-    .root-row .val {
-      justify-self: start;
-      white-space: nowrap;
-      font-size: 11.5px;
-    }
-
     .key {
       color: var(--aac-color-steel, #6b6b64);
       font-size: 11px;

@@ -1,0 +1,1 @@
+private-root rows keep before/after commitments on one line
