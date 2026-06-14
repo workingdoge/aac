@@ -1,6 +1,6 @@
 [package]
-name = "nullify"
-type = "bin"
+name = "ledger"
+type = "lib"
 authors = ["American Accounting Company"]
 
 [dependencies]

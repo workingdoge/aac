@@ -1,0 +1,14 @@
+{
+  "evaluated_at": "2026-06-13T21:26:17Z",
+  "task": "ship tools/queue-archive.sh (manifest -0/+1) so aac can bound its queue as working memory: the manifest still parses with the new entry provided by the LANDING map and the queue-lib dep present, check runs read-only on aac's live queue (exit 0), archive on a synthetic queue is content-preserving (resolved moves, opens + preamble byte-untouched, no line lost, both lint-clean, idempotent rerun), and the delta is additive with tools/loop untouched",
+  "cases": 4,
+  "passed": 4,
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "3cb71684a8306d35c0962715e0f7757cb845cbcbde7c27347c842b4db3010a01",
+    "traces_sha256": "d82e989ee907175912b872ac877367d79596c571dc30012e8f1008efe985ba56",
+    "body_sha256": "ef02269f60526fc8c7ed4cede956c412336317fec72bab01c9f6db69ddf993fc",
+    "attestation": "38dc0040eada538a2128ac9a0ae0d1c33af0cc5c43ece1790b76895a0a0aecfd"
+  }
+}

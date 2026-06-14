@@ -366,3 +366,5 @@ fn composition_transition_posts_the_bvr_journal() {
     assert(p[4] == ledger::journal_commitment(accounts, debits, credits), "journal commitments diverge");
     assert(p[2] != p[3], "nullifier root did not advance");
 }
+
+use rulebook::GoodsReceiptInvoice;

@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0029-queue-archive",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "f229aeeffee61ec2163856bfb139f2aa2099e14833bb22e09f625a0bf4286722",
+    "LANDING": "30fbf5d9cce52f8936b719a3d2eef8f17b91ae8440b7d177e30da12cd9690bcb",
+    "META": "b371a457d4fc11b2d70738075a6937ef6569df0e84d23609e0f4496dd898de42"
+  }
+}

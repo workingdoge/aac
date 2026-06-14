@@ -4,4 +4,6 @@ type = "bin"
 authors = ["American Accounting Company"]
 
 [dependencies]
+ledger = { path = "../ledger" }
+rulebook = { path = "../rulebook" }
 hash = { path = "../hash" }

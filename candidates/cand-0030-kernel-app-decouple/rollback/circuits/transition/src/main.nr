@@ -15,6 +15,7 @@
 //! sites/ledger/statements/Core.lean.
 
 use pacioli::{assert_u64, journal_balanced};
+use rulebook::{compile_goods_receipt_invoice, event_commitment, GoodsReceiptInvoice};
 
 // ---- profile shape (a deployment fixes these; recorded in Register R1) ----
 global N_BASIS: u32 = 3; // basis dimension B (atomic-unit coordinates)
@@ -328,30 +329,20 @@ fn nullifier_root_unchanged_when_no_right_consumed() {
 #[test]
 fn composition_transition_posts_the_bvr_journal() {
     // EVENT-COMPLETE/1 certifies journal_commitment = ledger::journal_commitment(
-    // Phi_R(event)). Here we post the SAME journal to a fresh state, check that
-    // TRANSITION/1 recomputes the same journal_commitment, and advance the
-    // nullifier root over an opaque consumed right -- so the two targets compose.
-    //
-    // The journal is the goods-receipt-invoice Pn conformance vector (cand-0009),
-    // inlined as a literal FIXTURE so this enshrined circuit carries no dependency
-    // on the rulebook application crate (cand-0030: sever the kernel->app
-    // back-edge). That Phi_R actually emits this exact vector is pinned app-side by
-    // the rulebook crate's own phi_reproduces_the_conformance_vector test; the
-    // fixture re-proves the composition claim here without a code edge. The durable
-    // kernel<->app contract is journal_commitment itself plus opaque-nullifier
-    // semantics, not this fixture.
-    let accounts: [u32; N_ROWS] = [0, 1, 2, 3];
-    let debits: [[u64; N_BASIS]; N_ROWS] = [[0, 50, 0], [10000, 0, 0], [0, 0, 0], [0, 0, 0]];
-    let credits: [[u64; N_BASIS]; N_ROWS] = [[0, 0, 0], [0, 0, 0], [0, 50, 0], [10000, 0, 0]];
+    // Phi_R(event)) and event_nullifier = ledger::event_nullifier(...). Build the
+    // matching TRANSITION/1 transition: post the compiled journal to a fresh state
+    // and consume that nullifier. TRANSITION/1 accepts; the journal_commitment it
+    // posts equals the BVR's, and it consumes the BVR's nullifier -- they compose.
+    let e = GoodsReceiptInvoice { usd_cents: 10000, fabric_meters: 50 };
+    let cj = compile_goods_receipt_invoice(e);
     let journal = [
-        Posting { account: accounts[0], debit: debits[0], credit: credits[0] },
-        Posting { account: accounts[1], debit: debits[1], credit: credits[1] },
-        Posting { account: accounts[2], debit: debits[2], credit: credits[2] },
-        Posting { account: accounts[3], debit: debits[3], credit: credits[3] },
+        Posting { account: cj.accounts[0], debit: cj.debits[0], credit: cj.credits[0] },
+        Posting { account: cj.accounts[1], debit: cj.debits[1], credit: cj.credits[1] },
+        Posting { account: cj.accounts[2], debit: cj.debits[2], credit: cj.credits[2] },
+        Posting { account: cj.accounts[3], debit: cj.debits[3], credit: cj.credits[3] },
     ];
-    // An opaque consumed-right nullifier (a hash image): TRANSITION/1 consumes
-    // nullifiers as opaque nonzero Fields; their derivation lives app-side.
-    let n: Field = 0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d;
+    let ps = ledger::participant_set(111, 222);
+    let n = ledger::event_nullifier(7, event_commitment(e), ps);
     let w = Witness {
         journal,
         prev_state: AcctState { debit: [[0; N_BASIS]; N_ACCT], credit: [[0; N_BASIS]; N_ACCT] },
@@ -363,6 +354,6 @@ fn composition_transition_posts_the_bvr_journal() {
     };
     let p = public_inputs(w, 100, 42, 0);
     main(p[0], p[1], p[2], p[3], p[4], p[5], p[6], 0, w);
-    assert(p[4] == ledger::journal_commitment(accounts, debits, credits), "journal commitments diverge");
+    assert(p[4] == ledger::journal_commitment(cj.accounts, cj.debits, cj.credits), "journal commitments diverge");
     assert(p[2] != p[3], "nullifier root did not advance");
 }

@@ -23,6 +23,8 @@
 // insertions. The non-membership LOGIC here is identical: the low-leaf range
 // bracket over a sorted-invariant set.
 
+use ledger::{event_nullifier, participant_set};
+use rulebook::{compile_goods_receipt_invoice, event_commitment, GoodsReceiptInvoice};
 use std::field::bn254::lt;
 
 global N_OLD: u32 = 4;
@@ -182,31 +184,24 @@ fn rejects_tampered_last_root() {
 }
 
 // -- composition with EVENT-COMPLETE/1: the anti-replay spine ----------------
-//
-// NULLIFY/1 consumes nullifiers as OPAQUE nonzero Fields; their derivation
-// (EVENT-COMPLETE/1's app-side event nullifier) is no concern of the kernel. So
-// these tests use a literal opaque value, carrying no dependency on the rulebook
-// application crate (cand-0030: sever the kernel->app back-edge).
-fn opaque_nullifier() -> Field {
-    // an opaque hash image -- nonzero and far above the small set members below
-    0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d
-}
 
-// A fresh nullifier is consumable (a non-member of the spent set).
+// A fresh BVR event nullifier is consumable (a non-member of the spent set).
 #[test]
-fn consumes_a_fresh_nullifier() {
-    let n = opaque_nullifier();
-    let spent = [0, 1, 2, 3]; // n (an opaque hash image) is not present
+fn consumes_a_fresh_event_nullifier() {
+    let e = GoodsReceiptInvoice { usd_cents: 10000, fabric_meters: 50 };
+    let n = event_nullifier(7, event_commitment(e), participant_set(111, 222));
+    let spent = [0, 1, 2, 3]; // n (a large hash) is not present
     let (lr, sc) = lr_sc(spent, n, 4); // consume n after the last member
     main(fr(spent), lr, sc, 1, spent, n, 4);
 }
 
-// Replaying a SPENT nullifier is rejected: once n is in the set, no gap brackets
-// it. This is the historical-set anti-replay guard EVENT-COMPLETE/1 relies on --
-// its app-side derivation only fixes the value; the kernel sees it opaque.
+// Replaying a SPENT event nullifier is rejected: once n is in the set, no gap
+// brackets it. This is the historical-set anti-replay guard EVENT-COMPLETE/1
+// relies on -- its in-circuit derivation only fixes the nullifier value.
 #[test(should_fail_with = "low-leaf does not bracket below")]
-fn rejects_replaying_a_spent_nullifier() {
-    let n = opaque_nullifier();
+fn rejects_replaying_a_spent_event_nullifier() {
+    let e = GoodsReceiptInvoice { usd_cents: 10000, fabric_meters: 50 };
+    let n = event_nullifier(7, event_commitment(e), participant_set(111, 222));
     let spent = [0, 1, 2, n]; // n already consumed (n > 2)
     let (lr, sc) = lr_sc(spent, n, 4); // try to consume n again
     main(fr(spent), lr, sc, 1, spent, n, 4);
@@ -220,4 +215,6 @@ fn print_public_inputs() {
     println(fr(s));
     println(lr);
     println(sc);
+    // silence unused-import warning: the compiler exercises the rulebook compile path.
+    let _ = compile_goods_receipt_invoice(GoodsReceiptInvoice { usd_cents: 1, fabric_meters: 1 });
 }

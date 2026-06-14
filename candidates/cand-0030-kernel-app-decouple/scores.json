@@ -1,0 +1,19 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0030-kernel-app-decouple",
+  "evaluated_at": "2026-06-14T00:29:23Z",
+  "task": "sever the kernel->app back-edge: remove the rulebook (application schema) dependency from the enshrined transition + nullify circuits (test-only; the proven main was already schema-agnostic). transition keeps pacioli+ledger+hash; nullify drops to hash alone. The transition composition test uses the literal Pn conformance vector + an opaque nullifier; nullify anti-replay tests use an opaque field. nargo test green workspace-wide, all sample witnesses solve, and a structural probe (with a candidate-local mutant) witnesses the kernel carries no app refs. 4/REG S5: base MUST NOT require an application target.",
+  "checks": {
+    "logic": "pass",
+    "prove": "pass",
+    "mutant": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "ddf85b7cfdfb98babacd682b54b067712f28de80d29581972740ee3579ff8306",
+    "traces_sha256": "7be044a436ce3bf9a120613a3640a71768c2c0ece7f2e43a6d4f484af7edea8b",
+    "body_sha256": "e4c446cb3c7de85f680ba2a99f9634a0eb4ce30569741f413e0b807441cad686",
+    "attestation": "3f06212d521f47abcef559b37a9e731e03accfc6ed1af8a173a5432970639daf"
+  }
+}

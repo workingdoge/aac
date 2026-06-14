@@ -1,0 +1,1 @@
+kernel crates carry no app refs; transition keeps pacioli+ledger+hash; nullify on hash only

@@ -1,0 +1,1 @@
+mutant caught: the probe flags a re-introduced rulebook reference (non-vacuous)
