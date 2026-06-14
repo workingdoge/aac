@@ -1,0 +1,1 @@
+corrupt vector rejected when a committed amount is changed without recomputing commitments

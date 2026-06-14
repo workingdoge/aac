@@ -170,14 +170,9 @@ application target that composes with 5/NET rather than replacing it.
 
 ## 9. Implementation status (non-normative)
 
-The first concrete commitment profile is
-[`VNET-BN254-G1/1`](../profiles/VNET-BN254-G1-1.md), with executable
-conformance fixtures at
-[`VNET-BN254-G1-1.json`](../profiles/vectors/VNET-BN254-G1-1.json). That
-profile fixes BN254 G1 point encoding, generator derivation, amount bounds, and
-the zero-opening fixture suite.
-
 No reference VNET/1 circuit or native verifier is assigned by this candidate.
-The next implementation slice should decide whether the link relation is
-recomputed in the VNET witness or supplied as a companion proof, then implement
-a minimal verifier/checker against the profile fixtures.
+The next implementation slice should choose the group/profile, define the exact
+point encoding and hash-to-curve rule, and produce conformance vectors that
+cover: accepted zero-opening, mismatched basis rejection, missing transition
+link rejection, and a false net rejected even when the aggregate point is
+well-formed.

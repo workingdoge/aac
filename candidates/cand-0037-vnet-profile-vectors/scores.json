@@ -1,0 +1,19 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0037-vnet-profile-vectors",
+  "evaluated_at": "2026-06-14T03:04:27Z",
+  "task": "Define VNET-BN254-G1/1 as the first concrete VNET/1 Pedersen vector-commitment profile, with BN254 G1 point encoding, deterministic generator derivation, u64 amount bounds, executable generated conformance vectors, and a reference checker covering accepted fundraising batch, mixed-basis rejection, missing transition-link rejection, and false-net zero-opening rejection.",
+  "checks": {
+    "profile": "pass",
+    "vectors": "pass",
+    "corrupt": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "f96ffa77758951f52cf442d9b1cb7d656d41da487a858a798199a445d8863058",
+    "traces_sha256": "05538bfb150848fa8c10acd3346d6a46e9916a8ce6ebd69440ba4742e635b1e8",
+    "body_sha256": "a1f82890b44e91cb99461be68ee709f810532fa3cc4d35ae871043712a5c240a",
+    "attestation": "14e4a0514702eb41206ca219e30f6a346d4eca5e095a812deb3632c24f5e7b5f"
+  }
+}

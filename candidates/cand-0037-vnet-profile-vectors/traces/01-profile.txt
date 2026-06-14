@@ -1,0 +1,1 @@
+profile/index/VNET cross-references carry BN254 group, encoding, generator derivation, commitment, and zero-opening rules
