@@ -1,4 +1,4 @@
-# cand-0045-vnet-runtime-adapter (machine-drafted, DRAFT -- pre-threshold)
+# cand-0045-vnet-runtime-adapter (machine-drafted, DRAFT — pre-threshold)
 
 ```text
 CycleReceipt:
