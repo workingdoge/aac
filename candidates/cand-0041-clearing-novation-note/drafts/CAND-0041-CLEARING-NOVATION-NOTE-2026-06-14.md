@@ -1,0 +1,22 @@
+# cand-0041-clearing-novation-note (machine-drafted, DRAFT — pre-threshold)
+
+```text
+CycleReceipt:
+  receipt_id: CR-cand-0041-clearing-novation-note-aac-2026-06-13-0001
+  cycle_id: aac-2026-06-13
+  cargo: Land Design Note 0004 (non-normative): AAC as a privacy-preserving CCP -- map FICC/DTCC clearing onto the existing primitive stack and model the one missing piece, NOVATION. Thesis: the spec stack IS a clearing-house decomposition because vector Pacioli's Pⁿ zero-account is the CCP conservation guaranty; netting preserves it; VNET/1 makes the net provable without revealing the gross. Novation modeled as a conservation-preserving DECOMPOSITION: a bilateral balanced journal J_AB becomes two CCP-legs J_AC + J_CB that sum back to J_AB and leave the CCP FLAT per trade (matched book at the unit) -- a NOVATE/1 application target (policy-gated, never base, 4/REG S5), NOT kernel. The closure: a CCP is a participant whose matched book the registry forces to balance; novation interposes; netting (NET/1 + VNET/1) is the private multilateral compression. Honest non-goals: risk/margin/default-waterfall, fails/CNS carry, legal novation, no instantiation. Plus a house-style flow->primitive diagram (0004-clearing-flow.html). Coordinates WITH VNET (the multilateral net is the operator's VNET work); touches no VNET files. Witnessed: the note carries the thesis + the novation decomposition + the application-layer placement + the non-goals + the non-normative marker, every referenced artifact resolves, the README indexes 0004, the diagram carries the stage+primitive labels, and a mutant stripped of the decomposition claim is caught.
+  source: candidates/cand-0041-clearing-novation-note/ (META, scores.json, traces/)
+  selected_material: TODO-review
+  left_behind: TODO-review
+  owner: TODO-review
+  authority_surface: cycle.operating-surface.v0
+  predicate: premath.seed-selection-boundary.v0
+  predicate_absence_reason: none
+  projection_surface: candidates/cand-0041-clearing-novation-note/
+  verification_boundary: TODO-review
+  shore_commitment: landed
+  threshold_outcome: admit
+  disposition: TODO-review
+  recorder: Tusk
+  receipt_ref: cycles/aac-2026-06-13/receipts/CAND-0041-CLEARING-NOVATION-NOTE-2026-06-14.md
+```
