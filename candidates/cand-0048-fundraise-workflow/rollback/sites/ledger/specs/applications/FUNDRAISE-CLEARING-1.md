@@ -385,16 +385,7 @@ role. It does not sign Ethereum messages, verify ProveKit proofs, run a CRE
 workflow, or compute the Solidity `settlementDigest`; those remain deployment
 obligations above the request surface.
 
-The JavaScript `fundraise-workflow` package is the current orchestration core
-above that seam. It takes a normalized verifier receipt, rejects stale or
-policy-inadmissible proof receipts, calls the authorizer, and returns the
-deterministic settlement action for `FundraiseMintSettlement.settle`. It does
-not import the CRE SDK, verify ProveKit proofs, sign transactions, submit
-transactions, or manage keys. A real CRE workflow or ProveKit verifier service
-is expected to produce the verifier receipt and consume the workflow output.
-
-The next implementation slices should replace the normalized verifier receipt
-producer with an actual CRE workflow simulation or ProveKit verifier service,
-then deploy the adapter to a testnet token contract. Non-mock BCC signature and
-cancellation schemes are adapter surfaces: they fail closed unless a deployment
-verifier accepts them.
+The next implementation slices should wire the authorizer seam to an actual CRE
+workflow simulation or ProveKit verifier service, then deploy the adapter to a
+testnet token contract. Non-mock BCC signature and cancellation schemes are
+adapter surfaces: they fail closed unless a deployment verifier accepts them.
