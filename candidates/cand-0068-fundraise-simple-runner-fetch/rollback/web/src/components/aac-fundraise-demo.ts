@@ -530,12 +530,6 @@ export class AacFundraiseDemo extends LitElement {
     return `${base.replace(/\/+$/, '')}/api/fundraise/run`;
   }
 
-  private apiRunUrl(): string {
-    const url = new URL(this.apiEndpoint());
-    url.searchParams.set('settle_local', 'false');
-    return url.toString();
-  }
-
   connectedCallback() {
     super.connectedCallback();
     this.ensureOwnedControls();
@@ -653,7 +647,11 @@ export class AacFundraiseDemo extends LitElement {
     this.liveError = '';
     this.liveElapsedMs = null;
     try {
-      const response = await fetch(this.apiRunUrl(), { method: 'GET' });
+      const response = await fetch(this.apiEndpoint(), {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ settle_local: false }),
+      });
       const payload = await response.json().catch(() => null);
       if (!response.ok || payload?.accepted !== true || !payload.summary) {
         throw new Error(payload?.message || payload?.reason || `HTTP ${response.status}`);

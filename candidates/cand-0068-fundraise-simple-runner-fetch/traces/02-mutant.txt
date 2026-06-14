@@ -1,0 +1,5 @@
+live proof fetch is not simple GET
+regressed to POST
+regressed to custom content-type header
+regressed to JSON request body
+POST/header/body mutant rejected
