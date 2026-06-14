@@ -44,90 +44,13 @@ run(['verify-spec-pack', path.join(packOut, 'spec.pack.json'), '--format', 'json
 const pack = JSON.parse(readFileSync(path.join(packOut, 'spec.pack.json'), 'utf8'));
 
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/gu, '-').replace(/^-+|-+$/gu, '');
-const sourceRoot = path.posix.join('sites/ledger', pack.sourceRoot || 'specs');
-const repoBlobRoot = 'https://github.com/workingdoge/aac/blob/main/';
-const sourceRoutes = new Map();
-
-const routeForDoc = (doc) => {
-  const docSlug = slug(doc.id);
-  return docSlug === 'index'
-    ? `/specs/${doc.seriesId}/`
-    : `/specs/${doc.seriesId}/${docSlug}/`;
-};
-
-for (const doc of pack.documents) {
-  const rel = path.posix.normalize(doc.sourcePath);
-  const route = routeForDoc(doc);
-  sourceRoutes.set(rel, route);
-  if (path.posix.basename(rel) === 'README.md') {
-    const dir = path.posix.dirname(rel);
-    sourceRoutes.set(dir, route);
-    sourceRoutes.set(`${dir}/`, route);
-  }
-}
-
-function splitHref(href) {
-  const hashAt = href.indexOf('#');
-  if (hashAt === -1) return [href, ''];
-  return [href.slice(0, hashAt), href.slice(hashAt)];
-}
-
-function repoHrefFromSource(sourceRel, target) {
-  const sourceDir = path.posix.dirname(sourceRel);
-  const resolved = path.posix.normalize(path.posix.join(sourceRoot, sourceDir, target));
-  return `${repoBlobRoot}${resolved}`;
-}
-
-function rewriteSpecHref(sourceRel, href) {
-  if (
-    href.startsWith('#') ||
-    href.startsWith('/') ||
-    /^[a-z][a-z0-9+.-]*:/iu.test(href)
-  ) {
-    return href;
-  }
-
-  const [target, suffix] = splitHref(href);
-  if (!target) return href;
-
-  const sourceDir = path.posix.dirname(sourceRel);
-  const resolved = path.posix.normalize(path.posix.join(sourceDir, target));
-  const candidates = [];
-  if (target.endsWith('/')) {
-    candidates.push(path.posix.normalize(path.posix.join(resolved, 'README.md')));
-    candidates.push(resolved);
-    candidates.push(`${resolved}/`);
-  } else {
-    candidates.push(resolved);
-    if (!path.posix.extname(resolved)) {
-      candidates.push(path.posix.normalize(path.posix.join(resolved, 'README.md')));
-      candidates.push(`${resolved}/`);
-    }
-  }
-
-  for (const candidate of candidates) {
-    const route = sourceRoutes.get(candidate);
-    if (route) return `${route}${suffix}`;
-  }
-
-  return `${repoHrefFromSource(sourceRel, target)}${suffix}`;
-}
-
-function rewriteSpecMarkdownLinks(body, doc) {
-  return body.replace(/\]\(([^)\s]+)(\s+"[^"]*")?\)/gu, (_m, href, title = '') => {
-    return `](${rewriteSpecHref(doc.sourcePath, href)}${title})`;
-  });
-}
-
-for (const series of new Set(pack.documents.map((doc) => doc.seriesId))) {
-  rmSync(path.join(docsRoot, series), { recursive: true, force: true });
-}
+for (const series of ['rfc', 'registers']) rmSync(path.join(docsRoot, series), { recursive: true, force: true });
 
 for (const doc of pack.documents) {
   const src = readFileSync(path.join(packOut, doc.packPath.file), 'utf8');
   const m = src.match(/^#\s+(.+)\r?\n/u);
   const title = doc.title || (m ? m[1].trim() : doc.id);
-  const body = rewriteSpecMarkdownLinks(m ? src.slice(m[0].length).replace(/^\r?\n/u, '') : src, doc);
+  const body = m ? src.slice(m[0].length).replace(/^\r?\n/u, '') : src;
   const out = path.join(docsRoot, doc.seriesId, `${slug(doc.id)}.md`);
   mkdirSync(path.dirname(out), { recursive: true });
   const note =

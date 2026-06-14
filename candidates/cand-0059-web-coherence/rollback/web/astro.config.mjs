@@ -34,11 +34,8 @@ export default defineConfig({
       pagination: true,
       tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 4 },
       sidebar: [
-        { label: 'Start here', items: ['index', 'fundraise'] },
-        { label: 'Implementation', items: ['circuit', 'registry', 'components'] },
-        { label: 'Application targets', autogenerate: { directory: 'specs/applications' } },
-        { label: 'Profiles', autogenerate: { directory: 'specs/profiles' } },
-        { label: 'Core RFCs', autogenerate: { directory: 'specs/rfc' } },
+        { label: 'The standard', items: ['index', 'circuit', 'registry', 'fundraise', 'components'] },
+        { label: 'RFC suite', autogenerate: { directory: 'specs/rfc' } },
         { label: 'Registers', autogenerate: { directory: 'specs/registers' } },
       ],
     }),

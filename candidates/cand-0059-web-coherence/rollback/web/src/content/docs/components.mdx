@@ -46,13 +46,10 @@ records what the verifiers discharged, never what a proposer claims.
 
 ## The receipt
 
-The clearing object is a **BalancedVectorReceipt**:
-[EVENT-COMPLETE/1](/specs/applications/event-complete-1/) compiles a typed
-commercial event into a canonical journal, [VNET/1](/specs/applications/vnet-1/)
-proves selected amount vectors net by basis dimension, and
-[SPARSE-CELLS/1](/specs/profiles/sparse-cells-1/) fixes the sparse witness
-shape. USD balances with USD, fabric with fabric, garment with garment; nothing
-collapses through price. Role coverage is proven, and the receipt carries its
-own proof.
+The clearing object is a **BalancedVectorReceipt** ([Design Note 0001](/design/0001-bvr-clearing-kernel/),
+[EVENT-COMPLETE/1](/specs/applications/event-complete-1/)) — a *vector* journal
+that balances per **incommensurable dimension**. USD balances with USD, fabric
+with fabric, garment with garment; nothing collapses through price. Role
+coverage is proven, and the receipt carries its own proof.
 
 <aac-receipt></aac-receipt>

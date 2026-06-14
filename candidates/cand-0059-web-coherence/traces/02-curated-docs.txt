@@ -1,0 +1,1 @@
+curated docs and sidebar use current stack routes

@@ -1,0 +1,6 @@
+cargo/sites/ledger/publication.json	sites/ledger/publication.json
+cargo/web/scripts/sync-specs.mjs	web/scripts/sync-specs.mjs
+cargo/web/astro.config.mjs	web/astro.config.mjs
+cargo/web/src/content/docs/index.mdx	web/src/content/docs/index.mdx
+cargo/web/src/content/docs/components.mdx	web/src/content/docs/components.mdx
+cargo/web/src/content/docs/fundraise.mdx	web/src/content/docs/fundraise.mdx
