@@ -1,0 +1,5 @@
+candidate_id: cand-0035-vnet-fundraising
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T02:19:52Z
+intent: Specify FUNDRAISE-CLEARING/1 as a VNET-backed private-balance-sheet fundraising application target: paid subscriptions update private issuer books/cap table and gate restricted token issuance, while concrete VNET curve/profile, circuit, verifier, and vendor adapters remain explicit follow-ons.
+status: landed

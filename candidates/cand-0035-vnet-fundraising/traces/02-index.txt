@@ -1,0 +1,1 @@
+application index references FUNDRAISE-CLEARING/1 and preserves VNET/1

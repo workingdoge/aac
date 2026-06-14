@@ -1,0 +1,1 @@
+FUNDRAISE-CLEARING/1 spec carries settlement, private books, cap-table, VNET, nullifier, mint, ABI, verifier, and boundary obligations
