@@ -1,0 +1,94 @@
+warning: unused global TAG_JOURNAL
+   ┌─ transition/src/main.nr:29:8
+   │
+29 │ global TAG_JOURNAL: Field = 3;
+   │        ----------- unused global
+   │
+
+[bom_receipt] Running 2 test functions
+[bom_receipt] Testing phi_reproduces_the_conformance_vector ... ok
+[bom_receipt] Testing phi_is_balanced_for_all_quantities ... ok
+[bom_receipt] 2 tests passed
+[event_bom_receipt] Running 6 test functions
+[event_bom_receipt] Testing rejects_missing_role ... ok
+[event_bom_receipt] Testing print_public_inputs ... ok
+[event_bom_receipt] Testing accepts_a_complete_kit_receipt ... ok
+[event_bom_receipt] Testing harness_rejects_an_unbalanced_journal_at_b4 ... ok
+[event_bom_receipt] Testing rejects_replay_under_a_foreign_nullifier ... ok
+[event_bom_receipt] Testing rejects_self_dealing ... ok
+[event_bom_receipt] 6 tests passed
+[event_complete] Running 5 test functions
+[event_complete] Testing accepts_a_complete_receipt ... ok
+[event_complete] Testing rejects_self_dealing ... ok
+[event_complete] Testing rejects_missing_role ... ok
+[event_complete] Testing print_public_inputs ... ok
+[event_complete] Testing rejects_replay_under_a_foreign_nullifier ... ok
+[event_complete] 5 tests passed
+[event_harness] Running 4 test functions
+[event_harness] Testing discharge_accepts_a_consistent_receipt ... ok
+[event_harness] Testing discharge_rejects_a_wrong_party_binding ... ok
+[event_harness] Testing discharge_rejects_a_wrong_journal_commitment ... ok
+[event_harness] Testing discharge_rejects_a_wrong_nullifier_binding ... ok
+[event_harness] 4 tests passed
+[event_repo_close] Running 4 test functions
+[event_repo_close] Testing accepts_a_complete_close_leg ... ok
+[event_repo_close] Testing rejects_self_dealing ... ok
+[event_repo_close] Testing print_public_inputs ... ok
+[event_repo_close] Testing rejects_a_tampered_interest ... ok
+[event_repo_close] 4 tests passed
+[event_repo_open] Running 5 test functions
+[event_repo_open] Testing rejects_missing_role ... ok
+[event_repo_open] Testing rejects_self_dealing ... ok
+[event_repo_open] Testing accepts_a_complete_open_leg ... ok
+[event_repo_open] Testing print_public_inputs ... ok
+[event_repo_open] Testing rejects_replay_under_a_foreign_nullifier ... ok
+[event_repo_open] 5 tests passed
+[hash] Running 1 test function
+[hash] Testing deterministic_and_distinguishing ... ok
+[hash] 1 test passed
+[ledger] Running 1 test function
+[ledger] Testing journal_commitment_is_order_binding ... ok
+[ledger] 1 test passed
+[nullify] Running 10 test functions
+[nullify] Testing accepts_a_non_member_insertion ... ok
+[nullify] Testing consumes_a_fresh_nullifier ... ok
+[nullify] Testing print_public_inputs ... ok
+[nullify] Testing accepts_insert_after_last ... ok
+[nullify] Testing rejects_tampered_last_root ... ok
+[nullify] Testing rejects_already_spent_nullifier ... ok
+[nullify] Testing accepts_insert_before_first ... ok
+[nullify] Testing rejects_inserting_the_zero_sentinel ... ok
+[nullify] Testing rejects_wrong_low_index ... ok
+[nullify] Testing rejects_replaying_a_spent_nullifier ... ok
+[nullify] 10 tests passed
+[pacioli] Running 7 test functions
+[pacioli] Testing journal_balances_when_columns_agree ... ok
+[pacioli] Testing cross_addition_decides_equality ... ok
+[pacioli] Testing balanced_term_is_pacioli_equal_to_zero ... ok
+[pacioli] Testing pn_numeraire_collapse_is_rejected ... ok
+[pacioli] Testing u64_roundtrip_rejects_overflow ... ok
+[pacioli] Testing u64_roundtrip_accepts_bounded ... ok
+[pacioli] Testing pn_vector_event_is_a_zero_account ... ok
+[pacioli] 7 tests passed
+[receipt] Running 1 test function
+[receipt] Testing identities_distinguish ... ok
+[receipt] 1 test passed
+[repo] Running 3 test functions
+[repo] Testing close_leg_is_balanced_for_all_quantities ... ok
+[repo] Testing legs_link ... ok
+[repo] Testing open_leg_is_balanced_for_all_quantities ... ok
+[repo] 3 tests passed
+[rulebook] Running 2 test functions
+[rulebook] Testing phi_reproduces_the_conformance_vector ... ok
+[rulebook] Testing phi_is_balanced_for_all_quantities ... ok
+[rulebook] 2 tests passed
+[transition] Running 8 test functions
+[transition] Testing balanced_transition_accepts ... ok
+[transition] Testing nullifier_root_unchanged_when_no_right_consumed ... ok
+[transition] Testing composition_transition_posts_the_bvr_journal ... ok
+[transition] Testing double_spend_rejects ... ok
+[transition] Testing print_public_inputs ... ok
+[transition] Testing tampered_next_root_rejects ... ok
+[transition] Testing unbalanced_journal_rejects ... ok
+[transition] Testing zero_multiplicity_fact_rejects ... ok
+[transition] 8 tests passed

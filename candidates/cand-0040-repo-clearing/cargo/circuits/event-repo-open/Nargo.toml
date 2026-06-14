@@ -1,0 +1,9 @@
+[package]
+name = "event_repo_open"
+type = "bin"
+authors = ["American Accounting Company"]
+[dependencies]
+repo = { path = "../repo" }
+receipt = { path = "../receipt" }
+ledger = { path = "../ledger" }
+event_harness = { path = "../event-harness" }

@@ -1,0 +1,1 @@
+nargo test --workspace green (repo 3/3 + event_repo_open 5/5 + event_repo_close 4/4); both repo witnesses solve; existing event_complete/transition/nullify still solve (value-preserving)

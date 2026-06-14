@@ -1,0 +1,2 @@
+[event_repo_close] Circuit witness successfully solved
+[event_repo_close] Witness saved to target/event_repo_close.gz

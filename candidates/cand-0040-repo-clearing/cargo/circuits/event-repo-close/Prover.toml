@@ -1,0 +1,11 @@
+# CLOSE leg witness. Public commitments from print_public_inputs.
+principal_cents = "100000000"
+interest_cents = "40000"
+collateral_par = "1000000"
+borrower_id = "111"
+lender_id = "222"
+posting_program_id = "12"
+event_commitment_pub = "0x28d57703423ef2935eda7422a5666f512ddc9eae9da486f91473e4f91c784694"
+participant_set_pub = "0x2be2070bf701535452f715ebd9898b4fb71a09732ae2401e05a698b227459667"
+journal_commitment_pub = "0x2f0114e012ca5eac1cce31c286c53c35a8410aa35c8ab0a6c525417f79c2dd62"
+event_nullifier_pub = "0x086fe51e7de3751eb72f56328dee3f4d8366cd17f7daa488580f1a06f91693af"
