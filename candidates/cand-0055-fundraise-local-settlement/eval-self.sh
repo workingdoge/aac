@@ -9,6 +9,7 @@ CARGO="$CAND_DIR/cargo"
 RUNNER="$CARGO/fundraise-demo-runner"
 WORK="$(mktemp -d /private/tmp/aac-fundraise-local-settle.XXXXXX)"
 rm -rf "$TRACES"; mkdir -p "$TRACES"
+rm -rf "$CARGO/registry/cache" "$CARGO/registry/out"
 
 NODE_BIN="${NODE_BIN:-/Users/arj/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node}"
 if [[ ! -x "$NODE_BIN" ]]; then
