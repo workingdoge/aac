@@ -1,0 +1,99 @@
+{
+  "schema": "atlas.site-registry-entry.v1",
+  "site": "aac",
+  "name": "AAC",
+  "status": "active",
+  "entryType": "domain-site",
+  "contextClasses": [
+    "meaning",
+    "realization",
+    "downstream-product",
+    "downstream-proof"
+  ],
+  "typeNotes": "Proof-native double-entry accounting domain with ledger specs, formal core, circuits, registry, runtime, and governance loop.",
+  "owner": "irai/aac",
+  "authority": "Owns AAC ledger/accounting domain semantics, RFC suite, formal ledger statements, accounting registry behavior, circuits, runtime adapters, and product/proof governance loop.",
+  "nonGoals": [
+    "Does not own Atlas site placement, registry schema, or cross-site placement doctrine.",
+    "Does not own Premath semantic cover law outside AAC-specific statements that cite upstream law.",
+    "Does not own private Personal source data except through explicit redacted exports or admitted accounting projections.",
+    "Does not own Bridge secret materialization sessions or credential custody.",
+    "Does not own Tusk workflow, issue lanes, or receipt infrastructure.",
+    "Does not make unbalanced ledger state valid by product need or proposer claim."
+  ],
+  "surfaces": [
+    {
+      "kind": "readme",
+      "path": "README.md",
+      "description": "AAC domain overview, formal-core status, and governance loop"
+    },
+    {
+      "kind": "flake",
+      "path": "flake.nix",
+      "description": "AAC development shell and build surface"
+    },
+    {
+      "kind": "design-index",
+      "path": "design/README.md",
+      "description": "AAC design surface"
+    },
+    {
+      "kind": "candidate-store",
+      "path": "candidates/README.md",
+      "description": "AAC candidate and governance loop surface"
+    },
+    {
+      "kind": "registry",
+      "path": "registry/README.md",
+      "description": "AAC registry surface"
+    },
+    {
+      "kind": "circuit",
+      "path": "circuits/README.md",
+      "description": "AAC circuit implementation surface"
+    },
+    {
+      "kind": "runtime",
+      "path": "fundraise-runtime/README.md",
+      "description": "AAC fundraise runtime surface"
+    },
+    {
+      "kind": "workflow",
+      "path": "fundraise-workflow/README.md",
+      "description": "AAC fundraise workflow surface"
+    },
+    {
+      "kind": "runtime",
+      "path": "vnet-runtime/README.md",
+      "description": "AAC vnet runtime surface"
+    },
+    {
+      "kind": "product",
+      "path": "world-app/README.md",
+      "description": "AAC World App product surface"
+    }
+  ],
+  "relatedSites": [
+    {
+      "site": "atlas",
+      "relation": "is placed by Atlas as an accounting/domain site"
+    },
+    {
+      "site": "boat",
+      "relation": "uses a Boat-derived candidate/governance loop"
+    },
+    {
+      "site": "personal",
+      "relation": "may consume explicit redacted accounting projections from Personal"
+    },
+    {
+      "site": "bridge",
+      "relation": "may consume bounded secret or materialization sessions for provider/runtime effects"
+    },
+    {
+      "site": "tusk",
+      "relation": "uses Tusk-style workflow and operator coordination without transferring AAC semantics"
+    }
+  ],
+  "firstWire": "AAC ledger state is admitted only through balanced, verifiable accounting projections and governance-loop evidence."
+}
