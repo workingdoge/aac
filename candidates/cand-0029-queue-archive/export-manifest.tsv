@@ -1,0 +1,59 @@
+# Export travel manifest (boat.export.v0): the kernel set boat-init.sh
+# materializes into a target instance — the mechanism and discipline
+# laws, never boat's soul (store, queue, cycles, theory program,
+# operator-held surfaces; origin.sh stays home per OB-1.3).
+# RJ-1.6 compiled artifact; consumer: tools/boat-init.sh.
+# Columns: type (file|dir) <TAB> repo-relative path.
+file	WORKER.md
+file	tools/loop
+file	tools/lib.sh
+file	tools/receipt-schema-check.sh
+file	tools/memory.sh
+file	tools/queue-lib.sh
+file	tools/queue-lint.sh
+file	tools/queue-archive.sh
+file	tools/cross-surface-check.sh
+file	tools/verdict-tripwire.sh
+file	tools/record-judgment-check.sh
+file	tools/route.sh
+file	tools/loop-model.py
+file	tools/loop-model-diff.sh
+file	tools/eval/attest.sh
+file	tools/eval/emit-refusal.sh
+file	tools/eval/eval-check.sh
+file	tools/eval/evaluate-candidate.sh
+file	tools/eval/evaluate-landed.sh
+file	tools/eval/witness-id.sh
+file	tools/eval/witness-id-vectors.json
+file	tools/toy/witness_id.py
+file	tools/schemas/status.vocab
+file	tools/schemas/queue-status.vocab
+file	tools/schemas/failure-classes.tsv
+file	tools/schemas/dispatch-origins.allow
+file	tools/schemas/loop-laws.json
+file	tools/schemas/instance.tsv
+file	tools/schemas/cycle-receipt.schema
+file	tools/schemas/import-receipt.schema
+file	tools/schemas/obstruction-receipt.schema
+file	tools/schemas/dissolution-receipt.schema
+file	tools/schemas/genesis-closure-receipt.schema
+file	tools/schemas/pralaya-opening-receipt.schema
+file	sites/premath/specs/PREMATH-0000-SITE.md
+file	sites/premath/specs/PREMATH-0001-GATE.md
+file	sites/premath/specs/PREMATH-0002-BIDIR-DESCENT.md
+file	sites/premath/specs/PREMATH-0003-DOCTRINE.md
+file	sites/premath/statements/record-judgments-v0.md
+file	sites/premath/statements/loop-model-v0.md
+file	sites/premath/statements/queue-judgments-v0.md
+file	sites/premath/fixtures/queue-clean-pass.md
+file	sites/premath/fixtures/queue-bad-status-fail.md
+file	sites/premath/fixtures/queue-misfiled-report.md
+file	sites/premath/fixtures/record-meta-telescope-pass-v0.md
+file	sites/premath/fixtures/record-meta-telescope-fail-v0.md
+file	sites/premath/fixtures/record-scores-sigma-pass-v0.md
+file	sites/premath/fixtures/record-scores-sigma-fail-v0.md
+file	sites/premath/fixtures/record-queue-checking-mode-pass-v0.md
+file	sites/premath/fixtures/record-queue-checking-mode-fail-v0.md
+file	sites/premath/fixtures/record-landing-receipt-pass-v0.md
+file	sites/premath/fixtures/record-vocab-atom-fail-v0.md
+dir	sites/premath/fixtures/loop-model

@@ -1,0 +1,2 @@
+queue-archive: 7 open entries (soft bound 40)
+queue-archive check rc=0 (declare 0 — advisory, read-only)

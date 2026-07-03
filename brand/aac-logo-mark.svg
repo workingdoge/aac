@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="AAC logo">
+  <title>AAC — balance is a proof</title>
+  <!-- Registry / ledger-context tile -->
+  <rect x="16" y="16" width="224" height="224" rx="52" fill="#15161a"/>
+  <!-- Debit row (top): a balanced amount vector over three basis dimensions -->
+  <rect x="71"  y="96" width="30" height="22" rx="7" fill="#f7f5ef"/>
+  <rect x="113" y="96" width="30" height="22" rx="7" fill="#f7f5ef"/>
+  <rect x="155" y="96" width="30" height="22" rx="7" fill="#f7f5ef"/>
+  <!-- Credit row (bottom): equal to the row above => balanced. Emerald accent -->
+  <rect x="71"  y="138" width="30" height="22" rx="7" fill="#1f9d63"/>
+  <rect x="113" y="138" width="30" height="22" rx="7" fill="#1f9d63"/>
+  <rect x="155" y="138" width="30" height="22" rx="7" fill="#1f9d63"/>
+</svg>

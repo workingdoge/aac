@@ -1,0 +1,5 @@
+queue-archive: archived 1 resolved entry; queue now 2 open, 0 resolved-remaining
+archive rc=0 (declare 0)
+open entries before/after: 2/2 (declare equal)
+line accounting: resolved relocated, opens retained
+content-preserving, no line lost, both lint-clean, idempotent

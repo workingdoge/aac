@@ -1,0 +1,2 @@
+manifest delta: -0/+1 (declare 0/1)
+deltas additive (-0/+1); tools/loop untouched

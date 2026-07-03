@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 220" width="780" height="220" role="img" aria-label="AAC — balance is a proof, not a promise">
+  <title>AAC logo lockup</title>
+  <!-- Mark -->
+  <g transform="translate(24,34) scale(0.6172)">
+    <rect x="16" y="16" width="224" height="224" rx="52" fill="#15161a"/>
+    <rect x="71"  y="96" width="30" height="22" rx="7" fill="#f7f5ef"/>
+    <rect x="113" y="96" width="30" height="22" rx="7" fill="#f7f5ef"/>
+    <rect x="155" y="96" width="30" height="22" rx="7" fill="#f7f5ef"/>
+    <rect x="71"  y="138" width="30" height="22" rx="7" fill="#1f9d63"/>
+    <rect x="113" y="138" width="30" height="22" rx="7" fill="#1f9d63"/>
+    <rect x="155" y="138" width="30" height="22" rx="7" fill="#1f9d63"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="208" y="120" font-family="'SF Mono','JetBrains Mono',ui-monospace,Menlo,Consolas,monospace" font-size="96" font-weight="700" letter-spacing="3" fill="#15161a">AAC</text>
+  <!-- Tagline -->
+  <text x="212" y="162" font-family="'SF Mono','JetBrains Mono',ui-monospace,Menlo,Consolas,monospace" font-size="21" letter-spacing="0.5" fill="#6c6e76">balance is a proof, not a promise</text>
+</svg>
