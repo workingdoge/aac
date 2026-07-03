@@ -1,0 +1,4 @@
+BLOCKER: web build not run because web/node_modules/.bin/astro absent and paint unavailable.
+node: v22.22.2
+npm: 10.9.7
+syntax check passed: web/scripts/sync-specs.mjs

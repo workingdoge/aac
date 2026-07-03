@@ -1,0 +1,1 @@
+current event_commitment, participant_set, journal_commitment, and event_nullifier are present in aac-receipt.ts and /components; removal mutant rejected

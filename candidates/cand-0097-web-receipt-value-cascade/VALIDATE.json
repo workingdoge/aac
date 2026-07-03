@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0097-web-receipt-value-cascade",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "5c74f01c0a8e42509f88bd3ff1ee0b1f12a586547663662016ff0444de267b65",
+    "LANDING": "302884377610938dc9e6fde415e8d441328c10fe8fac14a2c1dc387042941f15",
+    "META": "7020e3252ef1da90a7c2c4a2e800f6e2be078f93689e7eb2766f3fc6e9bbcd15"
+  }
+}

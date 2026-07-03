@@ -1,0 +1,19 @@
+{
+  "evaluated_at": "2026-07-03T17:28:20Z",
+  "task": "cand-0097 web aac-receipt value cascade: update component and /components public inputs after cand-0032 receipt tag reassignment, verify beta.14 event_complete values, build or block honestly, and resolve the queue entry.",
+  "checks": [
+    {"name": "t01-old-values-absent", "result": "pass"},
+    {"name": "t02-new-values-present", "result": "pass"},
+    {"name": "t03-recompute", "result": "pass"},
+    {"name": "t04-web-build", "result": "pass"},
+    {"name": "t05-queue-update", "result": "pass"}
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "1e2b4e246324bc5997de74cf243e5c183cc82fa653e558c835c3f41678e103b3",
+    "traces_sha256": "5b1c53972f99582ffd348004f5bb24153db2955d2692f6abc5d3a36cf86054e4",
+    "body_sha256": "f68234dea3a5ccaf98d96d14beb6a9badda904299bf1f000b13a9457b7b9f0e7",
+    "attestation": "6675980a2396b98cc50e4f07eeb06ca7ad9a8a1a8767d8aaa33c9c9751a30d3e"
+  }
+}

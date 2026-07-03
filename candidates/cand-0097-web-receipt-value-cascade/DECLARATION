@@ -1,0 +1,4 @@
+layer: artifact
+implements: none
+preserves: dm.presentation.projection,dm.commitment.attest
+compares_to: cand-0026-web-poseidon-roots precedent; cand-0032-ledger-receipt-split local slug

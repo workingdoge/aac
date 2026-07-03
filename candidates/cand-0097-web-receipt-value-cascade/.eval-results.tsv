@@ -1,0 +1,5 @@
+t01-old-values-absent	pass
+t02-new-values-present	pass
+t03-recompute	pass
+t04-web-build	pass
+t05-queue-update	pass

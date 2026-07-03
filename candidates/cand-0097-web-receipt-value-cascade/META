@@ -1,0 +1,5 @@
+candidate_id: cand-0097-web-receipt-value-cascade
+cycle_id: aac-2026-06-13
+opened: 2026-07-03T17:19:25Z
+intent: Web aac-receipt value cascade: refresh stale tag-reassignment values (cand-0032 follow-up)
+status: landed

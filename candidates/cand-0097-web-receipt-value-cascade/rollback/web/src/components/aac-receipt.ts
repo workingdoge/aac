@@ -19,24 +19,6 @@ export class AacReceipt extends LitElement {
     { acct: 'Supplier · Inventory', side: 'Cr', v: [0, 50, 0] },
     { acct: 'Buyer · Payable', side: 'Cr', v: [10000, 0, 0] },
   ];
-  private proofInputs = [
-    {
-      label: 'event_commitment · tag 120',
-      value: '0x22dde87bb42e2c0578693c0cc412f172b8ebd73de6201941f8eed299685a6d5a',
-    },
-    {
-      label: 'participant_set · tag 124',
-      value: '0x2be2070bf701535452f715ebd9898b4fb71a09732ae2401e05a698b227459667',
-    },
-    {
-      label: 'journal_commitment · tag 3',
-      value: '0x1bd134b20563b6f8e23129e7af09640e7024b7ef5fe4619807b07f8fdab896e2',
-    },
-    {
-      label: 'event_nullifier · tag 125',
-      value: '0x2425a832b86b32f7ad27a53c591bf3e4de047adc638caddbe8830fd7038c3545',
-    },
-  ];
 
   private fmt(n: number, kind: 'money' | 'unit'): string {
     if (n === 0) return '—';
@@ -60,9 +42,6 @@ export class AacReceipt extends LitElement {
     .roles .t { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--aac-color-steel, #6b6b64); margin-right: 2px; }
     .role { font-family: var(--aac-mono, "IBM Plex Mono", monospace); font-size: 11.5px; color: var(--aac-color-navy, #21324f); border: 1px solid var(--aac-color-navy, #21324f); border-radius: 2px; padding: 2px 8px; }
     .role b { color: var(--aac-color-oxblood, #93302c); }
-    .inputs { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 5px 12px; padding: 9px 16px; border-bottom: 1px solid var(--aac-color-rule, #e2dac4); font-family: var(--aac-mono, "IBM Plex Mono", monospace); font-size: 10.5px; }
-    .input-k { color: var(--aac-color-steel, #6b6b64); white-space: nowrap; }
-    .input-v { color: var(--aac-color-navy, #21324f); overflow-wrap: anywhere; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th, td { padding: 7px 16px; text-align: right; }
     th.acct, td.acct { text-align: left; }
@@ -100,12 +79,6 @@ export class AacReceipt extends LitElement {
           <span class="role">Buyer <b>✓</b></span>
           <span class="role">Supplier <b>✓</b></span>
           <span class="t" style="margin-left:auto">coverage complete</span>
-        </div>
-
-        <div class="inputs" aria-label="EVENT-COMPLETE public inputs">
-          ${this.proofInputs.map(
-            (input) => html`<span class="input-k">${input.label}</span><span class="input-v">${input.value}</span>`,
-          )}
         </div>
 
         <table>

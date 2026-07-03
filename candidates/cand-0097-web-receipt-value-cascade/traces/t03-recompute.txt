@@ -1,0 +1,1 @@
+beta.14 event_complete recomputation trace printed the four public inputs and execute solved, or an honest blocker was recorded; mutant rejected
