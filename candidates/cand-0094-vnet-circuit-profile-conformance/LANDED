@@ -4,3 +4,4 @@ seeds/world-app/provekit-vnet/Prover.toml.example	world-app/provekit-vnet/Prover
 seeds/candidates/QUEUE.md	candidates/QUEUE.md	yes
 # landed_at: 2026-07-03T14:51:48Z
 # toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=feebb6c98bd0faef8b540a9e26c410e98caefd38b6309aaaefa5a9045adf0c3b unavailable(not-in-devshell)
+git_commit	cc3f63d
