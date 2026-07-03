@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -u
+
+# Template for dependency-mode instances. Install this file as tools/loop.
+# It resolves the pinned Loop input from this instance's flake.lock, builds the
+# input's kernelExport package into the Nix store, exports BOAT_KERNEL_STORE for
+# staged eval helpers, and execs the store kernel's tools/loop.
+
+die() {
+  printf 'loop kernel shim: %s\n' "$1" >&2
+  exit "${2:-70}"
+}
+
+resolve_kernel_dir() {
+  local root="$1" candidate found count=0
+  [[ -d "$root" ]] || return 1
+  if [[ -x "$root/tools/loop" ]]; then
+    printf '%s\n' "$root"
+    return 0
+  fi
+  while IFS= read -r candidate; do
+    if [[ -x "$candidate/tools/loop" ]]; then
+      found="$candidate"
+      count=$((count + 1))
+    fi
+  done < <(find "$root" -mindepth 1 -maxdepth 1 -type d | sort)
+  [[ "$count" -eq 1 ]] || return 1
+  printf '%s\n' "$found"
+}
+
+script_path="${BASH_SOURCE[0]}"
+script_dir="${script_path%/*}"
+[[ "$script_dir" != "$script_path" ]] || script_dir="."
+script_dir="$(cd "$script_dir" && pwd)"
+repo_root="$(cd "$script_dir/.." && pwd)"
+kernel_store="${BOAT_KERNEL_STORE:-}"
+
+if [[ -n "$kernel_store" ]]; then
+  kernel_store="$(resolve_kernel_dir "$kernel_store")" \
+    || die "BOAT_KERNEL_STORE does not contain an executable kernel tools/loop"
+else
+  command -v nix >/dev/null 2>&1 \
+    || die "nix is required to resolve the pinned Loop kernel; set BOAT_KERNEL_STORE to a kernel export path to run without nix"
+  [[ -f "$repo_root/flake.lock" ]] \
+    || die "flake.lock is required to resolve the pinned Loop kernel"
+
+  err="${TMPDIR:-/tmp}/loop-kernel-shim.$$.err"
+  kernel_store="$(
+    BOAT_KERNEL_SHIM_REPO="$repo_root" nix \
+      --extra-experimental-features "nix-command flakes" \
+      build --no-link --print-out-paths --impure --expr '
+        let
+          repo = builtins.getEnv "BOAT_KERNEL_SHIM_REPO";
+          flake = builtins.getFlake ("path:" + repo);
+          system = builtins.currentSystem;
+        in flake.inputs.loop.packages.${system}.kernelExport
+      ' 2>"$err"
+  )" || {
+    sed -n '1,120p' "$err" >&2
+    rm -f "$err"
+    die "failed to build the pinned Loop kernel export from this flake"
+  }
+  rm -f "$err"
+  kernel_store="$(resolve_kernel_dir "$kernel_store")" \
+    || die "resolved kernel store path has no executable tools/loop: $kernel_store"
+fi
+
+export BOAT_KERNEL_STORE="$kernel_store"
+exec "$kernel_store/tools/loop" "$@"

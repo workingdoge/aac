@@ -11,6 +11,7 @@ file	tools/skill-kernel-check.sh
 file	tools/record-judgment-check.sh
 file	tools/review-judgment-check.sh
 file	tools/loop
+file	tools/kernel-shim.template.sh
 file	tools/lane.sh
 file	tools/lib.sh
 file	tools/receipt-schema-check.sh

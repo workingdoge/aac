@@ -73,6 +73,42 @@ row_count() {
   awk 'NF && $1 !~ /^#/ { c++ } END { print c + 0 }' "$1"
 }
 
+eval_lib_resolve_kernel_store() {
+  local root="$1" candidate found count=0
+  [[ -d "$root" ]] || { eval_lib_err "BOAT_KERNEL_STORE is not a directory: $root"; return 65; }
+  if [[ -f "$root/tools/loop" && -f "$root/WORKER.md" ]]; then
+    printf '%s\n' "$root"
+    return 0
+  fi
+  while IFS= read -r candidate; do
+    if [[ -f "$candidate/tools/loop" && -f "$candidate/WORKER.md" ]]; then
+      found="$candidate"
+      count=$((count + 1))
+    fi
+  done < <(find "$root" -mindepth 1 -maxdepth 1 -type d | sort)
+  case "$count" in
+    1) printf '%s\n' "$found" ;;
+    0) eval_lib_err "BOAT_KERNEL_STORE does not contain a kernel export: $root"; return 65 ;;
+    *) eval_lib_err "BOAT_KERNEL_STORE contains multiple kernel exports: $root"; return 65 ;;
+  esac
+}
+
+eval_lib_inject_kernel_store() {
+  local out="$1" store="$2" file rel
+  store="$(eval_lib_resolve_kernel_store "$store")" || return "$?"
+  while IFS= read -r file; do
+    rel="${file#"$store/"}"
+    case "$rel" in
+      tools/schemas/instance.tsv|tools/schemas/kernel-adaptations.tsv)
+        continue
+        ;;
+    esac
+    mkdir -p "$out/$(dirname "$rel")" || return 1
+    cp -p "$file" "$out/$rel" || return 1
+    chmod u+w "$out/$rel" 2>/dev/null || true
+  done < <(find "$store" -type f | sort)
+}
+
 # Usage: stage_root OUT [--head-only] [--apply-landing] [--include-candidate]
 # Copies ROOT's HEAD tree to OUT and, by default, overlays CAND/LANDING seeds.
 stage_root() {
@@ -134,6 +170,9 @@ stage_root() {
         *) eval_lib_err "LANDING kind invalid: $kind"; return 65 ;;
       esac
     done < "$CAND/LANDING"
+  fi
+  if [[ -n "${BOAT_KERNEL_STORE:-}" ]]; then
+    eval_lib_inject_kernel_store "$out" "$BOAT_KERNEL_STORE" || return "$?"
   fi
 }
 
