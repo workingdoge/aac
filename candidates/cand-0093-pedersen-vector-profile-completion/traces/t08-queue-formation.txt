@@ -1,0 +1,1 @@
+queue has one Open/Resolved header pair, resolves cand-0092, and opens the independent cross-check follow-up; duplicate-header mutant rejected

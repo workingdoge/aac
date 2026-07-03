@@ -1,0 +1,1 @@
+Noir derivation harness runs and regenerates PEDERSEN-VECTOR-1.json byte-identically; corrupt mutant rejected

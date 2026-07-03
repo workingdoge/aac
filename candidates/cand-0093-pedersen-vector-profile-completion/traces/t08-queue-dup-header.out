@@ -1,0 +1,2 @@
+{"failed_judgment": "QJ queue lint", "lawRef": "RJ-1.1", "obstruction_class": "record-formation-incomplete", "reason": "expected exactly one ## Open header, found 2", "tokenPath": "QUEUE.section.Open", "witnessId": "w1_7s2oteq4h315vmm003t5ti4kf9eq5ap80uboienjhd416mii5cmg"}
+queue-lint: 1 fail-closed violation(s), 0 report-only finding(s)

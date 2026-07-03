@@ -1,0 +1,1 @@
+canonical-y prose pins first QR counter and even square root; mutant rejected

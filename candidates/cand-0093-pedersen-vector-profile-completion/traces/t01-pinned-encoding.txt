@@ -1,0 +1,1 @@
+field_of prose pins UTF-8 big-endian, <=31-byte fail-closed strings, no reduction, and integer fields; mutant rejected

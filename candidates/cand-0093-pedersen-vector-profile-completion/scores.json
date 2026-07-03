@@ -1,0 +1,22 @@
+{
+  "evaluated_at": "2026-07-03T14:27:12Z",
+  "task": "Complete PEDERSEN-VECTOR/1 generator-pinning profile: field_of encoding, basis commitment, canonical y, beta.19 Noir-generated vectors, honesty boundary, and cand-0092 queue resolution.",
+  "checks": [
+    {"name": "t01-pinned-encoding", "result": "pass"},
+    {"name": "t02-basis-commitment", "result": "pass"},
+    {"name": "t03-canonical-y", "result": "pass"},
+    {"name": "t04-profile-id-lowercase", "result": "pass"},
+    {"name": "t05-seed-formula-unchanged", "result": "pass"},
+    {"name": "t06-vectors-regenerate", "result": "pass"},
+    {"name": "t07-honesty-clause", "result": "pass"},
+    {"name": "t08-queue-formation", "result": "pass"}
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "8130010f24f36165418a2b38e4643427b617429341c0ba6ebbe090c6efe6fb14",
+    "traces_sha256": "c3738c3229b1310afe4489c2feb60fc41ca341bcf30b80045bc509bad689c96d",
+    "body_sha256": "2cf431d082c6d9ec1cfeed5355f1931c2a8495feee57220aeed9a2c20cf14692",
+    "attestation": "5d9d13d1865cc1410731c66099f4398666b532e5fbeed60e6127306e46d91536"
+  }
+}

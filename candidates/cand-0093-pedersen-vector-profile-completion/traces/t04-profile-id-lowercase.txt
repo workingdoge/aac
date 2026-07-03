@@ -1,0 +1,1 @@
+§8 profile_id remains lowercase pedersen-vector/1; uppercase mutant rejected

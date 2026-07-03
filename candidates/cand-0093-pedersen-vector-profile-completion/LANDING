@@ -1,0 +1,6 @@
+seeds/sites/ledger/specs/profiles/PEDERSEN-VECTOR-1.md	sites/ledger/specs/profiles/PEDERSEN-VECTOR-1.md
+seeds/sites/ledger/specs/profiles/vectors/PEDERSEN-VECTOR-1.json	sites/ledger/specs/profiles/vectors/PEDERSEN-VECTOR-1.json
+seeds/world-app/provekit-pedersen-vector-derivation/Nargo.toml	world-app/provekit-pedersen-vector-derivation/Nargo.toml
+seeds/world-app/provekit-pedersen-vector-derivation/render-vector.mjs	world-app/provekit-pedersen-vector-derivation/render-vector.mjs
+seeds/world-app/provekit-pedersen-vector-derivation/src/main.nr	world-app/provekit-pedersen-vector-derivation/src/main.nr
+seeds/candidates/QUEUE.md	candidates/QUEUE.md

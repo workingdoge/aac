@@ -1,0 +1,1 @@
+basis_commitment formula pins ordered basis with explicit n and 2/FACT target-identity clause; mutant rejected

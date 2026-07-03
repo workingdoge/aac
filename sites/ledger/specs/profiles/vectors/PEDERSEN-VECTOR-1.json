@@ -1,0 +1,188 @@
+{
+  "schema": "aac.pedersen-vector.derivation.v1",
+  "profile_id": "pedersen-vector/1",
+  "description": "PEDERSEN-VECTOR/1 Grumpkin generator derivation for the 3-dimensional VNET demo basis.",
+  "toolchain": {
+    "noir": "v1.0.0-beta.19",
+    "package": "world-app/provekit-pedersen-vector-derivation",
+    "hash": "Noir stdlib std::hash::poseidon2_permutation, width 4/rate 3 sponge with message length in the capacity lane"
+  },
+  "field_of": {
+    "rule": "UTF-8 bytes interpreted as a big-endian integer; byte length must be <= 31; no reduction.",
+    "values": [
+      {
+        "string": "aac/vnet/1",
+        "byte_length": 10,
+        "field": "459866030074855593094961",
+        "hex": "0x6161632f766e65742f31"
+      },
+      {
+        "string": "aac/vnet/1/basis",
+        "byte_length": 16,
+        "field": "129440780105341809738746541662016858483",
+        "hex": "0x6161632f766e65742f312f6261736973"
+      },
+      {
+        "string": "pedersen-vector/1",
+        "byte_length": 17,
+        "field": "38246398409996331787205124593264425578289",
+        "hex": "0x706564657273656e2d766563746f722f31"
+      },
+      {
+        "string": "G",
+        "byte_length": 1,
+        "field": "71",
+        "hex": "0x47"
+      },
+      {
+        "string": "H",
+        "byte_length": 1,
+        "field": "72",
+        "hex": "0x48"
+      },
+      {
+        "string": "USD",
+        "byte_length": 3,
+        "field": "5591876",
+        "hex": "0x555344"
+      },
+      {
+        "string": "fabric",
+        "byte_length": 6,
+        "field": "112568449526115",
+        "hex": "0x666162726963"
+      },
+      {
+        "string": "shares",
+        "byte_length": 6,
+        "field": "126892148680051",
+        "hex": "0x736861726573"
+      }
+    ]
+  },
+  "basis": {
+    "n": 3,
+    "basis_type_ids": [
+      "USD",
+      "fabric",
+      "shares"
+    ],
+    "basis_commitment": {
+      "field": "3199263021048886800067584263637418741171169451581946816529327257071282393363",
+      "hex": "0x0712b7fcc0dfb564de94afac62b481c6d0396771c1c3a753f152ac5549a99113",
+      "formula": "Poseidon2(field_of(\"aac/vnet/1/basis\"), field_of(profile_id), n, field_of(basis_type_id_0), field_of(basis_type_id_1), field_of(basis_type_id_2))"
+    }
+  },
+  "curve": {
+    "name": "Grumpkin",
+    "base_field": "21888242871839275222246405745257275088548364400416034343698204186575808495617",
+    "equation": "y^2 = x^3 - 17",
+    "canonical_y": "even square root"
+  },
+  "generators": [
+    {
+      "label": "H",
+      "j": 0,
+      "basis_type_id_j": "USD",
+      "seed": {
+        "field": "10940186896042624944976460283495620559121424095382032222201435949679033712780",
+        "hex": "0x182fed253ea577b5a7b5d6b170dacdf160e3b209aa5564578f659db5eb04008c"
+      },
+      "accepted_ctr": 0,
+      "point": {
+        "x": "4442116937809428038466015586910822967980340166078939661906387952790413686754",
+        "y": "4817294039429267488105969530543855969668900749954483897040948903322607393472",
+        "x_hex": "0x09d2262aad8e762d15f87275820b57bd0e817ca5c61c695835f5fcd1dc42b7e2",
+        "y_hex": "0x0aa67de6cea53e79a8e1e45fddb7b97e6b4f74293458161bc9079e0327739ac0",
+        "is_infinite": false
+      },
+      "rejected_prior_counters": []
+    },
+    {
+      "label": "G",
+      "j": 0,
+      "basis_type_id_j": "USD",
+      "seed": {
+        "field": "13473456980920230159763372780932008564032546476222809528432830491693148912378",
+        "hex": "0x1dc9b4d70be8888e08fb1b0ed36eab5388a1463c3cac1e04f354a5b712cdbafa"
+      },
+      "accepted_ctr": 0,
+      "point": {
+        "x": "21378867110033115454839947600763369042167635625733880473869229047765030521928",
+        "y": "8543745247798408310630292543307850943452724989093895241541507109679289712694",
+        "x_hex": "0x2f44028dcaea5b2839c31942fc8d0363f4e15f810c484d96fa1ac28c1351cc48",
+        "y_hex": "0x12e396a43afbae17139b33df3fd1a54e9e281e4cc452fe9b41e05367c22dc036",
+        "is_infinite": false
+      },
+      "rejected_prior_counters": []
+    },
+    {
+      "label": "G",
+      "j": 1,
+      "basis_type_id_j": "fabric",
+      "seed": {
+        "field": "20158900163473807836480342338261400729201682984091068647090343330923242264846",
+        "hex": "0x2c91887cc64619535f1c0f89e3245913cf01ffe1a71e1be0f18bcbc593cb190e"
+      },
+      "accepted_ctr": 3,
+      "point": {
+        "x": "15744486407527661081054625781727663178874265897862468867830629516418152836222",
+        "y": "1205556853403814078068855613005326727425376491567528311964745933406350166466",
+        "x_hex": "0x22cf104238df8ba93b019fd83fc7d508282fbd80d46f87fffcc9b9b6465eac7e",
+        "y_hex": "0x02aa522cf4dc65f976cc22df170746ce6b3e08b6fe0e2a378a171569908949c2",
+        "is_infinite": false
+      },
+      "rejected_prior_counters": [
+        {
+          "ctr": 0,
+          "x_hex": "0x29a57044942717755e6d546026246f8efd6ee0aab72ccb70d0231a79566cfb82",
+          "legendre": "-1"
+        },
+        {
+          "ctr": 1,
+          "x_hex": "0x162dde57ad57b4cf4b19efd607f7aeb4c0156608b2d29a0d8a5d1715179f4226",
+          "legendre": "-1"
+        },
+        {
+          "ctr": 2,
+          "x_hex": "0x2914a7a29ef587f3276dd20ecad62b3d40980a7a44966146da529a6517338733",
+          "legendre": "-1"
+        }
+      ]
+    },
+    {
+      "label": "G",
+      "j": 2,
+      "basis_type_id_j": "shares",
+      "seed": {
+        "field": "16704946934808176836432298179695866751292064540733570957262331754371555754829",
+        "hex": "0x24eeaa372ccb256764dc06dac58486280ca430c7325087fd6a1725422bbb834d"
+      },
+      "accepted_ctr": 2,
+      "point": {
+        "x": "6215747075525991822894217274899096128320508540089587382936458111022554489410",
+        "y": "17447054944361757926801073249828699265838738136270834167682343104825010839236",
+        "x_hex": "0x0dbdfcf8d62a57e5b07c26bc6c3ef1c37a6950be9601f529822547ae4a6d2242",
+        "y_hex": "0x2692aee31c2e372093580990ec19a30b25fe41391d3ff2287221053e9c465ec4",
+        "is_infinite": false
+      },
+      "rejected_prior_counters": [
+        {
+          "ctr": 0,
+          "x_hex": "0x1bad3d404e5d0576c95868d0404009fc6a310c695344b747dac9df020153c42b",
+          "legendre": "-1"
+        },
+        {
+          "ctr": 1,
+          "x_hex": "0x2ca57d4f85f1ee0533474576a27fcc5d84cef484b56d690d22eb9e10a652a11e",
+          "legendre": "-1"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Generated with the Noir beta.19 stdlib Poseidon2 permutation, the same implementation family used by the ProveKit VNET circuit.",
+    "These vectors pin the PEDERSEN-VECTOR/1 derivation rule; they are not yet an independent Poseidon2 implementation cross-check.",
+    "An independent Python Poseidon2 cross-check is intentionally queued as follow-up work."
+  ]
+}

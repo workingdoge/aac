@@ -1,0 +1,1 @@
+spec and vector carry the Noir-family/not-independent-cross-check honesty clause; mutant rejected

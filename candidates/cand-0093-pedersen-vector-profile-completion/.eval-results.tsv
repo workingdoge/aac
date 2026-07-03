@@ -1,0 +1,8 @@
+t01-pinned-encoding	pass
+t02-basis-commitment	pass
+t03-canonical-y	pass
+t04-profile-id-lowercase	pass
+t05-seed-formula-unchanged	pass
+t06-vectors-regenerate	pass
+t07-honesty-clause	pass
+t08-queue-formation	pass

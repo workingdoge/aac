@@ -1,0 +1,5 @@
+candidate_id: cand-0093-pedersen-vector-profile-completion
+cycle_id: aac-2026-06-13
+opened: 2026-07-03T14:03:32Z
+intent: Pin the PEDERSEN-VECTOR/1 derivation encodings, basis commitment, canonical-y, and vectors (closes the cand-0092 obstruction)
+status: landed

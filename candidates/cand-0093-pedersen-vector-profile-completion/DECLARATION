@@ -1,0 +1,4 @@
+layer: theory
+implements: sites/ledger/specs/profiles/PEDERSEN-VECTOR-1.md
+preserves: dm.commitment.attest
+compares_to: sites/ledger/specs/profiles/VNET-BN254-G1-1.md, candidates/cand-0092-vnet-profile-alignment, candidates/cand-0044-pedersen-vector-profile
