@@ -1,0 +1,4 @@
+layer: artifact
+implements: none
+preserves: dm.commitment.attest
+compares_to: sites/ledger/specs/2/README.md, sites/ledger/specs/registers/R1.md, PC-1.1 TypedFact declaredType requirement

@@ -1,0 +1,5 @@
+candidate_id: cand-0099-r1-typeid-table
+cycle_id: aac-2026-06-13
+opened: 2026-07-03T22:55:49Z
+intent: Compute R1's typeId table + 2/FACT canonical-encoding vectors (every cross-thread TypedFact depends on this)
+status: landed

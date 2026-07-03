@@ -1,0 +1,5 @@
+t01-cjson-control-escape-gap	pass
+t02-typedecl-document-gap	pass
+t03-r1-tbd-gap	pass
+t04-queue-update-mutant	pass
+t05-citation-mutant	pass

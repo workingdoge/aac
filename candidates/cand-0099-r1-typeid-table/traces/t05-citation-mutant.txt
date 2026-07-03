@@ -1,0 +1,1 @@
+2/FACT rule citations resolve on source text and fail on a citation-removal mutant

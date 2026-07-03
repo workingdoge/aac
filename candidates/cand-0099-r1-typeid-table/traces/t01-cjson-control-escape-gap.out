@@ -1,0 +1,1 @@
+blocked: newline has distinct JSON spellings ("\n" vs "\u000a") and 2/FACT does not choose one

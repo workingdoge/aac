@@ -1,0 +1,19 @@
+{
+  "evaluated_at": "2026-07-03T23:00:13Z",
+  "task": "Record the cand-0099 cjson/1 and TypeDecl byte-determination blockers instead of computing arbitrary R1 typeIds.",
+  "checks": [
+    {"name": "t01-cjson-control-escape-gap", "result": "pass"},
+    {"name": "t02-typedecl-document-gap", "result": "pass"},
+    {"name": "t03-r1-tbd-gap", "result": "pass"},
+    {"name": "t04-queue-update-mutant", "result": "pass"},
+    {"name": "t05-citation-mutant", "result": "pass"}
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "2635fdb56d20f4c917b3fca69e535c779bf0dacf00f99014ad94a59b92bf488e",
+    "traces_sha256": "a6a2ad294c375cd6130c0fd5002330705b90237722c867d3333561abfa6d5b9d",
+    "body_sha256": "07f6157c2847debed824632bafe8f4d2f5f3b5b867bf52f36fd0f250a7af8336",
+    "attestation": "8b702a6cc5f29633dccb99d250d6c838fcc5367c2d89799b8be4b88c43812204"
+  }
+}

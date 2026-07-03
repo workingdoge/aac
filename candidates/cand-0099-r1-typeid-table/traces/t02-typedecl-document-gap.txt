@@ -1,0 +1,1 @@
+2/FACT section 3 requires H(enc(TypeDecl)), but no byte-canonical TypeDecl documents exist for the R1 handles
