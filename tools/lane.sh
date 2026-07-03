@@ -15,10 +15,18 @@ RESERVATIONS=""
 RESERVE_LOCK=""
 LAND_LOCK=""
 HELD_LOCK=""
+LANE_QUEUE_MOVED_EXIT=66
 
 die() {
   printf 'lane: %s\n' "$*" >&2
   exit 1
+}
+
+die_code() {
+  local code="$1"
+  shift
+  printf 'lane: %s\n' "$*" >&2
+  exit "$code"
 }
 
 usage() {
@@ -317,6 +325,41 @@ transplant_candidate_dir() {
   mv "$tmp" "$dest" || die "could not install transplanted candidate: $dest"
 }
 
+candidate_has_legacy_queue_file_row() {
+  local cand="$1" src="" dest="" kind=""
+  [[ -f "$cand/LANDING" ]] || return 1
+  while read -r src dest kind; do
+    [[ -n "$src" && "$src" != \#* ]] || continue
+    kind="${kind:-file}"
+    dest="${dest#./}"
+    [[ "$dest" == "candidates/QUEUE.md" && "$kind" == "file" ]] && return 0
+  done < "$cand/LANDING"
+  return 1
+}
+
+guard_legacy_queue_file_landing() {
+  local wt="$1" id="$2" cand="$wt/candidates/$id" wt_head="" base_commit="" base_queue=""
+  candidate_has_legacy_queue_file_row "$cand" || return 0
+  [[ -f "$ROOT/candidates/QUEUE.md" ]] \
+    || die "primary candidates/QUEUE.md missing for legacy queue-file landing guard"
+  wt_head="$(git -C "$wt" rev-parse HEAD 2>/dev/null)" \
+    || die "could not resolve lane worktree HEAD for $id"
+  base_commit="$(git -C "$ROOT" merge-base HEAD "$wt_head" 2>/dev/null)" \
+    || die "could not determine primary/lane merge-base for $id"
+  base_queue="$(mktemp "${TMPDIR:-/tmp}/lane-queue-base.XXXXXX")" \
+    || die "could not create queue-base comparison temp file"
+  if ! git -C "$wt" show "$base_commit:candidates/QUEUE.md" > "$base_queue" 2>/dev/null; then
+    rm -f "$base_queue"
+    die "could not read base candidates/QUEUE.md for $id at $base_commit"
+  fi
+  if ! cmp -s "$ROOT/candidates/QUEUE.md" "$base_queue"; then
+    rm -f "$base_queue"
+    die_code "$LANE_QUEUE_MOVED_EXIT" \
+      "land refused: first-dogfood incident class: legacy file-kind QUEUE row when the primary queue moved; fix procedure: convert the row to kind=queue-merge (capture QUEUE.base + re-brief)"
+  fi
+  rm -f "$base_queue"
+}
+
 cmd_open() {
   local slug="${1:-}" row id wt
   [[ -n "$slug" ]] || usage
@@ -349,6 +392,7 @@ EOF
     || die "land must run from the primary worktree, not the reserved lane worktree"
   [[ ! -f "$ROOT/candidates/$id/LANDED" ]] \
     || die "land refused: $id is already landed in the primary worktree"
+  guard_legacy_queue_file_landing "$wt" "$id"
 
   transplant_candidate_dir "$wt/candidates/$id" "$ROOT/candidates/$id"
 
