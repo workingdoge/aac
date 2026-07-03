@@ -1,0 +1,33 @@
+# tracker.actors.v0
+#
+# Runtime owner: Loop tracker realization.
+# Law realized: premath.issue-transition.v0 witness-class gate.
+#
+# File layout:
+#   ${BOAT_TRACKER_ROOT}/actors.tsv
+#
+# Rows are:
+#   actor<TAB>witness-class,witness-class,...
+#
+# The parser also accepts actor,witness-class,witness-class,... for small
+# hand-authored fixtures, but the canonical spelling is tab separated.
+#
+# Actor:
+#   identity.presentation:* reference
+#
+# Witness classes:
+#   SubjectValid
+#   CredentialValid
+#   ScopeValid
+#   FreshAt
+#   IssuerTrusted
+#   SignedBy
+#
+# Agent bundle:
+#   SubjectValid, CredentialValid, ScopeValid, FreshAt
+#
+# Operator bundle:
+#   IssuerTrusted, SignedBy, SubjectValid, CredentialValid, ScopeValid, FreshAt
+#
+# v0 checks only declared witness classes against the transition role table.
+# Cryptographic witness verification and identity admission are a later rung.

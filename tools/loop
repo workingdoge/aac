@@ -25,17 +25,48 @@ set -u
 #   loop status [ID]
 
 TOOLS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT="$(cd "$TOOLS_DIR/.." && pwd)"
+
+die() { printf 'loop: %s\n' "$*" >&2; exit 1; }
+
+resolve_instance_root() {
+  local root="$1" resolved
+  [[ -n "$root" ]] || {
+    printf 'loop: BOAT_INSTANCE_ROOT is set but empty\n' >&2
+    return 64
+  }
+  [[ -d "$root" ]] || {
+    printf 'loop: BOAT_INSTANCE_ROOT must be an existing directory: %s\n' "$root" >&2
+    return 64
+  }
+  resolved="$(cd "$root" && pwd)" || {
+    printf 'loop: BOAT_INSTANCE_ROOT cannot be resolved: %s\n' "$root" >&2
+    return 64
+  }
+  if [[ -d "$resolved/candidates" ]]; then
+    printf '%s\n' "$resolved"
+    return 0
+  fi
+  if [[ -f "$resolved/WORKER.md" && -f "$resolved/tools/loop" ]]; then
+    printf '%s\n' "$resolved"
+    return 0
+  fi
+  printf 'loop: BOAT_INSTANCE_ROOT must point to a governed loop instance root (expected candidates/ or WORKER.md plus tools/loop): %s\n' "$resolved" >&2
+  return 64
+}
+
+if [[ -n "${BOAT_INSTANCE_ROOT:-}" ]]; then
+  ROOT="$(resolve_instance_root "$BOAT_INSTANCE_ROOT")" || exit $?
+else
+  ROOT="$(cd "$TOOLS_DIR/.." && pwd)"
+fi
 STORE="$ROOT/candidates"
 # Instance identity (boat.instance.v0, export course): the cycle binding
 # comes from the instance registry so an exported instance carries its
 # own soul; an absent or row-less registry falls back to the boat
 # literal — byte-identical legacy behavior (RJ-1.6: the registry is
 # data, never executable authority).
-CYCLE_ID="$(awk -F'\t' '!/^#/ && $1 == "cycle_id" { print $2; exit }' "$TOOLS_DIR/schemas/instance.tsv" 2>/dev/null)"
+CYCLE_ID="$(awk -F'\t' '!/^#/ && $1 == "cycle_id" { print $2; exit }' "$ROOT/tools/schemas/instance.tsv" 2>/dev/null)"
 [[ -n "$CYCLE_ID" ]] || CYCLE_ID="boat-2026-05-17"
-
-die() { printf 'loop: %s\n' "$*" >&2; exit 1; }
 
 sha256_of() {
   if command -v shasum >/dev/null 2>&1; then
@@ -483,14 +514,16 @@ open)
   [[ -n "$id" && -n "$intent" ]] || die "usage: loop open ID \"INTENT\""
   [[ ! -e "$STORE/$id" ]] || die "candidate already exists: $id"
   require_unused_candidate_numeric_prefix "$id"
-  mkdir -p "$STORE/$id/drafts" "$STORE/$id/traces"
+  mkdir -p "$STORE/$id/drafts" "$STORE/$id/traces" \
+    || die "could not create candidate directories under $STORE/$id"
   {
     printf 'candidate_id: %s\n' "$id"
     printf 'cycle_id: %s\n' "$CYCLE_ID"
     printf 'opened: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
     printf 'intent: %s\n' "$intent"
     printf 'status: open\n'
-  } > "$STORE/$id/META"
+  } > "$STORE/$id/META" \
+    || die "could not write candidate META under $STORE/$id"
   {
     printf '# %s\n\nIntent: %s\n\nStatus: open (pre-threshold).\n\n' "$id" "$intent"
     printf '## Optional RLM Trace Evidence\n\n'
@@ -502,13 +535,15 @@ open)
     printf 'A passing RLM trace is evidence only; it does not grant answer authority,\n'
     printf 'KB admission, Boat candidate admission, Harbor readiness, live LLM calls,\n'
     printf 'provider calls, network access, shell access, or secret access.\n'
-  } > "$STORE/$id/README.md"
+  } > "$STORE/$id/README.md" \
+    || die "could not write candidate README under $STORE/$id"
   {
     printf 'layer: TODO (doctrine | theory | model | evidence-tooling | artifact)\n'
     printf 'implements: TODO (theory surfaces, or none)\n'
     printf 'preserves: TODO (dm.* list, or none, or unknown(reason))\n'
     printf 'compares_to: none\n'
-  } > "$STORE/$id/DECLARATION"
+  } > "$STORE/$id/DECLARATION" \
+    || die "could not write candidate DECLARATION under $STORE/$id"
   printf 'loop: opened %s (complete DECLARATION before validate)\n' "$id"
   ;;
 
@@ -1222,7 +1257,7 @@ land)
     s2_at="$(awk '/^# landed_at:/ { sub(/^# landed_at: */, ""); print; exit }' "$CAND/LANDED")"
     if [[ -n "$s2_snap" && -n "$s2_at" ]] \
       && s2_body="$(python3 -c 'import json,sys; print(json.dumps({"candidate": sys.argv[1], "snapshot": sys.argv[2], "landed_at": sys.argv[3]}, sort_keys=True, separators=(",", ":")))' "$id" "$s2_snap" "$s2_at" 2>/dev/null)" \
-      && printf '%s' "$s2_body" | bash "$TOOLS_DIR/memory.sh" append landing scripted >/dev/null 2>&1; then
+      && printf '%s' "$s2_body" | MEMORY_DIR="$ROOT/memory" BASE_TSV="$ROOT/nix/contexts/base.tsv" bash "$TOOLS_DIR/memory.sh" append landing scripted >/dev/null 2>&1; then
       printf 'loop: landing record appended to the memory chain\n'
     else
       printf 'loop: WARNING %s landed but the chain record was NOT appended — run: bash tools/memory.sh import-loop (cross-surface-check will flag the drift)\n' "$id" >&2
@@ -1745,6 +1780,7 @@ status)
     cat "$CAND/META"
   else
     for dir in "$STORE"/cand-*/; do
+      [[ -d "$dir" ]] || continue
       [[ -f "$dir/META" ]] || { printf '%s\t(no META)\n' "$(basename "$dir")"; continue; }
       printf '%s\t%s\t%s\n' "$(basename "$dir")" \
         "$(meta_get "$dir" status)" "$(meta_get "$dir" intent)"

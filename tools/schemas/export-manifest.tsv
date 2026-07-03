@@ -16,6 +16,7 @@ file	tools/lane.sh
 file	tools/lib.sh
 file	tools/receipt-schema-check.sh
 file	tools/memory.sh
+file	tools/tracker.sh
 file	tools/queue-lib.sh
 file	tools/queue-lint.sh
 file	tools/queue-merge.sh
@@ -49,6 +50,9 @@ file	tools/schemas/kernel-adaptations.tsv
 file	tools/schemas/review-workers.tsv
 file	tools/schemas/review-convening.txt
 file	tools/schemas/lane-policy.tsv
+file	tools/schemas/tracker-issue-v0.schema
+file	tools/schemas/tracker-event-v0.schema
+file	tools/schemas/tracker-actors-v0.schema
 file	tools/schemas/cycle-receipt.schema
 file	tools/schemas/import-receipt.schema
 file	tools/schemas/obstruction-receipt.schema

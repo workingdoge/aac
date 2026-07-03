@@ -2,6 +2,7 @@
 set -u
 
 # Template for dependency-mode instances. Install this file as tools/loop.
+# Template version: 2 (exports BOAT_INSTANCE_ROOT for the store kernel).
 # It resolves the pinned Loop input from this instance's flake.lock, builds the
 # input's kernelExport package into the Nix store, exports BOAT_KERNEL_STORE for
 # staged eval helpers, and execs the store kernel's tools/loop.
@@ -33,6 +34,7 @@ script_dir="${script_path%/*}"
 [[ "$script_dir" != "$script_path" ]] || script_dir="."
 script_dir="$(cd "$script_dir" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
+export BOAT_INSTANCE_ROOT="$repo_root"
 kernel_store="${BOAT_KERNEL_STORE:-}"
 
 if [[ -n "$kernel_store" ]]; then
