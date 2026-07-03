@@ -1,0 +1,6 @@
+# Lane coordination policy (boat.lane-policy.v0).
+# Columns: key<TAB>value<TAB>note
+lock_ttl_seconds	30	mkdir lock older than this is reclaimable only when its pid is dead
+lock_retry_initial_ms	50	initial wait between mkdir-lock acquisition attempts
+lock_retry_max_ms	500	maximum wait between mkdir-lock acquisition attempts
+lock_retry_multiplier	2	multiplier applied to the retry wait after each blocked attempt

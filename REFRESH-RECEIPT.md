@@ -3,12 +3,12 @@
 ```text
 RefreshReceipt:
   schema: boat.refresh.v0
-  refreshed_at: 2026-07-03T15:30:04Z
-  source: /Users/arj/irai/loop (commit ce0f548)
+  refreshed_at: 2026-07-03T16:01:59Z
+  source: /Users/arj/irai/loop (commit 1a7359f)
   law: premath.workspace-kernel-bundle.v0 (connection clause)
-  updated: 6 file(s)
+  updated: 3 file(s)
     - tools/schemas/export-manifest.tsv (manifest self-transport)
-  identical: 182 file(s)
+  identical: 187 file(s)
   adapted_skipped: 0 file(s)
   restored_from_skew: 0 file(s)
   removed_extraneous: 0 file(s)
