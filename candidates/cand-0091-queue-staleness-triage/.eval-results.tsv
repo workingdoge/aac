@@ -1,0 +1,14 @@
+t01-second-posting-edit	pass
+t01-second-posting-mutant	pass
+t02-provekit-edit	pass
+t02-provekit-mutant	pass
+t03-vnet-edit	pass
+t03-vnet-mutant	pass
+t04-fundraise-edit	pass
+t04-fundraise-mutant	pass
+t05-queue-lint	pass
+t05-queue-lint-mutant	pass
+t06-header-cardinality	pass
+t06-header-cardinality-mutant	pass
+t07-landing-scope	pass
+t07-landing-scope-mutant	pass

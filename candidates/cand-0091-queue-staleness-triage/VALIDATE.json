@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0091-queue-staleness-triage",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "b00ef37fa9e919db98b890d87cb6ccf312964ffe55365ba5d286c72237258b2f",
+    "LANDING": "6a56abb5460d701c1c0ecafb39ded089e588a8a850833263b221965cd294446f",
+    "META": "7aaf3078dec23acfc5daa8fcf5e4564c11f94a60dc108c7152e47f9af250791c"
+  }
+}

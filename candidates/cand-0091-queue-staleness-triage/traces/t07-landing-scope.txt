@@ -1,0 +1,1 @@
+landing scope is seeds/candidates/QUEUE.md only

@@ -1,0 +1,28 @@
+{
+  "evaluated_at": "2026-07-03T13:40:23Z",
+  "task": "cand-0091 queue staleness triage: resolve/rewrite stale queue entries",
+  "checks": [
+    {"name": "t01-second-posting-edit", "result": "pass"},
+    {"name": "t01-second-posting-mutant", "result": "pass"},
+    {"name": "t02-provekit-edit", "result": "pass"},
+    {"name": "t02-provekit-mutant", "result": "pass"},
+    {"name": "t03-vnet-edit", "result": "pass"},
+    {"name": "t03-vnet-mutant", "result": "pass"},
+    {"name": "t04-fundraise-edit", "result": "pass"},
+    {"name": "t04-fundraise-mutant", "result": "pass"},
+    {"name": "t05-queue-lint", "result": "pass"},
+    {"name": "t05-queue-lint-mutant", "result": "pass"},
+    {"name": "t06-header-cardinality", "result": "pass"},
+    {"name": "t06-header-cardinality-mutant", "result": "pass"},
+    {"name": "t07-landing-scope", "result": "pass"},
+    {"name": "t07-landing-scope-mutant", "result": "pass"}
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "a12de0f21af55e859f85a4dcd5e4188dca4c3868b962d2694d08f8bf89e58ee2",
+    "traces_sha256": "5f27790d6cd91b5e00315b873b3c60f62211cd26643fef4cacea92dee2515e72",
+    "body_sha256": "7f407bc57833973db7eec95d1ea898dfee3e3425887f8be942c16e94c4b386a5",
+    "attestation": "4c4b9a23f8d2206a6ef9deca8b5d78b38fd7453a0d709790bf11814f92b52442"
+  }
+}

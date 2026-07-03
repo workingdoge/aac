@@ -1,0 +1,5 @@
+candidate_id: cand-0091-queue-staleness-triage
+cycle_id: aac-2026-06-13
+opened: 2026-07-03T13:27:49Z
+intent: Resolve the three re-appended pre-fork queue entries against remote landings (cand-0090 follow-up)
+status: landed

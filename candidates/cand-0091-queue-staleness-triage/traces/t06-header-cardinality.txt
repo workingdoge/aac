@@ -1,0 +1,1 @@
+staged queue has exactly one Open and one Resolved header
