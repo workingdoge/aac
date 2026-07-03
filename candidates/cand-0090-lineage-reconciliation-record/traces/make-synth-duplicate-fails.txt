@@ -1,0 +1,1 @@
+make_synth refuses to overwrite an existing synthetic candidate

@@ -1,0 +1,1 @@
+record prose probe rejects a mutant with the remote-wins policy line removed

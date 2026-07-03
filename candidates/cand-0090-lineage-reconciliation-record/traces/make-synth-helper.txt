@@ -1,0 +1,1 @@
+make_synth creates a minimal synthetic candidate for the evaluator scratch space

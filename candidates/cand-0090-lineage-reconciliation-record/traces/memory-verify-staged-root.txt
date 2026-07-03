@@ -1,0 +1,1 @@
+memory.sh verify passes in the staged root

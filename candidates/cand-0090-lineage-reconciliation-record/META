@@ -1,0 +1,5 @@
+candidate_id: cand-0090-lineage-reconciliation-record
+cycle_id: aac-2026-06-13
+opened: 2026-07-03T11:14:34Z
+intent: Record the 2026-07-03 dual-lineage reconciliation (irai-227): merge, queue union, chain repair, kernel restoration
+status: landed

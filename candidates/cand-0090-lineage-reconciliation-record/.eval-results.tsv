@@ -1,0 +1,12 @@
+record-file-and-prose	pass
+record-prose-mutant-fails	pass
+dual-cand-0037-directories	pass
+dual-cand-0037-missing-fails	pass
+memory-verify-staged-root	pass
+memory-body-mutation-fails	pass
+queue-update-well-formed	pass
+queue-duplicate-header-fails	pass
+landing-map-scope	pass
+landing-missing-row-fails	pass
+make-synth-helper	pass
+make-synth-duplicate-fails	pass

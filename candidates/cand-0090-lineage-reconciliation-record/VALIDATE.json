@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0090-lineage-reconciliation-record",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "9c806133d7907dd1d534445ec4b7af710606b006a90fed8a0e04503ed7eb87ee",
+    "LANDING": "d75efdcbf7294bc2f559e5aaeab14dadc5c7cfd3757d1e00db85d727d4e34e28",
+    "META": "88ce5318eb6f79f3cfa88dd1e000566458b9dcff1c17251f6669266184fb106b"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "evaluated_at": "2026-07-03T11:25:50Z",
+  "task": "lineage reconciliation record evidence",
+  "checks": [
+    {"name": "record-file-and-prose", "result": "pass"},
+    {"name": "record-prose-mutant-fails", "result": "pass"},
+    {"name": "dual-cand-0037-directories", "result": "pass"},
+    {"name": "dual-cand-0037-missing-fails", "result": "pass"},
+    {"name": "memory-verify-staged-root", "result": "pass"},
+    {"name": "memory-body-mutation-fails", "result": "pass"},
+    {"name": "queue-update-well-formed", "result": "pass"},
+    {"name": "queue-duplicate-header-fails", "result": "pass"},
+    {"name": "landing-map-scope", "result": "pass"},
+    {"name": "landing-missing-row-fails", "result": "pass"},
+    {"name": "make-synth-helper", "result": "pass"},
+    {"name": "make-synth-duplicate-fails", "result": "pass"}
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "039f0db11ba96fad68dc59833ad347e5bdc41702adf639c9413297f7d60f25ad",
+    "traces_sha256": "89f7ceb8274c9ca5a32925dcae7c5f630b4238cc91b274f4aa3efdd1ab1d19e8",
+    "body_sha256": "e587511e9e04921cc5319d7b07ee9c4dce80efa3daa7131a37a1161915722ff1",
+    "attestation": "dba059f4f2ef0310fe5fbef4d083d85b2769b5abc272273ca3c45b829c0f52e1"
+  }
+}

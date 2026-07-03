@@ -1,0 +1,1 @@
+LANDING maps exactly the design note, design index, and queue seed; no tools or premath destinations

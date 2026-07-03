@@ -1,0 +1,1 @@
+memory verifier rejects a body mutation with the old hash left in place

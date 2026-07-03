@@ -1,0 +1,6 @@
+queue-lint: ok (status vocabulary clean; 0 report-only finding(s))
+open_count=24 resolved_count=87
+/private/tmp/aac-lineage-reconciliation.7LS3dI/staged/candidates/QUEUE.md: Atlas registry mirror re-pin after lineage reconciliation
+/private/tmp/aac-lineage-reconciliation.7LS3dI/staged/candidates/QUEUE.md: Origin push decision after lineage reconciliation
+/private/tmp/aac-lineage-reconciliation.7LS3dI/staged/candidates/QUEUE.md: Staleness triage for re-appended local queue entries
+/private/tmp/aac-lineage-reconciliation.7LS3dI/staged/candidates/QUEUE.md: resolved cand-0090-lineage-reconciliation-record
