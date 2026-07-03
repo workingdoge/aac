@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0095-vnet-transition-linkage",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "595fba464998bd345dc1240dc624020386d3b90a190d9da1cbf12faf40edb037",
+    "LANDING": "c1bf94157127b880af91bced398c3ddb487bc06057e60eb8e305f07a079686e2",
+    "META": "af3b9baca1793946e188a9582529837ce4b3bd31e4da9c6c206e043b8961f56d"
+  }
+}

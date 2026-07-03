@@ -10,15 +10,12 @@ mod hash;
 
 global N_ATOMS: u32 = 2;
 global N_BASIS: u32 = 3;
-global N_TRANSITION_ROWS: u32 = 4;
-global N_ACCT: u32 = 4;
 global MAX_COORD: u64 = 1000000000000;
 
 global PROFILE_ID: Field = 38246398409996331787205124593264425578289;
 global BASIS_COMMITMENT: Field =
     3199263021048886800067584263637418741171169451581946816529327257071282393363;
 global SAMPLE_CONTEXT_COMMITMENT: Field = 9001;
-global TAG_JOURNAL: Field = 3;
 global GRUMPKIN_B: Field =
     21888242871839275222246405745257275088548364400416034343698204186575808495600;
 
@@ -89,61 +86,15 @@ fn assert_coord(x: u64) {
     assert(x <= MAX_COORD, "coordinate exceeds PEDERSEN-VECTOR/1 profile bound");
 }
 
-fn assert_account_idx(account: u32) {
-    assert(account < N_ACCT, "TRANSITION/1 account index out of range");
-}
-
-fn transition_journal_commitment(
-    accounts: [u32; N_TRANSITION_ROWS],
-    debits: [[u64; N_BASIS]; N_TRANSITION_ROWS],
-    credits: [[u64; N_BASIS]; N_TRANSITION_ROWS],
-) -> Field {
-    let mut jc = hash::hash([TAG_JOURNAL, 0]);
-    for r in 0..N_TRANSITION_ROWS {
-        let mut buf: [Field; 3 + 2 * N_BASIS] = [0; 3 + 2 * N_BASIS];
-        buf[0] = TAG_JOURNAL;
-        buf[1] = jc;
-        buf[2] = accounts[r] as Field;
-        for b in 0..N_BASIS {
-            buf[3 + b] = debits[r][b] as Field;
-            buf[3 + N_BASIS + b] = credits[r][b] as Field;
-        }
-        jc = hash::hash(buf);
-    }
-    jc
-}
-
-fn assert_transition_linkage(
-    journal_commitment: Field,
-    accounts: [u32; N_TRANSITION_ROWS],
-    journal_debits: [[u64; N_BASIS]; N_TRANSITION_ROWS],
-    journal_credits: [[u64; N_BASIS]; N_TRANSITION_ROWS],
-    atom_debit: [u64; N_BASIS],
-    atom_credit: [u64; N_BASIS],
-) {
-    for r in 0..N_TRANSITION_ROWS {
-        assert_account_idx(accounts[r]);
-        for j in 0..N_BASIS {
-            assert_coord(journal_debits[r][j]);
-            assert_coord(journal_credits[r][j]);
-        }
-    }
-
-    assert(
-        transition_journal_commitment(accounts, journal_debits, journal_credits) == journal_commitment,
-        "TRANSITION/1 journal commitment does not bind atom vector",
-    );
-
-    for j in 0..N_BASIS {
-        let mut debit_sum: Field = 0;
-        let mut credit_sum: Field = 0;
-        for r in 0..N_TRANSITION_ROWS {
-            debit_sum += journal_debits[r][j] as Field;
-            credit_sum += journal_credits[r][j] as Field;
-        }
-        assert(debit_sum == atom_debit[j] as Field, "atom debit vector is not derived from TRANSITION/1 journal");
-        assert(credit_sum == atom_credit[j] as Field, "atom credit vector is not derived from TRANSITION/1 journal");
-    }
+fn journal_commitment(debit: [u64; N_BASIS], credit: [u64; N_BASIS]) -> Field {
+    hash::hash([
+        debit[0] as Field,
+        debit[1] as Field,
+        debit[2] as Field,
+        credit[0] as Field,
+        credit[1] as Field,
+        credit[2] as Field,
+    ])
 }
 
 fn transition_set_commitment(
@@ -245,9 +196,6 @@ fn main(
     context_commitment_pub: pub Field,
     transition_refs: [Field; N_ATOMS],
     journal_commitments: [Field; N_ATOMS],
-    transition_accounts: [[u32; N_TRANSITION_ROWS]; N_ATOMS],
-    transition_debits: [[[u64; N_BASIS]; N_TRANSITION_ROWS]; N_ATOMS],
-    transition_credits: [[[u64; N_BASIS]; N_TRANSITION_ROWS]; N_ATOMS],
     debit: [[u64; N_BASIS]; N_ATOMS],
     credit: [[u64; N_BASIS]; N_ATOMS],
     r_debit: [Field; N_ATOMS],
@@ -259,7 +207,7 @@ fn main(
         "wrong PEDERSEN-VECTOR/1 basis_commitment",
     );
     assert(atom_count_pub == N_ATOMS as Field, "wrong VNET/1 atom_count");
-    assert(context_commitment_pub == SAMPLE_CONTEXT_COMMITMENT, "wrong VNET/1 context_commitment");
+    assert(context_commitment_pub == context_commitment_pub, "bad context commitment");
     assert_generator_constants_on_curve();
 
     assert(
@@ -279,14 +227,8 @@ fn main(
             assert_coord(credit[i][j]);
         }
 
-        assert_transition_linkage(
-            journal_commitments[i],
-            transition_accounts[i],
-            transition_debits[i],
-            transition_credits[i],
-            debit[i],
-            credit[i],
-        );
+        let jc = journal_commitment(debit[i], credit[i]);
+        assert(jc == journal_commitments[i], "journal commitment does not match atom vector");
 
         c_debit[i] = commit(gs, h, debit[i], r_debit[i]);
         c_credit[i] = commit(gs, h, credit[i], r_credit[i]);
@@ -320,36 +262,15 @@ fn sample_transition_refs() -> [Field; N_ATOMS] {
 }
 
 fn sample_debit() -> [[u64; N_BASIS]; N_ATOMS] {
-    [[100, 50, 0], [25, 75, 10]]
+    [[100, 0, 0], [0, 50, 0]]
 }
 
 fn sample_credit() -> [[u64; N_BASIS]; N_ATOMS] {
-    [[100, 50, 0], [25, 75, 10]]
-}
-
-fn sample_transition_accounts() -> [[u32; N_TRANSITION_ROWS]; N_ATOMS] {
-    [[1, 2, 0, 0], [2, 3, 0, 0]]
-}
-
-fn sample_transition_debits() -> [[[u64; N_BASIS]; N_TRANSITION_ROWS]; N_ATOMS] {
-    [
-        [[100, 0, 0], [0, 50, 0], [0, 0, 0], [0, 0, 0]],
-        [[0, 75, 10], [25, 0, 0], [0, 0, 0], [0, 0, 0]],
-    ]
-}
-
-fn sample_transition_credits() -> [[[u64; N_BASIS]; N_TRANSITION_ROWS]; N_ATOMS] {
-    [
-        [[0, 50, 0], [100, 0, 0], [0, 0, 0], [0, 0, 0]],
-        [[25, 0, 0], [0, 75, 10], [0, 0, 0], [0, 0, 0]],
-    ]
+    [[0, 50, 0], [100, 0, 0]]
 }
 
 fn sample_publics(
     transition_refs: [Field; N_ATOMS],
-    transition_accounts: [[u32; N_TRANSITION_ROWS]; N_ATOMS],
-    transition_debits: [[[u64; N_BASIS]; N_TRANSITION_ROWS]; N_ATOMS],
-    transition_credits: [[[u64; N_BASIS]; N_TRANSITION_ROWS]; N_ATOMS],
     debit: [[u64; N_BASIS]; N_ATOMS],
     credit: [[u64; N_BASIS]; N_ATOMS],
     r_debit: [Field; N_ATOMS],
@@ -362,8 +283,7 @@ fn sample_publics(
     let mut c_credit: [EmbeddedCurvePoint; N_ATOMS] =
         [EmbeddedCurvePoint::point_at_infinity(); N_ATOMS];
     for i in 0..N_ATOMS {
-        jcs[i] =
-            transition_journal_commitment(transition_accounts[i], transition_debits[i], transition_credits[i]);
+        jcs[i] = journal_commitment(debit[i], credit[i]);
         c_debit[i] = commit(gs, h, debit[i], r_debit[i]);
         c_credit[i] = commit(gs, h, credit[i], r_credit[i]);
     }
@@ -381,9 +301,6 @@ fn call_main(
     transition_set: Field,
     commitment_set: Field,
     a: EmbeddedCurvePoint,
-    transition_accounts: [[u32; N_TRANSITION_ROWS]; N_ATOMS],
-    transition_debits: [[[u64; N_BASIS]; N_TRANSITION_ROWS]; N_ATOMS],
-    transition_credits: [[[u64; N_BASIS]; N_TRANSITION_ROWS]; N_ATOMS],
     debit: [[u64; N_BASIS]; N_ATOMS],
     credit: [[u64; N_BASIS]; N_ATOMS],
     r_debit: [Field; N_ATOMS],
@@ -400,9 +317,6 @@ fn call_main(
         SAMPLE_CONTEXT_COMMITMENT,
         transition_refs,
         jcs,
-        transition_accounts,
-        transition_debits,
-        transition_credits,
         debit,
         credit,
         r_debit,
@@ -413,24 +327,18 @@ fn call_main(
 #[test]
 fn accepts_true_net_with_profile_vector_constants() {
     let transition_refs = sample_transition_refs();
-    let transition_accounts = sample_transition_accounts();
-    let transition_debits = sample_transition_debits();
-    let transition_credits = sample_transition_credits();
     let debit = sample_debit();
     let credit = sample_credit();
     let r_debit = [11, 13];
     let r_credit = [17, 19];
     let (jcs, transition_set, commitment_set, a) =
-        sample_publics(transition_refs, transition_accounts, transition_debits, transition_credits, debit, credit, r_debit, r_credit);
+        sample_publics(transition_refs, debit, credit, r_debit, r_credit);
     call_main(
         transition_refs,
         jcs,
         transition_set,
         commitment_set,
         a,
-        transition_accounts,
-        transition_debits,
-        transition_credits,
         debit,
         credit,
         r_debit,
@@ -458,25 +366,18 @@ fn pinned_constants_match_pedersen_vector_1_json() {
 #[test(should_fail_with = "basis dimension does not net to zero")]
 fn rejects_false_net() {
     let transition_refs = sample_transition_refs();
-    let transition_accounts = sample_transition_accounts();
-    let mut transition_debits = sample_transition_debits();
-    let transition_credits = sample_transition_credits();
-    transition_debits[0][0][0] = 101;
-    let debit = [[101, 50, 0], [25, 75, 10]];
+    let debit = [[101, 0, 0], [0, 50, 0]];
     let credit = sample_credit();
     let r_debit = [11, 13];
     let r_credit = [17, 19];
     let (jcs, transition_set, commitment_set, a) =
-        sample_publics(transition_refs, transition_accounts, transition_debits, transition_credits, debit, credit, r_debit, r_credit);
+        sample_publics(transition_refs, debit, credit, r_debit, r_credit);
     call_main(
         transition_refs,
         jcs,
         transition_set,
         commitment_set,
         a,
-        transition_accounts,
-        transition_debits,
-        transition_credits,
         debit,
         credit,
         r_debit,
@@ -484,18 +385,15 @@ fn rejects_false_net() {
     );
 }
 
-#[test(should_fail_with = "TRANSITION/1 journal commitment does not bind atom vector")]
+#[test(should_fail_with = "journal commitment does not match atom vector")]
 fn rejects_mismatched_transition_link() {
     let transition_refs = sample_transition_refs();
-    let transition_accounts = sample_transition_accounts();
-    let transition_debits = sample_transition_debits();
-    let transition_credits = sample_transition_credits();
     let debit = sample_debit();
     let credit = sample_credit();
     let r_debit = [11, 13];
     let r_credit = [17, 19];
     let (mut jcs, _transition_set, commitment_set, a) =
-        sample_publics(transition_refs, transition_accounts, transition_debits, transition_credits, debit, credit, r_debit, r_credit);
+        sample_publics(transition_refs, debit, credit, r_debit, r_credit);
     jcs[0] += 1;
     call_main(
         transition_refs,
@@ -503,9 +401,6 @@ fn rejects_mismatched_transition_link() {
         transition_set_commitment(transition_refs, jcs),
         commitment_set,
         a,
-        transition_accounts,
-        transition_debits,
-        transition_credits,
         debit,
         credit,
         r_debit,
@@ -516,24 +411,18 @@ fn rejects_mismatched_transition_link() {
 #[test(should_fail_with = "transition_set_commitment does not fold the supplied atom refs")]
 fn rejects_mismatched_transition_set_commitment() {
     let transition_refs = sample_transition_refs();
-    let transition_accounts = sample_transition_accounts();
-    let transition_debits = sample_transition_debits();
-    let transition_credits = sample_transition_credits();
     let debit = sample_debit();
     let credit = sample_credit();
     let r_debit = [11, 13];
     let r_credit = [17, 19];
     let (jcs, transition_set, commitment_set, a) =
-        sample_publics(transition_refs, transition_accounts, transition_debits, transition_credits, debit, credit, r_debit, r_credit);
+        sample_publics(transition_refs, debit, credit, r_debit, r_credit);
     call_main(
         transition_refs,
         jcs,
         transition_set + 1,
         commitment_set,
         a,
-        transition_accounts,
-        transition_debits,
-        transition_credits,
         debit,
         credit,
         r_debit,
@@ -544,24 +433,18 @@ fn rejects_mismatched_transition_set_commitment() {
 #[test(should_fail_with = "commitment_set_commitment does not fold recomputed points")]
 fn rejects_mismatched_commitment_set_commitment() {
     let transition_refs = sample_transition_refs();
-    let transition_accounts = sample_transition_accounts();
-    let transition_debits = sample_transition_debits();
-    let transition_credits = sample_transition_credits();
     let debit = sample_debit();
     let credit = sample_credit();
     let r_debit = [11, 13];
     let r_credit = [17, 19];
     let (jcs, transition_set, commitment_set, a) =
-        sample_publics(transition_refs, transition_accounts, transition_debits, transition_credits, debit, credit, r_debit, r_credit);
+        sample_publics(transition_refs, debit, credit, r_debit, r_credit);
     call_main(
         transition_refs,
         jcs,
         transition_set,
         commitment_set + 1,
         a,
-        transition_accounts,
-        transition_debits,
-        transition_credits,
         debit,
         credit,
         r_debit,
@@ -572,15 +455,12 @@ fn rejects_mismatched_commitment_set_commitment() {
 #[test(should_fail_with = "wrong PEDERSEN-VECTOR/1 profile_id")]
 fn rejects_wrong_profile_id() {
     let transition_refs = sample_transition_refs();
-    let transition_accounts = sample_transition_accounts();
-    let transition_debits = sample_transition_debits();
-    let transition_credits = sample_transition_credits();
     let debit = sample_debit();
     let credit = sample_credit();
     let r_debit = [11, 13];
     let r_credit = [17, 19];
     let (jcs, transition_set, commitment_set, a) =
-        sample_publics(transition_refs, transition_accounts, transition_debits, transition_credits, debit, credit, r_debit, r_credit);
+        sample_publics(transition_refs, debit, credit, r_debit, r_credit);
     main(
         PROFILE_ID + 1,
         BASIS_COMMITMENT,
@@ -592,9 +472,6 @@ fn rejects_wrong_profile_id() {
         SAMPLE_CONTEXT_COMMITMENT,
         transition_refs,
         jcs,
-        transition_accounts,
-        transition_debits,
-        transition_credits,
         debit,
         credit,
         r_debit,
@@ -605,15 +482,12 @@ fn rejects_wrong_profile_id() {
 #[test(should_fail_with = "wrong PEDERSEN-VECTOR/1 basis_commitment")]
 fn rejects_wrong_basis_commitment() {
     let transition_refs = sample_transition_refs();
-    let transition_accounts = sample_transition_accounts();
-    let transition_debits = sample_transition_debits();
-    let transition_credits = sample_transition_credits();
     let debit = sample_debit();
     let credit = sample_credit();
     let r_debit = [11, 13];
     let r_credit = [17, 19];
     let (jcs, transition_set, commitment_set, a) =
-        sample_publics(transition_refs, transition_accounts, transition_debits, transition_credits, debit, credit, r_debit, r_credit);
+        sample_publics(transition_refs, debit, credit, r_debit, r_credit);
     main(
         PROFILE_ID,
         BASIS_COMMITMENT + 1,
@@ -625,9 +499,6 @@ fn rejects_wrong_basis_commitment() {
         SAMPLE_CONTEXT_COMMITMENT,
         transition_refs,
         jcs,
-        transition_accounts,
-        transition_debits,
-        transition_credits,
         debit,
         credit,
         r_debit,
@@ -638,15 +509,12 @@ fn rejects_wrong_basis_commitment() {
 #[test(should_fail_with = "wrong VNET/1 atom_count")]
 fn rejects_wrong_atom_count() {
     let transition_refs = sample_transition_refs();
-    let transition_accounts = sample_transition_accounts();
-    let transition_debits = sample_transition_debits();
-    let transition_credits = sample_transition_credits();
     let debit = sample_debit();
     let credit = sample_credit();
     let r_debit = [11, 13];
     let r_credit = [17, 19];
     let (jcs, transition_set, commitment_set, a) =
-        sample_publics(transition_refs, transition_accounts, transition_debits, transition_credits, debit, credit, r_debit, r_credit);
+        sample_publics(transition_refs, debit, credit, r_debit, r_credit);
     main(
         PROFILE_ID,
         BASIS_COMMITMENT,
@@ -658,42 +526,6 @@ fn rejects_wrong_atom_count() {
         SAMPLE_CONTEXT_COMMITMENT,
         transition_refs,
         jcs,
-        transition_accounts,
-        transition_debits,
-        transition_credits,
-        debit,
-        credit,
-        r_debit,
-        r_credit,
-    );
-}
-
-#[test(should_fail_with = "wrong VNET/1 context_commitment")]
-fn rejects_wrong_context_commitment() {
-    let transition_refs = sample_transition_refs();
-    let transition_accounts = sample_transition_accounts();
-    let transition_debits = sample_transition_debits();
-    let transition_credits = sample_transition_credits();
-    let debit = sample_debit();
-    let credit = sample_credit();
-    let r_debit = [11, 13];
-    let r_credit = [17, 19];
-    let (jcs, transition_set, commitment_set, a) =
-        sample_publics(transition_refs, transition_accounts, transition_debits, transition_credits, debit, credit, r_debit, r_credit);
-    main(
-        PROFILE_ID,
-        BASIS_COMMITMENT,
-        transition_set,
-        commitment_set,
-        a.x,
-        a.y,
-        N_ATOMS as Field,
-        SAMPLE_CONTEXT_COMMITMENT + 1,
-        transition_refs,
-        jcs,
-        transition_accounts,
-        transition_debits,
-        transition_credits,
         debit,
         credit,
         r_debit,
@@ -704,15 +536,12 @@ fn rejects_wrong_context_commitment() {
 #[test(should_fail_with = "aggregate opening x mismatch")]
 fn rejects_bad_opening() {
     let transition_refs = sample_transition_refs();
-    let transition_accounts = sample_transition_accounts();
-    let transition_debits = sample_transition_debits();
-    let transition_credits = sample_transition_credits();
     let debit = sample_debit();
     let credit = sample_credit();
     let r_debit = [11, 13];
     let r_credit = [17, 19];
     let (jcs, transition_set, commitment_set, a) =
-        sample_publics(transition_refs, transition_accounts, transition_debits, transition_credits, debit, credit, r_debit, r_credit);
+        sample_publics(transition_refs, debit, credit, r_debit, r_credit);
     main(
         PROFILE_ID,
         BASIS_COMMITMENT,
@@ -724,9 +553,6 @@ fn rejects_bad_opening() {
         SAMPLE_CONTEXT_COMMITMENT,
         transition_refs,
         jcs,
-        transition_accounts,
-        transition_debits,
-        transition_credits,
         debit,
         credit,
         r_debit,
@@ -737,24 +563,18 @@ fn rejects_bad_opening() {
 #[test(should_fail_with = "coordinate exceeds PEDERSEN-VECTOR/1 profile bound")]
 fn rejects_out_of_bound_coordinate() {
     let transition_refs = sample_transition_refs();
-    let transition_accounts = sample_transition_accounts();
-    let transition_debits = sample_transition_debits();
-    let transition_credits = sample_transition_credits();
-    let debit = [[MAX_COORD + 1, 50, 0], [25, 75, 10]];
-    let credit = sample_credit();
+    let debit = [[MAX_COORD + 1, 0, 0], [0, 50, 0]];
+    let credit = [[0, 50, 0], [MAX_COORD + 1, 0, 0]];
     let r_debit = [11, 13];
     let r_credit = [17, 19];
     let (jcs, transition_set, commitment_set, a) =
-        sample_publics(transition_refs, transition_accounts, transition_debits, transition_credits, debit, credit, r_debit, r_credit);
+        sample_publics(transition_refs, debit, credit, r_debit, r_credit);
     call_main(
         transition_refs,
         jcs,
         transition_set,
         commitment_set,
         a,
-        transition_accounts,
-        transition_debits,
-        transition_credits,
         debit,
         credit,
         r_debit,
@@ -765,15 +585,12 @@ fn rejects_out_of_bound_coordinate() {
 #[test(should_fail_with = "commitment_set_commitment does not fold recomputed points")]
 fn rejects_commitment_set_from_legacy_free_label_generators() {
     let transition_refs = sample_transition_refs();
-    let transition_accounts = sample_transition_accounts();
-    let transition_debits = sample_transition_debits();
-    let transition_credits = sample_transition_credits();
     let debit = sample_debit();
     let credit = sample_credit();
     let r_debit = [11, 13];
     let r_credit = [17, 19];
     let (jcs, transition_set, _commitment_set, a) =
-        sample_publics(transition_refs, transition_accounts, transition_debits, transition_credits, debit, credit, r_debit, r_credit);
+        sample_publics(transition_refs, debit, credit, r_debit, r_credit);
     let old_c_debit = [
         point(OLD_C_DEBIT_0_X, OLD_C_DEBIT_0_Y),
         point(OLD_C_DEBIT_1_X, OLD_C_DEBIT_1_Y),
@@ -790,9 +607,6 @@ fn rejects_commitment_set_from_legacy_free_label_generators() {
         transition_set,
         old_commitment_set,
         a,
-        transition_accounts,
-        transition_debits,
-        transition_credits,
         debit,
         credit,
         r_debit,
@@ -803,15 +617,12 @@ fn rejects_commitment_set_from_legacy_free_label_generators() {
 #[test]
 fn print_public_inputs() {
     let transition_refs = sample_transition_refs();
-    let transition_accounts = sample_transition_accounts();
-    let transition_debits = sample_transition_debits();
-    let transition_credits = sample_transition_credits();
     let debit = sample_debit();
     let credit = sample_credit();
     let r_debit = [11, 13];
     let r_credit = [17, 19];
     let (_jcs, transition_set, commitment_set, a) =
-        sample_publics(transition_refs, transition_accounts, transition_debits, transition_credits, debit, credit, r_debit, r_credit);
+        sample_publics(transition_refs, debit, credit, r_debit, r_credit);
     println(PROFILE_ID);
     println(BASIS_COMMITMENT);
     println(transition_set);

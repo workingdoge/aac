@@ -1,0 +1,25 @@
+# Prover.toml.example -- a true-net VNET witness over basis [USD, fabric, shares].
+#
+# Recompute the public inputs after circuit edits with:
+#   nix run .#nargo19 -- test --show-output print_public_inputs
+
+# Private witness:
+transition_refs = ["7001", "7002"]
+journal_commitments = [
+  "0x1954e5cc33780be8646e73e066d5e4fa6777454ba133cba74e4ebf2ce0bb1e87",
+  "0x12ec609f776f7694164a22064e8f66fcad5bf9f148740e9f4070c662f3dba75e",
+]
+debit = [["100", "0", "0"], ["0", "50", "0"]]
+credit = [["0", "50", "0"], ["100", "0", "0"]]
+r_debit = ["11", "13"]
+r_credit = ["17", "19"]
+
+# Public inputs, in VNET/1 section 5 order:
+profile_id_pub = "0x706564657273656e2d766563746f722f31"
+basis_commitment_pub = "0x0712b7fcc0dfb564de94afac62b481c6d0396771c1c3a753f152ac5549a99113"
+transition_set_commitment_pub = "0x148efeb6a52559a25bc9c78713f2643b649c8d992faefdfc0ecac2e4a821e5be"
+commitment_set_commitment_pub = "0x06b19fffddfd206edb06839d908fad4b4993860d4b1f602450c149e217411d25"
+aggregate_opening_x_pub = "0x0189efcd83678b566806f7b40bdedcd818a9adb56cff1aeabff00431164e05f0"
+aggregate_opening_y_pub = "0x140d6729a40f8393576efb10b4bd0eb05e87a280b6c1d2400c4d40dc6edb9dc9"
+atom_count_pub = "2"
+context_commitment_pub = "9001"

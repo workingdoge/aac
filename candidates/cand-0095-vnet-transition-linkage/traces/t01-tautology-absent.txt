@@ -1,0 +1,1 @@
+context self-tautology is absent and replaced by a demo context assertion; mutant reintroducing the tautology was rejected

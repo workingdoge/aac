@@ -1,0 +1,18 @@
+{
+  "evaluated_at": "2026-07-03T15:04:22Z",
+  "task": "cand-0095 VNET/1 section 4.1 TRANSITION/1 journal linkage",
+  "checks": [
+    {"name": "t01-tautology-absent", "result": "pass"},
+    {"name": "t02-linkage-constraint", "result": "pass"},
+    {"name": "t03-nargo-tests", "result": "pass"},
+    {"name": "t04-queue-resolved", "result": "pass"}
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "3d254fdc3b754d32cfaf6e26e3746d0b2a00781dd3a8fbb95d865773d223766d",
+    "traces_sha256": "a67ef953595e1f6d835a2fd759a1e1204781bbcf39e8c5cba7bf1782a34b364c",
+    "body_sha256": "f43cc7fb3983571604ed4390a6e0d9d8025a20426bc113f409d671e22948b14b",
+    "attestation": "0a21ec9f3f3b2194e550f8fa56c83a6164b3563f8cadc52ea838d5fc73e6f337"
+  }
+}

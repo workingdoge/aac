@@ -1,0 +1,6 @@
+seeds/world-app/provekit-vnet/src/main.nr	world-app/provekit-vnet/src/main.nr	yes
+seeds/world-app/provekit-vnet/README.md	world-app/provekit-vnet/README.md	yes
+seeds/world-app/provekit-vnet/Prover.toml.example	world-app/provekit-vnet/Prover.toml.example	yes
+seeds/candidates/QUEUE.md	candidates/QUEUE.md	yes
+# landed_at: 2026-07-03T15:10:14Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=feebb6c98bd0faef8b540a9e26c410e98caefd38b6309aaaefa5a9045adf0c3b unavailable(not-in-devshell)

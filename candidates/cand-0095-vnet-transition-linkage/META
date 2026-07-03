@@ -1,0 +1,5 @@
+candidate_id: cand-0095-vnet-transition-linkage
+cycle_id: aac-2026-06-13
+opened: 2026-07-03T14:52:42Z
+intent: VNET/1 section 4.1 TRANSITION/1 journal linkage (closes the deferred half of cand-0094)
+status: landed

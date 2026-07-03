@@ -1,0 +1,1 @@
+VNET/1 section 4.1 linkage recomputes the canonical TRANSITION/1 journal commitment and derives atom vectors from the same rows; mutant rejected
