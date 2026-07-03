@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0096-python-poseidon-crosscheck",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "1f7852919926f72ed28536146a92444a49b3f001a352b33fc875bf80a6c1044a",
+    "LANDING": "aa4b9d1d541b42ef96c072b0447258ca690fe85ebeaa2692261db11b46ede836",
+    "META": "c906fb27a344cc348c889b82bc1d70661bc690fac2fe177020ba37e3d4779996"
+  }
+}

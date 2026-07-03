@@ -1,0 +1,1 @@
+Candidate README records exact local constants provenance path and hashes; sha mutant rejected

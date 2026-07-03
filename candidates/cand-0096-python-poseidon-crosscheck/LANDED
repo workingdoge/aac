@@ -1,0 +1,6 @@
+seeds/sites/ledger/specs/profiles/reference/pedersen_vector_1.py	sites/ledger/specs/profiles/reference/pedersen_vector_1.py	no
+seeds/sites/ledger/specs/profiles/PEDERSEN-VECTOR-1.md	sites/ledger/specs/profiles/PEDERSEN-VECTOR-1.md	yes
+seeds/sites/ledger/specs/profiles/vectors/PEDERSEN-VECTOR-1.json	sites/ledger/specs/profiles/vectors/PEDERSEN-VECTOR-1.json	yes
+seeds/candidates/QUEUE.md	candidates/QUEUE.md	yes
+# landed_at: 2026-07-03T17:42:15Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=feebb6c98bd0faef8b540a9e26c410e98caefd38b6309aaaefa5a9045adf0c3b unavailable(not-in-devshell)

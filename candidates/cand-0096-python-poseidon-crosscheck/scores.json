@@ -1,0 +1,20 @@
+{
+  "evaluated_at": "2026-07-03T17:34:32Z",
+  "task": "cand-0096 independent Python Poseidon2 cross-check for PEDERSEN-VECTOR/1",
+  "checks": [
+    {"name": "t01-python-rederivation", "result": "pass"},
+    {"name": "t02-tampered-round-constant", "result": "pass"},
+    {"name": "t03-even-y-exercised", "result": "pass"},
+    {"name": "t04-honesty-clause-upgrade", "result": "pass"},
+    {"name": "t05-constants-provenance", "result": "pass"},
+    {"name": "t06-queue-update", "result": "pass"}
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "c36ec19b866e59ab28b26b75ffd87c88ba588882700b9addbac9919c98a4f165",
+    "traces_sha256": "a2cd858f96aa636b93e56c9d888617a62a11df0d77efea4d0fd9eaa018510ff7",
+    "body_sha256": "62056ebc719a6d0cac48232aab282451fe7dc54ee2b16919d070f90a8b8c2f29",
+    "attestation": "f15f4fc1fdb5effa0c402315e9f32a436c37d7ba4e67ff91ec587e369b1cd67c"
+  }
+}

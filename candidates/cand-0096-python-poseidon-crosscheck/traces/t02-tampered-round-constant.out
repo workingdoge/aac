@@ -1,0 +1,3 @@
+/private/tmp/aac-cand-0096.19NdPl/root/sites/ledger/specs/profiles/vectors/PEDERSEN-VECTOR-1.json: match
+/private/tmp/aac-cand-0096.19NdPl/root/sites/ledger/specs/profiles/vectors/PEDERSEN-VECTOR-1.json: first byte mismatch at offset 1899: expected 0x38, got 0x33
+tampered Poseidon2 round constant changed the derivation and was rejected

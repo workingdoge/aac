@@ -1,0 +1,3 @@
+/private/tmp/aac-cand-0096.19NdPl/root/sites/ledger/specs/profiles/vectors/PEDERSEN-VECTOR-1.json: match
+/private/tmp/aac-cand-0096.19NdPl/PEDERSEN-VECTOR-1.corrupt.json: first byte mismatch at offset 4299: expected 0x33, got 0x34
+Python reference byte-matched the vector and rejected the corrupt counter mutant

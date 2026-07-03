@@ -1,0 +1,738 @@
+#!/usr/bin/env python3
+"""Independent PEDERSEN-VECTOR/1 derivation reference.
+
+This file intentionally uses only the Python standard library. It does not call
+Noir, nargo, Barretenberg, ProveKit, or any wrapped circuit implementation.
+
+Poseidon2 provenance for the transcribed constants and algorithm:
+
+- Noir beta.19 source tree:
+  /nix/store/4rb54wn3b0cydjc5f0n6h3a8xlyw58i0-source
+  nix path hash: sha256-Plp1ARY6cMUhsqczwYNfIWltgxZ3yHle74af+ZCnUYY=
+- Stdlib foreign surface:
+  /nix/store/4rb54wn3b0cydjc5f0n6h3a8xlyw58i0-source/noir_stdlib/src/hash/mod.nr
+  sha256: 2197142a0150aa9e05a9f997bc6e43bd716a96fa875be2bf08ce38b71505aee4
+- BN254 Poseidon2 permutation:
+  /nix/store/4rb54wn3b0cydjc5f0n6h3a8xlyw58i0-source/acvm-repo/bn254_blackbox_solver/src/poseidon2.rs
+  sha256: 6511aeb27d28efa0c6e2e69dcf4b50da31e397df9fdffffe6bcdd01e096e5fc9
+- BN254 Poseidon2 constants:
+  /nix/store/4rb54wn3b0cydjc5f0n6h3a8xlyw58i0-source/acvm-repo/bn254_blackbox_solver/src/poseidon2_constants.rs
+  sha256: 4e31415d0696eef3ca558746841a12f54250f452e2b53c35aba96684fb776b3b
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+from typing import Any, Sequence
+
+FIELD_MODULUS = 21888242871839275222246405745257275088548364400416034343698204186575808495617
+GRUMPKIN_B = (-17) % FIELD_MODULUS
+PROFILE_ID = "pedersen-vector/1"
+DOMAIN = "aac/vnet/1"
+BASIS_DOMAIN = "aac/vnet/1/basis"
+DEMO_BASIS = ["USD", "fabric", "shares"]
+WIDTH = 4
+RATE = 3
+ROUNDS_F = 8
+ROUNDS_P = 56
+DEFAULT_VECTOR = Path(__file__).resolve().parents[1] / "vectors" / "PEDERSEN-VECTOR-1.json"
+
+VECTOR_NOTES = [
+    "Generated with the Noir beta.19 stdlib Poseidon2 permutation, the same implementation family used by the ProveKit VNET circuit.",
+    "Independently cross-checked by sites/ledger/specs/profiles/reference/pedersen_vector_1.py, a dependency-free Python implementation of the BN254 Poseidon2 permutation, Grumpkin try-and-increment, and even-y canonicalization.",
+    "The Python checker re-derives field_of, basis_commitment, seeds, counters, rejected prior x values, and H/G_0/G_1/G_2 coordinates byte-for-byte.",
+]
+
+POSEIDON2_HEX = """
+10dc6e9c006ea38b04b1e03b4bd9490c0d03f98929ca1d7fb56821fd19d3b6e7
+0c28145b6a44df3e0149b3d0a30b3bb599df9756d4dd9b84a86b38cfb45a740b
+00544b8338791518b2c7645a50392798b21f75bb60e3596170067d00141cac15
+222c01175718386f2e2e82eb122789e352e105a3b8fa852613bc534433ee428b
+19b849f69450b06848da1d39bd5e4a4302bb86744edc26238b0878e269ed23e5
+265ddfe127dd51bd7239347b758f0a1320eb2cc7450acc1dad47f80c8dcf34d6
+199750ec472f1809e0f66a545e1e51624108ac845015c2aa3dfc36bab497d8aa
+157ff3fe65ac7208110f06a5f74302b14d743ea25067f0ffd032f787c7f1cdf8
+2e49c43c4569dd9c5fd35ac45fca33f10b15c590692f8beefe18f4896ac94902
+0e35fb89981890520d4aef2b6d6506c3cb2f0b6973c24fa82731345ffa2d1f1e
+251ad47cb15c4f1105f109ae5e944f1ba9d9e7806d667ffec6fe723002e0b996
+13da07dc64d428369873e97160234641f8beb56fdd05e5f3563fa39d9c22df4e
+0c009b84e650e6d23dc00c7dccef7483a553939689d350cd46e7b89055fd4738
+011f16b1c63a854f01992e3956f42d8b04eb650c6d535eb0203dec74befdca06
+0ed69e5e383a688f209d9a561daa79612f3f78d0467ad45485df07093f367549
+04dba94a7b0ce9e221acad41472b6bbe3aec507f5eb3d33f463672264c9f789b
+0a3f2637d840f3a16eb094271c9d237b6036757d4bb50bf7ce732ff1d4fa28e8
+259a666f129eea198f8a1c502fdb38fa39b1f075569564b6e54a485d1182323f
+28bf7459c9b2f4c6d8e7d06a4ee3a47f7745d4271038e5157a32fdf7ede0d6a1
+0a1ca941f057037526ea200f489be8d4c37c85bbcce6a2aeec91bd6941432447
+0c6f8f958be0e93053d7fd4fc54512855535ed1539f051dcb43a26fd926361cf
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+123106a93cd17578d426e8128ac9d90aa9e8a00708e296e084dd57e69caaf811
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+26e1ba52ad9285d97dd3ab52f8e840085e8fa83ff1e8f1877b074867cd2dee75
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+1cb55cad7bd133de18a64c5c47b9c97cbe4d8b7bf9e095864471537e6a4ae2c5
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+1dcd73e46acd8f8e0e2c7ce04bde7f6d2a53043d5060a41c7143f08e6e9055d0
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+011003e32f6d9c66f5852f05474a4def0cda294a0eb4e9b9b12b9bb4512e5574
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+2b1e809ac1d10ab29ad5f20d03a57dfebadfe5903f58bafed7c508dd2287ae8c
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+2539de1785b735999fb4dac35ee17ed0ef995d05ab2fc5faeaa69ae87bcec0a5
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0c246c5a2ef8ee0126497f222b3e0a0ef4e1c3d41c86d46e43982cb11d77951d
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+192089c4974f68e95408148f7c0632edbb09e6a6ad1a1c2f3f0305f5d03b527b
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+1eae0ad8ab68b2f06a0ee36eeb0d0c058529097d91096b756d8fdc2fb5a60d85
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+179190e5d0e22179e46f8282872abc88db6e2fdc0dee99e69768bd98c5d06bfb
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+29bb9e2c9076732576e9a81c7ac4b83214528f7db00f31bf6cafe794a9b3cd1c
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+225d394e42207599403efd0c2464a90d52652645882aac35b10e590e6e691e08
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+064760623c25c8cf753d238055b444532be13557451c087de09efd454b23fd59
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+10ba3a0e01df92e87f301c4b716d8a394d67f4bf42a75c10922910a78f6b5b87
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0e070bf53f8451b24f9c6e96b0c2a801cb511bc0c242eb9d361b77693f21471c
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+1b94cd61b051b04dd39755ff93821a73ccd6cb11d2491d8aa7f921014de252fb
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+1d7cb39bafb8c744e148787a2e70230f9d4e917d5713bb050487b5aa7d74070b
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+2ec93189bd1ab4f69117d0fe980c80ff8785c2961829f701bb74ac1f303b17db
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+2db366bfdd36d277a692bb825b86275beac404a19ae07a9082ea46bd83517926
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+062100eb485db06269655cf186a68532985275428450359adc99cec6960711b8
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0761d33c66614aaa570e7f1e8244ca1120243f92fa59e4f900c567bf41f5a59b
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+20fc411a114d13992c2705aa034e3f315d78608a0f7de4ccf7a72e494855ad0d
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+25b5c004a4bdfcb5add9ec4e9ab219ba102c67e8b3effb5fc3a30f317250bc5a
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+23b1822d278ed632a494e58f6df6f5ed038b186d8474155ad87e7dff62b37f4b
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+22734b4c5c3f9493606c4ba9012499bf0f14d13bfcfcccaa16102a29cc2f69e0
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+26c0c8fe09eb30b7e27a74dc33492347e5bdff409aa3610254413d3fad795ce5
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+070dd0ccb6bd7bbae88eac03fa1fbb26196be3083a809829bbd626df348ccad9
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+12b6595bdb329b6fb043ba78bb28c3bec2c0a6de46d8c5ad6067c4ebfd4250da
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+248d97d7f76283d63bec30e7a5876c11c06fca9b275c671c5e33d95bb7e8d729
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+1a306d439d463b0816fc6fd64cc939318b45eb759ddde4aa106d15d9bd9baaaa
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+28a8f8372e3c38daced7c00421cb4621f4f1b54ddc27821b0d62d3d6ec7c56cf
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0094975717f9a8a8bb35152f24d43294071ce320c829f388bc852183e1e2ce7e
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+04d5ee4c3aa78f7d80fde60d716480d3593f74d4f653ae83f4103246db2e8d65
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+2a6cf5e9aa03d4336349ad6fb8ed2269c7bef54b8822cc76d08495c12efde187
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+2304d31eaab960ba9274da43e19ddeb7f792180808fd6e43baae48d7efcba3f3
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+03fd9ac865a4b2a6d5e7009785817249bff08a7e0726fcb4e1c11d39d199f0b0
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+00b7258ded52bbda2248404d55ee5044798afc3a209193073f7954d4d63b0b64
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+159f81ada0771799ec38fca2d4bf65ebb13d3a74f3298db36272c5ca65e92d9a
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+1ef90e67437fbc8550237a75bc28e3bb9000130ea25f0c5471e144cf4264431f
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+1e65f838515e5ff0196b49aa41a2d2568df739bc176b08ec95a79ed82932e30d
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+2b1b045def3a166cec6ce768d079ba74b18c844e570e1f826575c1068c94c33f
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0832e5753ceb0ff6402543b1109229c165dc2d73bef715e3f1c6e07c168bb173
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+02f614e9cedfb3dc6b762ae0a37d41bab1b841c2e8b6451bc5a8e3c390b6ad16
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0e2427d38bd46a60dd640b8e362cad967370ebb777bedff40f6a0be27e7ed705
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0493630b7c670b6deb7c84d414e7ce79049f0ec098c3c7c50768bbe29214a53a
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+22ead100e8e482674decdab17066c5a26bb1515355d5461a3dc06cc85327cea9
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+25b3e56e655b42cdaae2626ed2554d48583f1ae35626d04de5084e0b6d2a6f16
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+1e32752ada8836ef5837a6cde8ff13dbb599c336349e4c584b4fdc0a0cf6f9d0
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+2fa2a871c15a387cc50f68f6f3c3455b23c00995f05078f672a9864074d412e5
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+2f569b8a9a4424c9278e1db7311e889f54ccbf10661bab7fcd18e7c7a7d83505
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+044cb455110a8fdd531ade530234c518a7df93f7332ffd2144165374b246b43d
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+227808de93906d5d420246157f2e42b191fe8c90adfe118178ddc723a5319025
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+02fcca2934e046bc623adead873579865d03781ae090ad4a8579d2e7a6800355
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0ef915f0ac120b876abccceb344a1d36bad3f3c5ab91a8ddcbec2e060d8befac
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+1797130f4b7a3e1777eb757bc6f287f6ab0fb85f6be63b09f3b16ef2b1405d38
+0a76225dc04170ae3306c85abab59e608c7f497c20156d4d36c668555decc6e5
+1fffb9ec1992d66ba1e77a7b93209af6f8fa76d48acb664796174b5326a31a5c
+25721c4fc15a3f2853b57c338fa538d85f8fbba6c6b9c6090611889b797b9c5f
+0c817fd42d5f7a41215e3d07ba197216adb4c3790705da95eb63b982bfcaf75a
+13abe3f5239915d39f7e13c2c24970b6df8cf86ce00a22002bc15866e52b5a96
+2106feea546224ea12ef7f39987a46c85c1bc3dc29bdbd7a92cd60acb4d391ce
+21ca859468a746b6aaa79474a37dab49f1ca5a28c748bc7157e1b3345bb0f959
+05ccd6255c1e6f0c5cf1f0df934194c62911d14d0321662a8f1a48999e34185b
+0f0e34a64b70a626e464d846674c4c8816c4fb267fe44fe6ea28678cb09490a4
+0558531a4e25470c6157794ca36d0e9647dbfcfe350d64838f5b1a8a2de0d4bf
+09d3dca9173ed2faceea125157683d18924cadad3f655a60b72f5864961f1455
+0328cbd54e8c0913493f866ed03d218bf23f92d68aaec48617d4c722e5bd4335
+2bf07216e2aff0a223a487b1a7094e07e79e7bcc9798c648ee3347dd5329d34b
+1daf345a58006b736499c583cb76c316d6f78ed6a6dffc82111e11a63fe412df
+176563472456aaa746b694c60e1823611ef39039b2edc7ff391e6f2293d2c404
+"""
+
+_POSEIDON2_WORDS = POSEIDON2_HEX.split()
+if len(_POSEIDON2_WORDS) != 260:
+    raise RuntimeError(f"expected 260 Poseidon2 constants, got {len(_POSEIDON2_WORDS)}")
+
+INTERNAL_MATRIX_DIAGONAL = tuple(int(h, 16) % FIELD_MODULUS for h in _POSEIDON2_WORDS[:4])
+ROUND_CONSTANT = tuple(
+    tuple(int(h, 16) % FIELD_MODULUS for h in _POSEIDON2_WORDS[4 + 4 * i : 8 + 4 * i])
+    for i in range(64)
+)
+
+
+def hex_field(value: int) -> str:
+    return "0x" + value.to_bytes(32, "big").hex()
+
+
+def hex_unpadded(value: int) -> str:
+    return "0x" + format(value, "x")
+
+
+def field_of(text: str) -> int:
+    encoded = text.encode("utf-8")
+    if len(encoded) > 31:
+        raise ValueError(f"string field is too long: {text!r}")
+    return int.from_bytes(encoded, "big")
+
+
+def sbox(value: int) -> int:
+    return pow(value, 5, FIELD_MODULUS)
+
+
+def matrix_multiplication_4x4(state: Sequence[int]) -> list[int]:
+    if len(state) != 4:
+        raise ValueError("Poseidon2 width must be 4")
+    a, b, c, d = (x % FIELD_MODULUS for x in state)
+    t0 = (a + b) % FIELD_MODULUS
+    t1 = (c + d) % FIELD_MODULUS
+    t2 = (2 * b + t1) % FIELD_MODULUS
+    t3 = (2 * d + t0) % FIELD_MODULUS
+    t4 = (4 * t1 + t3) % FIELD_MODULUS
+    t5 = (4 * t0 + t2) % FIELD_MODULUS
+    t6 = (t3 + t5) % FIELD_MODULUS
+    t7 = (t2 + t4) % FIELD_MODULUS
+    return [t6, t5, t7, t4]
+
+
+def internal_m_multiplication(state: Sequence[int]) -> list[int]:
+    total = sum(state) % FIELD_MODULUS
+    return [
+        (state[i] * INTERNAL_MATRIX_DIAGONAL[i] + total) % FIELD_MODULUS
+        for i in range(WIDTH)
+    ]
+
+
+def add_round_constants(
+    state: Sequence[int], round_index: int, round_constants: Sequence[Sequence[int]]
+) -> list[int]:
+    return [
+        (state[i] + round_constants[round_index][i]) % FIELD_MODULUS for i in range(WIDTH)
+    ]
+
+
+def poseidon2_permutation(
+    inputs: Sequence[int], round_constants: Sequence[Sequence[int]] = ROUND_CONSTANT
+) -> list[int]:
+    if len(inputs) != WIDTH:
+        raise ValueError(f"Poseidon2 expected {WIDTH} values, got {len(inputs)}")
+    state = matrix_multiplication_4x4(inputs)
+
+    rf_first = ROUNDS_F // 2
+    for round_index in range(rf_first):
+        state = add_round_constants(state, round_index, round_constants)
+        state = [sbox(x) for x in state]
+        state = matrix_multiplication_4x4(state)
+
+    p_end = rf_first + ROUNDS_P
+    for round_index in range(rf_first, p_end):
+        state[0] = sbox((state[0] + round_constants[round_index][0]) % FIELD_MODULUS)
+        state = internal_m_multiplication(state)
+
+    for round_index in range(p_end, ROUNDS_F + ROUNDS_P):
+        state = add_round_constants(state, round_index, round_constants)
+        state = [sbox(x) for x in state]
+        state = matrix_multiplication_4x4(state)
+
+    return state
+
+
+def poseidon_hash(
+    inputs: Sequence[int], round_constants: Sequence[Sequence[int]] = ROUND_CONSTANT
+) -> int:
+    state = [0, 0, 0, len(inputs)]
+    for index, value in enumerate(inputs):
+        if value < 0 or value >= FIELD_MODULUS:
+            raise ValueError(f"input is not a field element: {value}")
+        state[index % RATE] = (state[index % RATE] + value) % FIELD_MODULUS
+        if (index % RATE) == RATE - 1:
+            state = poseidon2_permutation(state, round_constants)
+    if (len(inputs) % RATE) != 0:
+        state = poseidon2_permutation(state, round_constants)
+    return state[0]
+
+
+def basis_commitment(
+    basis: Sequence[str] = DEMO_BASIS, round_constants: Sequence[Sequence[int]] = ROUND_CONSTANT
+) -> int:
+    return poseidon_hash(
+        [field_of(BASIS_DOMAIN), field_of(PROFILE_ID), len(basis), *[field_of(x) for x in basis]],
+        round_constants,
+    )
+
+
+def generator_seed(
+    label: str,
+    basis_type_id: str,
+    index: int,
+    basis: Sequence[str] = DEMO_BASIS,
+    round_constants: Sequence[Sequence[int]] = ROUND_CONSTANT,
+) -> int:
+    return poseidon_hash(
+        [
+            field_of(DOMAIN),
+            field_of(PROFILE_ID),
+            basis_commitment(basis, round_constants),
+            field_of(basis_type_id),
+            field_of(label),
+            index,
+        ],
+        round_constants,
+    )
+
+
+def x_from_seed(
+    seed: int, counter: int, round_constants: Sequence[Sequence[int]] = ROUND_CONSTANT
+) -> int:
+    return poseidon_hash([seed, counter], round_constants)
+
+
+def legendre_symbol(value: int) -> int:
+    value %= FIELD_MODULUS
+    if value == 0:
+        return 0
+    out = pow(value, (FIELD_MODULUS - 1) // 2, FIELD_MODULUS)
+    return -1 if out == FIELD_MODULUS - 1 else out
+
+
+def tonelli_shanks(value: int) -> int:
+    value %= FIELD_MODULUS
+    if value == 0:
+        return 0
+    if legendre_symbol(value) != 1:
+        raise ValueError("not a quadratic residue")
+    if FIELD_MODULUS % 4 == 3:
+        return pow(value, (FIELD_MODULUS + 1) // 4, FIELD_MODULUS)
+
+    q = FIELD_MODULUS - 1
+    s = 0
+    while q % 2 == 0:
+        s += 1
+        q //= 2
+
+    z = 2
+    while legendre_symbol(z) != -1:
+        z += 1
+
+    m = s
+    c = pow(z, q, FIELD_MODULUS)
+    t = pow(value, q, FIELD_MODULUS)
+    r = pow(value, (q + 1) // 2, FIELD_MODULUS)
+
+    while t != 1:
+        i = 1
+        t2i = (t * t) % FIELD_MODULUS
+        while t2i != 1:
+            i += 1
+            if i == m:
+                raise RuntimeError("Tonelli-Shanks failed")
+            t2i = (t2i * t2i) % FIELD_MODULUS
+        b = pow(c, 1 << (m - i - 1), FIELD_MODULUS)
+        m = i
+        c = (b * b) % FIELD_MODULUS
+        t = (t * c) % FIELD_MODULUS
+        r = (r * b) % FIELD_MODULUS
+    if (r * r) % FIELD_MODULUS != value:
+        raise RuntimeError("Tonelli-Shanks returned a non-root")
+    return r
+
+
+def sqrt_even(value: int) -> tuple[int, bool]:
+    raw = tonelli_shanks(value)
+    return (raw if raw % 2 == 0 else FIELD_MODULUS - raw, raw % 2 == 1)
+
+
+def derive_generator(
+    label: str,
+    index: int,
+    basis_type_id: str,
+    round_constants: Sequence[Sequence[int]] = ROUND_CONSTANT,
+) -> dict[str, Any]:
+    seed = generator_seed(label, basis_type_id, index, DEMO_BASIS, round_constants)
+    rejected: list[dict[str, Any]] = []
+    for counter in range(1_000_000):
+        x = x_from_seed(seed, counter, round_constants)
+        rhs = (pow(x, 3, FIELD_MODULUS) + GRUMPKIN_B) % FIELD_MODULUS
+        legendre = legendre_symbol(rhs)
+        if legendre in (0, 1):
+            y, raw_sqrt_was_odd = sqrt_even(rhs)
+            return {
+                "label": label,
+                "j": index,
+                "basis_type_id_j": basis_type_id,
+                "seed": seed,
+                "accepted_ctr": counter,
+                "x": x,
+                "y": y,
+                "raw_sqrt_was_odd": raw_sqrt_was_odd,
+                "rejected_prior_counters": rejected,
+            }
+        rejected.append({"ctr": counter, "x": x, "legendre": str(legendre)})
+    raise RuntimeError("try-increment did not find a point")
+
+
+def field_value(text: str) -> dict[str, Any]:
+    value = field_of(text)
+    return {
+        "string": text,
+        "byte_length": len(text.encode("utf-8")),
+        "field": str(value),
+        "hex": hex_unpadded(value),
+    }
+
+
+def point_entry(generator: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "label": generator["label"],
+        "j": generator["j"],
+        "basis_type_id_j": generator["basis_type_id_j"],
+        "seed": {"field": str(generator["seed"]), "hex": hex_field(generator["seed"])},
+        "accepted_ctr": generator["accepted_ctr"],
+        "point": {
+            "x": str(generator["x"]),
+            "y": str(generator["y"]),
+            "x_hex": hex_field(generator["x"]),
+            "y_hex": hex_field(generator["y"]),
+            "is_infinite": False,
+        },
+        "rejected_prior_counters": [
+            {"ctr": item["ctr"], "x_hex": hex_field(item["x"]), "legendre": item["legendre"]}
+            for item in generator["rejected_prior_counters"]
+        ],
+    }
+
+
+def derive_generators(
+    round_constants: Sequence[Sequence[int]] = ROUND_CONSTANT,
+) -> list[dict[str, Any]]:
+    return [
+        derive_generator("H", 0, DEMO_BASIS[0], round_constants),
+        derive_generator("G", 0, DEMO_BASIS[0], round_constants),
+        derive_generator("G", 1, DEMO_BASIS[1], round_constants),
+        derive_generator("G", 2, DEMO_BASIS[2], round_constants),
+    ]
+
+
+def vector_doc(round_constants: Sequence[Sequence[int]] = ROUND_CONSTANT) -> dict[str, Any]:
+    commitment = basis_commitment(DEMO_BASIS, round_constants)
+    generators = derive_generators(round_constants)
+    return {
+        "schema": "aac.pedersen-vector.derivation.v1",
+        "profile_id": PROFILE_ID,
+        "description": "PEDERSEN-VECTOR/1 Grumpkin generator derivation for the 3-dimensional VNET demo basis.",
+        "toolchain": {
+            "noir": "v1.0.0-beta.19",
+            "package": "world-app/provekit-pedersen-vector-derivation",
+            "hash": "Noir stdlib std::hash::poseidon2_permutation, width 4/rate 3 sponge with message length in the capacity lane",
+        },
+        "field_of": {
+            "rule": "UTF-8 bytes interpreted as a big-endian integer; byte length must be <= 31; no reduction.",
+            "values": [
+                field_value(DOMAIN),
+                field_value(BASIS_DOMAIN),
+                field_value(PROFILE_ID),
+                field_value("G"),
+                field_value("H"),
+                field_value(DEMO_BASIS[0]),
+                field_value(DEMO_BASIS[1]),
+                field_value(DEMO_BASIS[2]),
+            ],
+        },
+        "basis": {
+            "n": len(DEMO_BASIS),
+            "basis_type_ids": DEMO_BASIS,
+            "basis_commitment": {
+                "field": str(commitment),
+                "hex": hex_field(commitment),
+                "formula": "Poseidon2(field_of(\"aac/vnet/1/basis\"), field_of(profile_id), n, field_of(basis_type_id_0), field_of(basis_type_id_1), field_of(basis_type_id_2))",
+            },
+        },
+        "curve": {
+            "name": "Grumpkin",
+            "base_field": str(FIELD_MODULUS),
+            "equation": "y^2 = x^3 - 17",
+            "canonical_y": "even square root",
+        },
+        "generators": [point_entry(generator) for generator in generators],
+        "notes": VECTOR_NOTES,
+    }
+
+
+def render_vector(round_constants: Sequence[Sequence[int]] = ROUND_CONSTANT) -> str:
+    return json.dumps(vector_doc(round_constants), indent=2) + "\n"
+
+
+def mutated_round_constants() -> tuple[tuple[int, ...], ...]:
+    rows = [list(row) for row in ROUND_CONSTANT]
+    rows[0][0] = (rows[0][0] + 1) % FIELD_MODULUS
+    return tuple(tuple(row) for row in rows)
+
+
+def compare_bytes(expected: bytes, actual: bytes) -> tuple[bool, str]:
+    if expected == actual:
+        return True, "match"
+    limit = min(len(expected), len(actual))
+    for index in range(limit):
+        if expected[index] != actual[index]:
+            return False, (
+                f"first byte mismatch at offset {index}: "
+                f"expected 0x{expected[index]:02x}, got 0x{actual[index]:02x}"
+            )
+    return False, f"length mismatch: expected {len(expected)}, got {len(actual)}"
+
+
+def validate_loaded_vector(path: Path, round_constants: Sequence[Sequence[int]]) -> tuple[bool, str]:
+    expected = render_vector(round_constants).encode()
+    actual = path.read_bytes()
+    return compare_bytes(expected, actual)
+
+
+def smoke_test() -> None:
+    expected = [
+        int("18DFB8DC9B82229CFF974EFEFC8DF78B1CE96D9D844236B496785C698BC6732E", 16),
+        int("095C230D1D37A246E8D2D5A63B165FE0FADE040D442F61E25F0590E5FB76F839", 16),
+        int("0BB9545846E1AFA4FA3C97414A60A20FC4949F537A68CCECA34C5CE71E28AA59", 16),
+        int("18A4F34C9C6F99335FF7638B82AEED9018026618358873C982BBDDE265B2ED6D", 16),
+    ]
+    got = poseidon2_permutation([0, 0, 0, 0])
+    if got != expected:
+        raise AssertionError(f"Poseidon2 zero-state smoke test failed: {got}")
+
+
+def check_even_y_exercised() -> str:
+    derived = derive_generators()
+    flipped = [g for g in derived if g["raw_sqrt_was_odd"]]
+    if flipped:
+        names = ", ".join(f"{g['label']}_{g['j']}" for g in flipped)
+        return f"even-y canonicalization exercised by generator raw odd sqrt: {names}"
+
+    for x in range(10_000):
+        rhs = (pow(x, 3, FIELD_MODULUS) + GRUMPKIN_B) % FIELD_MODULUS
+        if legendre_symbol(rhs) in (0, 1):
+            y, raw_odd = sqrt_even(rhs)
+            if raw_odd and y % 2 == 0:
+                return f"even-y canonicalization exercised by constructed probe x={x}"
+    raise AssertionError("no odd raw square root found")
+
+
+def constants_for_args(args: argparse.Namespace) -> Sequence[Sequence[int]]:
+    return mutated_round_constants() if getattr(args, "tamper_round_constant", False) else ROUND_CONSTANT
+
+
+def cmd_generate(args: argparse.Namespace) -> int:
+    text = render_vector(constants_for_args(args))
+    if args.out:
+        Path(args.out).write_text(text)
+    else:
+        print(text, end="")
+    return 0
+
+
+def cmd_check(args: argparse.Namespace) -> int:
+    path = Path(args.file) if args.file else DEFAULT_VECTOR
+    ok, detail = validate_loaded_vector(path, constants_for_args(args))
+    print(f"{path}: {detail}")
+    return 0 if ok else 1
+
+
+def cmd_even_y(args: argparse.Namespace) -> int:
+    print(check_even_y_exercised())
+    return 0
+
+
+def cmd_self_test(args: argparse.Namespace) -> int:
+    smoke_test()
+    ok, detail = validate_loaded_vector(Path(args.file) if args.file else DEFAULT_VECTOR, ROUND_CONSTANT)
+    if not ok:
+        print(detail)
+        return 1
+    print("Poseidon2 smoke test and PEDERSEN-VECTOR/1 derivation vector match")
+    return 0
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser()
+    sub = parser.add_subparsers(dest="cmd", required=True)
+
+    generate = sub.add_parser("generate")
+    generate.add_argument("--out")
+    generate.add_argument("--tamper-round-constant", action="store_true")
+    generate.set_defaults(func=cmd_generate)
+
+    check = sub.add_parser("check")
+    check.add_argument("file", nargs="?")
+    check.add_argument("--tamper-round-constant", action="store_true")
+    check.set_defaults(func=cmd_check)
+
+    even_y = sub.add_parser("check-even-y")
+    even_y.set_defaults(func=cmd_even_y)
+
+    self_test = sub.add_parser("self-test")
+    self_test.add_argument("file", nargs="?")
+    self_test.set_defaults(func=cmd_self_test)
+
+    args = parser.parse_args(argv)
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))

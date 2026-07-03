@@ -1,0 +1,1 @@
+Queue resolves cand-0096 with the honesty-clause upgrade and rejects malformed duplicate-header mutant

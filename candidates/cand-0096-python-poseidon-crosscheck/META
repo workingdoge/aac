@@ -1,0 +1,5 @@
+candidate_id: cand-0096-python-poseidon-crosscheck
+cycle_id: aac-2026-06-13
+opened: 2026-07-03T17:19:21Z
+intent: Independent Python Poseidon2 cross-check of the PEDERSEN-VECTOR/1 derivation vectors
+status: landed

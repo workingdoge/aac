@@ -1,0 +1,1 @@
+Spec and vector notes upgrade cand-0093 honesty clause to independently cross-checked; downgrade mutant rejected

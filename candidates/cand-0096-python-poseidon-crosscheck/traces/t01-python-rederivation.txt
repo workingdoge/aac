@@ -1,0 +1,1 @@
+Python reference regenerates PEDERSEN-VECTOR-1.json byte-for-byte and rejects a corrupt accepted_ctr mutant

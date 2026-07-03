@@ -1,0 +1,4 @@
+layer: evidence-tooling
+implements: sites/ledger/specs/profiles/reference/pedersen_vector_1.py, sites/ledger/specs/profiles/PEDERSEN-VECTOR-1.md
+preserves: dm.profile.evidence, dm.commitment.attest
+compares_to: candidates/cand-0093-pedersen-vector-profile-completion, sites/ledger/specs/profiles/reference/vnet_bn254_g1_1.py, /nix/store/4rb54wn3b0cydjc5f0n6h3a8xlyw58i0-source/acvm-repo/bn254_blackbox_solver/src/poseidon2_constants.rs

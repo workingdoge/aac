@@ -182,7 +182,7 @@
   ],
   "notes": [
     "Generated with the Noir beta.19 stdlib Poseidon2 permutation, the same implementation family used by the ProveKit VNET circuit.",
-    "Independently cross-checked by sites/ledger/specs/profiles/reference/pedersen_vector_1.py, a dependency-free Python implementation of the BN254 Poseidon2 permutation, Grumpkin try-and-increment, and even-y canonicalization.",
-    "The Python checker re-derives field_of, basis_commitment, seeds, counters, rejected prior x values, and H/G_0/G_1/G_2 coordinates byte-for-byte."
+    "These vectors pin the PEDERSEN-VECTOR/1 derivation rule; they are not yet an independent Poseidon2 implementation cross-check.",
+    "An independent Python Poseidon2 cross-check is intentionally queued as follow-up work."
   ]
 }

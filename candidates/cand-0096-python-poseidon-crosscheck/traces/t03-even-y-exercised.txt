@@ -1,0 +1,1 @@
+Even-y canonicalization is exercised by G_0, G_1, and G_2 raw odd square roots; observation mutant rejected
