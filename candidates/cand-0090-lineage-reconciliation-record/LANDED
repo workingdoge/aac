@@ -3,3 +3,4 @@ seeds/sites/ledger/design/README.md	sites/ledger/design/README.md	yes
 seeds/candidates/QUEUE.md	candidates/QUEUE.md	yes
 # landed_at: 2026-07-03T11:30:45Z
 # toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=feebb6c98bd0faef8b540a9e26c410e98caefd38b6309aaaefa5a9045adf0c3b unavailable(not-in-devshell)
+git_commit	0236ee9
