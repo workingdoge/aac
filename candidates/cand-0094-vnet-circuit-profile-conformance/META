@@ -1,0 +1,5 @@
+candidate_id: cand-0094-vnet-circuit-profile-conformance
+cycle_id: aac-2026-06-13
+opened: 2026-07-03T14:34:11Z
+intent: Align world-app/provekit-vnet to the completed PEDERSEN-VECTOR/1 profile (closes the VNET/1 queue entry's circuit half)
+status: landed

@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0094-vnet-circuit-profile-conformance",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "1d313d5eda1606da0f878b4a65c8361029f67526068319e6387c58e8a8cb3c46",
+    "LANDING": "c1bf94157127b880af91bced398c3ddb487bc06057e60eb8e305f07a079686e2",
+    "META": "093bb2ffc17861cb4a8a61b02191ffe086d92175e45d3d285e11e07a4b08feed"
+  }
+}

@@ -1,0 +1,4 @@
+layer: artifact
+implements: sites/ledger/specs/applications/VNET-1.md, sites/ledger/specs/profiles/PEDERSEN-VECTOR-1.md
+preserves: dm.profile.execution, dm.commitment.attest
+compares_to: candidates/cand-0093-pedersen-vector-profile-completion, candidates/cand-0052-provekit-vnet-circuit, sites/ledger/specs/profiles/PEDERSEN-VECTOR-1.md, sites/ledger/specs/applications/VNET-1.md

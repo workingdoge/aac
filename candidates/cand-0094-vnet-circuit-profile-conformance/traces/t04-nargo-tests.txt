@@ -1,0 +1,1 @@
+beta.19 nargo tests and sample execute pass, including the legacy-generator negative test; failing-test mutant rejected

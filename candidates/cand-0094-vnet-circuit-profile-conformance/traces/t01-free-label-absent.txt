@@ -1,0 +1,1 @@
+legacy free-label generator derivation is absent from the circuit; mutant reintroducing it was rejected

@@ -1,0 +1,42 @@
+[aac_vnet_provekit] Running 13 test functions
+[aac_vnet_provekit] Testing pinned_constants_match_pedersen_vector_1_json ... [0m[31mFAIL
+Failed to solve program: 'Cannot satisfy constraint'
+[0m
+error: Failed constraint
+    ┌─ src/main.nr:356:12
+    │
+356 │     assert(H_X == 4442116937809428038466015586910822967980340166078939661906387952790413686755);
+    │            -----------------------------------------------------------------------------------
+    │
+    = Call stack:
+      1. src/main.nr:356:12
+
+[aac_vnet_provekit] Testing print_public_inputs ... [0m[32mok[0m
+--- print_public_inputs stdout ---
+0x706564657273656e2d766563746f722f31
+0x0712b7fcc0dfb564de94afac62b481c6d0396771c1c3a753f152ac5549a99113
+0x148efeb6a52559a25bc9c78713f2643b649c8d992faefdfc0ecac2e4a821e5be
+0x06b19fffddfd206edb06839d908fad4b4993860d4b1f602450c149e217411d25
+0x0189efcd83678b566806f7b40bdedcd818a9adb56cff1aeabff00431164e05f0
+0x140d6729a40f8393576efb10b4bd0eb05e87a280b6c1d2400c4d40dc6edb9dc9
+0x02
+0x2329
+----------------------------------
+[aac_vnet_provekit] Testing rejects_mismatched_transition_set_commitment ... [0m[32mok[0m
+[aac_vnet_provekit] Testing accepts_true_net_with_profile_vector_constants ... [0m[32mok[0m
+[aac_vnet_provekit] Testing rejects_commitment_set_from_legacy_free_label_generators ... [0m[32mok[0m
+[aac_vnet_provekit] Testing rejects_bad_opening ... [0m[32mok[0m
+[aac_vnet_provekit] Testing rejects_mismatched_commitment_set_commitment ... [0m[32mok[0m
+[aac_vnet_provekit] Testing rejects_out_of_bound_coordinate ... [0m[32mok[0m
+[aac_vnet_provekit] Testing rejects_wrong_basis_commitment ... [0m[32mok[0m
+[aac_vnet_provekit] Testing rejects_false_net ... [0m[32mok[0m
+[aac_vnet_provekit] Testing rejects_mismatched_transition_link ... [0m[32mok[0m
+[aac_vnet_provekit] Testing rejects_wrong_profile_id ... [0m[32mok[0m
+[aac_vnet_provekit] Testing rejects_wrong_atom_count ... [0m[32mok[0m
+
+[aac_vnet_provekit] Failures:
+     pinned_constants_match_pedersen_vector_1_json
+
+[aac_vnet_provekit] [0m[32m12 tests passed, [0m[31m1 test failed
+
+[0m

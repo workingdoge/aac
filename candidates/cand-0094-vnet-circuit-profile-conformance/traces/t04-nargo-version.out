@@ -1,0 +1,3 @@
+nargo version = 1.0.0-beta.19
+noirc version = 1.0.0-beta.19+74d6be658e1ad252f87943292ba09bdd4da80bd4
+(git version hash: 74d6be658e1ad252f87943292ba09bdd4da80bd4, is dirty: false)

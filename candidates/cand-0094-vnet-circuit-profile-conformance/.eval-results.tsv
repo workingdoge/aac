@@ -1,0 +1,6 @@
+t01-free-label-absent	pass
+t02-pinned-constants	pass
+t03-public-surface	pass
+t04-nargo-tests	pass
+t05-deferred-linkage-queue	pass
+t06-queue-formation	pass

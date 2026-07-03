@@ -1,0 +1,20 @@
+{
+  "evaluated_at": "2026-07-03T14:45:45Z",
+  "task": "cand-0094 VNET circuit PEDERSEN-VECTOR/1 profile conformance",
+  "checks": [
+    {"name": "t01-free-label-absent", "result": "pass"},
+    {"name": "t02-pinned-constants", "result": "pass"},
+    {"name": "t03-public-surface", "result": "pass"},
+    {"name": "t04-nargo-tests", "result": "pass"},
+    {"name": "t05-deferred-linkage-queue", "result": "pass"},
+    {"name": "t06-queue-formation", "result": "pass"}
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "e5206c8494b85873908822c952e6a62aa301a18205b92a749316d141cbb41ee3",
+    "traces_sha256": "996d53a12f3820506c75952965efcedd5d8db429ad61ee65c9a231feab8f5b59",
+    "body_sha256": "4b2a74977e70460dbd10c6f5281d4a86586624f3e36b9ca5314a505bae0722ca",
+    "attestation": "711c97cb7ff8799de437d1e60136cfa99ad1d8ff30d4735ea9975c5297c763d4"
+  }
+}

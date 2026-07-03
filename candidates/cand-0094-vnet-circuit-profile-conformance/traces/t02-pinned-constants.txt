@@ -1,0 +1,1 @@
+pinned circuit constants byte-match PEDERSEN-VECTOR-1.json; corrupt vector mutant rejected

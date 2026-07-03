@@ -1,0 +1,1 @@
+basis_commitment/profile_id are public and asserted in the VNET/1 section 5 surface; mutant rejected
