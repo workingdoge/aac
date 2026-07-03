@@ -1,0 +1,4 @@
+layer: artifact
+implements: none
+preserves: dm.commitment.attest
+compares_to: cand-0052-provekit-vnet-circuit(remote), cand-0044-pedersen-vector-profile(local), sites/ledger/specs/profiles/PEDERSEN-VECTOR-1.md, sites/ledger/specs/applications/VNET-1.md

@@ -1,0 +1,5 @@
+candidate_id: cand-0092-vnet-profile-alignment
+cycle_id: aac-2026-06-13
+opened: 2026-07-03T13:49:45Z
+intent: Align world-app/provekit-vnet to the full PEDERSEN-VECTOR/1 profile and VNET/1 public surface
+status: landed

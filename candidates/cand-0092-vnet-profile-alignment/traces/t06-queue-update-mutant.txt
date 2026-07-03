@@ -1,0 +1,1 @@
+staged queue update lints with one Open/Resolved header pair; duplicate-header mutant is rejected

@@ -1,0 +1,20 @@
+{
+  "evaluated_at": "2026-07-03T13:56:27Z",
+  "task": "Record the cand-0092 PEDERSEN-VECTOR/1 ProveKit generator-pinning blocker instead of silently choosing soundness-critical generators.",
+  "checks": [
+    {"name": "t01-profile-generator-gap", "result": "pass"},
+    {"name": "t02-old-free-label-rejected", "result": "pass"},
+    {"name": "t03-vnet-abi-gap", "result": "pass"},
+    {"name": "t04-conformance-vector-gap", "result": "pass"},
+    {"name": "t05-readme-citation-gap", "result": "pass"},
+    {"name": "t06-queue-update-mutant", "result": "pass"}
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "189e0f24f8c47c239dcffb986cf33011cce560f09f75d0a65e66fa98f7041305",
+    "traces_sha256": "3f8645d2d06171d7f83e32babb61ee71753b0a155f9f2a0abbf0e0ba0509fab3",
+    "body_sha256": "d6f38af79c34b7248e2c11847a6ad35abd4cf002ee2a29138c25787a1b3f5b35",
+    "attestation": "b3b4349c31199a34fe93b17e1d8648cda729d524b3e326735b75db1e1a95c95d"
+  }
+}

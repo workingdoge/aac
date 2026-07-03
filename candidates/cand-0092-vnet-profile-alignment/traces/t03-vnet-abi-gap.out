@@ -1,0 +1,7 @@
+missing VNET/1 ABI slot: profile_id_pub: pub Field
+missing VNET/1 ABI slot: basis_commitment_pub: pub Field
+missing VNET/1 ABI slot: commitment_set_commitment_pub: pub Field
+missing VNET/1 ABI slot: atom_count_pub: pub Field
+missing VNET/1 ABI slot: context_commitment_pub: pub Field
+demo-only public journal array remains outside VNET/1 section 5 ABI
+demo generator_set_id_pub remains instead of profile_id + basis_commitment policy binding

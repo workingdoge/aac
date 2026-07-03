@@ -1,0 +1,1 @@
+PEDERSEN-VECTOR/1 section 2 is present, but executable Grumpkin generator vectors/reference code are absent and block safe pinning

@@ -1,0 +1,1 @@
+old free-label derive_generators path is rejected by the alignment checker
