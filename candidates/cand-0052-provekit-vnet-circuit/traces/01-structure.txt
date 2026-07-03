@@ -1,0 +1,1 @@
+VNET circuit is MSM-only, generator-pinned, linked, bounded, and reject-tested

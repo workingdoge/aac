@@ -1,0 +1,37 @@
+# Reflection: cand-0063-live-demo-shadow-clicks
+
+Intent: Bind the fundraise live controls inside the component shadow root so clicks reach the proof runner.
+Status at reflection: landed
+Reflected at: 2026-06-14T11:22:44Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0063-live-demo-shadow-clicks",
+  "evaluated_at": "2026-06-14T11:22:18Z",
+  "task": "Bind the fundraise live controls inside the component shadow root.",
+  "checks": {
+    "source": "pass",
+    "build": "pass",
+    "scope": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "8ea1fa8538a0c8cd4b1464485f5f2099376924b0ca620180164db13878891622",
+    "traces_sha256": "a28b5264f4f5aef399a6c5232f250324e888e53b4b37589708b285752fea7fd9",
+    "body_sha256": "8497fb25acaee17efc905355cce230f36c6f110cf38dde8c2f167bfa3870b335",
+    "attestation": "858ab6c3caa0309b929e5b3d0bca2a5f6eecc6576020d0b946a462b812e0f5ba"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.

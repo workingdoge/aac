@@ -1,0 +1,1 @@
+LEDGER/1 does not allocate a domain tag or expand base-registry targets

@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0046-fundraise-settlement-contract",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "f69c19d9f11cc7031ebfed98bae69af711cee2624289f2b24575ba4b67b66377",
+    "META": "5af5ca802c56d3554c5cf3e2d8f47bb3adf712be0affdfa3b2652a45bc47e40b"
+  }
+}

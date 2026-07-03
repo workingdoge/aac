@@ -1,0 +1,35 @@
+╮ [2mprovekit_cli::cmd::prepare::[22mrun [2mstart:[22m 39.2 kB[2m current, [22m35.0[2m allocations[22m
+│ [2m 104 ms [22m[1;32mINFO[0m Number of opcodes before: 342
+│ [2m 105 ms [22m[1;32mINFO[0m Number of opcodes 275
+│ [2m 105 ms [22m[1;32mINFO[0m Number of opcodes after: 275
+│ [2m 108 ms [22m[1;32mINFO[0m Number of opcodes before: 275
+│ [2m 108 ms [22m[1;32mINFO[0m Number of opcodes 243
+│ [2m 108 ms [22m[1;32mINFO[0m Number of opcodes after: 243
+├─╮ [2mprovekit_r1cs_compiler::noir_proof_scheme::[22mfrom_program [2mstart:[22m 12.6 MB[2m current, [22m968k[2m allocations[22m
+│ │ [2m13.2 μs [22m[1;32mINFO[0m Program noir version: 1.0.0-beta.19+74d6be658e1ad252f87943292ba09bdd4da80bd4
+│ │ [2m20.0 μs [22m[1;32mINFO[0m Program entry point: fn main(journal_commitments_pub: pub [Field; 2], transition_set_commitment_pub: pub Field, generator_set_id_pub: pub Field, aggregate_opening_x_pub: pub Field, aggregate_opening_y_pub: pub Field, aggregate_opening_is_infinite_pub: pub bool, debit: [[u64; 3]; 2], credit: [[u64; 3]; 2], r_debit: [Field; 2], r_credit: [Field; 2]);
+│ │ [2m 300 μs [22m[1;32mINFO[0m ACIR: 203 witnesses, 243 opcodes.
+│ │ [2m 360 ms [22m[1;32mINFO[0m R1CS 61188 constraints, 71204 witnesses, A 107486 entries, B 120339 entries, C 98228 entries
+│ │ [2m 360 ms [22m[1;32mINFO[0m Gaussian elimination: found 8215 linear constraints out of 61188
+│ │ [2m 380 ms [22m[1;32mINFO[0m Gaussian elimination: 8134 substitutions found
+│ │ [2m 384 ms [22m[1;32mINFO[0m Gaussian elimination: phase 2b (backward chains) complete
+│ │ [2m 391 ms [22m[1;32mINFO[0m Gaussian elimination: phase 3 (rebuild rows in parallel) complete
+│ │ [2m 394 ms [22m[1;32mINFO[0m Gaussian elimination: phase 4 (intern + assemble matrices) complete
+│ │ [2m 410 ms [22m[1;32mINFO[0m Column removal: 71204 -> 62299 real + 8622 virtual witnesses (70921 total for solving), 283 builders pruned
+│ │ [2m 412 ms [22m[1;32mINFO[0m Gaussian elimination: phase 5 (remove dead columns) complete
+│ │ [2m 412 ms [22m[1;32mINFO[0m Gaussian elimination: 61188 -> 53054 constraints (13.3% reduction), 8134 substitutions
+│ │ [2m 412 ms [22m[1;32mINFO[0m Column removal: 71204 -> 62299 witnesses (12.5% reduction), 283 builders pruned
+│ │ [2m 413 ms [22m[1;32mINFO[0m After GE optimization: 53054 constraints, 62299 witnesses (8134 eliminated, 13.3% constraint reduction)
+│ │ [2m 454 ms [22m[1;32mINFO[0m Witness split: w1 = 29704, w2 = 32595 (real, committed) + 8622 virtual (solving only)
+├─╯ 459 ms[2m duration, [22m74.0 MB[2m peak memory, [22m61.4 MB[2m local, [22m28.4 MB[2m current, [22m1.01M[2m allocations[22m
+├─╮ [2mprovekit_common::file::io::[22mwrite path="aac_vnet_provekit.pkp" [2mstart:[22m 43.5 MB[2m current, [22m1.99M[2m allocations[22m
+│ ├─╮ [2mprovekit_common::file::io::bin::[22mwrite_bin path="aac_vnet_provekit.pkp" format=[80, 114, 118, 75, 105, 116, 80, 114] version=(1, 2) compression=Xz hash_config=Some(Skyscraper) [2mstart:[22m 43.5 MB[2m current, [22m1.99M[2m allocations[22m
+│ │ │ [2m 477 ms [22m[1;32mINFO[0m Wrote 429 kB to "aac_vnet_provekit.pkp" path="aac_vnet_provekit.pkp" size=428681
+│ ├─╯ 477 ms[2m duration, [22m49.0 MB[2m peak memory, [22m5.49 MB[2m local, [22m43.5 MB[2m current, [22m46.9k[2m allocations[22m
+├─╯ [2mwrite: [22m477 ms[2m duration, [22m49.0 MB[2m peak memory, [22m5.49 MB[2m local, [22m43.5 MB[2m current, [22m46.9k[2m allocations[22m
+├─╮ [2mprovekit_common::file::io::[22mwrite path="aac_vnet_provekit.pkv" [2mstart:[22m 17.9 MB[2m current, [22m2.03M[2m allocations[22m
+│ ├─╮ [2mprovekit_common::file::io::bin::[22mwrite_bin path="aac_vnet_provekit.pkv" format=[80, 114, 118, 75, 105, 116, 86, 114] version=(1, 3) compression=Zstd hash_config=Some(Skyscraper) [2mstart:[22m 17.9 MB[2m current, [22m2.03M[2m allocations[22m
+│ │ │ [2m10.1 ms [22m[1;32mINFO[0m Wrote 647 kB to "aac_vnet_provekit.pkv" path="aac_vnet_provekit.pkv" size=647054
+│ ├─╯ 10.1 ms[2m duration, [22m23.0 MB[2m peak memory, [22m5.17 MB[2m local, [22m17.9 MB[2m current, [22m156[2m allocations[22m
+├─╯ [2mwrite: [22m10.1 ms[2m duration, [22m23.0 MB[2m peak memory, [22m5.17 MB[2m local, [22m17.9 MB[2m current, [22m165[2m allocations[22m
+╯ [2mrun: [22m1.06 s[2m duration, [22m74.0 MB[2m peak memory, [22m73.9 MB[2m local, [22m150 kB[2m current, [22m2.03M[2m allocations[22m

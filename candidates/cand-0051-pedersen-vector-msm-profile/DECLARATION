@@ -1,0 +1,4 @@
+layer: artifact
+implements: VNET/1
+preserves: dm.profile.execution, dm.commitment.attest
+compares_to: none

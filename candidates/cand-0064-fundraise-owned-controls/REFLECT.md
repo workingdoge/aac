@@ -1,0 +1,37 @@
+# Reflection: cand-0064-fundraise-owned-controls
+
+Intent: Keep the fundraise controls inside aac-fundraise-demo and bind the rendered shadow buttons directly to the owned proof actions.
+Status at reflection: landed
+Reflected at: 2026-06-14T11:31:14Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0064-fundraise-owned-controls",
+  "evaluated_at": "2026-06-14T11:30:51Z",
+  "task": "Keep the fundraise controls inside the component and bind rendered buttons directly.",
+  "checks": {
+    "source": "pass",
+    "build": "pass",
+    "scope": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "8c884e4b03c7d0ac0dcd8029fd8f60f45ff2cb573a7643ed57ea0f07605b301e",
+    "traces_sha256": "1f382e0842ae44abe5ee36ce79acbd60add6e56e0eddcebef1946afff728be83",
+    "body_sha256": "03ccc29d528ae589ed2b01759749d7ce7199d91cffc59fd3b757ec79131090c3",
+    "attestation": "396e2c8cff663ca4b4c42876f247433427afe720b21ff2fe5cf2114c314169c0"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.

@@ -1,0 +1,15 @@
+v24.14.0
+Usage: provekit-cli <command> [<args>]
+forge Version: 1.7.1-dev
+Commit SHA: refs/tags/v1.7.1
+Build Timestamp: 1980-01-01T00:00:00.000000000Z (315532800)
+Build Profile: release
+cast Version: 1.7.1-dev
+Commit SHA: refs/tags/v1.7.1
+Build Timestamp: 1980-01-01T00:00:00.000000000Z (315532800)
+Build Profile: release
+anvil Version: 1.7.1-dev
+Commit SHA: refs/tags/v1.7.1
+Build Timestamp: 1980-01-01T00:00:00.000000000Z (315532800)
+Build Profile: release
+solc, the solidity compiler commandline interface

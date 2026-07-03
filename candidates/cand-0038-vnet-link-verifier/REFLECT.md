@@ -1,0 +1,37 @@
+# Reflection: cand-0038-vnet-link-verifier
+
+Intent: Add a reference VNET link verifier and fixtures: bind VNET-BN254-G1 atoms to accepted TRANSITION/1 registry reports plus companion link certificates, then reject missing transition refs, journal mismatches, link-certificate mismatches, and false nets.
+Status at reflection: landed
+Reflected at: 2026-06-14T03:18:37Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0038-vnet-link-verifier",
+  "evaluated_at": "2026-06-14T03:18:09Z",
+  "task": "Add a reference VNET transition-link verifier and fixtures: accepted TRANSITION/1 reports, journal_commitment equality, companion link certificates binding opened vectors to transition+basis, and delegation to the VNET-BN254-G1/1 profile checker; reject missing transition refs, journal mismatches, certificate mismatches, and false nets.",
+  "checks": {
+    "text": "pass",
+    "vectors": "pass",
+    "corrupt": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "80388e462adeab0296791d1f41f6420611559b5cac023cf8c01e92ebb1ebc435",
+    "traces_sha256": "9c5eb91f5254d47543a1bdd4e2f6f21bd9193e6dab00e06be54188dc8adfa0b4",
+    "body_sha256": "dd82ddfab981036d9affe2307a290b07bac89c2ab889f37fb953c37da0c527eb",
+    "attestation": "58b4d21214af761b300448070fccc3a7c0dbd569cc2d6183a56c4ebf129d8f97"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.

@@ -1,0 +1,15 @@
+# Full-fill example for the live fundraise balance-sheet proof.
+# The runner overwrites this file in its temporary workdir for each selected batch.
+
+prev_balance_sheet_root = "424416853989"
+next_balance_sheet_root = "425916857889"
+settlement_amount_total = "1500"
+issued_unit_total = "150"
+order_cap_units = "150"
+fundraise_packet_commitment = "123456789"
+
+opening_cash_collected = "0"
+opening_units_issued = "0"
+opening_units_open = "150"
+state_salt = "424242"
+expected_fundraise_packet_commitment = "123456789"

@@ -1,0 +1,40 @@
+---
+title: Fundraise demo
+description: A private issuer balance sheet, ProveKit VNET proof, workflow authorization, and local settlement receipt.
+editUrl: false
+sidebar:
+  label: Fundraise demo
+  order: 4
+---
+
+import Loader from '../../components/Loader.astro';
+
+<Loader />
+
+This is the presentation console for the private treasury fundraise path. It
+opens ready to run a fresh ProveKit proof through the localhost runner API. A
+captured `fundraise-demo-runner --settle-local --summary` receipt is available
+as an explicit fallback, but it is not the default screen.
+
+<aac-fundraise-demo></aac-fundraise-demo>
+
+The issuer's balance sheet and cap table move as private roots. ProveKit accepts
+the VNET proof, the workflow authorizes the mint, and the local settlement
+contract mints receipt tokens while refusing replay. The settlement contract in
+this demo verifies the authorizer signature and replay guard; recursive
+on-chain VNET verification remains the production verifier target.
+
+The live presentation mode is one origin: build the site, then run
+`aac-fundraise-demo --serve --static-dir web/dist --port 4328`. The component
+calls `/api/fundraise/run` on that same localhost origin, runs ProveKit
+prepare/prove/verify, and returns a new summary. Local settlement remains an
+explicit runner mode because it requires an Anvil/Foundry environment.
+
+## Where it fits
+
+The demo is an implementation path through the application layer:
+[BCC/1](/specs/applications/bcc-1/) binds investor and issuer agreement,
+[VNET/1](/specs/applications/vnet-1/) clears the amount vectors, and
+[FUNDRAISE-CLEARING/1](/specs/applications/fundraise-clearing-1/) binds paid
+subscriptions to private issuer books and restricted token issuance. The base
+registry still enshrines only TRANSITION/1, NULLIFY/1, and NET/1.

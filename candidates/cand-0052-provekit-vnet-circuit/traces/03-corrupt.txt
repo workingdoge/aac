@@ -1,0 +1,1 @@
+mutant rejected when derived generators are replaced by the demo base-generator path

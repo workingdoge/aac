@@ -1,0 +1,5 @@
+candidate_id: cand-0037-vnet-profile-vectors
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T03:00:25Z
+intent: Define the first concrete VNET/1 profile and conformance vectors for fundraising batch netting: BN254/G1 Pedersen vector commitments, canonical point encoding, deterministic hash-to-curve generator derivation, a reference checker, and accepted/rejected fixtures for zero-opening, basis mismatch, transition-link omission, and false net.
+status: landed

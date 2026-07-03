@@ -1,0 +1,1 @@
+fundraise closing-books panel uses reconciliation language, not verifier language

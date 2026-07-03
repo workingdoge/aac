@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0088-fundraise-simplicial-profile",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3a4dd14da6ece7d518ea1fca4d9b3d014eb90bc77505573a20c67dca817d573c",
+    "LANDING": "8323beabeb9bd711fa62a041ca5c1e2632719ca34c739fc34696950e4e125049",
+    "META": "1a46507fe275cfb596a43ba3234f4917fd6ebcfb14471412022e12309bd6f695"
+  }
+}

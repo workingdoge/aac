@@ -1,0 +1,39 @@
+# Reflection: cand-0043-fundraise-bcc-composition
+
+Intent: Bind BCC agreement certificates into FUNDRAISE-CLEARING/1 runtime packets and mint authorization, while keeping bridge settlement as a separate context boundary.
+Status at reflection: landed
+Reflected at: 2026-06-14T06:02:25Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0043-fundraise-bcc-composition",
+  "evaluated_at": "2026-06-14T06:01:54Z",
+  "task": "Bind BCC agreement certificates and bridge settlement context into FUNDRAISE-CLEARING/1 runtime packets and mint authorization.",
+  "checks": {
+    "text": "pass",
+    "runtime": "pass",
+    "oracle": "pass",
+    "generate": "pass",
+    "corrupt": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "455dddecae572d97836d5ea7b4e7239970e6ee49e77a388a535cbd604a110214",
+    "traces_sha256": "5e84950dd5da9e8919ba5684b371dd9d35addbb34b6363fa9e086a1326accf63",
+    "body_sha256": "bdca83505e381c15e1ca09dfc7b1890ce8560f8289ed38c141d0ed20db961fd5",
+    "attestation": "e075fc2e1c37c92dad609ceaf9296ce3d6be0ea078707dec431ce2b81d750bf6"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.

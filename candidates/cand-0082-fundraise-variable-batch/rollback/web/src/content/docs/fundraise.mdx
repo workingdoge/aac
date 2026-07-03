@@ -1,0 +1,51 @@
+---
+title: Private order fill
+description: A private SAFE order, two fills, ProveKit VNET clearing, workflow authorization, and receipt-token settlement.
+editUrl: false
+sidebar:
+  label: Order fill demo
+  order: 4
+---
+
+import Loader from '../../components/Loader.astro';
+
+<Loader />
+
+This is the presentation console for a private issuer order. The issuer offers
+restricted receipt units and investors fill the order. The ticket, starting
+balances, submitted fills, and reconciliation rows are rendered from the runner
+summary returned by the localhost API. The live path calls the localhost runner,
+generates the order-fill proof packet with ProveKit, and leaves the verifier as
+a second console step. The verifier step surfaces the native ProveKit receipt:
+verifier status, packet commitment, public-input commitment, proof digest,
+verifier-key digest, and verify timing.
+
+After the swap, the console reconciles the issuer books from summary-provided
+opening balances, fill deltas, and closing balances.
+
+<aac-fundraise-demo></aac-fundraise-demo>
+
+The issuer's balance sheet and cap table move as private roots. ProveKit clears
+the submitted fills, the native verifier accepts the proof receipt, the workflow
+authorizes the receipt-token mint, and the local settlement contract can mint
+tokens while refusing replay. The settlement contract in this demo verifies the
+authorizer signature and replay guard; recursive on-chain VNET verification
+remains the production verifier target.
+
+The live presentation mode is one origin: build the site, then run
+`aac-fundraise-demo --serve --static-dir web/dist --port 4328`. The component
+calls `/api/fundraise/run` on that same localhost origin, runs ProveKit
+prepare/prove/verify for the order-fill packet, and returns a new summary. Local
+settlement remains an explicit runner mode because it requires an Anvil/Foundry
+environment. The current localhost runner returns the proof and verifier receipt
+in one response; the console separates their presentation so the operator sees
+generation before verification.
+
+## Where it fits
+
+The demo is an implementation path through the application layer:
+[BCC/1](/specs/applications/bcc-1/) binds investor and issuer agreement,
+[VNET/1](/specs/applications/vnet-1/) clears the amount vectors, and
+[FUNDRAISE-CLEARING/1](/specs/applications/fundraise-clearing-1/) binds paid
+order fills to private issuer books and restricted token issuance. The base
+registry still enshrines only TRANSITION/1, NULLIFY/1, and NET/1.

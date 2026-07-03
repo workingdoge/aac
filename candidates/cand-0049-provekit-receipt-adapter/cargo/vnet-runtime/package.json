@@ -1,0 +1,21 @@
+{
+  "name": "@aac/vnet-runtime",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Dependency-free JS reference verifier for VNET-BN254-G1/1 and VNET transition-link fixtures.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.mjs"
+    }
+  },
+  "scripts": {
+    "test": "node test/run-tests.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

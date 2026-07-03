@@ -1,0 +1,1 @@
+landing scope is fundraise UI/page/captured summary only

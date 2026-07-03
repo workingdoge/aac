@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0086-ledger-statement-interface",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "e5a92d8809350e0570b00a3ac2edc46acb677696b215da3cbf96b8309f39802b",
+    "LANDING": "641c3c1fa19506f3b4ba9a076519cb5efa357668f4ac390a495636c0d9f8a620",
+    "META": "ff649591f8d78220a7e55a2500470865398c52a9cdc0bf6254ef802f9fc86037"
+  }
+}

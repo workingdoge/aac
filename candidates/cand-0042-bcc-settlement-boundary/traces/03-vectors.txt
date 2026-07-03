@@ -1,0 +1,7 @@
+bcc-good-goods-for-cash: pass accepted=true reason=accepted
+bcc-signature-mismatch-reject: pass accepted=false reason=signature_mismatch
+bcc-cancellation-false-net-reject: pass accepted=false reason=cancellation_zero_opening
+bcc-transcript-mismatch-reject: pass accepted=false reason=transcript_hash_mismatch
+bcc-authenticated-ecdh-mismatch-reject: pass accepted=false reason=authenticated_dh_mismatch
+bcc-private-witness-leak-reject: pass accepted=false reason=private_witness_leak
+bcc-finality-replay-reject: pass accepted=false reason=finality_replay

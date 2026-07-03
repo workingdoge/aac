@@ -1,0 +1,1 @@
+fundraise page shows explicit starting balances before submitted fills

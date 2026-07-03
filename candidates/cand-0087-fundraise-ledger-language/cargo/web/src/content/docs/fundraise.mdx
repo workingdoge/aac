@@ -1,0 +1,76 @@
+---
+title: Private ledger settlement
+description: An issuer private ledger, a round-capacity statement, a selected SAFE subscription batch, and a verified receipt-issuance settlement.
+editUrl: false
+sidebar:
+  label: Ledger settlement demo
+  order: 4
+---
+
+import Loader from '../../components/Loader.astro';
+
+<Loader />
+
+This is the presentation console for a private issuer ledger. The issuer starts
+with a committed private state and publishes a round-capacity statement: up to
+150 restricted receipt units can be issued at 10 USDC per unit. Investor A's
+subscription is fixed while investor B's selected batch can be changed before
+the ledger transition is proved.
+
+The page follows the user object first. The flow is: issuer ledger pre-state,
+round-capacity statement, selected subscription batch, private settlement
+transition, issuer ledger post-state, and receipt-issuance statement. The
+localhost runner returns the ticket, opening ledger balances, selected batch,
+reconciliation rows, roots, and verifier fields. The live path generates the
+selected ledger-transition proof packet and mounts a verifier form as a separate
+step.
+
+The verifier form posts the packet commitment, public-input commitment, proof
+digest, verifier-key digest, balance-sheet roots, and batch binding back to the
+runner. Edits to those submitted public inputs are rejected before the console
+can show an accepted verifier receipt.
+
+After verification, the console reconciles the issuer ledger from
+summary-provided opening balances, selected-batch deltas, and post-state
+balances. A partial selected batch leaves the remaining round capacity open
+rather than flagging a mismatch. The runner also generates a separate statement
+receipt for the issuer balance sheet: it proves the private opening of the
+previous root, applies the selected batch, and proves the next root opens to the
+resulting row.
+
+<aac-fundraise-demo></aac-fundraise-demo>
+
+The issuer's balance sheet and cap table move as private LEDGER/1 roots.
+ProveKit is the proof engine for the transition and balance-sheet statement;
+VNET is the amount-vector clearing check under the receipt drawer; the workflow
+authorizes the receipt-token mint; and the local settlement contract can mint
+tokens while refusing replay. The settlement contract in this demo verifies the
+authorizer signature and replay guard. Recursive on-chain VNET verification
+remains the production verifier target.
+
+The balance-sheet statement is a state-arithmetic receipt, not an external
+audit of the starting balance sheet. Production use still needs an anchored
+prior root, auditor signature, or registry log.
+
+The live presentation mode is one origin: build the site, then run
+`aac-fundraise-demo --serve --static-dir web/dist --port 4328`. The component
+calls `/api/fundraise/preview` to rebuild the selected batch without proving,
+then `/api/fundraise/prove` on that same localhost origin to run ProveKit and
+stage a short-lived proof session. The verifier form uses htmx-style
+`hx-post` submission to `/api/fundraise/verify`, where the runner checks the
+submitted public inputs against the stored proof session and reruns native
+ProveKit verification. Local settlement remains an explicit runner mode because
+it requires an Anvil/Foundry environment. The runner writes a fresh Prover.toml
+for the balance-sheet circuit for each selected batch, so changing the second
+fill changes the state roots and the statement-verifier public inputs.
+
+## Where it fits
+
+The demo is an implementation path through the application layer:
+[LEDGER/1](/specs/applications/ledger-1/) is the issuer private state and
+statement vocabulary, [FUNDRAISE-CLEARING/1](/specs/applications/fundraise-clearing-1/)
+binds paid subscriptions to that ledger and to restricted receipt issuance,
+[BCC/1](/specs/applications/bcc-1/) binds investor and issuer agreement, and
+[VNET/1](/specs/applications/vnet-1/) clears the amount vectors behind the
+receipt. The base registry still enshrines only TRANSITION/1, NULLIFY/1, and
+NET/1.

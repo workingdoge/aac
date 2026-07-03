@@ -1,0 +1,1 @@
+astro build OK; ledger-statement demo presentation bundled

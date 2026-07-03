@@ -1,0 +1,1 @@
+landing scope is fundraise component/page only

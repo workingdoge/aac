@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0070-fundraise-same-origin-demo",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "f646a14816f9a79bc43fd293bb802928190c48532d5a8e0b91badcec6fa22065",
+    "META": "fcc9b618e8eb6d78a1b2e31e0f71c1bdca3833f10f69fef91b8158e82cdd39ce"
+  }
+}

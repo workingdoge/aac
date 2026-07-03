@@ -1,0 +1,5 @@
+vnet-link-good-fundraise: FAIL accepted=False reason=journal_commitment_mismatch
+vnet-link-missing-transition-reject: pass accepted=False reason=missing_transition_ref
+vnet-link-journal-mismatch-reject: pass accepted=False reason=journal_commitment_mismatch
+vnet-link-certificate-mismatch-reject: pass accepted=False reason=link_certificate_mismatch
+vnet-link-false-net-reject: pass accepted=False reason=zero_opening

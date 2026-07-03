@@ -1,0 +1,1 @@
+/fundraise embeds the demo, states the boundary, and is sidebar-linked

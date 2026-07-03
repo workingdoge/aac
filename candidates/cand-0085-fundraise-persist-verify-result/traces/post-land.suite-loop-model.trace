@@ -1,0 +1,22 @@
+agree fix-admitted-landed
+agree fix-already-landed
+agree fix-attest-tampered
+agree fix-decl-todo
+agree fix-drafts-bad
+agree fix-landing-bad
+agree fix-landing-dotslash
+agree fix-meta-missing-intent
+agree fix-missing-readme
+agree fix-nothing-to-land
+agree fix-recalls-low
+agree fix-recalls-one
+agree fix-rolled-back
+agree fix-scores-dup-attested
+agree fix-scores-smuggled
+agree fix-status-out-of-vocab
+agree fix-tier-guard
+agree fix-validate-refused
+agree fix-verdict-fail-attested
+agree fix-verdict-nested
+loop-model-diff: records=20 disagreements=0 (mode fixtures)
+loop-model-diff: coherence evidence holds over this corpus (LM-1.4)

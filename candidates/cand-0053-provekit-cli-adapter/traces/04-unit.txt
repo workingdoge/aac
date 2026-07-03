@@ -1,0 +1,1 @@
+fundraise-provekit-adapter tests: pass

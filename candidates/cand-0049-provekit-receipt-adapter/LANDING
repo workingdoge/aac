@@ -1,0 +1,6 @@
+cargo/fundraise-provekit-adapter/package.json	fundraise-provekit-adapter/package.json
+cargo/fundraise-provekit-adapter/README.md	fundraise-provekit-adapter/README.md
+cargo/fundraise-provekit-adapter/src/index.mjs	fundraise-provekit-adapter/src/index.mjs
+cargo/fundraise-provekit-adapter/src/index.d.ts	fundraise-provekit-adapter/src/index.d.ts
+cargo/fundraise-provekit-adapter/test/run-tests.mjs	fundraise-provekit-adapter/test/run-tests.mjs
+cargo/sites/ledger/specs/applications/FUNDRAISE-CLEARING-1.md	sites/ledger/specs/applications/FUNDRAISE-CLEARING-1.md

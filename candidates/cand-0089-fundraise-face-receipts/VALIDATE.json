@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0089-fundraise-face-receipts",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "1ac3a442302dc4d8cdb53b0eab4713cb53357410cbedeb665ba8a89b5b8dd16f",
+    "LANDING": "efc85cb3cf6cf298795ca92faa337417ff473d8211d71921b7679994488952c4",
+    "META": "468fbbb8f875150f5a1212a64156630d98f4b95a1c7d5161c1c995114a3ed5f8"
+  }
+}

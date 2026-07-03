@@ -1,0 +1,1 @@
+LEDGER/1 carries vertex, statement projection, transition binding, Gate vocabulary, and UI privacy boundaries

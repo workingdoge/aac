@@ -1,0 +1,1 @@
+component uses AAC tokens and renders the private-root/proof/settlement lanes

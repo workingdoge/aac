@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0048-fundraise-workflow",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "c4e7e4ac9ae82fec8a67049c58b7f59af75fd917dfbfd787f87f9ee81f10f3b8",
+    "META": "479e256187559405b1232178bd96dc6bfe8c82e436d607c2d39cbcdc57c5bca0"
+  }
+}

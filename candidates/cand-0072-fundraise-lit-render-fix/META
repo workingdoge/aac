@@ -1,0 +1,5 @@
+candidate_id: cand-0072-fundraise-lit-render-fix
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T12:33:21Z
+intent: Fix the fundraise Lit component render failure by moving reactive field initializers into the constructor.
+status: landed

@@ -1,0 +1,1 @@
+landing scope is only aac-fundraise-demo component

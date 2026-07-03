@@ -1,0 +1,1 @@
+landing scope is fundraise runtime, runner, and web demo only

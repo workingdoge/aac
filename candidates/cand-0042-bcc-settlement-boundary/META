@@ -1,0 +1,5 @@
+candidate_id: cand-0042-bcc-settlement-boundary
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T05:38:42Z
+intent: Clarify BCC as an agreement certificate with authenticated ECDH and cancellation opening, separating it from private-state settlement proofs and bridge contracts.
+status: landed

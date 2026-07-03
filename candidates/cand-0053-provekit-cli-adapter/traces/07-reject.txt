@@ -1,0 +1,1 @@
+native CLI adapter rejects corrupted proof during real ProveKit verify

@@ -1,0 +1,4 @@
+fundraise-good-batch: FAIL accepted=False reason=commitment_mismatch
+fundraise-mismatched-basis-reject: pass accepted=False reason=mixed_basis
+fundraise-missing-transition-link-reject: pass accepted=False reason=missing_transition_link
+fundraise-false-net-reject: pass accepted=False reason=zero_opening

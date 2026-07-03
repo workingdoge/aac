@@ -1,0 +1,22 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0055-fundraise-local-settlement",
+  "evaluated_at": "2026-06-14T09:50:44Z",
+  "task": "Add local Foundry deploy/sign/settle submission to the ProveKit fundraise demo runner.",
+  "checks": {
+    "structure": "pass",
+    "scope": "pass",
+    "toolchain": "pass",
+    "unit": "pass",
+    "cli_help": "pass",
+    "local_settlement": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "9335709151828bb97fa3d4a5cce0ef22c65eee4960bfafcad60a60a87f9de622",
+    "traces_sha256": "9197a596cddc3483d479881a8896e84d4574c54eedf572a70dc8b6308ff4a0e4",
+    "body_sha256": "028b32ba31f160e3edd0ce71c6d8eebd6201d99a2b8d8fdac1813e157a3cbfc7",
+    "attestation": "1b6198448db2cc1f22bd6e12aa3bee34bd736b8112ae4de3f512661a0b9b4f7f"
+  }
+}

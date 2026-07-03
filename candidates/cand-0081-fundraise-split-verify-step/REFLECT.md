@@ -1,0 +1,38 @@
+# Reflection: cand-0081-fundraise-split-verify-step
+
+Intent: Separate fundraise proof generation from the visible verifier step in the demo UI.
+Status at reflection: landed
+Reflected at: 2026-06-14T14:40:34Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0081-fundraise-split-verify-step",
+  "evaluated_at": "2026-06-14T14:40:15Z",
+  "task": "Separate proof generation from visible verifier acceptance in the fundraise demo UI.",
+  "checks": {
+    "source": "pass",
+    "mutant": "pass",
+    "build": "pass",
+    "scope": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "69f8306250c3e050b080cabe00dde691b1ddb30cbfdadbb4792d76df54d4b3bb",
+    "traces_sha256": "fafa24394bce9cce1cf19983b15005b37ad3af14d55c89028409bd6e5ee209c8",
+    "body_sha256": "134bc0e12525e32e4a603004645ad00bf5aad7e9ec2f9a503d9591978900e876",
+    "attestation": "26079f77a2ec7e716f13102e1155982fcf7112a42d9eb730ef738e9b4580ec3b"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.

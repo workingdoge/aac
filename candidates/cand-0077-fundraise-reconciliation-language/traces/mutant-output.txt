@@ -1,0 +1,12 @@
+component missing reconciliation label
+component aria label still not reconciliation
+component missing reconciliation state helper
+component missing pending reconciliation state
+component missing running reconciliation state
+component missing reconciled state
+component missing reconciled class
+component still labels closing-books panel as verification
+component still carries verification helper
+component still says ready to verify
+component still says checking books
+component still says books verified

@@ -1,0 +1,1 @@
+verdict-tripwire: ok (scores_verdict and verdict_of byte-identical modulo name)

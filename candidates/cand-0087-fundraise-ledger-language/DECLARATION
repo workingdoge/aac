@@ -1,0 +1,4 @@
+layer: artifact
+implements: LEDGER/1 presentation binding for FUNDRAISE-CLEARING/1
+preserves: dm.presentation.projection, dm.commitment.attest
+compares_to: cand-0086-ledger-statement-interface, cand-0083-fundraise-balance-sheet-proof

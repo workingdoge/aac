@@ -1,0 +1,5 @@
+decision: admit
+operator: agent:codex
+decided_at: 2026-06-14T03:18:36Z
+brief_sha256: e79f99701d9f1304eb63e06fd74304794f15f9cbecc93182b63507f9857864a4
+note: this records the threshold decision; the chartered record is the Tusk receipt

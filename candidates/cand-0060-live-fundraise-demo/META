@@ -1,0 +1,5 @@
+candidate_id: cand-0060-live-fundraise-demo
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T10:55:06Z
+intent: Add a live localhost fundraise demo API and frontend control that runs the ProveKit fundraise proof on demand while keeping the captured receipt as fallback.
+status: landed

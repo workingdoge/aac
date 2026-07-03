@@ -1,0 +1,13 @@
+# ProveKit balance-sheet state circuit for the fundraise demo.
+#
+# TOOLCHAIN PIN -- Noir v1.0.0-beta.19 (ProveKit's pin, per Design Note 0002 S2.1).
+# This is deliberately separate from AAC's beta.14 bb/UltraHonk `circuits/`
+# workspace. Do not add this package to that workspace.
+
+[package]
+name = "aac_balance_sheet_provekit"
+type = "bin"
+authors = ["American Accounting Company"]
+
+[dependencies]
+# No path/git deps: standalone for the beta.14/beta.19 split.

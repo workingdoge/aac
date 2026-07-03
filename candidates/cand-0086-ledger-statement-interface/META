@@ -1,0 +1,5 @@
+candidate_id: cand-0086-ledger-statement-interface
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T20:17:01Z
+intent: Define LEDGER/1 as the committed private ledger state and statement interface, giving fundraise demo its missing 0-simplex.
+status: landed

@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0035-vnet-fundraising",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "c1a7c24bb7753793f810ba066854e75c85426ef8f81d645f969df450994d743d",
+    "META": "3911e3215d2df0589c909232293a0f84b95a7382bf72a224c0904dfa13fa198b"
+  }
+}

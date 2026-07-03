@@ -1,0 +1,5 @@
+bcc-good-goods-for-cash: pass accepted=true reason=accepted
+bcc-signature-mismatch-reject: pass accepted=false reason=signature_mismatch
+bcc-vnet-false-net-reject: pass accepted=false reason=vnet_zero_opening
+bcc-transcript-mismatch-reject: pass accepted=false reason=transcript_hash_mismatch
+bcc-finality-replay-reject: pass accepted=false reason=finality_replay

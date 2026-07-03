@@ -1,0 +1,19 @@
+{
+  "evaluated_at": "2026-06-14T23:49:08Z",
+  "task": "post-land conformance",
+  "candidate": "cand-0089-fundraise-face-receipts",
+  "snapshot": "d39aafd",
+  "checks": [
+    { "name": "manifest", "result": "pass" },
+    { "name": "snapshot", "result": "pass" },
+    { "name": "suite", "result": "pass" }
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "evaluate-landed.sh",
+    "harness_sha256": "34f271602979a5f0473f86b5b667a65c6879198ad1fb7f8d3226f7fce5b6c1d1",
+    "traces_sha256": "29787a4f902b23115463e1a24e812424cbe0fc2baa3d45dda5ff4561b9701c77",
+    "body_sha256": "8335f7f7e248234ee3249eba525d4565cb28b23f8eb387d9b0eb2cf2c5895f26",
+    "attestation": "8c312fc5ae1316cae6b2d488332a2faf0ba3222f9f877e2aab27dc5832e210f0"
+  }
+}

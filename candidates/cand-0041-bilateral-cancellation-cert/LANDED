@@ -1,0 +1,11 @@
+cargo/sites/ledger/specs/applications/BCC-1.md	sites/ledger/specs/applications/BCC-1.md	no
+cargo/sites/ledger/specs/applications/README.md	sites/ledger/specs/applications/README.md	yes
+cargo/sites/ledger/specs/applications/vectors/BCC-DEMO-1.json	sites/ledger/specs/applications/vectors/BCC-DEMO-1.json	no
+cargo/bcc-runtime/package.json	bcc-runtime/package.json	no
+cargo/bcc-runtime/README.md	bcc-runtime/README.md	no
+cargo/bcc-runtime/src/index.mjs	bcc-runtime/src/index.mjs	no
+cargo/bcc-runtime/src/index.d.ts	bcc-runtime/src/index.d.ts	no
+cargo/bcc-runtime/test/run-tests.mjs	bcc-runtime/test/run-tests.mjs	no
+# landed_at: 2026-06-14T05:04:22Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1 unavailable(not-in-devshell)
+git_commit	efb4e75

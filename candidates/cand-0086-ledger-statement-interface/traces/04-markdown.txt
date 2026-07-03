@@ -1,0 +1,1 @@
+markdown metadata and index row are well formed

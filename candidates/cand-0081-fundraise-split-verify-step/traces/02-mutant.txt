@@ -1,0 +1,2 @@
+proof run does not stop before visible verification
+collapsed-verifier mutant rejected

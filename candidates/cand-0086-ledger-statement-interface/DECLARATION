@@ -1,0 +1,4 @@
+layer: artifact
+implements: ledger statement interface surface
+preserves: dm.commitment.attest, dm.presentation.projection
+compares_to: cand-0043-fundraise-bcc-composition, cand-0083-fundraise-balance-sheet-proof

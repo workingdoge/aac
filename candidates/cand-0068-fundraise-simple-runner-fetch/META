@@ -1,0 +1,5 @@
+candidate_id: cand-0068-fundraise-simple-runner-fetch
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T11:59:16Z
+intent: Make the fundraise component call the live runner through the simple GET API so browser-triggered proof runs complete reliably.
+status: landed

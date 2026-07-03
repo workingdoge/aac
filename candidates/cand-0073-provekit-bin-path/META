@@ -1,0 +1,5 @@
+candidate_id: cand-0073-provekit-bin-path
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T12:42:06Z
+intent: Resolve relative ProveKit binary paths before the demo runner switches into the temp circuit workdir.
+status: landed

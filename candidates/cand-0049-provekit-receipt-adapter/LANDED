@@ -1,0 +1,9 @@
+cargo/fundraise-provekit-adapter/package.json	fundraise-provekit-adapter/package.json	no
+cargo/fundraise-provekit-adapter/README.md	fundraise-provekit-adapter/README.md	no
+cargo/fundraise-provekit-adapter/src/index.mjs	fundraise-provekit-adapter/src/index.mjs	no
+cargo/fundraise-provekit-adapter/src/index.d.ts	fundraise-provekit-adapter/src/index.d.ts	no
+cargo/fundraise-provekit-adapter/test/run-tests.mjs	fundraise-provekit-adapter/test/run-tests.mjs	no
+cargo/sites/ledger/specs/applications/FUNDRAISE-CLEARING-1.md	sites/ledger/specs/applications/FUNDRAISE-CLEARING-1.md	yes
+# landed_at: 2026-06-14T07:25:50Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=a324246e80c0202d95f4e3a4b88dc8b048e92e49a9326a4e6bccd1e76b94cba1 unavailable(not-in-devshell)
+git_commit	8b52e1c

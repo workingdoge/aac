@@ -1,0 +1,7 @@
+cargo/fundraise-runtime/src/index.mjs fundraise-runtime/src/index.mjs
+cargo/fundraise-runtime/src/index.d.ts fundraise-runtime/src/index.d.ts
+cargo/fundraise-runtime/test/run-tests.mjs fundraise-runtime/test/run-tests.mjs
+cargo/fundraise-demo-runner/src/index.mjs fundraise-demo-runner/src/index.mjs
+cargo/fundraise-demo-runner/test/run-tests.mjs fundraise-demo-runner/test/run-tests.mjs
+cargo/web/src/components/aac-fundraise-demo.ts web/src/components/aac-fundraise-demo.ts
+cargo/web/src/data/fundraise-demo-summary.ts web/src/data/fundraise-demo-summary.ts

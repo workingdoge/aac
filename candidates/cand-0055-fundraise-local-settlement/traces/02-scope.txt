@@ -1,0 +1,1 @@
+landing scope is demo-runner only; registry is evidence fixture without generated artifacts

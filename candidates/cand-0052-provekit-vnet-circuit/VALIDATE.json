@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0052-provekit-vnet-circuit",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "134f770658b70eb8e3ec414c00bc96cf39f0bfaaa9e170b83230435a4f0e468a",
+    "LANDING": "dda50142848e5549da94e136c0a8153cb38b609bc39fe0ca316adcb22e2743ab",
+    "META": "e58393832098fac9b36425b82498ad9306abf511a976f4858db80df87224dce2"
+  }
+}

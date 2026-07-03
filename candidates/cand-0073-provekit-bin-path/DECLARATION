@@ -1,0 +1,4 @@
+layer: artifact
+implements: none
+preserves: dm.transport.location dm.commitment.attest
+compares_to: none

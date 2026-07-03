@@ -1,0 +1,5 @@
+candidate_id: cand-0040-fundraise-runtime-functions
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T04:35:16Z
+intent: Add a function-first JavaScript/TypeScript-facing fundraising runtime that builds and verifies FUNDRAISE-CLEARING/1 packets from typed functions, using the JSON transcript only as a fixture/audit receipt and keeping Python as a reference oracle.
+status: landed

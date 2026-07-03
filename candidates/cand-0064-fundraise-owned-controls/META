@@ -1,0 +1,5 @@
+candidate_id: cand-0064-fundraise-owned-controls
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T11:29:21Z
+intent: Keep the fundraise controls inside aac-fundraise-demo and bind the rendered shadow buttons directly to the owned proof actions.
+status: landed

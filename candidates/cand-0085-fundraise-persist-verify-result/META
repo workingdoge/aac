@@ -1,0 +1,5 @@
+candidate_id: cand-0085-fundraise-persist-verify-result
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T16:15:44Z
+intent: Preserve htmx verifier form result across Lit re-render.
+status: landed

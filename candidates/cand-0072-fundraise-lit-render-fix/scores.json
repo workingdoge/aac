@@ -1,0 +1,19 @@
+{
+  "evaluated_at": "2026-06-14T12:37:52Z",
+  "task": "post-land conformance",
+  "candidate": "cand-0072-fundraise-lit-render-fix",
+  "snapshot": "056ea61",
+  "checks": [
+    { "name": "manifest", "result": "pass" },
+    { "name": "snapshot", "result": "pass" },
+    { "name": "suite", "result": "pass" }
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "evaluate-landed.sh",
+    "harness_sha256": "34f271602979a5f0473f86b5b667a65c6879198ad1fb7f8d3226f7fce5b6c1d1",
+    "traces_sha256": "dff204c12b6af8e59df51c3ec0e90dc2cb444e64147db86b1a1537329037222c",
+    "body_sha256": "6b654bb9695668b8dfe42c19b7125bc731350a85898cbb801dd5f4656b38860f",
+    "attestation": "13f84a11e67f73020ea67f0820f8b8387312b578232f68ac92da422149ced909"
+  }
+}

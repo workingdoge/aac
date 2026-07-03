@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0087-fundraise-ledger-language",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "b11be104e9fb32dc32a3d1ddf02c8da29df7cdbdbaec78b0e1e0464ec4e4b891",
+    "LANDING": "568d212adef44bebbb1175e6f7677924b96314ca3870d471cafd96659c256c07",
+    "META": "a08995a75d01bd6e09a5f12c83617eac3ff88de0457cd2d3212f12743def1b3f"
+  }
+}

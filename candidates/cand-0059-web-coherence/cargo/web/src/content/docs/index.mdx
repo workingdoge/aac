@@ -1,0 +1,45 @@
+---
+title: American Accounting Company
+description: Proof-native double-entry accounting — records that balance, trust that endures.
+template: splash
+editUrl: false
+hero:
+  tagline: Instruments for network capital.
+  actions:
+    - text: Open the fundraise demo
+      link: /fundraise/
+      variant: primary
+    - text: Read the core RFCs
+      link: /specs/rfc/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+Balance is a proof, not a promise. Entities keep private books, publish provable
+balanced-claim roots at names, and anchor ledger roots in a registry that
+**refuses unbalanced state**. The core identity is algebraic: double-entry
+bookkeeping *is* the Grothendieck group K(M) of amount vectors — which is what
+lets a ledger's integrity be checked in zero knowledge.
+
+<CardGrid>
+  <Card title="The demo">
+    A private fundraise settles against issuer books, ProveKit accepts the VNET
+    proof, and a local settlement contract mints restricted receipt tokens while
+    refusing replay.
+  </Card>
+  <Card title="The stack">
+    TRANSITION/1 posts private row state. Application targets such as VNET/1,
+    BCC/1, and FUNDRAISE-CLEARING/1 add policy proofs without expanding the
+    base registry trust surface.
+  </Card>
+  <Card title="The RFC suite">
+    Core RFCs, application targets, concrete profiles, and registers are
+    published from the verified spec pack. Specs remain prescriptive; the demo
+    is one implementation path.
+  </Card>
+  <Card title="Records that balance">
+    The ledger is the institution. Every transfer, every claim, every receipt —
+    proven. Precision, integrity, persistence.
+  </Card>
+</CardGrid>

@@ -1,0 +1,1 @@
+EVM mint authorization rejects symbolic token/recipient values and preserves runtime digest binding

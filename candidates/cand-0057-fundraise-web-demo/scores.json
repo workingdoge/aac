@@ -1,0 +1,21 @@
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0057-fundraise-web-demo",
+  "evaluated_at": "2026-06-14T10:19:59Z",
+  "task": "Add a token-themed /fundraise presentation console for the ProveKit-to-local-settlement demo summary.",
+  "checks": {
+    "register": "pass",
+    "summary_fixture": "pass",
+    "theme": "pass",
+    "page": "pass",
+    "build": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "63fa2111d2e3dadd9ae4c75a452eebd2dead35115cee06f7a40400dedfe243c8",
+    "traces_sha256": "5cfe08525c56d0506750ff4741dfe2bbff82cac8756532c2096a3f6bd3b827ea",
+    "body_sha256": "4a7f7b47e896d57b92c1be9a8e7e124a98c1a00e3ef9037c1d3540e9a17c0316",
+    "attestation": "86ce253ac909c7f8961339cc6622cbd1a2ab4fbdf1f25a98ddc3b76423d33a86"
+  }
+}

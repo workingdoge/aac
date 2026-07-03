@@ -1,0 +1,1 @@
+generated spec markdown rewrites local pages and externalizes fixtures

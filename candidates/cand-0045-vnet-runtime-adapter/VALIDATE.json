@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0045-vnet-runtime-adapter",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "410257f2743dfe6a28ab735464cc204be7255bae82775e260b673b55107578b3",
+    "META": "cd44a9c371c97dd7c09ecf8b344671e53cb45692ce47c6571db9352d5985f1ce"
+  }
+}

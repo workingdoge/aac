@@ -1,0 +1,1 @@
+simplicial profile defines vertices, edges, horns, fillers, and uniqueness

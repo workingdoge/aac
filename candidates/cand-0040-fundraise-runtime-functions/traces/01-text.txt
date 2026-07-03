@@ -1,0 +1,1 @@
+runtime exposes function-first JS API, TS declarations, transcript boundary, and no Python backend dependency

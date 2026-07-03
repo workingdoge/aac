@@ -1,0 +1,37 @@
+# Reflection: cand-0066-fundraise-control-events
+
+Intent: Harden the component-owned fundraise controls by binding direct pointer/click/key handlers to the slotted light-DOM buttons.
+Status at reflection: landed
+Reflected at: 2026-06-14T11:49:29Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0066-fundraise-control-events",
+  "evaluated_at": "2026-06-14T11:49:03Z",
+  "task": "Harden the component-owned fundraise controls with direct click, pointer, and key bindings.",
+  "checks": {
+    "source": "pass",
+    "build": "pass",
+    "scope": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "25166d6bd34c5d005637f3f331558c45f66b4137c85b57ab9de0a870794153c6",
+    "traces_sha256": "b654596654fa31a1b8648d963c8680b061d3d22100e331f282c3f0c11188c5a6",
+    "body_sha256": "2bd99c5054e64cf25b2d60c30554985c4fccd0f74e6f7436e1c55211dbb8e34b",
+    "attestation": "96678a152604c3231f932d52048dd08c52bb9f66a8e02a1504f863c537478d59"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.

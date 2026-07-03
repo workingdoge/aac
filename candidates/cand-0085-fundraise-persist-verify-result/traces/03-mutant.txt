@@ -1,0 +1,1 @@
+transient-result mutant rejected by source probe

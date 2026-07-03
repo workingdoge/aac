@@ -1,0 +1,1 @@
+fundraise runtime and runner tests pass with face receipts

@@ -1,0 +1,10 @@
+summary is not declared for Lit accessor use
+runState is not declared for Lit accessor use
+liveError is not declared for Lit accessor use
+liveElapsedMs is not declared for Lit accessor use
+sourceLabel is not declared for Lit accessor use
+summary still shadows Lit accessor
+runState still shadows Lit accessor
+liveError still shadows Lit accessor
+liveElapsedMs still shadows Lit accessor
+sourceLabel still shadows Lit accessor

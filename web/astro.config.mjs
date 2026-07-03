@@ -5,7 +5,7 @@ import starlight from '@astrojs/starlight';
 // paintgun spec-publication pack (scripts/sync-specs.mjs); the look is the AAC
 // modernist identity, themed over Starlight from the design/ tokens.
 export default defineConfig({
-  site: 'https://specs.aac.sh',
+  site: 'https://www.aac.sh',
   integrations: [
     starlight({
       title: 'American Accounting Company',
@@ -34,8 +34,11 @@ export default defineConfig({
       pagination: true,
       tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 4 },
       sidebar: [
-        { label: 'The standard', items: ['index', 'circuit', 'registry', 'components'] },
-        { label: 'RFC suite', autogenerate: { directory: 'specs/rfc' } },
+        { label: 'Start here', items: ['index', 'fundraise'] },
+        { label: 'Implementation', items: ['circuit', 'registry', 'components'] },
+        { label: 'Application targets', autogenerate: { directory: 'specs/applications' } },
+        { label: 'Profiles', autogenerate: { directory: 'specs/profiles' } },
+        { label: 'Core RFCs', autogenerate: { directory: 'specs/rfc' } },
         { label: 'Registers', autogenerate: { directory: 'specs/registers' } },
       ],
     }),

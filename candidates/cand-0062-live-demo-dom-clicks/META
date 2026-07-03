@@ -1,0 +1,5 @@
+candidate_id: cand-0062-live-demo-dom-clicks
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T11:16:35Z
+intent: Attach explicit DOM click listeners to the fundraise live controls so the browser button actually runs the proof/fallback actions.
+status: landed

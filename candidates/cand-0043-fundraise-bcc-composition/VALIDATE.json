@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0043-fundraise-bcc-composition",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "00f25ff756c67e4cc61f7b9f985f6f3afd35961e0334d77d889230961604cd0b",
+    "META": "07d9ee59646b9fed77169abd439873fc6dba8ba0bdc01382d7dbc8bfcf59786f"
+  }
+}

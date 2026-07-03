@@ -1,0 +1,1 @@
+adapter exposes native CLI prepare/prove/verify runner, injectable seam, digest guards, and rejection tests

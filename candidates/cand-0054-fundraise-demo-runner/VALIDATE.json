@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0054-fundraise-demo-runner",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "4fce8fe78f1e6100215112a2dfc7fcbf328d7cb01a4f9316cfefb44e77ecc5fb",
+    "META": "dd8b2fd389cea5d2938f3e3540adff723e70677bb8776e8d1ee789240e6c2e8f"
+  }
+}

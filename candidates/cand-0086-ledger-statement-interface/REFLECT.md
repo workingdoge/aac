@@ -1,0 +1,38 @@
+# Reflection: cand-0086-ledger-statement-interface
+
+Intent: Define LEDGER/1 as the committed private ledger state and statement interface, giving fundraise demo its missing 0-simplex.
+Status at reflection: landed
+Reflected at: 2026-06-14T20:20:27Z
+
+## Scores
+
+```json
+{
+  "schema": "boat.eval-self.v0",
+  "candidate": "cand-0086-ledger-statement-interface",
+  "evaluated_at": "2026-06-14T20:20:03Z",
+  "task": "Add LEDGER/1 as the committed private ledger state and statement interface: ledger as vertex, statements as lawful projections, TRANSITION/1 binding, and Premath Gate failure vocabulary.",
+  "checks": {
+    "text": "pass",
+    "non_expansion": "pass",
+    "landing": "pass",
+    "markdown": "pass"
+  },
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "3d0b5763492a2d92cc93409db8973ac04fce871edf4c216f7bf16df6f3787564",
+    "traces_sha256": "77c81740d0c0f825d2b1fbbe1d9f6890de8ce1bb117bb3e36c557cd569ea232c",
+    "body_sha256": "007d65dbc64004374f3c40eb50a56de45cbb69f2bcde62a5c9572cde0bff8863",
+    "attestation": "699bad3a41d836d6feed326bcb24eee2884bbe7c621a1e719cd9cb64b201f7ea"
+  }
+}
+```
+
+## Comparison (intended vs realized)
+
+Assessment (agent-drafted): witness
+Basis: verdict pass (top-level JSON key); evidence attested (chain over scores body, traces, harness)
+
+Operator may override by editing this file; obstruction receipts proper
+remain Tusk-recorded threshold denials per the charter.

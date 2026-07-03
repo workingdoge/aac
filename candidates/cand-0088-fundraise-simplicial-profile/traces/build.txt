@@ -1,0 +1,69 @@
+tokens.css generated from design/ (paint build + verify)
+Synced 20 documents into src/content/docs/specs.
+16:55:26 [vite] Re-optimizing dependencies because vite config has changed
+16:55:26 [content] Syncing content
+16:55:26 [WARN] [starlight-docs-loader] Duplicate id "specs/applications/fundraise-clearing-1" found in /private/tmp/aac-fundraise-simplicial-profile.XFV2vL/repo/web/src/content/docs/specs/applications/fundraise-clearing-1.md. Later items with the same id will overwrite earlier ones.
+16:55:26 [content] Synced content
+16:55:26 [types] Generated 345ms
+16:55:26 [build] output: "static"
+16:55:26 [build] mode: "static"
+16:55:26 [build] directory: /private/tmp/aac-fundraise-simplicial-profile.XFV2vL/repo/web/dist/
+16:55:26 [build] Collecting build info...
+16:55:26 [build] ✓ Completed in 410ms.
+16:55:26 [build] Building static entrypoints...
+16:55:27 [vite] ✓ built in 782ms
+16:55:27 [build] ✓ Completed in 796ms.
+
+ building client (vite) 
+16:55:27 [vite] transforming...
+16:55:27 [vite] ✓ 35 modules transformed.
+16:55:27 [vite] rendering chunks...
+16:55:27 [vite] computing gzip size...
+16:55:27 [vite] dist/_astro/ec.0vx5m.js                                                              2.52 kB
+16:55:27 [vite] dist/_astro/ec.v4551.css                                                            18.22 kB │ gzip:  3.96 kB
+16:55:27 [vite] dist/_astro/MobileTableOfContents.astro_astro_type_script_index_0_lang.hwBsy0Mo.js   0.67 kB │ gzip:  0.40 kB
+16:55:27 [vite] dist/_astro/TableOfContents.astro_astro_type_script_index_0_lang.FuRcXuRY.js         2.06 kB │ gzip:  0.97 kB
+16:55:27 [vite] dist/_astro/page.B1D-nYk3.js                                                         2.24 kB │ gzip:  1.01 kB
+16:55:27 [vite] dist/_astro/Search.astro_astro_type_script_index_0_lang.CJiOmi4V.js                  2.69 kB │ gzip:  1.38 kB
+16:55:27 [vite] dist/_astro/ui-core.C0u4jL1_.js                                                     94.19 kB │ gzip: 27.34 kB
+16:55:27 [vite] dist/_astro/Loader.astro_astro_type_script_index_0_lang.ChuBsy9O.js                 99.48 kB │ gzip: 24.32 kB
+16:55:27 [vite] ✓ built in 134ms
+
+ generating static routes 
+16:55:27 ▶ @astrojs/starlight/routes/static/404.astro
+16:55:27   └─ /404.htmlEntry docs → 404 was not found.
+ (+9ms) 
+16:55:27 ▶ @astrojs/starlight/routes/static/index.astro
+16:55:27   ├─ /circuit/index.html (+5ms) 
+16:55:27   ├─ /fundraise/index.html (+3ms) 
+16:55:27   ├─ /components/index.html (+3ms) 
+16:55:27   ├─ /registry/index.html (+3ms) 
+16:55:27   ├─ /index.html (+2ms) 
+16:55:27   ├─ /specs/applications/index.html (+2ms) 
+16:55:27   ├─ /specs/applications/vnet-1/index.html (+2ms) 
+16:55:27   ├─ /specs/applications/event-complete-1/index.html (+2ms) 
+16:55:27   ├─ /specs/applications/fundraise-clearing-1/index.html (+2ms) 
+16:55:27   ├─ /specs/applications/bcc-1/index.html (+2ms) 
+16:55:27   ├─ /specs/profiles/index.html (+2ms) 
+16:55:27   ├─ /specs/profiles/sparse-cells-1/index.html (+1ms) 
+16:55:27   ├─ /specs/profiles/pedersen-vector-1/index.html (+2ms) 
+16:55:27   ├─ /specs/registers/r1/index.html (+2ms) 
+16:55:27   ├─ /specs/rfc/data/index.html (+2ms) 
+16:55:27   ├─ /specs/profiles/vnet-bn254-g1-1/index.html (+2ms) 
+16:55:27   ├─ /specs/rfc/name/index.html (+2ms) 
+16:55:27   ├─ /specs/rfc/fact/index.html (+2ms) 
+16:55:27   ├─ /specs/rfc/index.html (+1ms) 
+16:55:27   ├─ /specs/rfc/net/index.html (+2ms) 
+16:55:27   ├─ /specs/rfc/paci/index.html (+1ms) 
+16:55:27   ├─ /specs/rfc/otc/index.html (+2ms) 
+16:55:27   ├─ /specs/rfc/proof/index.html (+2ms) 
+16:55:27   ├─ /specs/rfc/reg/index.html (+1ms) 
+16:55:27   └─ /specs/rfc/sess/index.html (+3ms) 
+16:55:27 ✓ Completed in 87ms.
+
+16:55:27 [starlight:pagefind] Building search index with Pagefind...
+16:55:28 [starlight:pagefind] Found 26 HTML files.
+16:55:28 [starlight:pagefind] Finished building search index in 0.89s.
+16:55:28 [@astrojs/sitemap] `sitemap-index.xml` created at `dist`
+16:55:28 [build] 26 page(s) built in 2.33s
+16:55:28 [build] Complete!

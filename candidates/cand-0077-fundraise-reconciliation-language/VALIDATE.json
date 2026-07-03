@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0077-fundraise-reconciliation-language",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "8d54a146d07f9716efeb41f69e3adffd5773dac7b2b3890726d0e3f466fbf5b1",
+    "LANDING": "6554297eee9c9d023e5da9ca0b0ce790df8eb44fe00b6e62f79165d17ebccbda",
+    "META": "3bf1e83e7e43ad2d549b4bdbc857af83558ae3a42985279716f72ff320627379"
+  }
+}

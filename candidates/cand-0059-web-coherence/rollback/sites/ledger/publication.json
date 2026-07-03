@@ -1,0 +1,112 @@
+{
+  "schema": "atlas.spec-publication.v1",
+  "site": "aac",
+  "sourceRoot": "specs",
+  "series": [
+    {
+      "id": "rfc",
+      "title": "AAC RFC suite",
+      "documents": [
+        {
+          "id": "index",
+          "title": "Specification Suite \u2014 Catalog",
+          "status": "Raw",
+          "category": "index",
+          "path": "README.md",
+          "order": 0,
+          "summary": "The AAC RFC catalog, layering, lifecycle gates, and profile doctrine."
+        },
+        {
+          "id": "PACI",
+          "title": "Ledger Semantics",
+          "status": "Raw",
+          "category": "ledger",
+          "path": "1/README.md",
+          "order": 1,
+          "summary": "Double-entry as the Grothendieck group K(M) of amount vectors."
+        },
+        {
+          "id": "FACT",
+          "title": "Attested Facts and Canonical Form",
+          "status": "Raw",
+          "category": "facts",
+          "path": "2/README.md",
+          "order": 2
+        },
+        {
+          "id": "PROOF",
+          "title": "Proof Targets and the Verifier Contract",
+          "status": "Raw",
+          "category": "proof",
+          "path": "3/README.md",
+          "order": 3,
+          "summary": "Constraint idioms, carrier injectivity, the verifier contract."
+        },
+        {
+          "id": "REG",
+          "title": "The Root Registry",
+          "status": "Raw",
+          "category": "registry",
+          "path": "4/README.md",
+          "order": 4
+        },
+        {
+          "id": "NET",
+          "title": "Epoch Netting",
+          "status": "Raw",
+          "category": "netting",
+          "path": "5/README.md",
+          "order": 5
+        },
+        {
+          "id": "NAME",
+          "title": "Namespace Binding",
+          "status": "Raw",
+          "category": "naming",
+          "path": "6/README.md",
+          "order": 6
+        },
+        {
+          "id": "DATA",
+          "title": "Evidence and Availability",
+          "status": "Raw",
+          "category": "data",
+          "path": "7/README.md",
+          "order": 7
+        },
+        {
+          "id": "SESS",
+          "title": "Bilateral Payment Sessions",
+          "status": "Raw",
+          "category": "session",
+          "path": "8/README.md",
+          "order": 8
+        },
+        {
+          "id": "OTC",
+          "title": "Margined Bilateral Contingent Contracts",
+          "status": "Raw",
+          "category": "contracts",
+          "path": "12/README.md",
+          "order": 12,
+          "summary": "Reserved-number RFC, drafted."
+        }
+      ]
+    },
+    {
+      "id": "registers",
+      "title": "Registers",
+      "documents": [
+        {
+          "id": "R1",
+          "title": "Deployment Register",
+          "status": "Raw",
+          "category": "register",
+          "path": "registers/R1.md",
+          "order": 1,
+          "summary": "Append-only deployment register (non-normative)."
+        }
+      ]
+    }
+  ]
+}

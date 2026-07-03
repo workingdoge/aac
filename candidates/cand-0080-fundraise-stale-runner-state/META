@@ -1,0 +1,5 @@
+candidate_id: cand-0080-fundraise-stale-runner-state
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T14:27:03Z
+intent: Treat missing reconciliation/verifier fields from a live runner response as stale runner state, not a book mismatch.
+status: landed

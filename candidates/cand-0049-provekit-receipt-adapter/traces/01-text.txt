@@ -1,0 +1,1 @@
+ProveKit adapter receipt builder, verifier, proof-system guards, and boundary text are present

@@ -1,0 +1,5 @@
+candidate_id: cand-0077-fundraise-reconciliation-language
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T13:40:21Z
+intent: remove verifier overclaim from the fundraise closing-books UI
+status: landed

@@ -1,0 +1,26 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: The input did not match the regular expression /variable_fill_cap_exceeded/. Input:
+
+'FundraiseDemoRunnerError: settlement_cap_exceeded'
+
+    at file:///private/tmp/aac-variable-batch.u3De3d/repo/[eval1]:8:8 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: FundraiseDemoRunnerError: settlement_cap_exceeded
+      at buildFundraiseDemoBatchPacket (file:///private/tmp/aac-variable-batch.u3De3d/repo/fundraise-demo-runner/src/index.mjs:731:11)
+      at file:///private/tmp/aac-variable-batch.u3De3d/repo/[eval1]:8:21
+      at getActual (node:assert:611:5)
+      at strict.throws (node:assert:759:24)
+      at file:///private/tmp/aac-variable-batch.u3De3d/repo/[eval1]:8:8 {
+    reason: 'variable_batch_packet_rejected',
+    detail: { verifier_reason: 'settlement_cap_exceeded' }
+  },
+  expected: /variable_fill_cap_exceeded/,
+  operator: 'throws',
+  diff: 'simple'
+}
+
+Node.js v24.14.0

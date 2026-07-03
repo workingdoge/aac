@@ -1,0 +1,5 @@
+candidate_id: cand-0063-live-demo-shadow-clicks
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T11:21:15Z
+intent: Bind the fundraise live controls inside the component shadow root so clicks reach the proof runner.
+status: landed

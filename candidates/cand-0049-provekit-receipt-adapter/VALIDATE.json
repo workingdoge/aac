@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0049-provekit-receipt-adapter",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3f12bd291ef016fca8f636571fdc0b59e4b97d2d07b1e8841b07449b97554c06",
+    "LANDING": "e46ec29f187a80d31f43a4053b564f0751a4e2c473b53a25d816afd970d87ed6",
+    "META": "5ab2767f9960a4621b185ba3668656e2a197ffe135fd4b8c61c74c9c411211fb"
+  }
+}

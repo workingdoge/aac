@@ -1,0 +1,19 @@
+{
+  "evaluated_at": "2026-06-14T20:56:26Z",
+  "task": "post-land conformance",
+  "candidate": "cand-0088-fundraise-simplicial-profile",
+  "snapshot": "5712e98",
+  "checks": [
+    { "name": "manifest", "result": "pass" },
+    { "name": "snapshot", "result": "pass" },
+    { "name": "suite", "result": "pass" }
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "evaluate-landed.sh",
+    "harness_sha256": "34f271602979a5f0473f86b5b667a65c6879198ad1fb7f8d3226f7fce5b6c1d1",
+    "traces_sha256": "e71b69cf7972fb7235bb3880f8e3b0d820bee39bb843a3ab6ce922dc287674b6",
+    "body_sha256": "bf45eabdc5e8d1ad998eeee8d3bd84ac8bf278c1b1e57cea0cd53aa32ed2637b",
+    "attestation": "5aaac6d74194715786870072c1d6872c0d9cbf1188a1849fe8c73cc09cada6f5"
+  }
+}

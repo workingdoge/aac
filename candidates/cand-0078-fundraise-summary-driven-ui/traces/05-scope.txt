@@ -1,0 +1,1 @@
+landing scope is runner summary contract + fundraise web renderer only

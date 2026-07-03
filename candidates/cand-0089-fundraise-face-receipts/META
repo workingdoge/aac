@@ -1,0 +1,5 @@
+candidate_id: cand-0089-fundraise-face-receipts
+cycle_id: aac-2026-06-13
+opened: 2026-06-14T21:03:03Z
+intent: Generate FUNDRAISE-CLEARING/1 simplicial face receipts from the runtime packet and expose them through the demo summary.
+status: landed
