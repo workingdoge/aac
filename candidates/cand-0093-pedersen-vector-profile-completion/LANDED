@@ -6,3 +6,4 @@ seeds/world-app/provekit-pedersen-vector-derivation/src/main.nr	world-app/provek
 seeds/candidates/QUEUE.md	candidates/QUEUE.md	yes
 # landed_at: 2026-07-03T14:33:13Z
 # toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=feebb6c98bd0faef8b540a9e26c410e98caefd38b6309aaaefa5a9045adf0c3b unavailable(not-in-devshell)
+git_commit	df6aa7c
