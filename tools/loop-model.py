@@ -108,6 +108,19 @@ def read_two_fields(line):
     return src, dest
 
 
+def read_three_fields(line):
+    """bash `read -r src dest kind`: leading IFS stripped, first word to
+    src, second to dest, remainder to kind (trailing IFS stripped)."""
+    stripped = line.lstrip(" \t")
+    if not stripped:
+        return "", "", ""
+    parts = re.split(r'[ \t]+', stripped, maxsplit=2)
+    src = parts[0]
+    dest = parts[1] if len(parts) > 1 else ""
+    kind = parts[2].strip(" \t") if len(parts) > 2 else ""
+    return src, dest, kind
+
+
 def vocab_lines(path):
     """grep -vE '^#|^[[:space:]]*$' — non-comment, non-blank lines."""
     out = []
@@ -369,15 +382,26 @@ def apply_landing_lines(law, ctx):
         return
     by_check = {sub["check"]: sub for sub in law["line_laws"]}
     for line in landing_loop_lines(read_text(landing)):
-        src, dest = read_two_fields(line)
+        src, dest, kind = read_three_fields(line)
         if src == "" or src.startswith("#"):
             continue
+        kind = kind or law["default_kind"]
         if not os.path.isfile(ctx.path(src)):
             ctx.vfail(by_check["src-exists"], src=src, dest=dest)
         if dest == "":
             ctx.vfail(by_check["dest-nonempty"], src=src, dest=dest)
         if dest.startswith("/") or ".." in dest:
             ctx.vfail(by_check["dest-rooted"], src=src, dest=dest)
+        if kind not in law["allowed_kinds"]:
+            ctx.vfail(by_check["kind-vocab"], src=src, dest=dest, kind=kind)
+        if kind == "queue-merge":
+            norm_dest = dest[2:] if dest.startswith("./") else dest
+            if norm_dest != law["queue_merge_dest"]:
+                ctx.vfail(by_check["queue-merge-dest"], src=src, dest=dest,
+                          kind=kind)
+            if not os.path.isfile(ctx.path(law["queue_base"])):
+                ctx.vfail(by_check["queue-base-present"], src=src, dest=dest,
+                          kind=kind)
 
 
 def landing_loop_lines(text):
@@ -642,27 +666,32 @@ def predict_scores_verdict(ctx):
 
 def landing_pairs_for_land(ctx):
     """The land arm's pair construction: LANDING map (normalized,
-    first invalid dest dies) or the default *.sh -> tools/ rule.
-    Returns (pairs, invalid_seen)."""
+    first invalid row dies) or the default *.sh -> tools/ rule.
+    Returns (pairs, invalid_token)."""
     landing = ctx.path("LANDING")
     pairs = []
     if os.path.isfile(landing):
         for line in landing_loop_lines(read_text(landing)):
-            src, dest = read_two_fields(line)
+            src, dest, kind = read_three_fields(line)
             if src == "" or src.startswith("#"):
                 continue
+            kind = kind or "file"
             if dest.startswith("./"):
                 dest = dest[2:]
             if dest == "" or dest.startswith("/") or ".." in dest:
-                return pairs, True
-            pairs.append((src, dest))
+                return pairs, "landing-dests-valid"
+            if kind not in ("file", "queue-merge"):
+                return pairs, "landing-kind-valid"
+            if kind == "queue-merge" and dest != "candidates/QUEUE.md":
+                return pairs, "queue-merge-dest-valid"
+            pairs.append((src, dest, kind))
     else:
         for f in sorted(glob.glob(ctx.path("*.sh"))):
             base = os.path.basename(f)
             if base == "eval-self.sh":
                 continue
-            pairs.append((base, "tools/" + base))
-    return pairs, False
+            pairs.append((base, "tools/" + base, "file"))
+    return pairs, ""
 
 
 def predict_auto(ctx, validate_rc):
@@ -692,11 +721,11 @@ def predict_auto(ctx, validate_rc):
         return outcome("not-already-landed")
     pairs, invalid = landing_pairs_for_land(ctx)
     if invalid:
-        return outcome("landing-dests-valid")
+        return outcome(invalid)
     if not pairs:
         return outcome("landing-nonempty")
     tier_sensitive = any(
-        dest.startswith(tuple(laws["tier_patterns"])) for _, dest in pairs)
+        dest.startswith(tuple(laws["tier_patterns"])) for _, dest, _ in pairs)
     if tier_sensitive and not os.path.isfile(ctx.path("REVIEW.md")):
         return outcome("tier-review")
     return {"outcome": laws["chain"][-1]["terminal"]}

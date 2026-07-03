@@ -76,7 +76,7 @@ row_count() {
 # Usage: stage_root OUT [--head-only] [--apply-landing] [--include-candidate]
 # Copies ROOT's HEAD tree to OUT and, by default, overlays CAND/LANDING seeds.
 stage_root() {
-  local out="${1:-}" apply_landing=yes include_candidate=no arg src dest extra
+  local out="${1:-}" apply_landing=yes include_candidate=no arg src dest kind tmp merge_out
   [[ -n "$out" ]] || { eval_lib_err 'stage_root needs OUT'; return 64; }
   shift || true
   for arg in "$@"; do
@@ -98,14 +98,40 @@ stage_root() {
   fi
   if [[ "$apply_landing" == yes ]]; then
     [[ -f "$CAND/LANDING" ]] || { eval_lib_err "stage_root missing LANDING: $CAND/LANDING"; return 65; }
-    while IFS=$'\t' read -r src dest extra; do
+    while read -r src dest kind; do
       [[ -n "$src" && "$src" != \#* ]] || continue
-      [[ -n "$dest" && -z "${extra:-}" ]] || { eval_lib_err "bad LANDING row: $src $dest ${extra:-}"; return 65; }
+      kind="${kind:-file}"
+      [[ -n "$dest" ]] || { eval_lib_err "bad LANDING row: $src $dest ${kind:-}"; return 65; }
       [[ -e "$CAND/$src" ]] || { eval_lib_err "LANDING source missing: $src"; return 65; }
-      mkdir -p "$out/$(dirname "$dest")" || return 1
-      cp -R "$CAND/$src" "$out/$dest" || return 1
+      dest="${dest#./}"
       case "$dest" in
-        tools/loop|*.sh) chmod +x "$out/$dest" ;;
+        ""|/*|*..*) eval_lib_err "LANDING destination invalid: $dest"; return 65 ;;
+      esac
+      mkdir -p "$out/$(dirname "$dest")" || return 1
+      case "$kind" in
+        file)
+          cp -R "$CAND/$src" "$out/$dest" || return 1
+          case "$dest" in
+            tools/loop|*.sh) chmod +x "$out/$dest" ;;
+          esac
+          ;;
+        queue-merge)
+          [[ "$dest" == "candidates/QUEUE.md" ]] || {
+            eval_lib_err "queue-merge LANDING destination must be candidates/QUEUE.md: $dest"; return 65; }
+          [[ -f "$CAND/QUEUE.base" ]] || {
+            eval_lib_err "QUEUE.base missing for queue-merge LANDING row"; return 65; }
+          [[ -f "$out/tools/queue-merge.sh" ]] || {
+            eval_lib_err "staged queue-merge tool missing"; return 65; }
+          tmp="$(mktemp -d)" || return 1
+          merge_out="$tmp/QUEUE.md"
+          if ! bash "$out/tools/queue-merge.sh" "$dest" "$CAND/QUEUE.base" "$CAND/$src" "$out/$dest" "$merge_out"; then
+            rm -rf "$tmp"
+            return 65
+          fi
+          cp "$merge_out" "$out/$dest" || { rm -rf "$tmp"; return 1; }
+          rm -rf "$tmp"
+          ;;
+        *) eval_lib_err "LANDING kind invalid: $kind"; return 65 ;;
       esac
     done < "$CAND/LANDING"
   fi

@@ -16,6 +16,7 @@ file	tools/receipt-schema-check.sh
 file	tools/memory.sh
 file	tools/queue-lib.sh
 file	tools/queue-lint.sh
+file	tools/queue-merge.sh
 file	tools/queue-archive.sh
 file	tools/cross-surface-check.sh
 file	tools/verdict-tripwire.sh

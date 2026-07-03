@@ -182,14 +182,36 @@ record_scores_state() {
   fi
 }
 
+landing_kind_normalize() {
+  local kind="$1"
+  [[ -n "$kind" ]] || kind="file"
+  printf '%s' "$kind"
+}
+
+landing_has_queue_merge() {
+  local dir="$1" src dest kind
+  [[ -f "$dir/LANDING" ]] || return 1
+  while read -r src dest kind; do
+    [[ -n "$src" && "$src" != \#* ]] || continue
+    kind="$(landing_kind_normalize "${kind:-}")"
+    [[ "$kind" == "queue-merge" ]] && return 0
+  done < "$dir/LANDING"
+  return 1
+}
+
 record_landing_material() {
-  local src dest extra out="" sep=""
+  local src dest kind extra out="" sep=""
   if [[ -f "$CAND/LANDING" ]]; then
-    while read -r src dest extra; do
+    while read -r src dest kind; do
       [[ -n "$src" && "$src" != \#* ]] || continue
+      kind="$(landing_kind_normalize "${kind:-}")"
       dest="${dest#./}"
       [[ -n "$dest" ]] || continue
-      out="${out}${sep}${src} -> ${dest}"
+      if [[ "$kind" == "file" ]]; then
+        out="${out}${sep}${src} -> ${dest}"
+      else
+        out="${out}${sep}${src} -> ${dest} (${kind})"
+      fi
       sep="; "
     done < "$CAND/LANDING"
   fi
@@ -206,7 +228,7 @@ record_landing_material() {
 
 record_left_behind() {
   local id="$1" name out="" sep=""
-  for name in META DECLARATION README.md LANDING VALIDATE.json BRIEF.md REVIEW.md scores.json traces drafts rollback DECISION DECISIONS LANDED; do
+  for name in META DECLARATION README.md LANDING QUEUE.base VALIDATE.json BRIEF.md REVIEW.md scores.json traces drafts rollback DECISION DECISIONS LANDED; do
     [[ -e "$CAND/$name" ]] || continue
     out="${out}${sep}candidates/${id}/${name}"
     sep=", "
@@ -323,11 +345,11 @@ meta_set_status() {
 }
 
 candidate_landing_tier() {
-  local dir="$1" src dest base
+  local dir="$1" src dest kind base
   local normal=0 verifier=0 law=0
 
   if [[ -f "$dir/LANDING" ]]; then
-    while read -r src dest; do
+    while read -r src dest kind; do
       [[ -n "$src" && "$src" != \#* ]] || continue
       dest="${dest#./}"
       case "$dest" in
@@ -532,7 +554,7 @@ cand_id, cand_dir, result, failures_path = sys.argv[1:5]
 doc = {"schema": "boat.validate.v0", "candidate": cand_id, "result": result}
 if result == "admitted":
     refs = {}
-    for name in ("META", "DECLARATION", "LANDING"):
+    for name in ("META", "DECLARATION", "LANDING", "QUEUE.base"):
         p = os.path.join(cand_dir, name)
         if os.path.isfile(p):
             refs[name] = hashlib.sha256(open(p, "rb").read()).hexdigest()
@@ -565,12 +587,23 @@ VPYEOF
   fi
 
   if [[ -f "$CAND/LANDING" ]]; then
-    while read -r src dest; do
+    while read -r src dest kind; do
       [[ -n "$src" && "$src" != \#* ]] || continue
+      kind="$(landing_kind_normalize "${kind:-}")"
       [[ -f "$CAND/$src" ]] || vfail record-formation-incomplete LANDING "LANDING source missing: $src"
       [[ -n "$dest" ]] || vfail record-formation-incomplete LANDING "LANDING entry for $src has no destination"
       case "$dest" in
         /*|*..*) vfail verifier_contract_violation LANDING "LANDING destination must be root-relative without ..: $dest" ;;
+      esac
+      case "$kind" in
+        file) ;;
+        queue-merge)
+          [[ "${dest#./}" == "candidates/QUEUE.md" ]] \
+            || vfail verifier_contract_violation LANDING "queue-merge LANDING destination must be candidates/QUEUE.md: $dest"
+          [[ -f "$CAND/QUEUE.base" ]] \
+            || vfail record-formation-incomplete QUEUE.base "QUEUE.base missing for queue-merge LANDING row"
+          ;;
+        *) vfail vocabulary-atom-failure LANDING.kind "LANDING kind must be empty, file, or queue-merge: $kind" ;;
       esac
     done < "$CAND/LANDING"
   fi
@@ -666,6 +699,12 @@ evaluate)
 brief)
   id="${1:-}"; [[ -n "$id" ]] || die "usage: loop brief ID"
   require_candidate "$id"
+  if landing_has_queue_merge "$CAND"; then
+    [[ -f "$ROOT/candidates/QUEUE.md" ]] \
+      || die "queue-merge brief requires live candidates/QUEUE.md"
+    cp "$ROOT/candidates/QUEUE.md" "$CAND/QUEUE.base" \
+      || die "could not snapshot live candidates/QUEUE.md to QUEUE.base"
+  fi
   intent="$(meta_get "$CAND" intent)"
   status="$(meta_get "$CAND" status)"
   BRIEF="$CAND/BRIEF.md"
@@ -685,16 +724,31 @@ brief)
     # show everything that lands, not just shell scripts); falls back to the
     # default *.sh -> tools/ rule otherwise.
     if [[ -f "$CAND/LANDING" ]]; then
-      while read -r src dest; do
+      while read -r src dest kind; do
         [[ -n "$src" && "$src" != \#* ]] || continue
+        kind="$(landing_kind_normalize "${kind:-}")"
         [[ -f "$CAND/$src" ]] || { printf -- '- MISSING SOURCE: `%s`\n' "$src"; continue; }
         found_cargo=1
+        if [[ "$kind" == "queue-merge" && -f "$CAND/QUEUE.base" ]]; then
+          added="$(diff "$CAND/QUEUE.base" "$CAND/$src" | grep -c '^>')"
+          removed="$(diff "$CAND/QUEUE.base" "$CAND/$src" | grep -c '^<')"
+          printf -- '- `%s` queue-merges `%s`: +%s/-%s lines vs QUEUE.base\n' "$src" "$dest" "$added" "$removed"
+          continue
+        fi
         if [[ -f "$ROOT/$dest" ]]; then
           added="$(diff "$ROOT/$dest" "$CAND/$src" | grep -c '^>')"
           removed="$(diff "$ROOT/$dest" "$CAND/$src" | grep -c '^<')"
-          printf -- '- `%s` replaces `%s`: +%s/-%s lines vs live\n' "$src" "$dest" "$added" "$removed"
+          if [[ "$kind" == "file" ]]; then
+            printf -- '- `%s` replaces `%s`: +%s/-%s lines vs live\n' "$src" "$dest" "$added" "$removed"
+          else
+            printf -- '- `%s` lands `%s` as kind `%s`: +%s/-%s lines vs live\n' "$src" "$dest" "$kind" "$added" "$removed"
+          fi
         else
-          printf -- '- `%s` is NEW at `%s`: %s lines\n' "$src" "$dest" "$(wc -l < "$CAND/$src")"
+          if [[ "$kind" == "file" ]]; then
+            printf -- '- `%s` is NEW at `%s`: %s lines\n' "$src" "$dest" "$(wc -l < "$CAND/$src")"
+          else
+            printf -- '- `%s` is NEW at `%s` as kind `%s`: %s lines\n' "$src" "$dest" "$kind" "$(wc -l < "$CAND/$src")"
+          fi
         fi
       done < "$CAND/LANDING"
     else
@@ -1023,26 +1077,37 @@ land)
       || die "stale approval: DECISION binds brief ${decided_sha:0:12} but current brief is ${current_sha:0:12} — re-admit against current evidence"
   fi
 
-  # Landing map: $CAND/LANDING lines of "SRC DEST" (relative to candidate
-  # and root). Default: top-level *.sh -> tools/, excluding eval-self.sh.
+  # Landing map: $CAND/LANDING lines of "SRC DEST [KIND]" (relative to
+  # candidate and root). KIND defaults to file; queue-merge is admitted only
+  # for candidates/QUEUE.md. Default: top-level *.sh -> tools/, excluding
+  # eval-self.sh.
   pairs=()
   if [[ -f "$CAND/LANDING" ]]; then
-    while read -r src dest; do
+    while read -r src dest kind; do
       [[ -n "$src" && "$src" != \#* ]] || continue
+      kind="$(landing_kind_normalize "${kind:-}")"
       # Normalize and reject path tricks BEFORE the tier guard sees the dest:
       # "./tools/x" must not evade the tools/ check, and nothing escapes ROOT.
       dest="${dest#./}"
       case "$dest" in
         ""|/*|*..*) die "LANDING destination invalid (must be root-relative, no ..): '$dest'" ;;
       esac
-      pairs+=("$src $dest")
+      case "$kind" in
+        file) ;;
+        queue-merge)
+          [[ "$dest" == "candidates/QUEUE.md" ]] \
+            || die "queue-merge LANDING destination must be candidates/QUEUE.md: $dest"
+          ;;
+        *) die "LANDING kind invalid (allowed: empty, file, queue-merge): $kind" ;;
+      esac
+      pairs+=("$src"$'\t'"$dest"$'\t'"$kind")
     done < "$CAND/LANDING"
   else
     for f in "$CAND"/*.sh; do
       [[ -f "$f" ]] || continue
       base="$(basename "$f")"
       [[ "$base" == "eval-self.sh" ]] && continue
-      pairs+=("$base tools/$base")
+      pairs+=("$base"$'\t'"tools/$base"$'\t'"file")
     done
   fi
   [[ "${#pairs[@]}" -gt 0 ]] || die "nothing to land (add a LANDING map to $id)"
@@ -1058,7 +1123,7 @@ land)
   tier_sensitive=0
   tier_dest=""
   for pair in "${pairs[@]}"; do
-    dest="${pair#* }"
+    IFS=$'\t' read -r _src dest _kind <<< "$pair"
     case "$dest" in
       tools/*|sites/premath/specs/*|sites/premath/statements/*)
         tier_sensitive=1; tier_dest="$dest" ;;
@@ -1074,10 +1139,32 @@ land)
       || die "$id REVIEW.md does not form as a premath.review-judgments.v0 ReviewJudgment"
   fi
 
-  : > "$CAND/LANDED.tmp"
+  land_tmp="$(mktemp -d)"
+  land_cleanup() { rm -rf "$land_tmp"; }
+  trap land_cleanup EXIT
+  land_i=0
   for pair in "${pairs[@]}"; do
-    src="${pair%% *}"; dest="${pair#* }"
+    IFS=$'\t' read -r src dest kind <<< "$pair"
     [[ -f "$CAND/$src" ]] || die "landing source missing: $src"
+    case "$kind" in
+      file) ;;
+      queue-merge)
+        [[ -f "$CAND/QUEUE.base" ]] \
+          || die "QUEUE.base missing for queue-merge LANDING row; refresh QUEUE.base + re-seed + re-brief"
+        [[ -f "$TOOLS_DIR/queue-merge.sh" ]] \
+          || die "queue-merge tool missing from live verifier set"
+        bash "$TOOLS_DIR/queue-merge.sh" "$dest" "$CAND/QUEUE.base" "$CAND/$src" "$ROOT/$dest" "$land_tmp/merge-$land_i" \
+          || die "queue-merge prevalidation failed for $src -> $dest; refresh QUEUE.base + re-seed + re-brief"
+        ;;
+      *) die "LANDING kind invalid (allowed: empty, file, queue-merge): $kind" ;;
+    esac
+    land_i=$((land_i + 1))
+  done
+
+  : > "$CAND/LANDED.tmp"
+  land_i=0
+  for pair in "${pairs[@]}"; do
+    IFS=$'\t' read -r src dest kind <<< "$pair"
     if [[ -e "$ROOT/$dest" ]]; then
       mkdir -p "$CAND/rollback/$(dirname "$dest")"
       cp "$ROOT/$dest" "$CAND/rollback/$dest"
@@ -1090,14 +1177,24 @@ land)
     # its old inode — required when the cargo is tools/loop itself. On copy
     # failure, salvage the partial manifest so completed pairs stay
     # rollback-able, clean the tmp, and abort loudly.
-    if ! { cp "$CAND/$src" "$ROOT/$dest.landing.tmp" \
+    if [[ "$kind" == "queue-merge" ]]; then
+      landing_src="$land_tmp/merge-$land_i"
+    else
+      landing_src="$CAND/$src"
+    fi
+    if ! { cp "$landing_src" "$ROOT/$dest.landing.tmp" \
            && mv "$ROOT/$dest.landing.tmp" "$ROOT/$dest"; }; then
       rm -f "$ROOT/$dest.landing.tmp"
       mv "$CAND/LANDED.tmp" "$CAND/LANDED" 2>/dev/null || true
       die "landing copy failed for $src -> $dest; partial manifest saved (loop rollback $id undoes completed pairs)"
     fi
     printf '%s\t%s\t%s\n' "$src" "$dest" "$replaced" >> "$CAND/LANDED.tmp"
-    printf 'loop: landed %s -> %s (replaced=%s)\n' "$src" "$dest" "$replaced"
+    if [[ "$kind" == "queue-merge" ]]; then
+      printf 'loop: landed %s -> %s (kind=queue-merge, replaced=%s)\n' "$src" "$dest" "$replaced"
+    else
+      printf 'loop: landed %s -> %s (replaced=%s)\n' "$src" "$dest" "$replaced"
+    fi
+    land_i=$((land_i + 1))
   done
   printf '# landed_at: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$CAND/LANDED.tmp"
   printf '# toolchain: %s %s\n' "$(pinned_toolchain)" "$(bound_toolchain)" >> "$CAND/LANDED.tmp"
