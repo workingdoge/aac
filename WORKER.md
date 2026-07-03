@@ -20,9 +20,12 @@ is a candidate plus evidence — the gate decides.
 1. `bash tools/loop open cand-NNNN-short-name "intent"` (next free NNNN).
 2. Complete `DECLARATION` honestly (layer/implements/preserves/compares_to;
    vocabulary in PREMATH-0003 §5; modest claims beat rejected ones).
-3. Build cargo in the candidate dir + a `LANDING` map (src dest, repo-
-   relative). Never edit live `tools/` or `sites/` directly — cargo lands
-   only through `loop land`.
+3. Build proposed material under `seeds/` in the candidate dir + a `LANDING`
+   map (`src dest`, repo-relative). The source side is candidate-local seed
+   material, not the live tree; the destination side names the live path to
+   realize. Never edit live `tools/` or `sites/` directly — seeds land only
+   through `loop land`. Legacy candidates that use `cargo/` remain valid
+   history; new candidates should prefer `seeds/<surface-or-context>/...`.
 4. Build `eval-self.sh`: functional evidence in scratch trees (mktemp),
    per-class where applicable, corrupted-input rejection probes, and END by
    attesting: `bash tools/eval/attest.sh write scores.json eval-self.sh traces`.
@@ -31,8 +34,9 @@ is a candidate plus evidence — the gate decides.
    reaches an honest pass.
 6. `bash tools/loop brief cand-NNNN` (review requires a current brief).
    REVIEW (required when LANDING touches `tools/` or specs): convene a
-   SEPARATE fresh agent session — `claude -p` with the REVIEW-PROMPT.md
-   that `bash tools/loop review cand-NNNN` generates. Never review your own
+   SEPARATE fresh agent session — Claude (`claude -p`) or Codex
+   (`codex exec`) with the REVIEW-PROMPT.md that
+   `bash tools/loop review cand-NNNN` generates. Never review your own
    candidate in your own context. Implement every transform finding, then
    reconvene the same reviewer to verify before proceeding.
 7. `bash tools/loop auto cand-NNNN --agent <your-name>` — it validates,

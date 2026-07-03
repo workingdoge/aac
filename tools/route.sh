@@ -85,18 +85,20 @@ case "$CMD" in
 pick)
   # Forced exploration (ROUTE-1.3): any worker with n <= max_n/2 (and at
   # least 2 fewer observations) is picked first, least-sampled wins.
-  declare -A N S
   max_n=0
   for w in $WORKERS; do
     read -r n s <<< "$(counts "$w")"
-    N[$w]=$n; S[$w]=$s
     [[ "$n" -gt "$max_n" ]] && max_n=$n
   done
 
   explore=""
+  explore_n=0
   for w in $WORKERS; do
-    if [[ "${N[$w]}" -le $((max_n / 2)) && $((max_n - N[$w])) -ge 2 ]]; then
-      if [[ -z "$explore" || "${N[$w]}" -lt "${N[$explore]}" ]]; then explore="$w"; fi
+    read -r n s <<< "$(counts "$w")"
+    if [[ "$n" -le $((max_n / 2)) && $((max_n - n)) -ge 2 ]]; then
+      if [[ -z "$explore" || "$n" -lt "$explore_n" ]]; then
+        explore="$w"; explore_n="$n"
+      fi
     fi
   done
   if [[ -n "$explore" ]]; then
@@ -107,7 +109,8 @@ pick)
   # Thompson: sample Beta(s+1, n-s+1) per worker, pick the max.
   best=""; best_score=""
   for w in $WORKERS; do
-    score="$(python3 -c "import random,sys; print(random.betavariate(${S[$w]}+1, ${N[$w]}-${S[$w]}+1))")"
+    read -r n s <<< "$(counts "$w")"
+    score="$(python3 -c "import random,sys; print(random.betavariate($s+1, $n-$s+1))")"
     if [[ -z "$best" ]] || python3 -c "import sys; sys.exit(0 if $score > $best_score else 1)"; then
       best="$w"; best_score="$score"
     fi

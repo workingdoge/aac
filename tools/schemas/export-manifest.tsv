@@ -5,22 +5,33 @@
 # RJ-1.6 compiled artifact; consumer: tools/boat-init.sh.
 # Columns: type (file|dir) <TAB> repo-relative path.
 file	WORKER.md
+file	DISPATCH-ECONOMICS.md
+file	.agents/skills/boat/SKILL.md
+file	tools/skill-kernel-check.sh
+file	tools/record-judgment-check.sh
+file	tools/review-judgment-check.sh
 file	tools/loop
 file	tools/lib.sh
 file	tools/receipt-schema-check.sh
 file	tools/memory.sh
 file	tools/queue-lib.sh
 file	tools/queue-lint.sh
+file	tools/queue-archive.sh
 file	tools/cross-surface-check.sh
 file	tools/verdict-tripwire.sh
-file	tools/record-judgment-check.sh
 file	tools/route.sh
+file	tools/fusion.sh
+file	tools/review-query.sh
 file	tools/loop-model.py
 file	tools/loop-model-diff.sh
+file	tools/boat-refresh.sh
 file	tools/eval/attest.sh
 file	tools/eval/emit-refusal.sh
 file	tools/eval/eval-check.sh
 file	tools/eval/evaluate-candidate.sh
+file	tools/eval/mutate-receipts.sh
+file	tools/eval/harness-lint.sh
+file	tools/eval/eval-lib.sh
 file	tools/eval/evaluate-landed.sh
 file	tools/eval/witness-id.sh
 file	tools/eval/witness-id-vectors.json
@@ -31,6 +42,9 @@ file	tools/schemas/failure-classes.tsv
 file	tools/schemas/dispatch-origins.allow
 file	tools/schemas/loop-laws.json
 file	tools/schemas/instance.tsv
+file	tools/schemas/kernel-adaptations.tsv
+file	tools/schemas/review-workers.tsv
+file	tools/schemas/review-convening.txt
 file	tools/schemas/cycle-receipt.schema
 file	tools/schemas/import-receipt.schema
 file	tools/schemas/obstruction-receipt.schema
@@ -44,6 +58,9 @@ file	sites/premath/specs/PREMATH-0003-DOCTRINE.md
 file	sites/premath/statements/record-judgments-v0.md
 file	sites/premath/statements/loop-model-v0.md
 file	sites/premath/statements/queue-judgments-v0.md
+file	sites/premath/statements/core-gate-v0.md
+file	sites/premath/statements/core-bidir-descent-v0.md
+file	sites/premath/statements/review-judgments-v0.md
 file	sites/premath/fixtures/queue-clean-pass.md
 file	sites/premath/fixtures/queue-bad-status-fail.md
 file	sites/premath/fixtures/queue-misfiled-report.md

@@ -2,10 +2,14 @@
 # (obligation_registry pattern: one table other layers parse as the
 # authority surface; RJ-1.6 compiled artifact, never executable
 # authority). Consumers: tools/eval/emit-refusal.sh.
+# Column 3 names the SOURCE STATEMENT (statements/ family, the boarded
+# law carriers); spec surfaces (premath.spec.*) are the statements'
+# pinned realization inputs, cited in parentheses where the join path
+# matters. Only column 2 (lawRef) enters witness minting.
 record-formation-incomplete	RJ-1.1	premath.record-judgments.v0
 vocabulary-atom-failure	RJ-1.5	premath.record-judgments.v0
 sigma-missing-witness	RJ-1.2	premath.record-judgments.v0 (SIGPI-0003)
-verifier_contract_violation	BIDIR-4.4	premath.spec.bidir-descent.v0
-descent_failure	GATE-3.3	premath.spec.gate.v0 (via RJ-1.4 cross-surface join)
-glue_non_contractible	GATE-3.4	premath.spec.gate.v0 (via RJ-1.4 cross-surface join)
-model_coherence_failure	GATE-3.5	premath.spec.gate.v0 (via premath.loop-model.v0 LM-1.2 differential)
+verifier_contract_violation	BIDIR-4.4	premath.core.bidir-descent.v0
+descent_failure	GATE-3.3	premath.core.gate.v0 (via RJ-1.4 cross-surface join)
+glue_non_contractible	GATE-3.4	premath.core.gate.v0 (via RJ-1.4 cross-surface join)
+model_coherence_failure	GATE-3.5	premath.core.gate.v0 (via premath.loop-model.v0 LM-1.2 differential)

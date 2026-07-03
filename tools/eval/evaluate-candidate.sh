@@ -73,7 +73,18 @@ done
 
 # --- Generate mutants (deterministic) ---------------------------------------
 
-bash "$MUTATE" "$CORPUS" "${genuine_files[@]}" >/dev/null
+# Fail closed: a missing or failing mutation generator silently emptied the
+# negative corpus (rc 0, zero mutants, scores.json still written) — the
+# checker would then be scored against nothing it must reject. Evidence
+# with no rejection side is not evidence (BIDIR-4.4).
+[[ -f "$MUTATE" ]] || {
+  printf 'evaluate-candidate: mutation generator missing: %s\n' "$MUTATE" >&2
+  exit 65
+}
+bash "$MUTATE" "$CORPUS" "${genuine_files[@]}" >/dev/null || {
+  printf 'evaluate-candidate: mutation generator failed (negative corpus incomplete)\n' >&2
+  exit 65
+}
 
 # --- Slice assignment by date in filename -----------------------------------
 
@@ -90,10 +101,44 @@ slice_of() {
 
 # --- Replay ------------------------------------------------------------------
 
-declare -A n_genuine n_genuine_ok n_mutant n_mutant_rejected
-for s in search heldout; do
-  n_genuine[$s]=0; n_genuine_ok[$s]=0; n_mutant[$s]=0; n_mutant_rejected[$s]=0
-done
+n_genuine_search=0
+n_genuine_ok_search=0
+n_mutant_search=0
+n_mutant_rejected_search=0
+n_genuine_heldout=0
+n_genuine_ok_heldout=0
+n_mutant_heldout=0
+n_mutant_rejected_heldout=0
+
+inc_counter() {
+  local counter="$1" slice="$2"
+  case "$counter:$slice" in
+    n_genuine:search) n_genuine_search=$((n_genuine_search + 1)) ;;
+    n_genuine_ok:search) n_genuine_ok_search=$((n_genuine_ok_search + 1)) ;;
+    n_mutant:search) n_mutant_search=$((n_mutant_search + 1)) ;;
+    n_mutant_rejected:search) n_mutant_rejected_search=$((n_mutant_rejected_search + 1)) ;;
+    n_genuine:heldout) n_genuine_heldout=$((n_genuine_heldout + 1)) ;;
+    n_genuine_ok:heldout) n_genuine_ok_heldout=$((n_genuine_ok_heldout + 1)) ;;
+    n_mutant:heldout) n_mutant_heldout=$((n_mutant_heldout + 1)) ;;
+    n_mutant_rejected:heldout) n_mutant_rejected_heldout=$((n_mutant_rejected_heldout + 1)) ;;
+    *) printf 'evaluate-candidate: unknown counter: %s %s\n' "$counter" "$slice" >&2; exit 70 ;;
+  esac
+}
+
+counter_value() {
+  local counter="$1" slice="$2"
+  case "$counter:$slice" in
+    n_genuine:search) printf '%s\n' "$n_genuine_search" ;;
+    n_genuine_ok:search) printf '%s\n' "$n_genuine_ok_search" ;;
+    n_mutant:search) printf '%s\n' "$n_mutant_search" ;;
+    n_mutant_rejected:search) printf '%s\n' "$n_mutant_rejected_search" ;;
+    n_genuine:heldout) printf '%s\n' "$n_genuine_heldout" ;;
+    n_genuine_ok:heldout) printf '%s\n' "$n_genuine_ok_heldout" ;;
+    n_mutant:heldout) printf '%s\n' "$n_mutant_heldout" ;;
+    n_mutant_rejected:heldout) printf '%s\n' "$n_mutant_rejected_heldout" ;;
+    *) printf 'evaluate-candidate: unknown counter: %s %s\n' "$counter" "$slice" >&2; exit 70 ;;
+  esac
+}
 
 while IFS=$'\t' read -r name label mutation; do
   [[ -n "$name" ]] || continue
@@ -108,11 +153,11 @@ while IFS=$'\t' read -r name label mutation; do
   exit_code="$(awk -F': ' '/^# exit:/ { v = $2 } END { print v }' "$trace")"
 
   if [[ "$label" == "genuine" ]]; then
-    n_genuine[$slice]=$(( n_genuine[$slice] + 1 ))
-    [[ "$exit_code" == "0" ]] && n_genuine_ok[$slice]=$(( n_genuine_ok[$slice] + 1 ))
+    inc_counter n_genuine "$slice"
+    [[ "$exit_code" == "0" ]] && inc_counter n_genuine_ok "$slice"
   else
-    n_mutant[$slice]=$(( n_mutant[$slice] + 1 ))
-    [[ "$exit_code" != "0" ]] && n_mutant_rejected[$slice]=$(( n_mutant_rejected[$slice] + 1 ))
+    inc_counter n_mutant "$slice"
+    [[ "$exit_code" != "0" ]] && inc_counter n_mutant_rejected "$slice"
   fi
 done < "$CORPUS/labels.tsv"
 
@@ -134,11 +179,15 @@ ratio() {
   printf '  "slices": {\n'
   comma=""
   for s in search heldout; do
+    n_genuine_value="$(counter_value n_genuine "$s")"
+    n_genuine_ok_value="$(counter_value n_genuine_ok "$s")"
+    n_mutant_value="$(counter_value n_mutant "$s")"
+    n_mutant_rejected_value="$(counter_value n_mutant_rejected "$s")"
     printf '%s    "%s": {\n' "$comma" "$s"
-    printf '      "genuine": %s,\n' "${n_genuine[$s]}"
-    printf '      "mutants": %s,\n' "${n_mutant[$s]}"
-    printf '      "admit_recall": %s,\n' "$(ratio "${n_genuine_ok[$s]}" "${n_genuine[$s]}")"
-    printf '      "deny_recall": %s\n' "$(ratio "${n_mutant_rejected[$s]}" "${n_mutant[$s]}")"
+    printf '      "genuine": %s,\n' "$n_genuine_value"
+    printf '      "mutants": %s,\n' "$n_mutant_value"
+    printf '      "admit_recall": %s,\n' "$(ratio "$n_genuine_ok_value" "$n_genuine_value")"
+    printf '      "deny_recall": %s\n' "$(ratio "$n_mutant_rejected_value" "$n_mutant_value")"
     printf '    }'
     comma=$',\n'
   done

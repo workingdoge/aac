@@ -92,6 +92,21 @@ def assert_no_floats(value, path):
             assert_no_floats(v, f"{path}[{i}]")
 
 
+def assert_no_surrogates(value, path):
+    if isinstance(value, str):
+        for ch in value:
+            cp = ord(ch)
+            if 0xD800 <= cp <= 0xDFFF:
+                reject(f"lone surrogate at {path} (canonical UTF-8 cannot encode it)")
+    if isinstance(value, dict):
+        for k, v in value.items():
+            assert_no_surrogates(k, f"{path}.<key>")
+            assert_no_surrogates(v, f"{path}.{k}")
+    if isinstance(value, list):
+        for i, v in enumerate(value):
+            assert_no_surrogates(v, f"{path}[{i}]")
+
+
 def compute(key):
     if not isinstance(key, dict):
         reject("key must be a JSON object")
@@ -110,6 +125,7 @@ def compute(key):
     if context is not None and not isinstance(context, dict):
         reject("context must be an object or null")
     assert_no_floats(context, "context")
+    assert_no_surrogates(key, "key")
     return witness_id(cls=key["class"], law_ref=key["lawRef"],
                       token_path=token_path, context=context)
 

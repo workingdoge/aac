@@ -22,6 +22,11 @@
     "admitted_judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
     "witness_ref_files": ["META", "DECLARATION", "LANDING"],
     "status_transition": {"from": "open", "to": "validated"},
+    "landed_status_guard": {
+      "statuses": ["landed"],
+      "rc": 70,
+      "message": "validate is pre-land and preserves existing VALIDATE.json for landed records; use tools/eval/evaluate-landed.sh for post-land conformance"
+    },
     "meta_required_keys": ["candidate_id", "cycle_id", "opened", "intent", "status"],
     "laws": [
       {"id": "VAL-README", "kind": "file-exists", "path": "README.md",
@@ -79,7 +84,11 @@
          "reason": "scores.json provenance verification FAILED"}]},
       {"id": "VAL-DRAFTS", "kind": "drafts-receipts", "glob": "drafts/*.md",
        "class": "record-formation-incomplete", "token": "drafts",
-       "reason": "drafts/*.md failed receipt-schema-check"}
+       "reason": "drafts/*.md failed receipt-schema-check"},
+      {"id": "VAL-EVAL-HARNESS-FORM", "kind": "eval-harness-lint",
+       "path": "eval-self.sh", "tool": "tools/eval/harness-lint.sh",
+       "class": "verifier_contract_violation", "token": "eval-self.sh",
+       "reason": "evaluator harness has {errors} verifier-contract lint error(s) (harness-lint; see emitted class message)"}
     ]
   },
   "scores_verdict": {

@@ -438,6 +438,124 @@ def apply_drafts_receipts(law, ctx):
         ctx.vfail(law)
 
 
+def harness_lint_error_count(text):
+    """Independent restatement of tools/eval/harness-lint.sh's ERROR
+    classes (dead-set-e, no-failure-path, worldly-assertion). The first
+    two are vacuous-probe forms whose subshell closer sits in an AND-OR
+    list. WARN-class findings (tail-status-only) do not fail validate on
+    either side. Same logical line boundary: backslash-continued lines are
+    joined before the scan; a trailing escaped backslash is not a
+    continuation."""
+    closer = re.compile(r'^\s*\)\s*>[^;]*?(?:2>&1)?\s*(?:&&|\|\|)')
+    opener = re.compile(r'^\s*\($')
+    set_e = re.compile(r'^\s*set\s+-[a-z]*e', re.M)
+    has_exit = re.compile(r'\bexit\b')
+    always_true = re.compile(r'^(echo\b|printf\b|note\b|true\b|:(\s|$))')
+    assign = re.compile(r'^\s*([A-Za-z_][A-Za-z0-9_]*)=.*git\s+rev-parse\b')
+    equality = re.compile(r'(?:\[\[|\[|\btest\b).*(?:==|(?<![<>!])=(?!=)).*')
+    sha_literal = re.compile(r'\b[0-9a-fA-F]{7,40}\b')
+    sha_var = re.compile(
+        r'\$\{?(?=[A-Za-z_])'
+        r'(?=[A-Za-z0-9_]*(?:SHA|REV|COMMIT|PIN|BASE|OLD|EXPECTED|ANCESTOR|REF))'
+        r'[A-Za-z_][A-Za-z0-9_]*\}?',
+        re.I,
+    )
+    var_ref = re.compile(r'\$\{?([A-Za-z_][A-Za-z0-9_]*)\}?')
+    lines = []
+    buf = ''
+    for raw in text.splitlines():
+        stripped = raw.rstrip()
+        if stripped.endswith('\\') and not stripped.endswith('\\\\'):
+            buf += stripped[:-1] + ' '
+            continue
+        lines.append(buf + raw)
+        buf = ''
+    if buf:
+        lines.append(buf)
+    errors = 0
+    rev_vars = set()
+
+    def rev_parse_targets(s):
+        targets = []
+        for m in re.finditer(r'git\s+rev-parse\b([^;&|`$)]*)', s):
+            tail = m.group(1).strip()
+            if not tail:
+                continue
+            words = [w.strip('"\'') for w in tail.split()]
+            refs = [w for w in words if w and not w.startswith('-')]
+            if refs:
+                targets.append(refs[-1])
+        return targets
+
+    def is_live_rev_parse(s):
+        if 'merge-base --is-ancestor' in s:
+            return False
+        for target in rev_parse_targets(s):
+            if '$' in target:
+                continue
+            clean = target[:-len('^{commit}')] if target.endswith('^{commit}') else target
+            if re.fullmatch(r'[0-9a-fA-F]{7,40}', clean):
+                continue
+            if clean == 'HEAD' or clean.startswith('refs/heads/') or clean.startswith('origin/'):
+                return True
+            if re.fullmatch(r'[A-Za-z][A-Za-z0-9._/-]*', clean):
+                return True
+        return False
+
+    def has_sha_pin(s):
+        return bool(sha_literal.search(s) or sha_var.search(s))
+
+    for line in lines:
+        if 'merge-base --is-ancestor' in line:
+            continue
+        m = assign.match(line)
+        if m and is_live_rev_parse(line):
+            rev_vars.add(m.group(1))
+        if not equality.search(line):
+            continue
+        direct = is_live_rev_parse(line) and has_sha_pin(line)
+        assigned = bool(set(var_ref.findall(line)).intersection(rev_vars)) and has_sha_pin(line)
+        if direct or assigned:
+            errors += 1
+
+    for i, line in enumerate(lines):
+        if not closer.match(line):
+            continue
+        op = None
+        for j in range(i - 1, -1, -1):
+            if closer.match(lines[j]):
+                break
+            if opener.match(lines[j]):
+                op = j
+                break
+        if op is None:
+            continue
+        body = lines[op + 1:i]
+        flow = '\n'.join(l for l in body if not l.strip().startswith('#'))
+        last = ''
+        for bl in reversed(body):
+            s = bl.strip()
+            if s and not s.startswith('#'):
+                last = s
+                break
+        if set_e.search(flow):
+            errors += 1
+        elif not has_exit.search(flow) and always_true.match(last):
+            errors += 1
+    return errors
+
+
+def apply_eval_harness_lint(law, ctx):
+    harness = ctx.path(law["path"])
+    if not os.path.isfile(harness):
+        return
+    if not os.path.isfile(os.path.join(ctx.root, law["tool"])):
+        return
+    errors = harness_lint_error_count(read_text(harness))
+    if errors:
+        ctx.vfail(law, errors=errors)
+
+
 APPLY = {
     "file-exists": apply_file_exists,
     "meta-required-keys": apply_meta_required_keys,
@@ -447,6 +565,7 @@ APPLY = {
     "declaration": apply_declaration,
     "scores-block": apply_scores_block,
     "drafts-receipts": apply_drafts_receipts,
+    "eval-harness-lint": apply_eval_harness_lint,
 }
 
 
@@ -468,11 +587,24 @@ def meta_with_status(meta_text, status):
 
 def predict_validate(ctx):
     vlaws = ctx.laws["validate"]
+    cur_status = meta_get(ctx.meta_text(), "status")
+    landed_guard = vlaws.get("landed_status_guard", {})
+    if cur_status in landed_guard.get("statuses", []):
+        validate_path = ctx.path("VALIDATE.json")
+        if os.path.isfile(validate_path):
+            doc = read_text(validate_path)
+        else:
+            doc = "VALIDATE.json-NOT-WRITTEN\n"
+        return {
+            "doc": doc,
+            "rc": int(landed_guard.get("rc", 70)),
+            "post_status": cur_status,
+        }
+
     for law in vlaws["laws"]:
         m_eval(law, ctx)
 
     doc = {"schema": vlaws["doc_schema"], "candidate": ctx.cand_id}
-    cur_status = meta_get(ctx.meta_text(), "status")
     if ctx.failures:
         doc["result"] = "rejected"
         doc["failures"] = ctx.failures

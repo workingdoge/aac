@@ -7,10 +7,11 @@ set -u
 #
 # Usage:
 #   loop open ID "INTENT"
-#   loop validate ID
+#   loop validate ID                    (pre-land record formation; refuses landed records)
 #   loop evaluate ID [--split-date YYYY-MM-DD] -- CLASSIFIER...
 #   loop brief ID                        (semantic diff: what would I admit?)
-#   loop review ID                       (convene an independent reviewer session)
+#   loop review ID [--convene [claude|codex]] [--note TEXT] [--beyond-rounds REASON]
+#                                        (write reviewer prompt; optionally run convening)
 #   loop admit ID --operator NAME --ack-latest      (brief-bound decision)
 #   loop deny ID --operator NAME --reason "..."
 #   loop auto ID --agent NAME            (agent-held: brief+admit+land+record)
@@ -136,6 +137,170 @@ meta_get() {
   awk -F': ' -v key="$key" '$1 == key { sub($1 ": ", ""); print; exit }' "$dir/META"
 }
 
+single_line_field() {
+  local value="$1"
+  value="${value//$'\r'/ }"
+  value="${value//$'\n'/ }"
+  value="${value//$'\t'/ }"
+  while [[ "$value" == *"  "* ]]; do
+    value="${value//  / }"
+  done
+  value="${value# }"
+  value="${value% }"
+  printf '%s' "$value"
+}
+
+declaration_get() {
+  local dir="$1" key="$2"
+  [[ -f "$dir/DECLARATION" ]] || return 0
+  awk -F': ' -v key="$key" '$1 == key { sub($1 ": ", ""); print; exit }' "$dir/DECLARATION"
+}
+
+decision_get() {
+  local dir="$1" key="$2"
+  [[ -f "$dir/DECISION" ]] || return 0
+  awk -F': ' -v key="$key" '$1 == key { sub($1 ": ", ""); print; exit }' "$dir/DECISION"
+}
+
+record_file_state() {
+  local path="$1"
+  if [[ -f "$path" ]]; then
+    printf 'present'
+  else
+    printf 'absent'
+  fi
+}
+
+record_scores_state() {
+  local scores="$1"
+  if [[ ! -f "$scores" ]]; then
+    printf 'absent'
+  elif grep -q '"provenance"' "$scores"; then
+    printf 'present(provenance)'
+  else
+    printf 'present(no-provenance)'
+  fi
+}
+
+record_landing_material() {
+  local src dest extra out="" sep=""
+  if [[ -f "$CAND/LANDING" ]]; then
+    while read -r src dest extra; do
+      [[ -n "$src" && "$src" != \#* ]] || continue
+      dest="${dest#./}"
+      [[ -n "$dest" ]] || continue
+      out="${out}${sep}${src} -> ${dest}"
+      sep="; "
+    done < "$CAND/LANDING"
+  fi
+  if [[ -z "$out" && -f "$CAND/LANDED" ]]; then
+    while IFS=$'\t' read -r src dest extra; do
+      [[ -n "$src" && "$src" != \#* && "$src" != "git_commit" ]] || continue
+      [[ -n "$dest" ]] || continue
+      out="${out}${sep}${src} -> ${dest}"
+      sep="; "
+    done < "$CAND/LANDED"
+  fi
+  single_line_field "${out:-unavailable(no-landing-map)}"
+}
+
+record_left_behind() {
+  local id="$1" name out="" sep=""
+  for name in META DECLARATION README.md LANDING VALIDATE.json BRIEF.md REVIEW.md scores.json traces drafts rollback DECISION DECISIONS LANDED; do
+    [[ -e "$CAND/$name" ]] || continue
+    out="${out}${sep}candidates/${id}/${name}"
+    sep=", "
+  done
+  if [[ -n "$out" ]]; then
+    single_line_field "candidate-local record/evidence retained: $out"
+  else
+    printf 'none'
+  fi
+}
+
+record_owner() {
+  local id="$1" operator layer implements
+  operator="$(decision_get "$CAND" operator)"
+  [[ -n "$operator" ]] || operator="candidate:${id}"
+  layer="$(declaration_get "$CAND" layer)"
+  [[ -n "$layer" ]] || layer="unavailable(no-declaration-layer)"
+  implements="$(declaration_get "$CAND" implements)"
+  [[ -n "$implements" ]] || implements="unavailable(no-declaration-implements)"
+  single_line_field "${operator}; declaration.layer=${layer}; declaration.implements=${implements}"
+}
+
+record_memory_ref() {
+  local id="$1" log="$ROOT/memory/log.jsonl"
+  [[ -f "$log" ]] || { printf 'unavailable(no-memory-log)'; return 0; }
+  command -v python3 >/dev/null 2>&1 || { printf 'unavailable(no-python)'; return 0; }
+  python3 - "$log" "$id" <<'PYEOF'
+import json
+import sys
+
+log_path, cand_id = sys.argv[1:3]
+hit = None
+try:
+    with open(log_path, encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rec = json.loads(line)
+                body = json.loads(rec.get("body", "{}"))
+            except Exception:
+                continue
+            if rec.get("kind") == "landing" and body.get("candidate") == cand_id:
+                hit = (rec, body)
+except FileNotFoundError:
+    hit = None
+
+if hit is None:
+    print("unavailable(no-memory-entry)", end="")
+else:
+    rec, body = hit
+    print(
+        "hash=%s; snapshot=%s; landed_at=%s"
+        % (
+            rec.get("hash", "unknown"),
+            body.get("snapshot", "unknown"),
+            body.get("landed_at", "unknown"),
+        ),
+        end="",
+    )
+PYEOF
+}
+
+record_landed_ref() {
+  local key="$1" value=""
+  if [[ -f "$CAND/LANDED" ]]; then
+    case "$key" in
+      git_commit) value="$(awk -F'\t' '$1 == "git_commit" { print $2; exit }' "$CAND/LANDED")" ;;
+      landed_at) value="$(awk '/^# landed_at:/ { sub(/^# landed_at: */, ""); print; exit }' "$CAND/LANDED")" ;;
+    esac
+  fi
+  [[ -n "$value" ]] || value="unavailable(no-${key})"
+  single_line_field "$value"
+}
+
+record_source_ref() {
+  local id="$1" meta_cid meta_cycle landed_commit landed_at memory_ref
+  meta_cid="$(meta_get "$CAND" candidate_id)"
+  [[ -n "$meta_cid" ]] || meta_cid="unavailable(no-META.candidate_id)"
+  meta_cycle="$(meta_get "$CAND" cycle_id)"
+  [[ -n "$meta_cycle" ]] || meta_cycle="unavailable(no-META.cycle_id)"
+  landed_commit="$(record_landed_ref git_commit)"
+  landed_at="$(record_landed_ref landed_at)"
+  memory_ref="$(record_memory_ref "$id")"
+  single_line_field "candidates/${id}/ (META, scores.json, traces/; META.candidate_id=${meta_cid}; META.cycle_id=${meta_cycle}; LANDED.git_commit=${landed_commit}; LANDED.landed_at=${landed_at}; memory.landing=${memory_ref})"
+}
+
+record_verification_boundary() {
+  local memory_ref
+  memory_ref="$(record_memory_ref "$1")"
+  single_line_field "machine refs only: VALIDATE.json=$(record_file_state "$CAND/VALIDATE.json"); scores=$(record_scores_state "$CAND/scores.json"); REVIEW.md=$(record_file_state "$CAND/REVIEW.md"); LANDED=$(record_file_state "$CAND/LANDED"); memory.landing=${memory_ref}"
+}
+
 # Queue-entry sanitizer (STONE S3): machine-built entries pass through
 # awk -v, which interprets C escape sequences — a goal carrying literal
 # backslashes (or embedded CR/LF) forges additional queue lines (the
@@ -157,11 +322,133 @@ meta_set_status() {
   printf 'loop: %s -> %s\n' "$(basename "$dir")" "$status"
 }
 
+candidate_landing_tier() {
+  local dir="$1" src dest base
+  local normal=0 verifier=0 law=0
+
+  if [[ -f "$dir/LANDING" ]]; then
+    while read -r src dest; do
+      [[ -n "$src" && "$src" != \#* ]] || continue
+      dest="${dest#./}"
+      case "$dest" in
+        tools/*) verifier=1 ;;
+        sites/premath/specs/*|sites/premath/statements/*) law=1 ;;
+        *) normal=1 ;;
+      esac
+    done < "$dir/LANDING"
+  else
+    for src in "$dir"/*.sh; do
+      [[ -f "$src" ]] || continue
+      base="$(basename "$src")"
+      [[ "$base" == "eval-self.sh" ]] && continue
+      verifier=1
+    done
+  fi
+
+  case $((normal + verifier + law)) in
+    0) printf 'normal' ;;
+    1)
+      if [[ "$verifier" -eq 1 ]]; then printf 'verifier-set'
+      elif [[ "$law" -eq 1 ]]; then printf 'law-spine'
+      else printf 'normal'
+      fi ;;
+    *) printf 'mixed' ;;
+  esac
+}
+
+shell_quote() {
+  printf '%q' "$1"
+}
+
+review_usage() {
+  printf 'loop: usage: loop review ID [--convene [claude|codex]] [--note TEXT] [--beyond-rounds REASON]\n' >&2
+  exit 64
+}
+
+review_worker_template() {
+  local worker="$1" table="$TOOLS_DIR/schemas/review-workers.tsv" name template
+  [[ -f "$table" ]] || die "review worker table missing: $table"
+  while IFS=$'\t' read -r name template; do
+    [[ -n "$name" && "$name" != \#* ]] || continue
+    if [[ "$name" == "$worker" ]]; then
+      printf '%s' "$template"
+      return 0
+    fi
+  done < "$table"
+  return 1
+}
+
+review_resolve_worker_command() {
+  local worker="$1" root_q template command
+  if ! template="$(review_worker_template "$worker")"; then
+    printf 'loop: unknown review worker: %s\n' "$worker" >&2
+    review_usage
+  fi
+  command="${BOAT_REVIEW_WORKER_CMD:-$template}"
+  root_q="$(shell_quote "$ROOT")"
+  command="${command//\{root\}/$root_q}"
+  printf '%s' "$command"
+}
+
+review_archive_count() {
+  find "$CAND" -maxdepth 1 -type f -name 'REVIEW.agent-*-round*.md' 2>/dev/null \
+    | wc -l | tr -d ' '
+}
+
+review_prior_worker() {
+  local file="$1" worker=""
+  if [[ -f "$file" ]]; then
+    worker="$(grep -Eio '(review_worker|reviewer_agent|worker)[ :=]+(claude|codex)' "$file" 2>/dev/null \
+      | head -1 | grep -Eio '(claude|codex)' | tail -1 || true)"
+  fi
+  if [[ -z "$worker" && -f "$CAND/REVIEWS" ]]; then
+    worker="$(grep -Eo 'worker=(claude|codex)' "$CAND/REVIEWS" 2>/dev/null \
+      | tail -1 | sed 's/^worker=//' || true)"
+  fi
+  case "$worker" in
+    claude|codex) printf '%s' "$worker" ;;
+    *) printf 'prior' ;;
+  esac
+}
+
+review_archive_existing() {
+  local round="$1" prior_worker target
+  [[ -f "$CAND/REVIEW.md" ]] || return 0
+  prior_worker="$(review_prior_worker "$CAND/REVIEW.md")"
+  target="$CAND/REVIEW.agent-$prior_worker-round$round.md"
+  [[ ! -e "$target" ]] || die "review archive target already exists: $target"
+  mv "$CAND/REVIEW.md" "$target"
+  printf 'loop: archived prior REVIEW.md to %s\n' "$target"
+}
+
 require_candidate() {
   local id="$1"
   CAND="$STORE/$id"
   [[ -d "$CAND" ]] || die "no such candidate: $id"
   [[ -f "$CAND/META" ]] || die "$id has no META (created before the spec? add one)"
+}
+
+candidate_numeric_prefix() {
+  local id="$1" rest num
+  case "$id" in
+    cand-[0-9][0-9][0-9][0-9]-*)
+      rest="${id#cand-}"
+      num="${rest%%-*}"
+      printf 'cand-%s\n' "$num"
+      ;;
+    *) return 1 ;;
+  esac
+}
+
+require_unused_candidate_numeric_prefix() {
+  local id="$1" prefix existing base
+  prefix="$(candidate_numeric_prefix "$id")" || return 0
+  for existing in "$STORE/$prefix"-*; do
+    [[ -e "$existing" ]] || continue
+    base="$(basename "$existing")"
+    [[ "$base" == "$id" ]] && continue
+    die "candidate numeric prefix already exists: $prefix is used by $base; choose the next free NNNN"
+  done
 }
 
 cmd="${1:-}"
@@ -173,6 +460,7 @@ open)
   id="${1:-}"; intent="${2:-}"
   [[ -n "$id" && -n "$intent" ]] || die "usage: loop open ID \"INTENT\""
   [[ ! -e "$STORE/$id" ]] || die "candidate already exists: $id"
+  require_unused_candidate_numeric_prefix "$id"
   mkdir -p "$STORE/$id/drafts" "$STORE/$id/traces"
   {
     printf 'candidate_id: %s\n' "$id"
@@ -181,8 +469,18 @@ open)
     printf 'intent: %s\n' "$intent"
     printf 'status: open\n'
   } > "$STORE/$id/META"
-  printf '# %s\n\nIntent: %s\n\nStatus: open (pre-threshold).\n' "$id" "$intent" \
-    > "$STORE/$id/README.md"
+  {
+    printf '# %s\n\nIntent: %s\n\nStatus: open (pre-threshold).\n\n' "$id" "$intent"
+    printf '## Optional RLM Trace Evidence\n\n'
+    printf 'When model-assisted or large-context reasoning materially supports this candidate,\n'
+    printf 'keep that support in checking mode: generate an explicit trace with\n'
+    printf '`tools/eval/rlm-trace-from-candidate.sh`, check it with\n'
+    printf '`sites/eval/realizations/rlm-trace-profile-check/rlm-trace-profile-check.sh`,\n'
+    printf 'and store the JSONL plus checker output under `traces/` before attestation.\n'
+    printf 'A passing RLM trace is evidence only; it does not grant answer authority,\n'
+    printf 'KB admission, Boat candidate admission, Harbor readiness, live LLM calls,\n'
+    printf 'provider calls, network access, shell access, or secret access.\n'
+  } > "$STORE/$id/README.md"
   {
     printf 'layer: TODO (doctrine | theory | model | evidence-tooling | artifact)\n'
     printf 'implements: TODO (theory surfaces, or none)\n'
@@ -195,6 +493,12 @@ open)
 validate)
   id="${1:-}"; [[ -n "$id" ]] || die "usage: loop validate ID"
   require_candidate "$id"
+  pre_status="$(meta_get "$CAND" status)"
+  if [[ "$pre_status" == "landed" ]]; then
+    printf 'loop: validate %s refused: candidate is landed; validate is a pre-land candidate-record check and will not rewrite VALIDATE.json\n' "$id" >&2
+    printf 'loop: validate %s: use post-land conformance instead: bash tools/eval/evaluate-landed.sh candidates/%s\n' "$id" "$id" >&2
+    exit 70
+  fi
   failures=0
   rm -f "$CAND/VALIDATE.json"
   vfail_classes=(); vfail_tokens=(); vfail_reasons=()
@@ -315,6 +619,22 @@ VPYEOF
   if compgen -G "$CAND/drafts/*.md" > /dev/null; then
     bash "$TOOLS_DIR/receipt-schema-check.sh" "$CAND"/drafts/*.md \
       || vfail record-formation-incomplete drafts "drafts/*.md failed receipt-schema-check"
+  fi
+
+  # Evaluator-harness form (BIDIR-4.4 verifier contract; harness-lint,
+  # boarded from boat cand-0199). Pre-land only by construction — landed
+  # records are refused above, so historical receipts never re-enter this
+  # gate. Lint absent => check skipped, never a new hard dependency.
+  # ERROR findings are vacuous probes: evidence that cannot fail is not
+  # evidence.
+  if [[ -f "$CAND/eval-self.sh" && -f "$TOOLS_DIR/eval/harness-lint.sh" ]]; then
+    hl_out="$(bash "$TOOLS_DIR/eval/harness-lint.sh" "$CAND/eval-self.sh" 2>&1)"
+    hl_rc=$?
+    if [[ "$hl_rc" -ne 0 ]]; then
+      printf '%s\n' "$hl_out" >&2
+      hl_errs="$(printf '%s\n' "$hl_out" | grep -c ': ERROR ')"
+      vfail verifier_contract_violation eval-self.sh "evaluator harness has $hl_errs verifier-contract lint error(s) (harness-lint; see emitted class message)"
+    fi
   fi
 
   if [[ "$failures" -gt 0 ]]; then
@@ -470,10 +790,69 @@ brief)
   ;;
 
 review)
-  id="${1:-}"; [[ -n "$id" ]] || die "usage: loop review ID"
+  id="${1:-}"; [[ -n "$id" ]] || review_usage
   require_candidate "$id"
+  shift
+  review_convene=0
+  review_worker="claude"
+  review_note=""
+  review_beyond_rounds=""
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+      --convene)
+        review_convene=1
+        if [[ "$#" -gt 1 && "${2:-}" != --* ]]; then
+          review_worker="$2"
+          shift 2
+        else
+          shift
+        fi
+        ;;
+      --convene=*)
+        review_convene=1
+        review_worker="${1#--convene=}"
+        shift
+        ;;
+      --note)
+        [[ "$#" -ge 2 ]] || review_usage
+        review_note="$2"
+        shift 2
+        ;;
+      --beyond-rounds)
+        [[ "$#" -ge 2 ]] || review_usage
+        review_beyond_rounds="$2"
+        shift 2
+        ;;
+      *)
+        printf 'loop: unknown review flag or worker: %s\n' "$1" >&2
+        review_usage
+        ;;
+    esac
+  done
   [[ -f "$CAND/BRIEF.md" ]] || die "generate the brief first: loop brief $id"
   PROMPT="$CAND/REVIEW-PROMPT.md"
+  review_brief_sha="$(sha256_of "$CAND/BRIEF.md")"
+  review_landing_tier="$(candidate_landing_tier "$CAND")"
+
+  if [[ "$review_convene" -eq 1 ]]; then
+    review_worker_cmd="$(review_resolve_worker_command "$review_worker")" || exit $?
+    prior_rounds="$(review_archive_count)"
+    review_next_round=$((prior_rounds + 1))
+    if [[ "$review_next_round" -ge 3 && -z "$review_beyond_rounds" ]]; then
+      printf 'loop: DOCT-9.4 refuses review convening round %s for %s; at most two transform rounds are permitted. Pass --beyond-rounds REASON only for explicit override evidence.\n' "$review_next_round" "$id" >&2
+      exit 69
+    fi
+    if [[ "$review_next_round" -ge 3 ]]; then
+      printf 'loop: DOCT-9.4 beyond-rounds override for %s round %s: %s\n' "$id" "$review_next_round" "$review_beyond_rounds" >&2
+      if [[ -f "$CAND/REVIEWS" ]]; then
+        printf '%s beyond-rounds worker=%s round=%s reason=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$review_worker" "$review_next_round" "$review_beyond_rounds" >> "$CAND/REVIEWS"
+      else
+        printf 'loop: REVIEWS ledger absent; beyond-rounds reason not appended: %s\n' "$review_beyond_rounds" >&2
+      fi
+    fi
+    review_archive_existing "$review_next_round"
+  fi
+
   {
     printf '# Reviewer instructions: %s\n\n' "$id"
     printf 'You are an INDEPENDENT REVIEWER for a candidate change. You did not\n'
@@ -493,7 +872,32 @@ review)
     printf -- '  A reviewer who edits cargo becomes a proposer and is disqualified.\n'
     printf -- '- Answer the operator'\''s questions conversationally; ground every\n'
     printf -- '  answer in a file you actually read, cited by path.\n\n'
-    printf 'When the operator says the review is done, write REVIEW.md with:\n\n'
+    printf 'When the operator says the review is done, write REVIEW.md. Start it\n'
+    printf 'with a fenced ReviewJudgment block. Copy review_prompt_sha256 from the\n'
+    printf 'first field of REVIEW-PROMPT.sha256, which loop writes after this\n'
+    printf 'REVIEW-PROMPT.md file is complete. If the sidecar is unavailable,\n'
+    printf 'compute it from REVIEW-PROMPT.md as it exists on disk after this prompt\n'
+    printf 'is written (for example: shasum -a 256 REVIEW-PROMPT.md). Before\n'
+    printf 'returning, run from the repo root: bash tools/review-judgment-check.sh\n'
+    printf 'candidates/%s .\n\n' "$id"
+    printf '```text\n'
+    printf 'ReviewJudgment:\n'
+    printf '  candidate_id: %s\n' "$id"
+    printf '  reviewed_at: <UTC timestamp>\n'
+    printf '  subject:\n'
+    printf '    brief_sha256: %s\n' "$review_brief_sha"
+    printf '    landing_tier: %s\n' "$review_landing_tier"
+    printf '    review_prompt_sha256: <copy first field from REVIEW-PROMPT.sha256>\n'
+    printf '  reviewer:\n'
+    printf '    independence_claim: fresh-session\n'
+    printf '    write_scope_claim: REVIEW.md-only\n'
+    printf '  evidence_audit:\n'
+    printf '    eval_check: <reproduced | failed | not-run-with-reason | not-applicable>\n'
+    printf '    witness_ref: <eval-check command/output path, or reason>\n'
+    printf '  findings: none\n'
+    printf '  recommendation: admit | transform | deny | needs-more-evidence\n'
+    printf '```\n\n'
+    printf 'Then include the prose ReviewNote:\n\n'
     printf '```text\n'
     printf 'ReviewNote:\n'
     printf '  candidate_id: %s\n' "$id"
@@ -505,33 +909,51 @@ review)
     printf '  recommendation: admit | deny | transform | needs-more-evidence\n'
     printf '```\n'
   } > "$PROMPT"
+  prompt_sha="$(sha256_of "$PROMPT")"
+  printf '%s  REVIEW-PROMPT.md\n' "$prompt_sha" > "$CAND/REVIEW-PROMPT.sha256"
   printf 'loop: reviewer prompt written to %s\n' "$PROMPT"
-  # Convening ledger (STONE S6, DOCT-9.4 evidence channel): append-only,
-  # DECISIONS idiom. WARN-ONLY at the bound — round-counting semantics
-  # (a round = implement findings + reconvene, per WORKER.md) are not yet
-  # law; a convening counter that refused would false-refuse the
-  # contract-compliant initial-review + post-transform-verify path.
-  printf '%s convening\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$CAND/REVIEWS"
-  convenings="$(grep -c ' convening$' "$CAND/REVIEWS")"
-  if [[ "$convenings" -ge 3 ]]; then
-    printf 'loop: WARNING convening #%s for %s — WORKER.md bounds TRANSFORM ROUNDS at 2 (a verify reconvene is not a round); if this is a third transform round, STOP: queue the impasse and leave the candidate unlanded (DOCT-9.4)\n' "$convenings" "$id" >&2
+  printf 'loop: reviewer prompt sha256 written to %s\n' "$CAND/REVIEW-PROMPT.sha256"
+  if [[ "$review_convene" -ne 1 ]]; then
+    printf '%s prompt\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$CAND/REVIEWS"
+    printf 'loop: to convene a fresh reviewer now:\n'
+    printf 'loop:   bash tools/loop review %s --convene\n' "$id"
+    printf 'loop:   bash tools/loop review %s --convene codex\n' "$id"
+    printf 'loop: default reviewer worker is claude (DISPATCH-ECONOMICS.md)\n'
+    printf 'loop: test seam: BOAT_REVIEW_WORKER_CMD overrides the resolved worker command\n'
+    if [[ -f "$CAND/REVIEW.md" ]]; then
+      printf 'loop: REVIEW.md present; sha256 %s\n' "$(sha256_of "$CAND/REVIEW.md")"
+    fi
+    exit 0
   fi
-  if command -v claude >/dev/null 2>&1 && [[ -t 0 ]]; then
-    printf 'loop: launching independent reviewer session (fresh context)...\n'
-    ( cd "$CAND" && claude "$(cat "$PROMPT")" )
-  elif command -v claude >/dev/null 2>&1; then
-    printf 'loop: stdin is not a TTY; an interactive reviewer session would die\n'
-    printf 'loop: waiting for operator input. Convene the reviewer headlessly:\n'
-    printf 'loop:   pipe REVIEW-PROMPT.md plus a "complete the review NOW, write\n'
-    printf 'loop:   REVIEW.md yourself, no interactive operator is present"\n'
-    printf 'loop:   instruction into: claude -p --add-dir %s\n' "$ROOT"
+
+  [[ -f "$TOOLS_DIR/schemas/review-convening.txt" ]] \
+    || die "review convening boilerplate missing: $TOOLS_DIR/schemas/review-convening.txt"
+  printf '%s convening worker=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$review_worker" >> "$CAND/REVIEWS"
+  if [[ -n "${BOAT_REVIEW_WORKER_CMD:-}" ]]; then
+    printf 'loop: convening reviewer worker=%s via BOAT_REVIEW_WORKER_CMD override\n' "$review_worker"
   else
-    printf 'loop: claude CLI not found; open a FRESH agent session in %s\n' "$CAND"
-    printf 'loop: and paste REVIEW-PROMPT.md as its first message\n'
+    printf 'loop: convening reviewer worker=%s from tools/schemas/review-workers.tsv\n' "$review_worker"
   fi
-  if [[ -f "$CAND/REVIEW.md" ]]; then
-    printf 'loop: REVIEW.md present; sha256 %s\n' "$(sha256_of "$CAND/REVIEW.md")"
+  {
+    cat "$PROMPT"
+    if [[ -n "$review_note" ]]; then
+      printf '\nCoordinator context-notes:\n\n'
+      printf '%s\n' "$review_note"
+    fi
+    printf '\n'
+    sed "s/{id}/$id/g" "$TOOLS_DIR/schemas/review-convening.txt"
+  } | ( cd "$ROOT" && bash -c "$review_worker_cmd" )
+  review_worker_rc=$?
+  printf 'loop: reviewer worker exited %s\n' "$review_worker_rc"
+  if [[ ! -f "$CAND/REVIEW.md" ]]; then
+    printf 'loop: REVIEW.md missing after reviewer convening\n' >&2
   fi
+  if bash "$TOOLS_DIR/review-judgment-check.sh" "$CAND" "$ROOT"; then
+    printf 'loop: review judgment accepted\n'
+    exit 0
+  fi
+  printf 'loop: review judgment missing or rejected\n' >&2
+  exit 69
   ;;
 
 admit|deny)
@@ -644,6 +1066,12 @@ land)
   done
   if [[ "$tier_sensitive" -eq 1 && ! -f "$CAND/REVIEW.md" ]]; then
     die "$id lands into the verifier set or law spine ($tier_dest) — an independent REVIEW.md is required (loop review $id)"
+  fi
+  if [[ "$tier_sensitive" -eq 1 ]]; then
+    [[ -f "$TOOLS_DIR/review-judgment-check.sh" ]] \
+      || die "$id lands into the verifier set or law spine ($tier_dest) — tools/review-judgment-check.sh is required"
+    bash "$TOOLS_DIR/review-judgment-check.sh" "$CAND" "$ROOT" \
+      || die "$id REVIEW.md does not form as a premath.review-judgments.v0 ReviewJudgment"
   fi
 
   : > "$CAND/LANDED.tmp"
@@ -949,10 +1377,17 @@ dispatch)
       printf '   DECLARATION honestly (layer/implements/preserves per the dm.* registry).\n'
       printf '3. Build the cargo and an eval-self.sh whose scores.json is attested via\n'
       printf '   tools/eval/attest.sh. Raw traces stay in traces/, never summarized.\n'
+      printf '   Optional RLM trace evidence is allowed only in checking mode: for\n'
+      printf '   model-assisted or large-context support, generate an explicit trace with\n'
+      printf '   tools/eval/rlm-trace-from-candidate.sh, check it with the landed\n'
+      printf '   rlm-trace-profile-check.sh, and attest both trace and checker output.\n'
+      printf '   A passing RLM trace is evidence only; it grants no answer authority,\n'
+      printf '   KB admission, Boat candidate admission, Harbor readiness, live LLM calls,\n'
+      printf '   provider calls, network access, shell access, or secret access.\n'
       printf '4. Write README.md (cargo, evaluation, tier) and a LANDING map.\n'
       printf '5. If any LANDING destination is under tools/, an independent REVIEW.md is\n'
-      printf '   required: convene a FRESH reviewer via a separate "%s" worker session\n' "$WORKER_BIN"
-      printf '   (read-only, writes only REVIEW.md). Implement transform findings and\n'
+      printf '   required: convene a FRESH reviewer in a separate Claude or Codex session\n'
+      printf '   where available (read-only intent, writes only REVIEW.md). Implement transform findings and\n'
       printf '   reconvene to verify — AT MOST 2 transform rounds (DOCT-9.4; this bound\n'
       printf '   is CONTROLLING). If the reviewer still says transform after round 2,\n'
       printf '   STOP: queue the impasse, leave the candidate unlanded, and report\n'
@@ -982,11 +1417,12 @@ dispatch)
     else
       # STONE S5 (operator decision: dispatch host IS the sandbox, a
       # worker may spawn READ-ONLY reviewer sessions). The scoped
-      # Bash(claude -p *) grant lets a dispatched worker convene the
-      # headless reviewer its spec/statement cargo now requires (the
-      # widened tier guard) — without it, the guard makes such candidates
+      # Bash(claude -p *) grant lets a dispatched Claude worker convene a
+      # headless Claude reviewer for spec/statement cargo that requires one
+      # (the widened tier guard) — without it, the guard makes such candidates
       # un-landable and burns the budget. Discharges the cand-0019
-      # reviewer-convening gap; codex profile (BOAT_CODEX_FLAGS) untouched.
+      # reviewer-convening gap; Codex reviewer use remains a prompt-level
+      # option and the codex profile (BOAT_CODEX_FLAGS) is untouched.
       CLAUDE_EXTRA=(--allowedTools 'Bash(bash tools/*)' 'Bash(bash candidates/*)' 'Bash(git *)' 'Bash(claude -p *)')
     fi
     # Section wrap (CTX-1.2/1.4): with an admitted context and nix present,
@@ -1066,6 +1502,11 @@ record)
   id="${1:-}"; [[ -n "$id" ]] || die "usage: loop record ID"
   require_candidate "$id"
   intent="$(meta_get "$CAND" intent)"
+  source_ref="$(record_source_ref "$id")"
+  selected_material="$(record_landing_material)"
+  left_behind="$(record_left_behind "$id")"
+  owner="$(record_owner "$id")"
+  verification_boundary="$(record_verification_boundary "$id")"
   today="$(date -u +%Y-%m-%d)"
   upper_id="$(printf '%s' "$id" | tr '[:lower:]' '[:upper:]')"
   mkdir -p "$CAND/drafts"
@@ -1078,15 +1519,15 @@ CycleReceipt:
   receipt_id: CR-${id}-${CYCLE_ID}-0001
   cycle_id: ${CYCLE_ID}
   cargo: ${intent}
-  source: candidates/${id}/ (META, scores.json, traces/)
-  selected_material: TODO-review
-  left_behind: TODO-review
-  owner: TODO-review
+  source: ${source_ref}
+  selected_material: ${selected_material}
+  left_behind: ${left_behind}
+  owner: ${owner}
   authority_surface: cycle.operating-surface.v0
   predicate: premath.seed-selection-boundary.v0
   predicate_absence_reason: none
   projection_surface: candidates/${id}/
-  verification_boundary: TODO-review
+  verification_boundary: ${verification_boundary}
   shore_commitment: landed
   threshold_outcome: admit
   disposition: TODO-review

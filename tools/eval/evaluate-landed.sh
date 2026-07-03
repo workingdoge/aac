@@ -12,7 +12,15 @@ set -u
 #   suite      the live verifier suite passes on the landed tree
 #
 # Suite membership (documented, deliberate): charter-conformance,
-# regular-doctrine --all, sigpi --all, cwf-comprehension --all (if present).
+# regular-doctrine --all, sigpi --all, cwf-comprehension --all,
+# RLM trace dry-run harness over the prior-landed corpus (if present),
+# KB receipt-memory projection checks (if present), projection descent gate over
+# the prior-landed packet corpus (if present), provider-operation section
+# projection over the current Harbor publication-provider packet cover (if
+# present), Bridge capability/session judgment over the current redacted
+# host-runtime-file fixture (if present), Harbor publication cover projection
+# over the current cover packet (if present), review-query health
+# (conditional on the source-local query helper being present).
 # receipt-index-check is EXCLUDED: it asserts cross-workspace paths
 # (fish/...) that fail in sandboxes regardless of cargo; its inclusion would
 # make post-land evidence environment-dependent. Revisit if that check gains
@@ -44,6 +52,64 @@ cand_status="$(awk -F': ' '$1 == "status" { gsub(/[ \t\r]+$/, "", $2); print $2;
   printf 'evaluate-landed: no LANDED manifest\n' >&2
   exit 70
 }
+
+# Local writer lock: post-land evidence rewrites scores.json and traces, so
+# concurrent runs for the same candidate must fail before any mutation.
+LOCK_DIR="$CAND_DIR/.evaluate-landed.lock"
+LOCK_PID="$LOCK_DIR/pid"
+LOCK_OWNED=0
+
+lock_pid_alive() {
+  local pid="${1:-}"
+  [[ "$pid" =~ ^[0-9]+$ ]] && kill -0 "$pid" 2>/dev/null
+}
+
+cleanup_evaluate_landed_lock() {
+  [[ "${LOCK_OWNED:-0}" == "1" ]] || return 0
+  local owner=""
+  owner="$(cat "$LOCK_PID" 2>/dev/null || true)"
+  if [[ "$owner" == "$$" ]]; then
+    rm -rf "$LOCK_DIR"
+  fi
+}
+
+acquire_evaluate_landed_lock() {
+  local owner attempt
+  for attempt in 1 2 3; do
+    if mkdir "$LOCK_DIR" 2>/dev/null; then
+      LOCK_OWNED=1
+      printf '%s\n' "$$" > "$LOCK_PID"
+      printf '%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$LOCK_DIR/started_at"
+      trap cleanup_evaluate_landed_lock EXIT
+      trap 'cleanup_evaluate_landed_lock; exit 130' INT
+      trap 'cleanup_evaluate_landed_lock; exit 143' TERM
+      return 0
+    fi
+
+    owner="$(cat "$LOCK_PID" 2>/dev/null || true)"
+    if lock_pid_alive "$owner"; then
+      printf 'evaluate-landed: another run is active for %s (pid %s, lock %s)\n' \
+        "$(basename "$CAND_DIR")" "$owner" "$LOCK_DIR" >&2
+      exit 75
+    fi
+    if [[ "$owner" =~ ^[0-9]+$ ]]; then
+      printf 'evaluate-landed: removing stale lock %s (pid %s is not active)\n' \
+        "$LOCK_DIR" "$owner" >&2
+      rm -rf "$LOCK_DIR"
+      continue
+    fi
+
+    printf 'evaluate-landed: lock %s has unknown owner; refusing to mutate evidence\n' \
+      "$LOCK_DIR" >&2
+    exit 75
+  done
+
+  printf 'evaluate-landed: could not acquire lock %s\n' "$LOCK_DIR" >&2
+  exit 75
+}
+
+acquire_evaluate_landed_lock
+
 TRACES="$CAND_DIR/traces"
 mkdir -p "$TRACES"
 
@@ -194,7 +260,7 @@ else
   # Membership is uniformly conditional (export course): an exported
   # instance carries the kernel subset of the suite; a member whose
   # checker did not travel is absent, not failing. On the source
-  # instance every checker exists, so the executed set is unchanged.
+  # instance every enrolled checker exists, so the full source suite runs.
   [[ -f "$ROOT/tools/charter-conformance-check.sh" ]] \
     && run_suite charter bash tools/charter-conformance-check.sh
   [[ -f "$ROOT/tools/regular-doctrine-check.sh" ]] \
@@ -207,14 +273,220 @@ else
     && run_suite record-judgments bash tools/record-judgment-check.sh --all
   [[ -f "$ROOT/tools/cross-surface-check.sh" ]] \
     && run_suite cross-surface bash tools/cross-surface-check.sh
-  [[ -f "$ROOT/tools/kernel-boundary-check.sh" ]] \
-    && run_suite kernel-boundary bash tools/kernel-boundary-check.sh
   [[ -f "$ROOT/tools/queue-lint.sh" ]] \
     && run_suite queue-judgments bash tools/queue-lint.sh --all
   [[ -f "$ROOT/tools/verdict-tripwire.sh" ]] \
     && run_suite verdict-tripwire bash tools/verdict-tripwire.sh
   [[ -f "$ROOT/tools/loop-model-diff.sh" ]] \
     && run_suite loop-model bash tools/loop-model-diff.sh --fixtures
+  [[ -f "$ROOT/tools/skill-kernel-check.sh" ]] \
+    && run_suite skill-kernel bash tools/skill-kernel-check.sh
+  [[ -f "$ROOT/tools/review-query.sh" ]] \
+    && run_suite review-query bash -c '
+      set -euo pipefail
+      summary="${TMPDIR:-/tmp}/boat-review-query-summary.$$.out"
+      cleanup() { rm -f "$summary"; }
+      trap cleanup EXIT
+      bash tools/review-query.sh --self-test
+      bash tools/review-query.sh --summary > "$summary"
+      python3 - "$PWD" "$summary" <<'"'"'PY'"'"'
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+summary = Path(sys.argv[2])
+keys = {}
+for line in summary.read_text(encoding="utf-8").splitlines():
+    if not line.strip():
+        continue
+    name, sep, value = line.partition(": ")
+    if not sep:
+        raise SystemExit(f"malformed summary line: {line}")
+    if not value.isdigit():
+        raise SystemExit(f"non-numeric summary value for {name}: {value}")
+    keys[name] = int(value)
+
+required = {"reviews", "typed", "untyped", "malformed"}
+missing = sorted(required - set(keys))
+if missing:
+    raise SystemExit(f"missing summary keys: {missing}")
+if keys["reviews"] != keys["typed"] + keys["untyped"]:
+    raise SystemExit("summary invariant failed: reviews != typed + untyped")
+
+review_dir = root / "candidates"
+if not review_dir.exists():
+    if any(keys.values()):
+        raise SystemExit("summary reported records without a candidates directory")
+elif not review_dir.is_dir():
+    raise SystemExit("candidates path exists but is not a directory")
+PY
+      bash tools/review-query.sh --strict --typed true --jsonl \
+        | python3 -c '"'"'import json, sys
+for line in sys.stdin:
+    rec = json.loads(line)
+    if rec.get("authority") != "query-only":
+        raise SystemExit("review-query emitted non-query authority")
+    if not rec.get("typed"):
+        raise SystemExit("typed query emitted an untyped record")
+'"'"'
+    '
+  [[ -f "$ROOT/tools/eval/rlm-trace-harness.sh" \
+     && -d "$ROOT/sites/eval/corpus/rlm-trace-v0" ]] \
+    && run_suite rlm-trace-harness bash tools/eval/rlm-trace-harness.sh sites/eval/corpus/rlm-trace-v0
+  [[ -f "$ROOT/sites/kb/realizations/kb-receipt-memory-premath-check/kb-receipt-memory-premath-check.sh" \
+     && -f "$ROOT/sites/kb/examples/boat-receipt-memory-projection.jsonl" ]] \
+    && run_suite kb-receipt-memory bash sites/kb/realizations/kb-receipt-memory-premath-check/kb-receipt-memory-premath-check.sh \
+      sites/kb/examples/boat-receipt-memory-projection.jsonl .
+  [[ -f "$ROOT/sites/kb/realizations/kb-receipt-memory-premath-check/kb-receipt-memory-premath-check.sh" \
+     && -f "$ROOT/sites/kb/examples/boat-receipt-memory-projection.verified.jsonl" ]] \
+    && run_suite kb-receipt-memory-verified bash sites/kb/realizations/kb-receipt-memory-premath-check/kb-receipt-memory-premath-check.sh \
+      sites/kb/examples/boat-receipt-memory-projection.verified.jsonl .
+  [[ -f "$ROOT/sites/eval/realizations/projection-descent-check/projection-descent-check.sh" \
+     && -f "$ROOT/sites/eval/corpus/projection-descent-v0/manifest.tsv" ]] \
+    && run_suite projection-descent bash sites/eval/realizations/projection-descent-check/projection-descent-check.sh \
+      sites/eval/corpus/projection-descent-v0/manifest.tsv .
+  [[ -f "$ROOT/sites/premath/realizations/provider-operation-section-check/provider-operation-section-check.sh" \
+     && -f "$ROOT/sites/harbor/specs/examples/boat-harbor-0.launch-admission-plan.json" \
+     && -f "$ROOT/sites/infra/specs/examples/publication.harbor.boat-harbor-0.desired-state.json" \
+     && -f "$ROOT/sites/bridge/specs/examples/publication-host-bootstrap.bounded-session-admission.json" \
+     && -f "$ROOT/sites/ops/specs/examples/boat-harbor-0.realization.pipeline-admission.json" \
+     && -f "$ROOT/sites/connectors/specs/examples/boat-harbor-0.provision-publication-host.receipt-shape.json" \
+     && -f "$ROOT/sites/connectors/specs/examples/boat-harbor-0.provision-publication-host.execution-admission.json" \
+     && -f "$ROOT/sites/harbor/specs/examples/boat-harbor-0.live-receipt-execution-admission.json" \
+     && -f "$ROOT/sites/publication/examples/boat-harbor-0.publication.json" ]] \
+    && run_suite provider-operation-section bash -c '
+      set -euo pipefail
+      out="${TMPDIR:-/tmp}/boat-provider-operation-section.$$.json"
+      cleanup() { rm -f "$out"; }
+      trap cleanup EXIT
+      bash sites/premath/realizations/provider-operation-section-check/provider-operation-section-check.sh \
+        sites/harbor/specs/examples/boat-harbor-0.launch-admission-plan.json \
+        sites/infra/specs/examples/publication.harbor.boat-harbor-0.desired-state.json \
+        sites/bridge/specs/examples/publication-host-bootstrap.bounded-session-admission.json \
+        sites/ops/specs/examples/boat-harbor-0.realization.pipeline-admission.json \
+        sites/connectors/specs/examples/boat-harbor-0.provision-publication-host.receipt-shape.json \
+        sites/connectors/specs/examples/boat-harbor-0.provision-publication-host.execution-admission.json \
+        sites/harbor/specs/examples/boat-harbor-0.live-receipt-execution-admission.json \
+        sites/publication/examples/boat-harbor-0.publication.json > "$out"
+      jq -e "
+        .schema == \"premath.provider-operation-section.projection.v0\"
+        and .statementRef == \"premath.provider-operation-section-judgment.v0\"
+        and .result == \"accepted\"
+        and .mode == \"checking-only\"
+        and .agreement.refAgreement == true
+        and .agreement.boundaryAgreement == true
+        and .agreement.receiptObligationAgreement == true
+        and (.doesNotAuthorize | index(\"Bridge session issuance\") != null)
+        and (.doesNotAuthorize | index(\"provider calls or provider truth\") != null)
+      " "$out" >/dev/null
+      jq -r "
+        \"schema=\" + .schema,
+        \"result=\" + .result,
+        \"refAgreement=\" + (.agreement.refAgreement | tostring),
+        \"boundaryAgreement=\" + (.agreement.boundaryAgreement | tostring),
+        \"receiptObligationAgreement=\" + (.agreement.receiptObligationAgreement | tostring)
+      " "$out"
+    '
+  [[ -f "$ROOT/sites/premath/realizations/bridge-capability-session-judgment-check/bridge-capability-session-judgment-check.sh" \
+     && -f "$ROOT/sites/bridge/specs/examples/host-runtime-api-token.capability-section.json" \
+     && -f "$ROOT/sites/bridge/specs/examples/host-runtime-api-token.materialization-session.allow.json" \
+     && -f "$ROOT/sites/bridge/specs/examples/host-runtime-api-token.session-judgment.allow.json" ]] \
+    && run_suite bridge-capability-session-judgment bash -c '
+      set -euo pipefail
+      work="$(mktemp -d "${TMPDIR:-/tmp}/boat-bridge-capability-session.XXXXXX")"
+      cleanup() { rm -rf "$work"; }
+      trap cleanup EXIT
+      mkdir -p "$work/runtime"
+      printf "%s\n" "redacted runtime-handle fixture" > "$work/runtime/provider-api-token"
+      out="$work/projection.json"
+      if ! bash sites/premath/realizations/bridge-capability-session-judgment-check/bridge-capability-session-judgment-check.sh \
+          --now 2026-04-13T14:31:00Z \
+          --runtime-handle "$work/runtime/provider-api-token" \
+          --runtime-roots "$work/runtime" \
+          sites/bridge/specs/examples/host-runtime-api-token.capability-section.json \
+          sites/bridge/specs/examples/host-runtime-api-token.materialization-session.allow.json \
+          sites/bridge/specs/examples/host-runtime-api-token.session-judgment.allow.json > "$out"; then
+        cat "$out"
+        exit 1
+      fi
+      jq -e "
+        .schema == \"premath.bridge-capability-session-judgment.projection.v0\"
+        and .statementRef == \"premath.bridge-capability-session-judgment.v0\"
+        and .result == \"accepted\"
+        and .mode == \"checking-only\"
+        and .judgment.schema_version == \"bridge-session-judgment-0.1\"
+        and .judgment.judgment == \"accept\"
+        and .judgment.redacted == true
+        and .agreement.schemaAgreement == true
+        and .agreement.bindingAgreement == true
+        and .agreement.consumerAgreement == true
+        and .agreement.bridgeTraceAgreement == true
+        and .agreement.expiryAgreement == true
+        and .agreement.runtimeHandlePolicyAgreement == true
+        and .agreement.expectedJudgmentAgreement == true
+        and (.doesNotAuthorize | index(\"Bridge session issuance\") != null)
+        and (.doesNotAuthorize | index(\"secret materialization\") != null)
+        and (.doesNotAuthorize | index(\"provider calls or provider truth\") != null)
+      " "$out" >/dev/null
+      jq -r "
+        \"schema=\" + .schema,
+        \"result=\" + .result,
+        \"judgment=\" + .judgment.judgment,
+        \"bindingAgreement=\" + (.agreement.bindingAgreement | tostring),
+        \"expiryAgreement=\" + (.agreement.expiryAgreement | tostring),
+        \"runtimeHandlePolicyAgreement=\" + (.agreement.runtimeHandlePolicyAgreement | tostring)
+      " "$out"
+    '
+  [[ -f "$ROOT/sites/premath/realizations/harbor-publication-cover-check/harbor-publication-cover-check.sh" \
+     && -f "$ROOT/sites/harbor/specs/examples/boat-harbor-0.publication-cover.json" ]] \
+    && run_suite harbor-publication-cover bash -c '
+      set -euo pipefail
+      work="$(mktemp -d "${TMPDIR:-/tmp}/boat-harbor-publication-cover.XXXXXX")"
+      cleanup() { rm -rf "$work"; }
+      trap cleanup EXIT
+      mkdir -p "$work/runtime"
+      printf "%s\n" "redacted runtime-handle fixture" > "$work/runtime/provider-api-token"
+      out="$work/projection.json"
+      if ! bash sites/premath/realizations/harbor-publication-cover-check/harbor-publication-cover-check.sh \
+          --runtime-handle "$work/runtime/provider-api-token" \
+          --runtime-roots "$work/runtime" \
+          sites/harbor/specs/examples/boat-harbor-0.publication-cover.json . > "$out"; then
+        cat "$out"
+        exit 1
+      fi
+      jq -e "
+        .schema == \"premath.harbor-publication-cover.projection.v0\"
+        and .statementRef == \"premath.harbor-publication-cover.v0\"
+        and .coverRef == \"harbor.publication-cover:boat-harbor-0.publication\"
+        and .result == \"accepted\"
+        and .mode == \"checking-only\"
+        and .agreement.memberPathCoverage == true
+        and .agreement.refAgreement == true
+        and .agreement.delegatedCheckerAgreement == true
+        and .agreement.receiptObligationAgreement == true
+        and .agreement.runtimeHandlePolicyAgreement == true
+        and .agreement.boundaryAgreement == true
+        and (.delegates | length) == 14
+        and all(.delegates[]; .ok == true)
+        and (.fibres.premath | index(\"premath.provider-operation-section.projection.v0\") != null)
+        and (.fibres.premath | index(\"premath.bridge-capability-session-judgment.projection.v0\") != null)
+        and (.doesNotAuthorize | index(\"Bridge session issuance\") != null)
+        and (.doesNotAuthorize | index(\"provider calls or provider truth\") != null)
+        and (.doesNotAuthorize | index(\"Harbor readiness\") != null)
+      " "$out" >/dev/null
+      jq -r "
+        \"schema=\" + .schema,
+        \"result=\" + .result,
+        \"delegates=\" + (.delegates | length | tostring),
+        \"refAgreement=\" + (.agreement.refAgreement | tostring),
+        \"delegatedCheckerAgreement=\" + (.agreement.delegatedCheckerAgreement | tostring),
+        \"runtimeHandlePolicyAgreement=\" + (.agreement.runtimeHandlePolicyAgreement | tostring)
+      " "$out"
+    '
+  [[ -f "$ROOT/tools/rust-premath-gate-diff.sh" \
+     && -f "$ROOT/rust/premath-gate/Cargo.toml" \
+     && -f "$ROOT/flake.nix" ]] \
+    && run_suite rust-premath-gate bash tools/rust-premath-gate-diff.sh
   record suite "$suite_ok"
 fi
 

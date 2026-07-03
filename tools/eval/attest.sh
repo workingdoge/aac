@@ -63,7 +63,11 @@ write)
 
   tmp="$scores.attest.tmp"
   {
-    head -n -1 "$scores"
+    # all lines but the last (strip the bare closing }). sed '$d' is portable
+    # across BSD and GNU; `head -n -1` is a GNU-only idiom that errors on BSD
+    # head (macOS), emitting nothing and silently dropping the scores body —
+    # which corrupts every attestation on a stock-macOS instance (cand-0057).
+    sed '$d' "$scores"
     printf '%s\n' "$MARKER"
     printf '    "harness": "%s",\n' "$(basename "$harness")"
     printf '    "harness_sha256": "%s",\n' "$harness_sha"

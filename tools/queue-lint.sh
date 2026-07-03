@@ -5,6 +5,9 @@ set -u
 # QJ-1.1/1.2). Reads through the ONE canonical parser (queue-lib.sh).
 #
 # FAIL-CLOSED (exit 1) on the one clean, enforceable invariant:
+#   - QJ-1.2 section cardinality — exactly one literal `## Open` header and
+#     exactly one literal `## Resolved` header. Duplicate/missing sections make
+#     later appends ambiguous, so this is record formation, not report-only.
 #   - QJ-1.1 status vocabulary — every entry's status is in
 #     tools/schemas/queue-status.vocab (open|resolved). The loop's
 #     appenders only ever write `open`, so this is green by construction;
@@ -31,6 +34,12 @@ EMIT="$ROOT/tools/eval/emit-refusal.sh"
 
 strict=no
 [[ "${1:-}" == "--strict" ]] && strict=yes
+
+# Portable capitalize-first: macOS ships bash 3.2, which has no ${var^} (a
+# bash 4.0+ idiom — on 3.2 it is a "bad substitution" that silently aborts the
+# strict-reject path, so the misfiling guard never fires). The section name is
+# only ever open|resolved (the ## headings), so a case mapping is exact.
+cap() { case "$1" in open) printf 'Open' ;; resolved) printf 'Resolved' ;; *) printf '%s' "$1" ;; esac; }
 
 # --all (suite mode): pin the statement's QJ laws (required-text, the
 # house pattern), run the fixture pass/fail corpus, then lint the live
@@ -62,6 +71,8 @@ if [[ "${1:-}" == "--all" ]]; then
       || { printf '  FIXTURE queue-misfiled-report should pass in default mode\n' >&2; rc=1; }
     QUEUE_MD="$fixdir/queue-misfiled-report.md" bash "$0" --strict >/dev/null 2>&1 \
       && { printf '  FIXTURE queue-misfiled-report should fail under --strict\n' >&2; rc=1; }
+    QUEUE_MD="$fixdir/queue-duplicate-open-fail.md" bash "$0" >/dev/null 2>&1 \
+      && { printf '  FIXTURE queue-duplicate-open-fail should fail\n' >&2; rc=1; }
     printf 'fixtures: %s\n' "$([[ "$rc" -eq 0 ]] && echo accepted || echo rejected)"
   fi
   # live queue (report mode; never blocks the suite)
@@ -87,6 +98,17 @@ refuse() { # CLASS TOKEN REASON
     || printf 'queue-lint: emission degraded for %s\n' "$2" >&2
 }
 
+open_headers="$(awk '$0 == "## Open" { c++ } END { print c + 0 }' "$QUEUE")"
+resolved_headers="$(awk '$0 == "## Resolved" { c++ } END { print c + 0 }' "$QUEUE")"
+if [[ "$open_headers" -ne 1 ]]; then
+  refuse record-formation-incomplete "QUEUE.section.Open" "expected exactly one ## Open header, found $open_headers"
+  hard=$((hard+1))
+fi
+if [[ "$resolved_headers" -ne 1 ]]; then
+  refuse record-formation-incomplete "QUEUE.section.Resolved" "expected exactly one ## Resolved header, found $resolved_headers"
+  hard=$((hard+1))
+fi
+
 while IFS=$'\t' read -r lineno section status origin date first; do
   [[ -n "$lineno" ]] || continue
   # grammar: status must be non-empty
@@ -106,10 +128,10 @@ while IFS=$'\t' read -r lineno section status origin date first; do
   # QJ-1.2 section discipline (report-only unless --strict)
   if { [[ "$section" == open && "$status" != open ]] || [[ "$section" == resolved && "$status" != resolved ]]; }; then
     if [[ "$strict" == yes ]]; then
-      refuse record-formation-incomplete "QUEUE.line.$lineno.section" "status '$status' misfiled under ## ${section^}"
+      refuse record-formation-incomplete "QUEUE.line.$lineno.section" "status '$status' misfiled under ## $(cap "$section")"
       hard=$((hard+1))
     else
-      printf 'queue-lint: REPORT line %s: %s entry under ## %s (QJ-1.2 misfiling)\n' "$lineno" "$status" "${section^}" >&2
+      printf 'queue-lint: REPORT line %s: %s entry under ## %s (QJ-1.2 misfiling)\n' "$lineno" "$status" "$(cap "$section")" >&2
       soft=$((soft+1))
     fi
   fi

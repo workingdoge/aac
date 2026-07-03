@@ -1,0 +1,36 @@
+Non-interactive reviewer convening:
+
+Complete the review NOW. No interactive operator is present.
+
+Actually write `candidates/{id}/REVIEW.md`.
+
+Write exactly one fenced `ReviewJudgment` block that satisfies
+`tools/review-judgment-check.sh`. It must include:
+
+- `candidate_id: {id}`
+- `reviewed_at: <UTC timestamp YYYY-MM-DDTHH:MM:SSZ>`
+- `subject.brief_sha256`: hash `candidates/{id}/BRIEF.md` yourself
+- `subject.review_prompt_sha256`: copy `REVIEW-PROMPT.sha256` first field, hash
+  `REVIEW-PROMPT.md` yourself, or use `unavailable(reason)` only if the prompt
+  is unavailable
+- `subject.landing_tier`: the checker vocabulary
+- `reviewer.independence_claim: fresh-session`
+- `reviewer.write_scope_claim: REVIEW.md-only`
+- `evidence_audit.eval_check`: checker vocabulary
+- `evidence_audit.witness_ref`: include the eval-check command or reason
+- `findings: none` or a findings list with every required finding field
+- `recommendation`: one of `admit`, `transform`, `deny`, or
+  `needs-more-evidence`
+
+Run from the repository root:
+
+```sh
+bash tools/eval/eval-check.sh candidates/{id} .
+bash tools/review-judgment-check.sh candidates/{id} .
+```
+
+Iterate on `candidates/{id}/REVIEW.md` until
+`tools/review-judgment-check.sh` accepts it.
+
+Your write scope is `candidates/{id}/REVIEW.md` only. Do not modify cargo,
+traces, scores, candidate metadata, prompt files, live tools, or queue files.
