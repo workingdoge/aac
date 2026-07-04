@@ -1,0 +1,1 @@
+scratch migration uses a read-only manifest-derived kernel store, removes non-carveout kernel copies, preserves instance/adaptation souls, writes a receipt, and no-ops on rerun

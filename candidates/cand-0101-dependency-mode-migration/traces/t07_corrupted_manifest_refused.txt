@@ -1,0 +1,1 @@
+mutant corrupted manifest row is refused before receipt creation

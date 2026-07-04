@@ -1,0 +1,5 @@
+candidate_id: cand-0101-dependency-mode-migration
+cycle_id: aac-2026-06-13
+opened: 2026-07-04T14:20:06Z
+intent: migrate this instance from kernel-by-copy to dependency-mode using the kcir pilot shape
+status: landed

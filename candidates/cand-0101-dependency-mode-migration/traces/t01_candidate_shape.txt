@@ -1,0 +1,1 @@
+candidate declaration, landing map, flake seed, migration script syntax, and POST-LAND commands are formed

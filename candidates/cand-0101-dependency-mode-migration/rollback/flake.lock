@@ -954,24 +954,6 @@
         "type": "github"
       }
     },
-    "loop": {
-      "inputs": {
-        "nixpkgs": "nixpkgs"
-      },
-      "locked": {
-        "lastModified": 1783174400,
-        "narHash": "sha256-tmWl/4nBvRp4vFLJgryFMAmJqXlnHxvUlo9wa1yt50k=",
-        "ref": "refs/heads/main",
-        "rev": "932d0d408273d26e2a818dbad91e1af7828e2480",
-        "revCount": 70,
-        "type": "git",
-        "url": "file:///Users/arj/irai/loop"
-      },
-      "original": {
-        "type": "git",
-        "url": "file:///Users/arj/irai/loop"
-      }
-    },
     "microvm": {
       "inputs": {
         "nixpkgs": [
@@ -1511,7 +1493,6 @@
         "co-snarks-src": "co-snarks-src",
         "crane": "crane_2",
         "flake-utils": "flake-utils_2",
-        "loop": "loop",
         "nixpkgs": "nixpkgs_8",
         "noir-src": "noir-src",
         "paintgun": "paintgun",

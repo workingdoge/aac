@@ -1,0 +1,1 @@
+corrupted manifest refusal emits the malformed-row boundary and leaves no receipt

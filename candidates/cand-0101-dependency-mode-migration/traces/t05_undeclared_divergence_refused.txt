@@ -1,0 +1,1 @@
+mutant undeclared kernel-file divergence is refused before receipt creation

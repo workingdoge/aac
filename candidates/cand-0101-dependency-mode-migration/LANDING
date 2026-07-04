@@ -1,0 +1,3 @@
+seeds/flake.nix	flake.nix
+seeds/flake.lock	flake.lock
+seeds/migrate-to-dependency.sh	migrate-to-dependency.sh

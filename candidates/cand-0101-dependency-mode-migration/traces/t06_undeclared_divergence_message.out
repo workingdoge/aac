@@ -1,0 +1,2 @@
+kernel store digest mismatch: WORKER.md
+migrate-to-dependency: BOAT_KERNEL_STORE does not match the local manifest set

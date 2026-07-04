@@ -1,0 +1,3 @@
+cand-synth-root-override	open	dependency-mode root override probe
+loop: cand-synth-root-override -> validated
+status: validated

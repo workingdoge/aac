@@ -1,0 +1,12 @@
+{
+  "candidate": "cand-0101-dependency-mode-migration",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "3541ac920f705960ebfa93ee5e5017b6f80270ecc07f71f0e3c6100abc0b6325",
+    "LANDING": "7040da71e2da76123ad3a71da2b4adc0aaccca86c1fb0d84855488d7538e576a",
+    "META": "70c86a3be17b53072387ef5497728a5d0fbfc27361b2c8b6fb06f04a972e5648"
+  }
+}

@@ -1,0 +1,12 @@
+MigrationReceipt:
+  schema: boat.migration.v0
+  law: premath.workspace-kernel-bundle.v0 (connection clause)
+  from: copy-mode
+  to: dependency-mode
+  kernel_rev_pinned: 932d0d408273d26e2a818dbad91e1af7828e2480
+  shim: tools/loop
+    - tools/schemas/instance.tsv
+    - tools/schemas/kernel-adaptations.tsv
+  follow_up: loop-side bundle-base.tsv mode flip is a separate loop-side change
+export BOAT_INSTANCE_ROOT="$repo_root"
+migrate-to-dependency: already dependency-mode; no-op

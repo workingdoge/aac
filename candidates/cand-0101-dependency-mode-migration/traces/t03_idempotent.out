@@ -1,0 +1,2 @@
+migrate-to-dependency: already dependency-mode; no-op
+migrate-to-dependency: follow-up: loop-side bundle-base.tsv mode flip is a separate loop-side change

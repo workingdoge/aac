@@ -8,7 +8,6 @@
     # Local-path pin (hackathon-speed); swap for a published ref when
     # boat publishes beyond this host.
     boat.url = "git+file:///Users/arj/irai/boat";
-    loop.url = "git+file:///Users/arj/irai/loop";
     # paintgun: DTCG 2025.10 design-token compiler/verifier (the `paint`
     # CLI) for the AAC design system + spec-publication packs. Published,
     # reproducible pin.
@@ -52,7 +51,6 @@
       nixpkgs,
       flake-utils,
       boat,
-      loop,
       paintgun,
       noir-src,
       co-snarks-src,
@@ -451,7 +449,6 @@
         packages =
           {
             default = nargo;
-            kernelStore = loop.packages.${system}.kernelExport;
             inherit nargo nargo19 bignum-paramgen provekit;
           }
           // lib.optionalAttrs pkgs.stdenv.isLinux {

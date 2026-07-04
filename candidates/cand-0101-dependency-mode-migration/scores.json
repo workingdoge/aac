@@ -1,0 +1,22 @@
+{
+  "evaluated_at": "2026-07-04T14:30:38Z",
+  "task": "cand-0101 AAC dependency-mode migration machinery",
+  "checks": [
+    {"name": "t01_candidate_shape", "result": "pass"},
+    {"name": "t02_lock_pin_shape", "result": "pass"},
+    {"name": "t03_migration_removes_kernel_and_preserves_souls", "result": "pass"},
+    {"name": "t04_shim_uses_scratch_instance_root", "result": "pass"},
+    {"name": "t05_undeclared_divergence_refused", "result": "pass"},
+    {"name": "t06_undeclared_divergence_message", "result": "pass"},
+    {"name": "t07_corrupted_manifest_refused", "result": "pass"},
+    {"name": "t08_corrupted_manifest_message", "result": "pass"}
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "168edc07747c6338feb09bfff6982dff39eb7650da1dea182eeb7131a115e1bd",
+    "traces_sha256": "47957d0c9a6e6c35644b5df54c8a72f210eae569a4c68e845368dbc7490cbde6",
+    "body_sha256": "d3876eedf681037e52d13b19305b526f31b4111dceb27453a159caea1cb37172",
+    "attestation": "eb1695f5311761d13df3f3f80877d03b506ed98feb507b5b26149e370cc2f585"
+  }
+}

@@ -1,0 +1,4 @@
+layer: evidence-tooling
+implements: premath.workspace-kernel-bundle.v0 (connection clause: aac dependency-mode base-change machinery)
+preserves: dm.identity, dm.transport.location, dm.profile.evidence, dm.commitment.attest, dm.refine.context
+compares_to: kcir.cand-0002-dependency-mode-pilot, loop.cand-0018-dependency-mode-support, loop.cand-0022-instance-root-override, loop.tools/kernel-shim.template.sh

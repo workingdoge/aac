@@ -1,0 +1,1 @@
+undeclared divergence refusal emits the manifest digest mismatch boundary and leaves no receipt

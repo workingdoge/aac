@@ -1,0 +1,3 @@
+migrate-to-dependency: migrated copy-mode -> dependency-mode (196 file(s) removed; shim_sha256=439f7640157c01c6c87394cd4b9c129595d0bbbc318e21973a8ce932dfe1d4d7)
+migrate-to-dependency: wrote MIGRATION-RECEIPT.md
+migrate-to-dependency: follow-up: loop-side bundle-base.tsv mode flip is a separate loop-side change

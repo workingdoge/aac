@@ -1,0 +1,1 @@
+post-migration shim exports BOAT_INSTANCE_ROOT so store-kernel status and validate read/write the scratch instance, not the read-only store

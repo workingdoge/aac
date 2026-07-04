@@ -1,0 +1,15 @@
+layer: evidence-tooling
+implements: premath.workspace-kernel-bundle.v0 (connection clause: aac dependency-mode base-change machinery)
+preserves: dm.identity, dm.transport.location, dm.profile.evidence, dm.commitment.attest, dm.refine.context
+compares_to: kcir.cand-0002-dependency-mode-pilot, loop.cand-0018-dependency-mode-support, loop.cand-0022-instance-root-override, loop.tools/kernel-shim.template.sh
+seeds/flake.nix	flake.nix
+seeds/flake.lock	flake.lock
+seeds/migrate-to-dependency.sh	migrate-to-dependency.sh
+    loop.url = "git+file:///Users/arj/irai/loop";
+      loop,
+            kernelStore = loop.packages.${system}.kernelExport;
+/Users/arj/irai/aac/candidates/cand-0101-dependency-mode-migration/README.md: This candidate does not run the migration
+/Users/arj/irai/aac/candidates/cand-0101-dependency-mode-migration/README.md: bash migrate-to-dependency.sh
+/Users/arj/irai/aac/candidates/cand-0101-dependency-mode-migration/README.md: kernel_store="$(awk -F
+/Users/arj/irai/aac/candidates/cand-0101-dependency-mode-migration/README.md: bash "$kernel_store/tools/lock-bump.sh" . --dry-run
+/Users/arj/irai/aac/candidates/cand-0101-dependency-mode-migration/README.md: bash tools/loop status cand-0101-dependency-mode-migration
