@@ -50,6 +50,7 @@ file	tools/schemas/instance.tsv
 file	tools/schemas/kernel-adaptations.tsv
 file	tools/schemas/review-workers.tsv
 file	tools/schemas/review-convening.txt
+file	tools/schemas/review-mechanical-checklist.txt
 file	tools/schemas/lane-policy.tsv
 file	tools/schemas/tracker-issue-v0.schema
 file	tools/schemas/tracker-event-v0.schema

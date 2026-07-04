@@ -5,8 +5,9 @@ Complete the review NOW. No interactive operator is present.
 Actually write `candidates/{id}/REVIEW.md`.
 Absolute REVIEW.md mandate: write `{candidate_dir}/REVIEW.md`; writing at that path is authorized and expected even when it contains `.git/`; mandatory self-check after writing: verify the file exists and re-read its fenced `ReviewJudgment` block before exiting; exiting without the file is a task failure.
 
-Write exactly one fenced `ReviewJudgment` block that satisfies
-`tools/review-judgment-check.sh`. It must include:
+This is the `tier-full` convened-review path. Write exactly one fenced
+`ReviewJudgment` block that satisfies `tools/review-judgment-check.sh`. It
+must include:
 
 - `candidate_id: {id}`
 - `reviewed_at: <UTC timestamp YYYY-MM-DDTHH:MM:SSZ>`

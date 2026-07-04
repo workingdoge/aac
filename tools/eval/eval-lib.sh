@@ -109,6 +109,131 @@ eval_lib_inject_kernel_store() {
   done < <(find "$store" -type f | sort)
 }
 
+eval_lib_manifest_path_ok() {
+  local rel="$1"
+  case "$rel" in
+    ""|/*|../*|*/../*|*/..|..)
+      return 1
+      ;;
+  esac
+}
+
+eval_lib_copy_manifest_file() {
+  local root="$1" out="$2" rel="$3"
+  eval_lib_manifest_path_ok "$rel" || {
+    eval_lib_err "manifest path invalid: $rel"
+    return 65
+  }
+  [[ -f "$root/$rel" ]] || {
+    eval_lib_err "manifest names missing file: $rel"
+    return 65
+  }
+  mkdir -p "$out/$(dirname "$rel")" || return 1
+  cp -p "$root/$rel" "$out/$rel" || return 1
+}
+
+# Usage: manifest_store_fixture ROOT OUT [MANIFEST]
+# Materializes only files declared by MANIFEST (default:
+# ROOT/tools/schemas/export-manifest.tsv) into OUT, then carries the manifest
+# chart itself when the chart lives under ROOT. This builds external-interface
+# store fixtures from declared shape instead of copying the subject tree.
+manifest_store_fixture() {
+  local root="${1:-}" out="${2:-}" manifest="${3:-}" kind path extra file rel chart_rel
+  [[ -n "$root" && -d "$root" && -n "$out" ]] || {
+    eval_lib_err 'manifest_store_fixture needs ROOT OUT'
+    return 64
+  }
+  root="$(cd "$root" && pwd)" || return 1
+  manifest="${manifest:-$root/tools/schemas/export-manifest.tsv}"
+  [[ -f "$manifest" ]] || {
+    eval_lib_err "missing manifest: $manifest"
+    return 65
+  }
+  rm -rf "$out"
+  mkdir -p "$out" || return 1
+  while IFS=$'\t' read -r kind path extra; do
+    case "$kind" in
+      ""|\#*) continue ;;
+    esac
+    [[ -n "$path" && -z "${extra:-}" ]] || {
+      eval_lib_err "malformed manifest row: $kind $path ${extra:-}"
+      return 65
+    }
+    eval_lib_manifest_path_ok "$path" || {
+      eval_lib_err "manifest path invalid: $path"
+      return 65
+    }
+    case "$kind" in
+      file)
+        eval_lib_copy_manifest_file "$root" "$out" "$path" || return "$?"
+        ;;
+      dir)
+        [[ -d "$root/$path" ]] || {
+          eval_lib_err "manifest names missing dir: $path"
+          return 65
+        }
+        while IFS= read -r file; do
+          rel="${file#"$root/"}"
+          eval_lib_copy_manifest_file "$root" "$out" "$rel" || return "$?"
+        done < <(find "$root/$path" -type f | sort)
+        ;;
+      *)
+        eval_lib_err "manifest kind unknown: $kind"
+        return 65
+        ;;
+    esac
+  done < "$manifest"
+  case "$manifest" in
+    "$root"/*)
+      chart_rel="${manifest#"$root/"}"
+      eval_lib_copy_manifest_file "$root" "$out" "$chart_rel" || return "$?"
+      ;;
+  esac
+}
+
+# Usage: readonly_store_fixture DIR
+# Removes write bits from a fixture tree so read claims are tested against a
+# read-only store shape. Use writable_store_fixture before cleanup if needed.
+readonly_store_fixture() {
+  local dir="${1:-}"
+  [[ -n "$dir" && -d "$dir" ]] || {
+    eval_lib_err 'readonly_store_fixture needs DIR'
+    return 64
+  }
+  chmod -R a-w "$dir" || return 1
+}
+
+read_only_store_fixture() {
+  readonly_store_fixture "$@"
+}
+
+# Usage: writable_store_fixture DIR
+# Restores owner write bits on a fixture tree, mainly for cleanup.
+writable_store_fixture() {
+  local dir="${1:-}"
+  [[ -n "$dir" && -d "$dir" ]] || {
+    eval_lib_err 'writable_store_fixture needs DIR'
+    return 64
+  }
+  chmod -R u+w "$dir" 2>/dev/null || true
+}
+
+# Usage: readonly_manifest_store_fixture ROOT OUT [MANIFEST]
+# Convenience wrapper: manifest_store_fixture followed by readonly_store_fixture.
+readonly_manifest_store_fixture() {
+  local root="${1:-}" out="${2:-}" manifest="${3:-}"
+  if [[ -n "$manifest" ]]; then
+    manifest_store_fixture "$root" "$out" "$manifest" || return "$?"
+  else
+    manifest_store_fixture "$root" "$out" || return "$?"
+  fi
+  readonly_store_fixture "$out"
+}
+
+read_only_manifest_store_fixture() {
+  readonly_manifest_store_fixture "$@"
+}
+
 # Usage: stage_root OUT [--head-only] [--apply-landing] [--include-candidate]
 # Copies ROOT's HEAD tree to OUT and, by default, overlays CAND/LANDING seeds.
 stage_root() {

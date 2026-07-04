@@ -65,6 +65,38 @@ set -u
 # It intentionally does not report the monotone `git merge-base --is-ancestor`
 # form.
 #
+# Fixture-independence lint (cand-0030; from the kcir dependency-mode pilot
+# blind spots). External-interface fixtures must be shape-independent of the
+# subject under test: use declared manifests/schemas for store shape, differing
+# souls where souls are tested, and read-only stores for read claims.
+#
+# What this lint reports mechanically:
+#
+#   subject-fixture-copy              ERROR  the evaluator copies the subject
+#                                           tree wholesale (`$ROOT`, `$STAGE`,
+#                                           `$SUBJECT`, `$SUBJECT_ROOT`) with
+#                                           recursive/archive copy forms or a
+#                                           local `copy_tree` helper
+#   subject-digest-self-comparison    ERROR  the evaluator compares a digest
+#                                           or bytes for the same relative path
+#                                           under two subject roots, including
+#                                           simple variables assigned from
+#                                           `sha_file "$ROOT/rel"` and
+#                                           `sha_file "$STAGE/rel"`
+#   writable-readonly-store           ERROR  a function/probe whose name or
+#                                           body says read-only/readonly creates
+#                                           a store fixture but has no local
+#                                           read-only marker (`chmod ... -w`,
+#                                           `readonly_store_fixture`, or
+#                                           `readonly_manifest_store_fixture`)
+#
+# Boundary (honest): this is still a line/block scanner, not a semantic shell
+# interpreter. It catches only direct, mechanical smells. It cannot judge
+# whether a manifest row set is the right external interface, whether two soul
+# payloads differ meaningfully, whether a helper not named here really produces
+# a read-only tree, or whether a subject tree copy is internal staging rather
+# than an external-interface fixture. Those remain reviewer judgment.
+#
 # Usage:
 #   harness-lint.sh FILE...
 #
@@ -101,6 +133,41 @@ SHA_VAR = re.compile(
     re.I,
 )
 VAR_REF = re.compile(r'\$\{?([A-Za-z_][A-Za-z0-9_]*)\}?')
+SUBJECT_ROOTS = r'(?:ROOT|STAGE|SUBJECT|SUBJECT_ROOT)'
+SUBJECT_ROOT_REF = r'\$\{?' + SUBJECT_ROOTS + r'\}?'
+SUBJECT_WHOLE_PATH = r'"?' + SUBJECT_ROOT_REF + r'(?:/\.?)?"?(?=\s|$|[|;&)])'
+SUBJECT_COPY = [
+    re.compile(r'\bcp\b(?=[^#\n]*(?:-[A-Za-z]*[Rr][A-Za-z]*|--recursive|--archive|-a\b))'
+               r'[^#\n]*' + SUBJECT_WHOLE_PATH),
+    re.compile(r'\brsync\b(?=[^#\n]*(?:-a|--archive))[^#\n]*' + SUBJECT_WHOLE_PATH),
+    re.compile(r'\bcopy_tree\s+' + SUBJECT_WHOLE_PATH),
+    re.compile(r'\b(?:cd\s+' + SUBJECT_WHOLE_PATH +
+               r'\s*&&\s*(?:git\s+archive|tar\s+(?:-c|cf)|tar\s+-cf))'),
+    re.compile(r'\bgit\s+-C\s+' + SUBJECT_WHOLE_PATH + r'\s+archive\b'),
+]
+SUBJECT_PATH = re.compile(
+    r'"?\$\{?(?P<root>' + SUBJECT_ROOTS + r')\}?/(?P<rel>[^"\'\s)]+)"?'
+)
+SHA_PATH = re.compile(
+    r'sha_file\s+"?\$\{?(?P<root>' + SUBJECT_ROOTS + r')\}?/(?P<rel>[^"\')]+)"?'
+)
+DIGEST_ASSIGN = re.compile(
+    r'^\s*(?P<var>[A-Za-z_][A-Za-z0-9_]*)=["\']?\$\(sha_file\s+'
+    r'"?\$\{?(?P<root>' + SUBJECT_ROOTS + r')\}?/(?P<rel>[^"\')]+)"?\)'
+)
+READONLY_TEXT = re.compile(r'(?:read[-_ ]?only|readonly)', re.I)
+STORE_CREATE = re.compile(
+    r'\bmkdir\s+-p\b[^#\n]*(?:store|kernel-store|fake-store)|'
+    r'\b(?:manifest_store_fixture|materialize_[A-Za-z0-9_]*(?:store|manifest)|make_[A-Za-z0-9_]*store)\b',
+    re.I,
+)
+READONLY_MARK = re.compile(
+    r'\b(?:chmod\b[^#\n]*-[A-Za-z]*w\b|read_?only_store_fixture|'
+    r'read_?only_manifest_store_fixture|readonly_store_fixture|'
+    r'readonly_manifest_store_fixture)\b',
+    re.I,
+)
+FUNC_DEF = re.compile(r'^\s*([A-Za-z_][A-Za-z0-9_]*)\s*\(\)\s*\{')
 
 errors = 0
 warnings = 0
@@ -173,13 +240,81 @@ def has_rev_var(text, rev_vars):
     refs = set(VAR_REF.findall(text))
     return bool(refs.intersection(rev_vars))
 
+def norm_rel(rel):
+    rel = rel.strip().strip('"\'')
+    while rel.startswith('./'):
+        rel = rel[2:]
+    if rel.endswith('/.'):
+        rel = rel[:-2]
+    return rel
+
+def subject_path_matches(pattern, text):
+    return [(m.group('root'), norm_rel(m.group('rel'))) for m in pattern.finditer(text)]
+
+def same_subject_rel(paths):
+    for idx, (root, rel) in enumerate(paths):
+        for other_root, other_rel in paths[idx + 1:]:
+            if rel == other_rel and root != other_root:
+                return rel
+    return None
+
+def report_subject_copy(path, line_no, line):
+    print('%s:%d: ERROR subject-fixture-copy: subject tree copied '
+          'wholesale into a fixture; use manifest_store_fixture or '
+          'readonly_manifest_store_fixture for external-interface fixtures '
+          '(%s)' % (path, line_no, line.strip()))
+
+def report_digest_self_comparison(path, line_no, rel):
+    print('%s:%d: ERROR subject-digest-self-comparison: same subject-relative '
+          'path compared across subject roots (%s); use an independent fixture '
+          'or a deliberately different soul payload' % (path, line_no, rel))
+
+def report_writable_readonly_store(path, line_no, name):
+    print('%s:%d: ERROR writable-readonly-store: read-only-named store probe '
+          '%s creates a store fixture without a chmod/helper read-only marker'
+          % (path, line_no, name))
+
+def function_blocks(lines, physno):
+    i = 0
+    while i < len(lines):
+        m = FUNC_DEF.match(lines[i])
+        if not m:
+            i += 1
+            continue
+        end = None
+        for j in range(i + 1, len(lines)):
+            if re.match(r'^\s*}\s*$', lines[j]):
+                end = j
+                break
+        if end is None:
+            i += 1
+            continue
+        yield m.group(1), i, end, lines[i:end + 1], physno[i] + 1
+        i = end + 1
+
 for path in sys.argv[1:]:
     with open(path, encoding='utf-8', errors='replace') as fh:
         entries = logical_lines(fh.read().splitlines())
     lines = [text for _, text in entries]
     physno = [first for first, _ in entries]
     rev_vars = set()
+    digest_vars = {}
     for i, line in enumerate(lines):
+        if any(rx.search(line) for rx in SUBJECT_COPY):
+            report_subject_copy(path, physno[i] + 1, line)
+            errors += 1
+        rel = same_subject_rel(subject_path_matches(SHA_PATH, line))
+        if rel:
+            report_digest_self_comparison(path, physno[i] + 1, rel)
+            errors += 1
+        if 'cmp' in line:
+            rel = same_subject_rel(subject_path_matches(SUBJECT_PATH, line))
+            if rel:
+                report_digest_self_comparison(path, physno[i] + 1, rel)
+                errors += 1
+        dm = DIGEST_ASSIGN.match(line)
+        if dm:
+            digest_vars[dm.group('var')] = (dm.group('root'), norm_rel(dm.group('rel')))
         if 'merge-base --is-ancestor' in line:
             continue
         m = ASSIGN.match(line)
@@ -189,11 +324,33 @@ for path in sys.argv[1:]:
             continue
         direct = is_live_rev_parse(line) and has_sha_pin(line)
         assigned = has_rev_var(line, rev_vars) and has_sha_pin(line)
+        refs = list(dict.fromkeys(VAR_REF.findall(line)))
+        digest_refs = [(v, digest_vars[v]) for v in refs if v in digest_vars]
+        digest_rel = None
+        for idx, (_var, (root, rel)) in enumerate(digest_refs):
+            for _other_var, (other_root, other_rel) in digest_refs[idx + 1:]:
+                if rel == other_rel and root != other_root:
+                    digest_rel = rel
+                    break
+            if digest_rel:
+                break
+        if digest_rel:
+            report_digest_self_comparison(path, physno[i] + 1, digest_rel)
+            errors += 1
         if direct or assigned:
             where = '%s:%d%s' % (path, physno[i] + 1, probe_name(lines, i))
             print('%s: ERROR worldly-assertion: live git rev-parse string '
                   'equality is not replay-stable; use git merge-base '
                   '--is-ancestor <pin> HEAD' % where)
+            errors += 1
+    for name, start, _end, body, line_no in function_blocks(lines, physno):
+        readonly_claim = bool(READONLY_TEXT.search(name)) or any(READONLY_TEXT.search(l) for l in body)
+        if not readonly_claim:
+            continue
+        creates_store = any(STORE_CREATE.search(l) for l in body)
+        has_readonly = any(READONLY_MARK.search(l) for l in body)
+        if creates_store and not has_readonly:
+            report_writable_readonly_store(path, line_no, name)
             errors += 1
     for i, line in enumerate(lines):
         if not CLOSER.match(line):

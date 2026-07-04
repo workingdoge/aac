@@ -130,7 +130,65 @@ escalation. Known shortfall, declared: the operator-credential requirement
 for the highest tier is an open queue item; until it lands, high-risk
 checkpoint enforcement above the review tier is procedural, not mechanical.
 
-## 7. Boundary
+## 7. Review tiering by claim class
+
+Review tier is classified by the claims a candidate asks the review gate to
+discharge, not by the proposer's preference or by the destination path alone.
+
+Law: DOCT-10.1 — Claim-class vocabulary. A `mechanical` claim is one whose
+truth is wholly discharged by recorded command runs with stable inputs,
+visible outputs, and exit codes. Examples include ancestry checks, digest or
+byte equality, declared pin-line changes, generated-file regeneration, and
+the existing green check suite. A `semantic` claim is any claim where a human
+or LLM reading can add soundness: law, tool behavior, judgment semantics,
+review policy, authority boundaries, or any prose whose correctness is not
+fully decided by the recorded commands. Unknown or mixed claims are semantic
+for review-tier purposes.
+
+Law: DOCT-10.2 — Review tiers. `tier-full` is the existing independent
+convened-review path and is unchanged: a fresh reviewer writes a
+`ReviewJudgment`, audits the brief and evidence, and may recommend admit,
+transform, deny, or needs-more-evidence. `tier-mechanical` is a checklist
+path: the candidate's `REVIEW.md` carries a recorded mechanical checklist
+that declares each mechanical claim, maps every claim to command run(s),
+stores the command outputs and exit codes in the candidate record, and
+records the tier-eligibility test. A well-formed `tier-mechanical` checklist
+substitutes for convening only for mechanical claims.
+
+Law: DOCT-10.3 — Mechanical-tier refusal rule. A candidate claiming
+`tier-mechanical` is REFUSED at review time when its `DECLARATION`,
+`LANDING`, or cargo contains any semantic-class change. The mechanically
+checkable v0 eligibility test is:
+
+```text
+1. every LANDING destination is listed in the checklist's declared
+   pin/byte-identity destination allowlist;
+2. the diff from the current base file to the candidate seed is classified
+   as generated-file, pin-line, or byte-identity only; and
+3. the checklist records the eligibility command, output reference, exit
+   code `0`, and result `pass`.
+```
+
+The checker that consumes review records runs this formation and eligibility
+test. Reviewers may rerun or audit it, but the record is not valid unless the
+checker accepts it. A semantic destination hidden behind an allowlist, or a
+non-pin/generated diff, fails closed as a tier-guard refusal.
+
+Law: DOCT-10.4 — Mechanical checklist formation. A mechanical checklist is
+well formed only when all declared claims are mapped to existing command-run
+records, every command-run record has a non-empty command, an output
+reference inside the candidate record, and exit code `0`, and the
+eligibility test is present and passing. Missing mappings, missing outputs,
+nonzero exits, malformed eligibility, and ineligible diffs are named
+violations and reject the checklist.
+
+Law: DOCT-10.5 — Full-review preservation. Any candidate with a semantic
+claim, a mixed claim set, or a malformed mechanical checklist remains on
+`tier-full`. This doctrine does not weaken the existing tier guard; it adds
+a narrower machine-checkable witness for pin-only, lock-bump, and
+digest-verified byte-identity candidates.
+
+## 8. Boundary
 
 This spec does not admit: CHANGE-MORPHISMS' 2-cell calculus (cited,
 ports separately); DOCTRINE-INF §9.2 staged guardrail ordering

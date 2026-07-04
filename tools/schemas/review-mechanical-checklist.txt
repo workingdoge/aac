@@ -1,0 +1,57 @@
+Tier-mechanical review checklist schema (v0)
+
+This is a typed REVIEW.md record for candidates whose review claims are
+mechanical under PREMATH-0003 DOCT-10. It is accepted by
+tools/review-judgment-check.sh only when formation, command-run mapping, and
+eligibility checks all pass.
+
+Use exactly one fenced block:
+
+```text
+ReviewMechanicalChecklist:
+  candidate_id: cand-NNNN-name
+  reviewed_at: <UTC timestamp YYYY-MM-DDTHH:MM:SSZ>
+  subject:
+    brief_sha256: <sha256>
+    landing_tier: normal | verifier-set | law-spine | mixed
+    review_tier: tier-mechanical
+    review_prompt_sha256: <sha256 or unavailable(reason)>
+  eligibility:
+    classification: mechanical
+    allowed_destinations: <comma-separated LANDING destinations>
+    diff_class: pin-line-or-generated-file-only
+    command: <command that ran the eligibility test>
+    exit_code: 0
+    output_ref: <candidate-relative output file>
+    result: pass
+  claims:
+    - id: C1
+      statement: <mechanical claim>
+  command_runs:
+    - id: R1
+      command: <recorded command>
+      exit_code: 0
+      output_ref: <candidate-relative output file>
+  claim_map:
+    - claim: C1
+      run: R1
+  recommendation: admit
+```
+
+Formation rules:
+
+- Every claim id must be unique and non-empty.
+- Every command-run id must be unique and non-empty.
+- Every command run must have a non-empty command, exit code `0`, and an
+  existing output_ref under the candidate directory.
+- Every declared claim must appear in claim_map and every mapped run must
+  exist.
+- The eligibility section must declare `classification: mechanical`,
+  `diff_class: pin-line-or-generated-file-only`, exit code `0`, and
+  `result: pass`.
+- Every LANDING destination must be in allowed_destinations.
+- The checker rejects non-pin/generated diffs as semantic-class cargo.
+
+Boundary: this checklist does not prove reviewer independence, does not
+authorize semantic claims, and does not replace a full convened review when a
+human/LLM reading can add soundness.
