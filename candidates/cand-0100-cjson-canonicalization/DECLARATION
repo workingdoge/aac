@@ -1,0 +1,4 @@
+layer: theory
+implements: sites/ledger/specs/2/README.md cjson/1 canonical bytes and TypeDecl identity; sites/ledger/specs/registers/R1.md handle identity table
+preserves: dm.commitment.attest, dm.refine.context
+compares_to: cand-0099 obstruction, 2/FACT as written

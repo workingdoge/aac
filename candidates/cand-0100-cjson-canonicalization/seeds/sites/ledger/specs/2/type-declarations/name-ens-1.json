@@ -1,0 +1,14 @@
+{
+  "kind": "naming-profile",
+  "name": "name-ens/1",
+  "version": 1,
+  "schema": {
+    "normativeRef": "6/NAME section 4",
+    "system": "ENS",
+    "ownership": "ENS registry owner or on-registry delegation",
+    "stableIdentity": "namehash",
+    "hierarchy": "subnames",
+    "records": "text records",
+    "registryKey": "namehash"
+  }
+}

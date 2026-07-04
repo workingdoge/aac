@@ -1,0 +1,1 @@
+encoder is deterministic across source member order and rejects duplicate keys, floats/exponents, -0/leading-zero forms, and surrogate strings

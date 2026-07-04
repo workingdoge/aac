@@ -1,0 +1,1 @@
+big integer vectors use minimal decimal with no exponent forms and reject non-minimal inputs

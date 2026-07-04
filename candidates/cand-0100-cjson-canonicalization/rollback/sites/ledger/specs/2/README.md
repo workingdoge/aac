@@ -40,18 +40,10 @@ Encoding `enc : Value → bytes` (UTF-8 text):
   emit `-0`, leading zeros, or exponent forms.
 - Strings as JSON strings with mandatory escaping of `"` `\` and
   control characters, and no other escaping; no unpaired surrogates.
-  Encoders MUST use the short two-character escapes where JSON defines
-  them (`\"`, `\\`, `\b`, `\t`, `\n`, `\f`, `\r`). All other control
-  characters MUST be escaped as `\u00xx` with lowercase hex digits. No
-  other characters are escaped.
 - Arrays: `[` e₁ `,` … `,` eₙ `]`, elements in order, no whitespace.
 - Objects: `{` pairs `}`, pairs sorted by the UTF-8 bytes of their keys,
   ascending, duplicate keys forbidden; each pair `enc(key) : enc(value)`;
   no whitespace.
-
-cjson/1 is distinct from RFC 8785/JCS: it sorts object keys by UTF-8
-bytes and uses arbitrary-precision minimal decimal integers with no
-exponent forms.
 
 Encoders MUST reject any value outside the grammar. `enc` is injective on
 the grammar; a collision between distinct Values is a defect of this
@@ -65,12 +57,6 @@ names are informative handles, never identity.
 **Type identity.** A declaration — of a channel, an attestation scheme, a
 basis element, a profile, a proof target — is a Value under §2:
 `TypeDecl := { kind, name?, version, schema, … }` with `name` informative.
-For this suite, a `TypeDecl` MUST be an object with string `kind`,
-integer `version`, Value `schema`, and optional string `name`; any
-additional member is part of the declaration and changes identity.
-Canonical TypeDecl documents for 2/FACT live under
-`sites/ledger/specs/2/type-declarations/` and are identified by
-`enc(TypeDecl)`, not by source-file whitespace or member order.
 Its identity is `typeId := H(enc(TypeDecl))`. Two parties refer to the
 same channel iff they hold byte-identical declarations: agreement on an
 identifier *is* agreement on its definition, so cross-organization

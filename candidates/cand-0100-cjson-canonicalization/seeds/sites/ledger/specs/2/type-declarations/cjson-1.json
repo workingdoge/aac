@@ -1,0 +1,23 @@
+{
+  "kind": "encoding",
+  "name": "cjson/1",
+  "version": 1,
+  "schema": {
+    "normativeRef": "2/FACT section 2",
+    "valueGrammar": ["null", "boolean", "string", "integer", "array", "object"],
+    "integerRule": "arbitrary-precision minimal decimal; no -0, leading zeros, or exponent forms",
+    "stringRule": {
+      "shortEscapes": ["\\\"", "\\\\", "\\b", "\\t", "\\n", "\\f", "\\r"],
+      "otherControlEscape": "\\u00xx with lowercase hex digits",
+      "otherCharactersEscaped": false,
+      "surrogatesAllowed": false
+    },
+    "arrayRule": "elements in order; no whitespace",
+    "objectRule": {
+      "keyOrder": "ascending UTF-8 bytes of keys",
+      "duplicateKeysAllowed": false,
+      "whitespace": "none"
+    },
+    "rfc8785Jcs": false
+  }
+}

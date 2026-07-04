@@ -1,0 +1,13 @@
+{
+  "kind": "data-availability-profile",
+  "name": "data-walrus/1",
+  "version": 1,
+  "schema": {
+    "normativeRef": "7/DATA section 1",
+    "store": "Walrus",
+    "bundleRole": "content-addressed evidence bundle",
+    "manifestEncoding": "cjson/1",
+    "manifestItems": ["kind", "digest", "pointer", "enc-suite"],
+    "lossSemantics": "loss degrades auditability, never funds"
+  }
+}

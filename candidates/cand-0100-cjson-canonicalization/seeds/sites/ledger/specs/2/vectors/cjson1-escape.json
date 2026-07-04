@@ -1,0 +1,246 @@
+{
+  "suite": "cjson/1",
+  "rule": "2/FACT section 2 string escape spelling",
+  "cases": [
+    {
+      "codepoint": "U+0000",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0000",
+      "expectedEncoding": "\"\\u0000\"",
+      "expectedHex": "225c753030303022"
+    },
+    {
+      "codepoint": "U+0001",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0001",
+      "expectedEncoding": "\"\\u0001\"",
+      "expectedHex": "225c753030303122"
+    },
+    {
+      "codepoint": "U+0002",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0002",
+      "expectedEncoding": "\"\\u0002\"",
+      "expectedHex": "225c753030303222"
+    },
+    {
+      "codepoint": "U+0003",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0003",
+      "expectedEncoding": "\"\\u0003\"",
+      "expectedHex": "225c753030303322"
+    },
+    {
+      "codepoint": "U+0004",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0004",
+      "expectedEncoding": "\"\\u0004\"",
+      "expectedHex": "225c753030303422"
+    },
+    {
+      "codepoint": "U+0005",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0005",
+      "expectedEncoding": "\"\\u0005\"",
+      "expectedHex": "225c753030303522"
+    },
+    {
+      "codepoint": "U+0006",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0006",
+      "expectedEncoding": "\"\\u0006\"",
+      "expectedHex": "225c753030303622"
+    },
+    {
+      "codepoint": "U+0007",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0007",
+      "expectedEncoding": "\"\\u0007\"",
+      "expectedHex": "225c753030303722"
+    },
+    {
+      "codepoint": "U+0008",
+      "class": "json-short-control",
+      "expectedEscape": "\\b",
+      "expectedEncoding": "\"\\b\"",
+      "expectedHex": "225c6222"
+    },
+    {
+      "codepoint": "U+0009",
+      "class": "json-short-control",
+      "expectedEscape": "\\t",
+      "expectedEncoding": "\"\\t\"",
+      "expectedHex": "225c7422"
+    },
+    {
+      "codepoint": "U+000A",
+      "class": "json-short-control",
+      "expectedEscape": "\\n",
+      "expectedEncoding": "\"\\n\"",
+      "expectedHex": "225c6e22"
+    },
+    {
+      "codepoint": "U+000B",
+      "class": "unicode-control",
+      "expectedEscape": "\\u000b",
+      "expectedEncoding": "\"\\u000b\"",
+      "expectedHex": "225c753030306222"
+    },
+    {
+      "codepoint": "U+000C",
+      "class": "json-short-control",
+      "expectedEscape": "\\f",
+      "expectedEncoding": "\"\\f\"",
+      "expectedHex": "225c6622"
+    },
+    {
+      "codepoint": "U+000D",
+      "class": "json-short-control",
+      "expectedEscape": "\\r",
+      "expectedEncoding": "\"\\r\"",
+      "expectedHex": "225c7222"
+    },
+    {
+      "codepoint": "U+000E",
+      "class": "unicode-control",
+      "expectedEscape": "\\u000e",
+      "expectedEncoding": "\"\\u000e\"",
+      "expectedHex": "225c753030306522"
+    },
+    {
+      "codepoint": "U+000F",
+      "class": "unicode-control",
+      "expectedEscape": "\\u000f",
+      "expectedEncoding": "\"\\u000f\"",
+      "expectedHex": "225c753030306622"
+    },
+    {
+      "codepoint": "U+0010",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0010",
+      "expectedEncoding": "\"\\u0010\"",
+      "expectedHex": "225c753030313022"
+    },
+    {
+      "codepoint": "U+0011",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0011",
+      "expectedEncoding": "\"\\u0011\"",
+      "expectedHex": "225c753030313122"
+    },
+    {
+      "codepoint": "U+0012",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0012",
+      "expectedEncoding": "\"\\u0012\"",
+      "expectedHex": "225c753030313222"
+    },
+    {
+      "codepoint": "U+0013",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0013",
+      "expectedEncoding": "\"\\u0013\"",
+      "expectedHex": "225c753030313322"
+    },
+    {
+      "codepoint": "U+0014",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0014",
+      "expectedEncoding": "\"\\u0014\"",
+      "expectedHex": "225c753030313422"
+    },
+    {
+      "codepoint": "U+0015",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0015",
+      "expectedEncoding": "\"\\u0015\"",
+      "expectedHex": "225c753030313522"
+    },
+    {
+      "codepoint": "U+0016",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0016",
+      "expectedEncoding": "\"\\u0016\"",
+      "expectedHex": "225c753030313622"
+    },
+    {
+      "codepoint": "U+0017",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0017",
+      "expectedEncoding": "\"\\u0017\"",
+      "expectedHex": "225c753030313722"
+    },
+    {
+      "codepoint": "U+0018",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0018",
+      "expectedEncoding": "\"\\u0018\"",
+      "expectedHex": "225c753030313822"
+    },
+    {
+      "codepoint": "U+0019",
+      "class": "unicode-control",
+      "expectedEscape": "\\u0019",
+      "expectedEncoding": "\"\\u0019\"",
+      "expectedHex": "225c753030313922"
+    },
+    {
+      "codepoint": "U+001A",
+      "class": "unicode-control",
+      "expectedEscape": "\\u001a",
+      "expectedEncoding": "\"\\u001a\"",
+      "expectedHex": "225c753030316122"
+    },
+    {
+      "codepoint": "U+001B",
+      "class": "unicode-control",
+      "expectedEscape": "\\u001b",
+      "expectedEncoding": "\"\\u001b\"",
+      "expectedHex": "225c753030316222"
+    },
+    {
+      "codepoint": "U+001C",
+      "class": "unicode-control",
+      "expectedEscape": "\\u001c",
+      "expectedEncoding": "\"\\u001c\"",
+      "expectedHex": "225c753030316322"
+    },
+    {
+      "codepoint": "U+001D",
+      "class": "unicode-control",
+      "expectedEscape": "\\u001d",
+      "expectedEncoding": "\"\\u001d\"",
+      "expectedHex": "225c753030316422"
+    },
+    {
+      "codepoint": "U+001E",
+      "class": "unicode-control",
+      "expectedEscape": "\\u001e",
+      "expectedEncoding": "\"\\u001e\"",
+      "expectedHex": "225c753030316522"
+    },
+    {
+      "codepoint": "U+001F",
+      "class": "unicode-control",
+      "expectedEscape": "\\u001f",
+      "expectedEncoding": "\"\\u001f\"",
+      "expectedHex": "225c753030316622"
+    },
+    {
+      "codepoint": "U+0022",
+      "class": "json-short-non-control",
+      "name": "quotation mark",
+      "expectedEscape": "\\\"",
+      "expectedEncoding": "\"\\\"\"",
+      "expectedHex": "225c2222"
+    },
+    {
+      "codepoint": "U+005C",
+      "class": "json-short-non-control",
+      "name": "reverse solidus",
+      "expectedEscape": "\\\\",
+      "expectedEncoding": "\"\\\\\"",
+      "expectedHex": "225c5c22"
+    }
+  ]
+}

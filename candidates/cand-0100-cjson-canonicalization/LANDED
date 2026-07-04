@@ -1,0 +1,16 @@
+seeds/sites/ledger/specs/2/README.md	sites/ledger/specs/2/README.md	yes
+seeds/sites/ledger/specs/2/reference/cjson1_encode.py	sites/ledger/specs/2/reference/cjson1_encode.py	no
+seeds/sites/ledger/specs/2/type-declarations/cjson-1.json	sites/ledger/specs/2/type-declarations/cjson-1.json	no
+seeds/sites/ledger/specs/2/type-declarations/sha256-1.json	sites/ledger/specs/2/type-declarations/sha256-1.json	no
+seeds/sites/ledger/specs/2/type-declarations/d2f-31be-1.json	sites/ledger/specs/2/type-declarations/d2f-31be-1.json	no
+seeds/sites/ledger/specs/2/type-declarations/uh-bn254-1.json	sites/ledger/specs/2/type-declarations/uh-bn254-1.json	no
+seeds/sites/ledger/specs/2/type-declarations/name-ens-1.json	sites/ledger/specs/2/type-declarations/name-ens-1.json	no
+seeds/sites/ledger/specs/2/type-declarations/data-walrus-1.json	sites/ledger/specs/2/type-declarations/data-walrus-1.json	no
+seeds/sites/ledger/specs/2/vectors/cjson1-escape.json	sites/ledger/specs/2/vectors/cjson1-escape.json	no
+seeds/sites/ledger/specs/2/vectors/cjson1-key-order.json	sites/ledger/specs/2/vectors/cjson1-key-order.json	no
+seeds/sites/ledger/specs/2/vectors/cjson1-integers.json	sites/ledger/specs/2/vectors/cjson1-integers.json	no
+seeds/sites/ledger/specs/2/vectors/typedecl-typeids.json	sites/ledger/specs/2/vectors/typedecl-typeids.json	no
+seeds/sites/ledger/specs/registers/R1.md	sites/ledger/specs/registers/R1.md	yes
+seeds/candidates/QUEUE.md	candidates/QUEUE.md	yes
+# landed_at: 2026-07-04T00:42:49Z
+# toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=feebb6c98bd0faef8b540a9e26c410e98caefd38b6309aaaefa5a9045adf0c3b unavailable(not-in-devshell)

@@ -1,0 +1,12 @@
+{
+  "kind": "proof-profile",
+  "name": "uh-bn254/1",
+  "version": 1,
+  "schema": {
+    "normativeRef": "3/PROOF section 1",
+    "proofSystem": "UltraHonk",
+    "field": "BN254 scalar field",
+    "setup": "universal",
+    "role": "primary client-proved targets"
+  }
+}

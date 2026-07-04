@@ -1,0 +1,13 @@
+{
+  "candidate": "cand-0100-cjson-canonicalization",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "9bb6c6185654ce04e65f33cc21bb624a1af66741f051cf4b71abefdb71c3d877",
+    "LANDING": "1a70254b07c1249933657e49c9fceae3be34be52e834d37303f6a7c266794a1e",
+    "META": "7d0ff78a6348dce13adb4900088b996ab2e43079dc8394a5e684eb0e3d6df298",
+    "QUEUE.base": "2a7649ef868d996d844cea83b3e07a37942bac7b0cc5e1985d4dc2358f3b0592"
+  }
+}

@@ -1,0 +1,1 @@
+escape vectors cover every control character and reject an uppercase-hex mutant

@@ -1,0 +1,9 @@
+t01-encoder-determinism	pass
+t02-escape-vectors	pass
+t03-key-order-jcs-mutant	pass
+t04-integer-vectors	pass
+t05-typedecl-vectors	pass
+t06-r1-digests	pass
+t07-r1-no-tbd	pass
+t08-additive-spec-diff	pass
+t09-queue-formation	pass

@@ -1,0 +1,1 @@
+queue-merge result resolves the cand-0099 obstruction and rejects duplicate-header mutant

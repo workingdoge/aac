@@ -1,0 +1,23 @@
+{
+  "evaluated_at": "2026-07-04T00:28:12Z",
+  "task": "Complete cjson/1 canonical bytes, TypeDecl documents, R1 typeIds, vectors, and cand-0099 queue resolution.",
+  "checks": [
+    {"name": "t01-encoder-determinism", "result": "pass"},
+    {"name": "t02-escape-vectors", "result": "pass"},
+    {"name": "t03-key-order-jcs-mutant", "result": "pass"},
+    {"name": "t04-integer-vectors", "result": "pass"},
+    {"name": "t05-typedecl-vectors", "result": "pass"},
+    {"name": "t06-r1-digests", "result": "pass"},
+    {"name": "t07-r1-no-tbd", "result": "pass"},
+    {"name": "t08-additive-spec-diff", "result": "pass"},
+    {"name": "t09-queue-formation", "result": "pass"}
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "b79301551968eb4df70745825a28b5168aa1911067564cc91998b57ea0156ac0",
+    "traces_sha256": "23b5dad9d71ca9629bd9bbe57062339dfe5da3aca3bd655ec53a21f67cf1d8e8",
+    "body_sha256": "5fa6ea7352acadc470629868f40af968d4961e4bf78aa02217205f499ac3ad86",
+    "attestation": "703ac3ab5bf2ec3d104999ed3df9aedecb44120580d3dcfbb7819174590408be"
+  }
+}

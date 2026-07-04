@@ -1,0 +1,12 @@
+{
+  "kind": "digest-to-carrier-profile",
+  "name": "d2f-31be/1",
+  "version": 1,
+  "schema": {
+    "normativeRef": "2/FACT section 4",
+    "sourceDigestBytes": 32,
+    "carrierBitsAdmitted": 248,
+    "rule": "drop the leading byte and interpret the remaining 31 bytes big-endian",
+    "discardedByteCarriesSemantics": false
+  }
+}

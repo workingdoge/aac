@@ -1,0 +1,21 @@
+{
+  "suite": "cjson/1",
+  "rule": "2/FACT section 2 object keys sorted by UTF-8 bytes",
+  "case": {
+    "description": "BMP private-use U+E000 sorts before astral U+1F600 by UTF-8 bytes; JCS/UTF-16 order is the opposite.",
+    "value": {
+      "": 1,
+      "😀": 2
+    },
+    "utf8ByteOrder": [
+      "U+E000",
+      "U+1F600"
+    ],
+    "jcsUtf16OrderWouldBe": [
+      "U+1F600",
+      "U+E000"
+    ],
+    "expectedEncoding": "{\"\":1,\"😀\":2}",
+    "expectedHex": "7b22ee8080223a312c22f09f9880223a327d"
+  }
+}

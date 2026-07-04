@@ -1,0 +1,1 @@
+2/FACT README diff is additive, preserves prior key-order/integer/string pins byte-for-byte, and rejects a pin-mutating mutant

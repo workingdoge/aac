@@ -1,0 +1,1 @@
+TypeDecl documents parse and reproduce TypeDecl->typeId vectors

@@ -1,0 +1,5 @@
+candidate_id: cand-0100-cjson-canonicalization
+cycle_id: aac-2026-06-13
+opened: 2026-07-04T00:12:31Z
+intent: 2/FACT completion: pin cjson/1 canonical bytes + author TypeDecl documents (closes the cand-0099 obstruction)
+status: landed

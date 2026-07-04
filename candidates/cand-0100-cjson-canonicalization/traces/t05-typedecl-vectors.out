@@ -1,0 +1,1 @@
+all TypeDecl docs parse under cjson/1 and reproduce the TypeDecl->typeId vectors; duplicate-key mutant is rejected

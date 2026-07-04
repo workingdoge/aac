@@ -1,0 +1,1 @@
+every computed R1 digest recomputes from its TypeDecl document and corrupt-digest mutant is rejected

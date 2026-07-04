@@ -1,0 +1,13 @@
+{
+  "kind": "hash",
+  "name": "sha256/1",
+  "version": 1,
+  "schema": {
+    "normativeRef": "2/FACT section 3",
+    "algorithm": "SHA-256",
+    "input": "bytes",
+    "output": "32 bytes",
+    "humanRendering": "sha256:<64 lowercase hex characters>",
+    "role": "reference H for deployed 2/FACT identities"
+  }
+}

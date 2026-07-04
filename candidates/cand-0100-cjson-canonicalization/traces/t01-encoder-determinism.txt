@@ -1,0 +1,1 @@
+cjson/1 reference encoder is deterministic and rejects out-of-grammar JSON inputs

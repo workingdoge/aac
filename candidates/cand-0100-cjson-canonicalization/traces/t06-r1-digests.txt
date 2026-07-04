@@ -1,0 +1,1 @@
+R1 digests recompute from TypeDecl documents and corrupt mutant is rejected
