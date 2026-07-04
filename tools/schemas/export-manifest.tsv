@@ -12,6 +12,7 @@ file	tools/record-judgment-check.sh
 file	tools/review-judgment-check.sh
 file	tools/loop
 file	tools/kernel-shim.template.sh
+file	tools/lock-bump.sh
 file	tools/lane.sh
 file	tools/lib.sh
 file	tools/receipt-schema-check.sh
