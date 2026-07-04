@@ -426,11 +426,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1783186033,
-        "narHash": "sha256-IRJy9oWZ92w4xWxMadeGadsieu3S5awnfTpsqBq3PLg=",
+        "lastModified": 1783190132,
+        "narHash": "sha256-YHAs1+ExnJiWamEf0QYd02IWb1RbyiU04AEWY8AVtsc=",
         "ref": "refs/heads/main",
-        "rev": "bf9bb38059226d6f4f00d0b656dfe0bde126e9e0",
-        "revCount": 78,
+        "rev": "a6199a580f7d7f597af3e6766ab7ec3b31b7e74c",
+        "revCount": 82,
         "type": "git",
         "url": "file:///Users/arj/irai/loop"
       },
