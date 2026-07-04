@@ -19,8 +19,12 @@ set -u
 # not a store (QJ Boundary), so these are surfaced, not gated:
 #   - QJ-1.2 section discipline (a resolved entry under ## Open, etc.);
 #   - origin parseability.
+#   - owner-split mirror drift: open queue entries that look like work items
+#     but carry no canonical tracker ref (`issue:<scope>:<n>`) or bd
+#     provenance ref (`external(bd:...)` / `bd:<id>`).
 # `--strict` promotes the report-only findings to fail-closed (for a
-# future cleaned queue); the evaluate-landed suite runs the default mode.
+# future cleaned queue), except the owner-split mirror check, which is always
+# report-only. The evaluate-landed suite runs the default mode.
 #
 # Refusals are typed via emit-refusal.sh (witnessIds minted).
 # Exit: 0 clean (or only report-only findings); 1 fail-closed violation;
@@ -146,6 +150,93 @@ while IFS=$'\t' read -r lineno section status origin date first; do
     fi
   fi
 done < <(bash "$LIB" parse "$QUEUE")
+
+mirror_findings="$(python3 - "$QUEUE" <<'PYEOF' 2>/dev/null || true
+import re
+import sys
+
+try:
+    lines = open(sys.argv[1], encoding="utf-8").read().splitlines()
+except OSError:
+    sys.exit(0)
+
+TRACKER_REF = re.compile(r"\bissue:(?:workspace|instance-[^:\s/]+):[1-9][0-9]*\b")
+BD_REF = re.compile(r"\b(?:external\(bd:[^)]+\)|bd:[A-Za-z0-9._-]+)\b")
+ACTION = re.compile(
+    r"\b(add|admit|build|carry|close|consume|create|fix|implement|land|migrate|"
+    r"produce|prove|replace|retire|run|sync|transport|update|wire)\b|"
+    r"\b(must|needs?|should)\b",
+    re.I,
+)
+HOLDER = re.compile(r"\b(holder[- ]?to[- ]?be|owner|assignee|worker|agent|operator|codex|claude)\b", re.I)
+RECORD_MARKER = re.compile(
+    r"course record of what happened|landing recorded|names no remaining work|"
+    r"audit transcript|close-out ledger",
+    re.I,
+)
+
+def origin_for(block):
+    joined = "\n".join(block)
+    m = re.match(r"^- \[[^\]]+\]\s*\((.*)$", joined, re.S)
+    if not m:
+        return ""
+    rest = m.group(1)
+    close = rest.find(")")
+    paren = rest if close < 0 else rest[:close]
+    paren = re.sub(r"\s+", " ", paren).strip()
+    return paren.rsplit(",", 1)[0].strip() if "," in paren else paren
+
+def first_body_line(block):
+    joined = "\n".join(block)
+    m = re.match(r"^- \[[^\]]+\]\s*(?:\([^)]*\))?\s*(.*)$", joined, re.S)
+    body = m.group(1) if m else joined
+    return re.sub(r"\s+", " ", body).strip()[:160]
+
+def lifecycle_record(origin, text):
+    low = origin.lower()
+    return low.startswith("dispatch escalation") or low.startswith("reflect ") or RECORD_MARKER.search(text)
+
+def work_item_shaped(origin, text):
+    holderish = HOLDER.search(text) or re.match(r"^(agent:|codex|claude|operator\b)", origin, re.I)
+    return bool(holderish and ACTION.search(text))
+
+section = None
+i = 0
+while i < len(lines):
+    line = lines[i]
+    h = re.match(r"^## (.+?)\s*$", line)
+    if h:
+        section = h.group(1).strip().lower()
+        i += 1
+        continue
+    if not line.startswith("- ["):
+        i += 1
+        continue
+    start = i + 1
+    block = [line]
+    i += 1
+    while i < len(lines) and not lines[i].startswith("- [") and not lines[i].startswith("## "):
+        block.append(lines[i])
+        i += 1
+    joined = "\n".join(block)
+    if section != "open" or not block[0].startswith("- [open]"):
+        continue
+    if TRACKER_REF.search(joined) or BD_REF.search(joined):
+        continue
+    origin = origin_for(block)
+    if lifecycle_record(origin, joined):
+        continue
+    if work_item_shaped(origin, joined):
+        print(f"{start}\t{first_body_line(block)}")
+PYEOF
+)"
+if [[ -n "$mirror_findings" ]]; then
+  while IFS=$'\t' read -r lineno first; do
+    [[ -n "$lineno" ]] || continue
+    printf 'queue-lint: REPORT line %s: open work-item-shaped entry has no tracker ref token (owner-split mirror): %s\n' "$lineno" "$first" >&2
+    soft=$((soft+1))
+  done <<< "$mirror_findings"
+fi
 
 if [[ "$hard" -gt 0 ]]; then
   printf 'queue-lint: %s fail-closed violation(s), %s report-only finding(s)\n' "$hard" "$soft" >&2

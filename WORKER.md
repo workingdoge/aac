@@ -8,12 +8,22 @@ is a candidate plus evidence — the gate decides.
 
 ## Your standing references
 
-- `candidates/QUEUE.md` — the obstruction backlog (your default goal source)
+- `tools/tracker.sh` — the governed work-item tracker. Use
+  `BOAT_TRACKER_ROOT=${BOAT_TRACKER_ROOT:-/Users/arj/irai/.boat/tracker}` with
+  `ready`, `claim`, `close`, and `comment` for work-item flow.
+- `candidates/QUEUE.md` — loop-lifecycle records only: resolved histories and
+  dispatch-failure obstructions.
 - `candidates/README.md` — the store spec and status flow
 - `sites/premath/specs/` — the law spine (SITE, GATE, BIDIR, DOCTRINE)
 - `tools/loop` — the runner; `bash tools/loop` with no args shows usage
 - Prior candidates `candidates/cand-00*/` — full history; read before
   inventing; the store is your memory
+
+The governed tracker owns work items. `candidates/QUEUE.md` owns loop-lifecycle
+records: resolved histories and dispatch-failure obstructions.
+
+bd is retired as authority. Treat bd/Dolt state as read-only archival
+provenance only: never write bd records and never stop Dolt servers.
 
 ## The iteration recipe
 
@@ -42,8 +52,10 @@ is a candidate plus evidence — the gate decides.
 7. `bash tools/loop auto cand-NNNN --agent <your-name>` — it validates,
    briefs, admits (labeled agent:<your-name>), lands with git snapshot,
    records, reflects.
-8. Close out: update `candidates/QUEUE.md` (resolve what you fixed, queue
-   what you found), `git add -A && git commit` with a `loop:` message.
+8. Close out: `tools/tracker.sh close` or `tools/tracker.sh comment` the
+   governed work item through `BOAT_TRACKER_ROOT`; update `candidates/QUEUE.md`
+   only for loop-lifecycle records (resolved histories or dispatch-failure
+   obstructions), then `git add -A && git commit` with a `loop:` message.
 
 ## Bounds (DOCT-9.4 — these are law, not advice)
 

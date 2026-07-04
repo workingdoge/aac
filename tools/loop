@@ -367,6 +367,151 @@ queue_entry_sanitize() {
   printf '%s' "$e"
 }
 
+dispatch_instance_token() {
+  local token
+  token="$(awk -F'\t' '!/^#/ && $1 == "instance" { print $2; exit }' "$ROOT/tools/schemas/instance.tsv" 2>/dev/null)"
+  [[ -n "$token" ]] || return 1
+  LC_ALL=C printf '%s' "$token" | grep -Eq '^[!-~]+$' || return 1
+  case "$token" in
+    *[/:]*) return 1 ;;
+  esac
+  printf '%s\n' "$token"
+}
+
+dispatch_tracker_goal() {
+  local tracker token prefix tmp err row rc
+  tracker="$TOOLS_DIR/tracker.sh"
+  [[ -f "$tracker" ]] || return 2
+  token="$(dispatch_instance_token)" || return 2
+  prefix="issue:instance-${token}:"
+  tmp="$(mktemp "${TMPDIR:-/tmp}/loop-tracker-ready.XXXXXX")" || return 2
+  err="$tmp.err"
+  BOAT_TRACKER_ROOT="${BOAT_TRACKER_ROOT:-/Users/arj/irai/.boat/tracker}" \
+    bash "$tracker" ready > "$tmp" 2> "$err"
+  rc=$?
+  if [[ "$rc" -ne 0 ]]; then
+    rm -f "$tmp" "$err"
+    return 2
+  fi
+  if ! awk -F'\t' 'NR == 1 { ok = ($1 == "id" && $2 == "priority" && $3 == "title") } END { exit ok ? 0 : 1 }' "$tmp"; then
+    rm -f "$tmp" "$err"
+    return 2
+  fi
+  row="$(awk -F'\t' -v p="$prefix" '
+    NR > 1 && index($1, p) == 1 {
+      print $1 "\t" $2 "\t" $3
+      found = 1
+      exit
+    }
+    END { if (!found) exit 1 }
+  ' "$tmp")"
+  rc=$?
+  rm -f "$tmp" "$err"
+  [[ "$rc" -eq 0 && -n "$row" ]] || return 1
+  awk -F'\t' '{ printf "tracker issue %s [%s] %s\n", $1, $2, $3 }' <<< "$row"
+}
+
+dispatch_queue_top_goal_current_behavior() {
+  local qgoal g_origin allow_file origin_ok pfx
+  # Full-block extraction (STONE S3): a queue entry is its "- [open]"
+  # line THROUGH the next entry/section boundary — the old first-line
+  # read handed workers content-free goals from multi-line entries.
+  qgoal="$(awk '
+    /^- \[open\]/ && !found { found = 1; sub(/^- \[open\] /, ""); print; next }
+    found && (/^- \[/ || /^## /) { exit }
+    found && /^[[:space:]]*$/ { next }
+    found { print }
+  ' "$STORE/QUEUE.md")"
+  [[ -n "$qgoal" ]] || die "no --goal given and no open queue entries"
+  # Origin gate (STONE S3, declared strengthening; RJ-1.3): queue-top
+  # text flows verbatim into the worker prompt — anything that can
+  # append to the queue programs the next worker. Unattended (no
+  # --goal) dispatch consumes only entries whose (origin, ...) prefix
+  # is operator-allowlisted; everything else needs an explicit --goal.
+  g_origin="$(printf '%s' "$qgoal" | head -n 1 | sed -n 's/^(\([^)]*\)).*/\1/p')"
+  g_origin="${g_origin%,*}"
+  allow_file="$TOOLS_DIR/schemas/dispatch-origins.allow"
+  origin_ok=no
+  if [[ -f "$allow_file" && -n "$g_origin" ]]; then
+    while IFS= read -r pfx; do
+      [[ -n "$pfx" && "$pfx" != \#* ]] || continue
+      [[ "$g_origin" == "$pfx"* ]] && { origin_ok=yes; break; }
+    done < "$allow_file"
+  fi
+  if [[ "$origin_ok" != yes ]]; then
+    bash "$TOOLS_DIR/eval/emit-refusal.sh" verifier_contract_violation QUEUE.entry.origin \
+      "dispatch goal selection" \
+      "queue-top origin '${g_origin:-unparseable}' is not operator-allowlisted for unattended dispatch" \
+      'null' >&2 || true
+    die "queue-top origin '${g_origin:-unparseable}' not allowlisted for no-goal dispatch (pass --goal explicitly, or land an allowlist entry: tools/schemas/dispatch-origins.allow)"
+  fi
+  goal="$qgoal"
+  printf 'loop: dispatching queue-top goal (origin: %s)\n' "$g_origin"
+}
+
+dispatch_queue_obstruction_goal() {
+  local qgoal
+  command -v python3 >/dev/null 2>&1 || return 1
+  qgoal="$(python3 - "$STORE/QUEUE.md" <<'PYEOF'
+import re
+import sys
+
+try:
+    lines = open(sys.argv[1], encoding="utf-8").read().splitlines()
+except OSError:
+    sys.exit(1)
+
+def entry_origin(block):
+    joined = "\n".join(block)
+    m = re.match(r"^- \[open\]\s*\((.*)$", joined, re.S)
+    if not m:
+        return ""
+    rest = m.group(1)
+    close = rest.find(")")
+    paren = rest if close < 0 else rest[:close]
+    paren = re.sub(r"\s+", " ", paren).strip()
+    return paren.rsplit(",", 1)[0].strip() if "," in paren else paren
+
+def is_loop_obstruction(block):
+    joined = "\n".join(block)
+    origin = entry_origin(block).lower()
+    text = joined.lower()
+    return (
+        origin.startswith("dispatch escalation")
+        or origin.startswith("reflect ")
+        or "loop-obstruction" in origin
+        or "loop obstruction" in text
+    )
+
+section = None
+i = 0
+while i < len(lines):
+    line = lines[i]
+    h = re.match(r"^## (.+?)\s*$", line)
+    if h:
+        section = h.group(1).strip()
+        i += 1
+        continue
+    if not line.startswith("- ["):
+        i += 1
+        continue
+    block = [line]
+    i += 1
+    while i < len(lines) and not lines[i].startswith("- [") and not lines[i].startswith("## "):
+        block.append(lines[i])
+        i += 1
+    if section == "Open" and block[0].startswith("- [open]") and is_loop_obstruction(block):
+        block[0] = re.sub(r"^- \[open\]\s*", "", block[0], count=1)
+        print("\n".join(block).strip())
+        sys.exit(0)
+sys.exit(1)
+PYEOF
+  )" || return 1
+  [[ -n "$qgoal" ]] || return 1
+  goal="$qgoal"
+  printf 'loop: dispatching queue loop-obstruction goal\n'
+}
+
 meta_set_status() {
   local dir="$1" status="$2"
   local tmp="$dir/META.tmp"
@@ -1445,39 +1590,20 @@ dispatch)
   fi
 
   if [[ -z "$goal" ]]; then
-    # Full-block extraction (STONE S3): a queue entry is its "- [open]"
-    # line THROUGH the next entry/section boundary — the old first-line
-    # read handed workers content-free goals from multi-line entries.
-    goal="$(awk '
-      /^- \[open\]/ && !found { found = 1; sub(/^- \[open\] /, ""); print; next }
-      found && (/^- \[/ || /^## /) { exit }
-      found && /^[[:space:]]*$/ { next }
-      found { print }
-    ' "$STORE/QUEUE.md")"
-    [[ -n "$goal" ]] || die "no --goal given and no open queue entries"
-    # Origin gate (STONE S3, declared strengthening; RJ-1.3): queue-top
-    # text flows verbatim into the worker prompt — anything that can
-    # append to the queue programs the next worker. Unattended (no
-    # --goal) dispatch consumes only entries whose (origin, ...) prefix
-    # is operator-allowlisted; everything else needs an explicit --goal.
-    g_origin="$(printf '%s' "$goal" | head -n 1 | sed -n 's/^(\([^)]*\)).*/\1/p')"
-    g_origin="${g_origin%,*}"
-    allow_file="$TOOLS_DIR/schemas/dispatch-origins.allow"
-    origin_ok=no
-    if [[ -f "$allow_file" && -n "$g_origin" ]]; then
-      while IFS= read -r pfx; do
-        [[ -n "$pfx" && "$pfx" != \#* ]] || continue
-        [[ "$g_origin" == "$pfx"* ]] && { origin_ok=yes; break; }
-      done < "$allow_file"
+    tracker_rc=0
+    tracker_goal="$(dispatch_tracker_goal)"
+    tracker_rc=$?
+    if [[ "$tracker_rc" -eq 0 ]]; then
+      goal="$tracker_goal"
+      printf 'loop: dispatching tracker-ready goal\n'
+    elif [[ "$tracker_rc" -eq 2 ]]; then
+      printf 'loop: NOTICE: governed tracker unavailable for no-goal dispatch; falling back to current candidates/QUEUE.md behavior\n' >&2
+      dispatch_queue_top_goal_current_behavior
+    else
+      instance_token="$(dispatch_instance_token 2>/dev/null || printf 'unknown')"
+      dispatch_queue_obstruction_goal \
+        || die "no --goal given, tracker has no ready issue for instance '$instance_token', and no open loop-obstruction queue entries"
     fi
-    if [[ "$origin_ok" != yes ]]; then
-      bash "$TOOLS_DIR/eval/emit-refusal.sh" verifier_contract_violation QUEUE.entry.origin \
-        "dispatch goal selection" \
-        "queue-top origin '${g_origin:-unparseable}' is not operator-allowlisted for unattended dispatch" \
-        'null' >&2 || true
-      die "queue-top origin '${g_origin:-unparseable}' not allowlisted for no-goal dispatch (pass --goal explicitly, or land an allowlist entry: tools/schemas/dispatch-origins.allow)"
-    fi
-    printf 'loop: dispatching queue-top goal (origin: %s)\n' "$g_origin"
   fi
 
   DDIR="$STORE/.dispatch"
@@ -1503,8 +1629,9 @@ dispatch)
       fi
       printf '## Procedure (the loop is law; follow it exactly)\n\n'
       printf '1. Read WORKER.md first — it is your BINDING contract; where this brief\n'
-      printf '   and WORKER.md disagree, WORKER.md controls. Then candidates/QUEUE.md,\n'
-      printf '   candidates/README.md, and sites/premath/specs/\n'
+      printf '   and WORKER.md disagree, WORKER.md controls. Then inspect governed work\n'
+      printf '   with BOAT_TRACKER_ROOT=${BOAT_TRACKER_ROOT:-/Users/arj/irai/.boat/tracker} bash tools/tracker.sh ready,\n'
+      printf '   candidates/README.md, candidates/QUEUE.md lifecycle records, and sites/premath/specs/\n'
       printf '   (especially PREMATH-0002 BIDIR-4.4 and PREMATH-0003 DOCT-9.4; they bind you).\n'
       printf '2. tools/loop open cand-NNNN-<slug> "<intent>" (next free number); complete\n'
       printf '   DECLARATION honestly (layer/implements/preserves per the dm.* registry).\n'
