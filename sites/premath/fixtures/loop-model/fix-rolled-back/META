@@ -1,5 +1,0 @@
-candidate_id: fix-rolled-back
-cycle_id: boat-2026-05-17
-opened: 2026-06-12T00:00:00Z
-intent: rolled-back record - reflect override, auto re-lands
-status: rolled-back

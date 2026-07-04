@@ -1,8 +1,0 @@
-# Review worker commands (boat.review-workers.v0).
-# RJ-1.6 compiled artifact; consumer: tools/loop review --convene.
-# Columns: worker<TAB>command-template. The literal {root} is replaced with
-# the shell-quoted repository root at run time.
-# BOAT_REVIEW_WORKER_CMD overrides the resolved command in full; this is the
-# hermetic test seam for convening probes and must not require live CLIs.
-claude	claude -p --add-dir {root} --permission-mode acceptEdits --allowedTools Bash,Read,Write,Grep,Glob
-codex	codex exec -C {root} --sandbox workspace-write --ephemeral -

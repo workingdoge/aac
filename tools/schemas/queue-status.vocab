@@ -1,5 +1,0 @@
-# Queue status vocabulary (QJ-1.1 atomic predicate QueueStatusVocab,
-# premath.queue-judgments.v0). Consumer: tools/queue-lint.sh.
-# Compiled artifact per RJ-1.6. One status per line.
-open
-resolved

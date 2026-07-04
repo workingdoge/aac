@@ -1,2 +1,0 @@
-frozen fixture trace (fix-attest-tampered)
-tampered after attestation (deliberate fixture edit)

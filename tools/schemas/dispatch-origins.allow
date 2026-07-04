@@ -1,7 +1,0 @@
-# Dispatch goal-source origin allowlist (STONE S3; RJ-1.3 brought to
-# unattended dispatch). Prefix-matched against the (origin, ...) field
-# of the queue-top entry. Entries NOT matching require an explicit
-# --goal: queue-top text flows verbatim into the worker prompt, so
-# unattended consumption is operator-held. One prefix per line;
-# comments and blanks ignored. Compiled artifact per RJ-1.6.
-operator
