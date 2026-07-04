@@ -3,3 +3,4 @@ seeds/flake.lock	flake.lock	yes
 seeds/migrate-to-dependency.sh	migrate-to-dependency.sh	no
 # landed_at: 2026-07-04T14:54:33Z
 # toolchain: nixpkgs_rev=ac62194c3917 flake_lock_sha256=f0304a09f2293a6d22c8649999d90002b98ca79b0d247aa5eb88c1bbf7d5fcc7 unavailable(not-in-devshell)
+git_commit	e4b9fc3
