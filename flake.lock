@@ -959,11 +959,11 @@
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1783174400,
-        "narHash": "sha256-tmWl/4nBvRp4vFLJgryFMAmJqXlnHxvUlo9wa1yt50k=",
+        "lastModified": 1783186033,
+        "narHash": "sha256-IRJy9oWZ92w4xWxMadeGadsieu3S5awnfTpsqBq3PLg=",
         "ref": "refs/heads/main",
-        "rev": "932d0d408273d26e2a818dbad91e1af7828e2480",
-        "revCount": 70,
+        "rev": "bf9bb38059226d6f4f00d0b656dfe0bde126e9e0",
+        "revCount": 78,
         "type": "git",
         "url": "file:///Users/arj/irai/loop"
       },
@@ -1260,8 +1260,8 @@
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-25.05",
         "repo": "nixpkgs",
+        "rev": "ac62194c3917d5f474c1a844b6fd6da2db95077d",
         "type": "github"
       }
     },

@@ -2,7 +2,7 @@
 set -u
 
 # Template for dependency-mode instances. Install this file as tools/loop.
-# Template version: 2 (exports BOAT_INSTANCE_ROOT for the store kernel).
+# Template version: 3 (adds __boat-kernel-store machine-readable query).
 # It resolves the pinned Loop input from this instance's flake.lock, builds the
 # input's kernelExport package into the Nix store, exports BOAT_KERNEL_STORE for
 # staged eval helpers, and execs the store kernel's tools/loop.
@@ -36,6 +36,15 @@ script_dir="$(cd "$script_dir" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
 export BOAT_INSTANCE_ROOT="$repo_root"
 kernel_store="${BOAT_KERNEL_STORE:-}"
+kernel_query=0
+
+case "${1:-}" in
+  __boat-kernel-store)
+    kernel_query=1
+    shift
+    [[ "$#" -eq 0 ]] || die "__boat-kernel-store takes no arguments" 64
+    ;;
+esac
 
 if [[ -n "$kernel_store" ]]; then
   kernel_store="$(resolve_kernel_dir "$kernel_store")" \
@@ -68,4 +77,8 @@ else
 fi
 
 export BOAT_KERNEL_STORE="$kernel_store"
+if [[ "$kernel_query" -eq 1 ]]; then
+  printf '%s\n' "$kernel_store"
+  exit 0
+fi
 exec "$kernel_store/tools/loop" "$@"
