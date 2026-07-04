@@ -1030,12 +1030,13 @@ review)
       printf '%s\n' "$review_note"
     fi
     printf '\n'
-    sed "s/{id}/$id/g" "$TOOLS_DIR/schemas/review-convening.txt"
+    sed -e "s/{id}/$id/g" -e "s|{candidate_dir}|$CAND|g" "$TOOLS_DIR/schemas/review-convening.txt"
   } | ( cd "$ROOT" && bash -c "$review_worker_cmd" )
   review_worker_rc=$?
   printf 'loop: reviewer worker exited %s\n' "$review_worker_rc"
   if [[ ! -f "$CAND/REVIEW.md" ]]; then
-    printf 'loop: REVIEW.md missing after reviewer convening\n' >&2
+    printf 'loop: ERROR: stdout-only degradation: reviewer worker exited without writing REVIEW.md at %s\n' "$CAND/REVIEW.md" >&2
+    printf 'loop: ERROR: re-convene with the absolute REVIEW.md path, explicit write authorization, and post-write self-check before proceeding.\n' >&2
   fi
   if bash "$TOOLS_DIR/review-judgment-check.sh" "$CAND" "$ROOT"; then
     printf 'loop: review judgment accepted\n'
