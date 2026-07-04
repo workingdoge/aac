@@ -1,0 +1,20 @@
+{
+  "evaluated_at": "2026-07-03T23:22:34Z",
+  "task": "cand-0098 fundraise VNET packet binding",
+  "checks": [
+    {"name": "t01-generated-not-copied", "result": "pass"},
+    {"name": "t02-public-input-correspondence", "result": "pass"},
+    {"name": "t03-shape-mismatch-refusal", "result": "pass"},
+    {"name": "t04-receipt-digest-fields", "result": "pass"},
+    {"name": "t05-receipt-type-surface", "result": "pass"},
+    {"name": "t06-queue-merge", "result": "pass"}
+  ],
+  "verdict": "pass"
+  ,"provenance": {
+    "harness": "eval-self.sh",
+    "harness_sha256": "221ce651c774058840b2853868ed650fe9a5f8b0173cd6c38bbf903d2f6d959d",
+    "traces_sha256": "9f3d16aa5a1fefe1b07380614df67b84b457967a017820ab3cca0135e26195cc",
+    "body_sha256": "3065b153b2c967645bcc2cc3b6a0d89d472cc84a94ee23dd8c31f46af5eb19c4",
+    "attestation": "41b40fe78418b2925a85cd23013f6ab844f8cce59add68c35ee97867289d17cc"
+  }
+}

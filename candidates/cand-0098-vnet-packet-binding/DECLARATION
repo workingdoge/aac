@@ -1,0 +1,4 @@
+layer: artifact
+implements: none
+preserves: dm.refine.context, dm.profile.evidence, dm.commitment.attest
+compares_to: cand-0094-vnet-circuit-profile-conformance; cand-0095-vnet-transition-linkage; P1 static-witness bypass bead; PC-1.5 computes-on-circuit-side boundary

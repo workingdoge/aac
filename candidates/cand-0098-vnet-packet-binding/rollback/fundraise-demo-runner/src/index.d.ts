@@ -3,8 +3,6 @@ import type { FundraisePacket, VerifyOptions } from "../../fundraise-runtime/src
 import type { WorkflowPolicy, WorkflowReceipt, SettlementAction, VerifierReceipt } from "../../fundraise-workflow/src/index.d.ts";
 
 export declare const FUNDRAISE_DEMO_RUNNER_SCHEMA = "aac.fundraise-demo-runner.receipt.v1";
-export declare const PROVEKIT_VNET_PACKET_BINDING_SCHEMA =
-  "aac.fundraise-demo-runner.vnet-provekit-packet-binding.v1";
 export declare const DEFAULT_VECTOR_ID = "fundraise-demo-good";
 export declare const DEFAULT_PROVEKIT_PACKAGE = "world-app/provekit-vnet";
 export declare const DEFAULT_PROVEKIT_PROOF = "proof.np";
@@ -38,21 +36,6 @@ export declare class FundraiseDemoRunnerError extends Error {
   readonly reason: string;
   readonly detail: Record<string, unknown>;
   constructor(reason: string, message?: string, detail?: Record<string, unknown>);
-}
-
-export interface ProveKitVnetPacketWitness {
-  schema: typeof PROVEKIT_VNET_PACKET_BINDING_SCHEMA;
-  profile_id: "pedersen-vector/1";
-  basis_type_ids: ["USD", "fabric", "shares"];
-  public_inputs: Record<string, string>;
-  private_inputs: Record<string, unknown>;
-  prover_toml: string;
-  packet_vnet_link_commitment: string;
-  public_inputs_commitment: string;
-  packet_public_inputs_commitment: string;
-  prover_toml_digest: string;
-  witness_commitment: string;
-  mapping: Record<string, unknown>;
 }
 
 export interface FundraiseDemoRunnerInput {
@@ -164,11 +147,6 @@ export interface FundraiseDemoReceipt {
     proof_ref: string;
     proof_digest: string;
     verifier_key_digest: string;
-    packet_public_inputs_commitment: string | null;
-    packet_vnet_link_commitment: string | null;
-    vnet_circuit_public_inputs_commitment: string | null;
-    vnet_witness_commitment: string | null;
-    prover_toml_digest: string | null;
     timings_ms: Record<string, number>;
   };
   verifier_receipt: VerifierReceipt & {
@@ -252,11 +230,6 @@ export interface FundraiseDemoSummary {
     mode: string | null;
     packet_commitment: string | null;
     public_inputs_commitment: string | null;
-    packet_public_inputs_commitment: string | null;
-    packet_vnet_link_commitment: string | null;
-    vnet_circuit_public_inputs_commitment: string | null;
-    vnet_witness_commitment: string | null;
-    prover_toml_digest: string | null;
     proof_ref: string | null;
     proof_digest: string | null;
     verifier_key_digest: string | null;
@@ -310,11 +283,6 @@ export interface FundraiseDemoSummary {
     proof_system: string | null;
     proof_digest: string | null;
     verifier_key_digest: string | null;
-    packet_public_inputs_commitment: string | null;
-    packet_vnet_link_commitment: string | null;
-    vnet_circuit_public_inputs_commitment: string | null;
-    vnet_witness_commitment: string | null;
-    prover_toml_digest: string | null;
     timings_ms: Record<string, number>;
   };
   workflow: {
@@ -428,11 +396,6 @@ export declare function buildFundraiseDemoVerifierReceipt(input?: FundraiseDemoR
   verifier_receipt: VerifierReceipt & {
     verifier_key_digest: string;
     timings_ms: Record<string, number>;
-    packet_public_inputs_commitment?: string;
-    packet_vnet_link_commitment?: string;
-    vnet_circuit_public_inputs_commitment?: string;
-    vnet_witness_commitment?: string;
-    prover_toml_digest?: string;
   };
   workdir: string | null;
   balance_sheet_workdir: string | null;
@@ -486,29 +449,14 @@ export declare function loadFundraiseDemoPacket(input?: {
   fixture_path?: string;
   vector_id?: string;
 }): Promise<FundraisePacket>;
-export declare function buildProveKitVnetWitnessFromPacket(packet: FundraisePacket): ProveKitVnetPacketWitness;
-export declare function bindProveKitVnetWitnessToVerifierReceipt(
-  receipt: VerifierReceipt,
-  input: { packet: FundraisePacket; witness: ProveKitVnetPacketWitness },
-): VerifierReceipt & {
-  packet_binding_schema: typeof PROVEKIT_VNET_PACKET_BINDING_SCHEMA;
-  packet_public_inputs_commitment: string;
-  packet_vnet_link_commitment: string;
-  vnet_circuit_public_inputs_commitment: string;
-  vnet_witness_commitment: string;
-  prover_toml_digest: string;
-  packet_binding_note: string;
-};
 export declare function prepareProveKitWorkdir(input?: {
   repo_root?: string;
   circuit_dir?: string;
   work_dir?: string;
   keep_workdir?: boolean;
-  packet?: FundraisePacket;
 }): Promise<{
   work_dir: string;
   circuit_dir: string;
   home_dir: string;
   keep_workdir: boolean;
-  vnet_witness: ProveKitVnetPacketWitness | null;
 }>;

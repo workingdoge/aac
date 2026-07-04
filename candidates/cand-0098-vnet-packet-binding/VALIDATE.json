@@ -1,0 +1,13 @@
+{
+  "candidate": "cand-0098-vnet-packet-binding",
+  "judgment": "candidate-record formation checks (premath.record-judgments.v0 shaped)",
+  "normal_form_ref": null,
+  "result": "admitted",
+  "schema": "boat.validate.v0",
+  "witness_refs": {
+    "DECLARATION": "a85e954228e64ef2e5c5854ce2dec3c0471fc067065e9a28af6a6511e763c79e",
+    "LANDING": "997ce0a833efc83ec838864764b2e4c2b2690ebb704faad9321349baab04be73",
+    "META": "f3d4faf6c6badac3556cecf3dd645c1e5676a88757c0b8bb23ce345d91b7ab27",
+    "QUEUE.base": "9c2368b9bb2c1e0a5ddc24c50a79f6466659843b748b013df16ff62527c80dd1"
+  }
+}

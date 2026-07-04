@@ -1,0 +1,1 @@
+public declaration surface exposes the binding helper and receipt digest fields; digest-field deletion mutant rejected

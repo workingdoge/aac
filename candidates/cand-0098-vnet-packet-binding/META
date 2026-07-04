@@ -1,0 +1,5 @@
+candidate_id: cand-0098-vnet-packet-binding
+cycle_id: aac-2026-06-13
+opened: 2026-07-03T22:55:34Z
+intent: P1 soundness: fundraise VNET proof must bind the packet (derive Prover.toml from vnet_link; kill the static-witness bypass)
+status: landed

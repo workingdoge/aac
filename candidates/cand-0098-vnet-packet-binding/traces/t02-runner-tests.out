@@ -1,0 +1,5 @@
+
+> @aac/fundraise-demo-runner@0.0.0 test
+> node test/run-tests.mjs
+
+fundraise-demo-runner tests: pass

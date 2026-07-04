@@ -1,0 +1,6 @@
+t01-generated-not-copied	pass
+t02-public-input-correspondence	pass
+t03-shape-mismatch-refusal	pass
+t04-receipt-digest-fields	pass
+t05-receipt-type-surface	pass
+t06-queue-merge	pass

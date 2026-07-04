@@ -13,7 +13,6 @@ import {
 import {
   buildFundraiseFaceReceipts,
   buildFundraisePacket as buildRuntimeFundraisePacket,
-  digestHex,
   verifyFundraisePacket,
 } from "../../fundraise-runtime/src/index.mjs";
 import {
@@ -29,14 +28,8 @@ import {
   foldScalar,
   transitionReportFor,
 } from "../../vnet-runtime/src/index.mjs";
-import {
-  PROVEKIT_VNET_PACKET_BINDING_SCHEMA,
-  buildPacketBoundPlaceholderProverToml,
-  buildProveKitVnetWitnessFromPacket,
-} from "./vnet-provekit-binding.mjs";
 
 export const FUNDRAISE_DEMO_RUNNER_SCHEMA = "aac.fundraise-demo-runner.receipt.v1";
-export { PROVEKIT_VNET_PACKET_BINDING_SCHEMA, buildProveKitVnetWitnessFromPacket };
 export const DEFAULT_VECTOR_ID = "fundraise-demo-good";
 export const DEFAULT_PROVEKIT_PACKAGE = "world-app/provekit-vnet";
 export const DEFAULT_PROVEKIT_PROOF = "proof.np";
@@ -118,13 +111,11 @@ export async function buildFundraiseDemoVerifierReceipt(input = {}) {
     circuit_dir: input.circuit_dir,
     work_dir: input.work_dir,
     keep_workdir: input.keep_workdir,
-    packet,
   });
   try {
-    const baseVerifierReceipt = await buildProveKitVerifierReceiptFromNativeCli({
+    const verifierReceipt = await buildProveKitVerifierReceiptFromNativeCli({
       packet,
       cli: {
-        public_inputs: work.vnet_witness?.public_inputs ?? packet.public_inputs,
         provekit_bin: provekitBin,
         circuit_dir: work.circuit_dir,
         cwd: work.circuit_dir,
@@ -139,12 +130,6 @@ export async function buildFundraiseDemoVerifierReceipt(input = {}) {
       },
       verifier_id: input.verifier_id ?? "aac-fundraise-demo-provekit",
     });
-    const verifierReceipt = work.vnet_witness
-      ? bindProveKitVnetWitnessToVerifierReceipt(baseVerifierReceipt, {
-          packet,
-          witness: work.vnet_witness,
-        })
-      : baseVerifierReceipt;
     const balanceSheet = await buildBalanceSheetVerifierReceipt({
       input,
       packet,
@@ -163,8 +148,7 @@ export async function buildFundraiseDemoVerifierReceipt(input = {}) {
         provekit_bin: provekitBin,
         circuit_dir: work.circuit_dir,
         home_dir: work.home_dir,
-        public_inputs: work.vnet_witness?.public_inputs ?? packet.public_inputs,
-        vnet_witness: work.vnet_witness ?? null,
+        public_inputs: packet.public_inputs,
         prover_toml: "Prover.toml",
         prover_key: input.prover_key ?? DEFAULT_PROVEKIT_PROVER_KEY,
         verifier_key: input.verifier_key ?? DEFAULT_PROVEKIT_VERIFIER_KEY,
@@ -180,37 +164,6 @@ export async function buildFundraiseDemoVerifierReceipt(input = {}) {
       await rm(work.work_dir, { recursive: true, force: true });
     }
   }
-}
-
-export function bindProveKitVnetWitnessToVerifierReceipt(receipt, { packet, witness }) {
-  const publicInputsCommitment = hex32(receipt.public_inputs_commitment);
-  const core = {
-    ...receipt,
-    public_inputs_commitment: publicInputsCommitment,
-    packet_binding_schema: PROVEKIT_VNET_PACKET_BINDING_SCHEMA,
-    packet_public_inputs_commitment: witness.packet_public_inputs_commitment,
-    packet_vnet_link_commitment: witness.packet_vnet_link_commitment,
-    vnet_circuit_public_inputs_commitment: witness.public_inputs_commitment,
-    vnet_witness_commitment: witness.witness_commitment,
-    prover_toml_digest: witness.prover_toml_digest,
-    packet_binding_note:
-      "Prover.toml was generated from packet.vnet_link and the circuit public inputs were checked before proving.",
-  };
-  if (publicInputsCommitment !== witness.public_inputs_commitment) {
-    throw new FundraiseDemoRunnerError("vnet_circuit_public_inputs_commitment_mismatch", "vnet_circuit_public_inputs_commitment_mismatch", {
-      receipt_public_inputs_commitment: publicInputsCommitment,
-      witness_public_inputs_commitment: witness.public_inputs_commitment,
-    });
-  }
-  if (core.packet_commitment !== packetCommitment(packet)) {
-    throw new FundraiseDemoRunnerError("vnet_packet_commitment_mismatch");
-  }
-  return { ...core, receipt_digest: workflowVerifierReceiptDigest(core) };
-}
-
-function workflowVerifierReceiptDigest(receipt) {
-  const { receipt_digest: _receiptDigest, ...payload } = receipt;
-  return hex32(digestHex("aac/fundraise-workflow/verifier-receipt/1", payload));
 }
 
 export async function runFundraiseDemoLocalSettlement(input = {}) {
@@ -573,18 +526,12 @@ async function rerunStoredFundraiseVerification(session, kind) {
     prove: false,
     verify: true,
   });
-  const receipt = buildProveKitVerifierReceipt({
+  return buildProveKitVerifierReceipt({
     packet: artifact.packet,
     provekit,
     verifier_id: artifact.verifier_id,
     verifier_profile: artifact.verifier_profile,
   });
-  return artifact.vnet_witness
-    ? bindProveKitVnetWitnessToVerifierReceipt(receipt, {
-        packet: artifact.packet,
-        witness: artifact.vnet_witness,
-      })
-    : receipt;
 }
 
 function fundraiseVerifyRejection({ reason, proof_id, elapsed_ms, detail = {} }) {
@@ -1186,11 +1133,6 @@ function buildDemoReceipt({
       proof_ref: verifier_receipt.proof_ref,
       proof_digest: verifier_receipt.proof_digest,
       verifier_key_digest: verifier_receipt.verifier_key_digest,
-      packet_public_inputs_commitment: verifier_receipt.packet_public_inputs_commitment ?? null,
-      packet_vnet_link_commitment: verifier_receipt.packet_vnet_link_commitment ?? null,
-      vnet_circuit_public_inputs_commitment: verifier_receipt.vnet_circuit_public_inputs_commitment ?? null,
-      vnet_witness_commitment: verifier_receipt.vnet_witness_commitment ?? null,
-      prover_toml_digest: verifier_receipt.prover_toml_digest ?? null,
       timings_ms: verifier_receipt.timings_ms,
     },
     verifier_receipt,
@@ -1224,11 +1166,6 @@ function buildPreviewReceipt({ input, packet }) {
       proof_ref: null,
       proof_digest: null,
       verifier_key_digest: null,
-      packet_public_inputs_commitment: null,
-      packet_vnet_link_commitment: null,
-      vnet_circuit_public_inputs_commitment: null,
-      vnet_witness_commitment: null,
-      prover_toml_digest: null,
       timings_ms: {},
     },
     verifier_receipt: {},
@@ -1672,23 +1609,13 @@ export function buildFundraiseDemoSummary(receipt) {
       mode: verifier.mode ?? receipt.provekit?.mode ?? null,
       packet_commitment: verifier.packet_commitment ?? null,
       public_inputs_commitment: verifier.public_inputs_commitment ?? null,
-      packet_public_inputs_commitment: verifier.packet_public_inputs_commitment ?? receipt.provekit?.packet_public_inputs_commitment ?? null,
-      packet_vnet_link_commitment: verifier.packet_vnet_link_commitment ?? receipt.provekit?.packet_vnet_link_commitment ?? null,
-      vnet_circuit_public_inputs_commitment:
-        verifier.vnet_circuit_public_inputs_commitment
-        ?? receipt.provekit?.vnet_circuit_public_inputs_commitment
-        ?? null,
-      vnet_witness_commitment: verifier.vnet_witness_commitment ?? receipt.provekit?.vnet_witness_commitment ?? null,
-      prover_toml_digest: verifier.prover_toml_digest ?? receipt.provekit?.prover_toml_digest ?? null,
       proof_ref: verifier.proof_ref ?? receipt.provekit?.proof_ref ?? null,
       proof_digest: verifier.proof_digest ?? receipt.provekit?.proof_digest ?? null,
       verifier_key_digest: verifier.verifier_key_digest ?? receipt.provekit?.verifier_key_digest ?? null,
       receipt_digest: verifier.receipt_digest ?? receipt.workflow_receipt?.verifier_receipt_digest ?? null,
       adapter_schema: verifier.adapter_schema ?? null,
       timings_ms: verifier.timings_ms ?? receipt.provekit?.timings_ms ?? {},
-      boundary: verifier.packet_binding_schema === PROVEKIT_VNET_PACKET_BINDING_SCHEMA
-        ? "Native ProveKit verification is live here and the VNET witness/public inputs are generated from packet.vnet_link before proving; recursive/on-chain proof verification remains the production verifier target."
-        : "Native ProveKit verification is live here; recursive/on-chain proof verification remains the production verifier target.",
+      boundary: "Native ProveKit verification is live here; recursive/on-chain proof verification remains the production verifier target.",
     },
     balance_sheet: {
       accepted: balanceSheetVerifier.accepted === true,
@@ -1767,11 +1694,6 @@ export function buildFundraiseDemoSummary(receipt) {
       proof_system: receipt.provekit?.proof_system ?? null,
       proof_digest: receipt.provekit?.proof_digest ?? null,
       verifier_key_digest: receipt.provekit?.verifier_key_digest ?? null,
-      packet_public_inputs_commitment: receipt.provekit?.packet_public_inputs_commitment ?? null,
-      packet_vnet_link_commitment: receipt.provekit?.packet_vnet_link_commitment ?? null,
-      vnet_circuit_public_inputs_commitment: receipt.provekit?.vnet_circuit_public_inputs_commitment ?? null,
-      vnet_witness_commitment: receipt.provekit?.vnet_witness_commitment ?? null,
-      prover_toml_digest: receipt.provekit?.prover_toml_digest ?? null,
       timings_ms: receipt.provekit?.timings_ms ?? {},
     },
     workflow: {
@@ -2044,7 +1966,6 @@ export async function prepareProveKitWorkdir({
   circuit_dir,
   work_dir,
   keep_workdir = false,
-  packet,
 } = {}) {
   const source = resolve(repo_root, circuit_dir ?? DEFAULT_PROVEKIT_PACKAGE);
   const workRoot = work_dir ? resolve(work_dir) : await mkdtemp(resolve(tmpdir(), "aac-fundraise-demo."));
@@ -2054,12 +1975,7 @@ export async function prepareProveKitWorkdir({
     recursive: true,
     filter: (src) => shouldCopyCircuitPath(source, src),
   });
-  const vnetPackage = isDefaultProveKitVnetPackage(source);
-  const vnetWitness = vnetPackage ? buildProveKitVnetWitnessFromPacket(packet) : null;
-  await writeFile(
-    resolve(target, "Prover.toml"),
-    vnetWitness?.prover_toml ?? buildPacketBoundPlaceholderProverToml(packet),
-  );
+  await cp(resolve(target, "Prover.toml.example"), resolve(target, "Prover.toml"));
   const homeDir = resolve(workRoot, "home");
   await mkdir(resolve(homeDir, "nargo"), { recursive: true });
   return {
@@ -2067,12 +1983,7 @@ export async function prepareProveKitWorkdir({
     circuit_dir: target,
     home_dir: homeDir,
     keep_workdir,
-    vnet_witness: vnetWitness,
   };
-}
-
-function isDefaultProveKitVnetPackage(source) {
-  return basename(source) === basename(DEFAULT_PROVEKIT_PACKAGE);
 }
 
 function shouldCopyCircuitPath(source, src) {

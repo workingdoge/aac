@@ -1,0 +1,1 @@
+verifier receipt records packet-public-input, packet-vnet-link, circuit-public-input, witness, and generated-TOML digests; missing-digest mutant rejected

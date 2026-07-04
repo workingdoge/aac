@@ -1,0 +1,1 @@
+generated Prover.toml public inputs match the packet-derived expectation, nargo executes the generated witness when available, and amount-tamper is refused

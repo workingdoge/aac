@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 
@@ -12,7 +12,6 @@ import {
   buildFundraiseDemoBatchPacket,
   buildFundraiseDemoCorsHeaders,
   buildFundraiseDemoSummary,
-  buildProveKitVnetWitnessFromPacket,
   fundraiseStaticContentType,
   loadFundraiseDemoPacket,
   prepareProveKitWorkdir,
@@ -38,119 +37,16 @@ async function satisfyFakeProveKitCommand(command) {
   return { exit_code: 0, stdout: `${command.step}: ok\n` };
 }
 
-function buildShapeCompatibleProveKitVnetPacket() {
-  const profileId = "pedersen-vector/1";
-  const basisTypeIds = ["USD", "fabric", "shares"];
-  const basisCommitment = "3199263021048886800067584263637418741171169451581946816529327257071282393363";
-  const atom = ({
-    transition_ref,
-    journal_commitment,
-    debit,
-    credit,
-    debit_blinding,
-    credit_blinding,
-    transition_accounts,
-    transition_debits,
-    transition_credits,
-  }) => ({
-    profile_id: profileId,
-    basis_type_ids: basisTypeIds,
-    basis_commitment: basisCommitment,
-    transition_ref,
-    journal_commitment,
-    debit,
-    credit,
-    debit_blinding,
-    credit_blinding,
-    transition_link: {
-      transition_accounts,
-      transition_debits,
-      transition_credits,
-    },
-  });
-  return {
-    public_inputs: {
-      round_id: "provekit-vnet-sample",
-      context_commitment: "9001",
-    },
-    vnet_link: {
-      vnet: {
-        profile_id: profileId,
-        basis_type_ids: basisTypeIds,
-        basis_commitment: basisCommitment,
-        context_commitment: "9001",
-        transition_set_commitment:
-          "0x2b8a24d48020d3af53b6c2853450eefa0e73ce04d22365530e6ddcadb191973a",
-        commitment_set_commitment:
-          "0x13947fc7b94aff97d38d9e375de087d6058c7a3204f547045736a0a0c31690e6",
-        aggregate_opening: {
-          x: "0x0189efcd83678b566806f7b40bdedcd818a9adb56cff1aeabff00431164e05f0",
-          y: "0x140d6729a40f8393576efb10b4bd0eb05e87a280b6c1d2400c4d40dc6edb9dc9",
-        },
-        atoms: [
-          atom({
-            transition_ref: "7001",
-            journal_commitment:
-              "0x14ccbd5f8c9e45d77a96b9eb9d47278e43344dd75c686a76689e209e66dda885",
-            debit: [100, 50, 0],
-            credit: [100, 50, 0],
-            debit_blinding: 11,
-            credit_blinding: 17,
-            transition_accounts: [1, 2, 0, 0],
-            transition_debits: [[100, 0, 0], [0, 50, 0], [0, 0, 0], [0, 0, 0]],
-            transition_credits: [[0, 50, 0], [100, 0, 0], [0, 0, 0], [0, 0, 0]],
-          }),
-          atom({
-            transition_ref: "7002",
-            journal_commitment:
-              "0x27c16360cd1c685a825e9f385c6d1959a8508125d8ee9ba3ccc4d6f617916719",
-            debit: [25, 75, 10],
-            credit: [25, 75, 10],
-            debit_blinding: 13,
-            credit_blinding: 19,
-            transition_accounts: [2, 3, 0, 0],
-            transition_debits: [[0, 75, 10], [25, 0, 0], [0, 0, 0], [0, 0, 0]],
-            transition_credits: [[25, 0, 0], [0, 75, 10], [0, 0, 0], [0, 0, 0]],
-          }),
-        ],
-      },
-    },
-  };
-}
-
 const packet = await loadFundraiseDemoPacket({ repo_root: repoRoot });
 assert.equal(packet.public_inputs.issued_unit_total, 150);
 
-const provekitPacket = buildShapeCompatibleProveKitVnetPacket();
-const provekitWitness = buildProveKitVnetWitnessFromPacket(provekitPacket);
-assert.equal(provekitWitness.schema, "aac.fundraise-demo-runner.vnet-provekit-packet-binding.v1");
-assert.equal(provekitWitness.public_inputs.atom_count_pub, "2");
-assert.equal(
-  provekitWitness.public_inputs.aggregate_opening_x_pub,
-  "696025954462360609854244429735001228443867042826384838556274523143607813616",
-);
-assert.match(provekitWitness.prover_toml, /transition_refs = \["7001", "7002"\]/);
-assert.equal(provekitWitness.prover_toml.includes("example witness"), false);
-assert.match(provekitWitness.public_inputs_commitment, /^0x[0-9a-f]{64}$/);
-assert.throws(
-  () => buildProveKitVnetWitnessFromPacket(packet),
-  /vnet_provekit_profile_mismatch/,
-);
-const tamperedProvekitPacket = structuredClone(provekitPacket);
-tamperedProvekitPacket.vnet_link.vnet.atoms[0].debit[0] = 101;
-assert.throws(
-  () => buildProveKitVnetWitnessFromPacket(tamperedProvekitPacket),
-  /vnet_provekit_atom_debit_mismatch/,
-);
-
-const work = await prepareProveKitWorkdir({ repo_root: repoRoot, keep_workdir: true, packet: provekitPacket });
+const work = await prepareProveKitWorkdir({ repo_root: repoRoot, keep_workdir: true });
 assert.equal(work.circuit_dir.endsWith("provekit-vnet"), true);
-assert.deepEqual(work.vnet_witness.public_inputs, provekitWitness.public_inputs);
-assert.equal(await readFile(resolve(work.circuit_dir, "Prover.toml"), "utf8"), provekitWitness.prover_toml);
 
 const fakeWork = await mkdtemp(resolve(tmpdir(), "aac-demo-runner-test."));
 await mkdir(resolve(fakeWork, "circuit"), { recursive: true });
 await writeFile(resolve(fakeWork, "circuit", "Nargo.toml"), "[package]\nname = \"fake\"\n");
+await writeFile(resolve(fakeWork, "circuit", "Prover.toml.example"), "accepted = true\n");
 await mkdir(resolve(fakeWork, "static", "fundraise"), { recursive: true });
 await mkdir(resolve(fakeWork, "static", "_astro"), { recursive: true });
 await writeFile(resolve(fakeWork, "static", "index.html"), "<aac-fundraise-demo></aac-fundraise-demo>\n");

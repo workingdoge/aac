@@ -1,0 +1,861 @@
+╮ [2mprovekit_cli::cmd::prepare::[22mrun [2mstart:[22m 39.2 kB[2m current, [22m35.0[2m allocations[22m
+│ [2m 159 ms [22m[1;32mINFO[0m Number of opcodes before: 956
+│ [2m 160 ms [22m[1;32mINFO[0m Number of opcodes 634
+│ [2m 160 ms [22m[1;32mINFO[0m Number of opcodes after: 634
+│ [2m 166 ms [22m[1;32mINFO[0m Number of opcodes before: 634
+│ [2m 166 ms [22m[1;32mINFO[0m Number of opcodes 602
+│ [2m 167 ms [22m[1;32mINFO[0m Number of opcodes after: 602
+├─╮ [2mprovekit_r1cs_compiler::noir_proof_scheme::[22mfrom_program [2mstart:[22m 13.2 MB[2m current, [22m1.07M[2m allocations[22m
+│ │ [2m 103 μs [22m[1;32mINFO[0m Program noir version: 1.0.0-beta.19+74d6be658e1ad252f87943292ba09bdd4da80bd4
+│ │ [2m 117 μs [22m[1;32mINFO[0m Program entry point: fn main(profile_id_pub: pub Field, basis_commitment_pub: pub Field, transition_set_commitment_pub: pub Field, commitment_set_commitment_pub: pub Field, aggregate_opening_x_pub: pub Field, aggregate_opening_y_pub: pub Field, atom_count_pub: pub Field, context_commitment_pub: pub Field, transition_refs: [Field; 2], journal_commitments: [Field; 2], transition_accounts: [[u32; 4]; 2], transition_debits: [[[u64; 3]; 4]; 2], transition_credits: [[[u64; 3]; 4]; 2], debit: [[u64; 3]; 2], credit: [[u64; 3]; 2], r_debit: [Field; 2], r_credit: [Field; 2]);
+│ │ [2m 426 μs [22m[1;32mINFO[0m ACIR: 521 witnesses, 602 opcodes.
+│ │ [2m 604 ms [22m[1;32mINFO[0m R1CS 69532 constraints, 82690 witnesses, A 174781 entries, B 242773 entries, C 107645 entries
+│ │ [2m 605 ms [22m[1;32mINFO[0m Gaussian elimination: found 8600 linear constraints out of 69532
+│ │ [2m 637 ms [22m[1;32mINFO[0m Gaussian elimination: 8521 substitutions found
+│ │ [2m 643 ms [22m[1;32mINFO[0m Gaussian elimination: phase 2b (backward chains) complete
+│ │ [2m 652 ms [22m[1;32mINFO[0m Gaussian elimination: phase 3 (rebuild rows in parallel) complete
+│ │ [2m 657 ms [22m[1;32mINFO[0m Gaussian elimination: phase 4 (intern + assemble matrices) complete
+│ │ [2m 699 ms [22m[1;32mINFO[0m Column removal: 82690 -> 71135 real + 11111 virtual witnesses (82246 total for solving), 444 builders pruned
+│ │ [2m 705 ms [22m[1;32mINFO[0m Gaussian elimination: phase 5 (remove dead columns) complete
+│ │ [2m 705 ms [22m[1;32mINFO[0m Gaussian elimination: 69532 -> 61011 constraints (12.3% reduction), 8521 substitutions
+│ │ [2m 705 ms [22m[1;32mINFO[0m Column removal: 82690 -> 71135 witnesses (14.0% reduction), 444 builders pruned
+│ │ [2m 706 ms [22m[1;32mINFO[0m After GE optimization: 61011 constraints, 71135 witnesses (8521 eliminated, 12.3% constraint reduction)
+│ │ [2m 791 ms [22m[1;32mINFO[0m Witness split: w1 = 34718, w2 = 36417 (real, committed) + 11111 virtual (solving only)
+├─╯ 802 ms[2m duration, [22m103 MB[2m peak memory, [22m89.7 MB[2m local, [22m37.3 MB[2m current, [22m1.29M[2m allocations[22m
+├─╮ [2mprovekit_common::file::io::[22mwrite path="aac_vnet_provekit.pkp" [2mstart:[22m 60.0 MB[2m current, [22m2.37M[2m allocations[22m
+│ ├─╮ [2mprovekit_common::file::io::bin::[22mwrite_bin path="aac_vnet_provekit.pkp" format=[80, 114, 118, 75, 105, 116, 80, 114] version=(1, 2) compression=Xz hash_config=Some(Skyscraper) [2mstart:[22m 60.0 MB[2m current, [22m2.37M[2m allocations[22m
+│ │ │ [2m1.66  s [22m[1;32mINFO[0m Wrote 573 kB to "aac_vnet_provekit.pkp" path="aac_vnet_provekit.pkp" size=573237
+│ ├─╯ 1.66 s[2m duration, [22m70.0 MB[2m peak memory, [22m10.0 MB[2m local, [22m60.0 MB[2m current, [22m110k[2m allocations[22m
+├─╯ [2mwrite: [22m1.66 s[2m duration, [22m70.0 MB[2m peak memory, [22m10.0 MB[2m local, [22m60.0 MB[2m current, [22m110k[2m allocations[22m
+├─╮ [2mprovekit_common::file::io::[22mwrite path="aac_vnet_provekit.pkv" [2mstart:[22m 21.6 MB[2m current, [22m2.48M[2m allocations[22m
+│ ├─╮ [2mprovekit_common::file::io::bin::[22mwrite_bin path="aac_vnet_provekit.pkv" format=[80, 114, 118, 75, 105, 116, 86, 114] version=(1, 3) compression=Zstd hash_config=Some(Skyscraper) [2mstart:[22m 21.6 MB[2m current, [22m2.48M[2m allocations[22m
+│ │ │ [2m16.3 ms [22m[1;32mINFO[0m Wrote 767 kB to "aac_vnet_provekit.pkv" path="aac_vnet_provekit.pkv" size=766576
+│ ├─╯ 16.4 ms[2m duration, [22m27.8 MB[2m peak memory, [22m6.19 MB[2m local, [22m21.6 MB[2m current, [22m156[2m allocations[22m
+├─╯ [2mwrite: [22m16.4 ms[2m duration, [22m27.8 MB[2m peak memory, [22m6.19 MB[2m local, [22m21.6 MB[2m current, [22m165[2m allocations[22m
+╯ [2mrun: [22m2.66 s[2m duration, [22m103 MB[2m peak memory, [22m103 MB[2m local, [22m150 kB[2m current, [22m2.48M[2m allocations[22m
+╮ [2mprovekit_cli::cmd::prove::[22mrun [2mstart:[22m 39.2 kB[2m current, [22m32.0[2m allocations[22m
+├─╮ [2mprovekit_common::file::io::[22mread path="aac_vnet_provekit.pkp" [2mstart:[22m 39.8 kB[2m current, [22m45.0[2m allocations[22m
+│ ├─╮ [2mprovekit_common::file::io::bin::[22mread_bin path="aac_vnet_provekit.pkp" format=[80, 114, 118, 75, 105, 116, 80, 114] major=1 minor=2 size=573237 [2mstart:[22m 40.6 kB[2m current, [22m62.0[2m allocations[22m
+│ ├─╯ 82.7 ms[2m duration, [22m36.1 MB[2m peak memory, [22m36.1 MB[2m local, [22m27.7 MB[2m current, [22m120k[2m allocations[22m
+├─╯ [2mread: [22m82.7 ms[2m duration, [22m36.1 MB[2m peak memory, [22m36.1 MB[2m local, [22m27.7 MB[2m current, [22m120k[2m allocations[22m
+│ [2m82.8 ms [22m[1;32mINFO[0m Read Noir proof scheme constraints=61011 witnesses=71135
+├─╮ [2mprovekit_prover::[22mprove_with_toml [2mstart:[22m 27.7 MB[2m current, [22m120k[2m allocations[22m
+│ ├─╮ [2mprovekit_prover::[22mprove [2mstart:[22m 27.7 MB[2m current, [22m121k[2m allocations[22m
+│ │ ├─╮ [2mprovekit_prover::[22mgenerate_noir_witness [2mstart:[22m 27.7 MB[2m current, [22m121k[2m allocations[22m
+│ │ ├─╯ 1.46 ms[2m duration, [22m27.8 MB[2m peak memory, [22m48.0 kB[2m local, [22m27.8 MB[2m current, [22m4.05k[2m allocations[22m
+│ │ ├─╮ [2mprovekit_prover::[22mprove_with_witness [2mstart:[22m 27.8 MB[2m current, [22m125k[2m allocations[22m
+│ │ │ ├─╮ [2mprovekit_prover::[22msolve_w1 [2mstart:[22m 26.1 MB[2m current, [22m126k[2m allocations[22m
+│ │ │ │ ├─╮ [2mprovekit_prover::r1cs::[22msolve_witness_vec [2mstart:[22m 26.1 MB[2m current, [22m126k[2m allocations[22m
+│ │ │ │ ├─╯ 1.88 s[2m duration, [22m26.1 MB[2m peak memory, [22m732 B[2m local, [22m26.1 MB[2m current, [22m2.29k[2m allocations[22m
+│ │ │ ├─╯ [2msolve_w1: [22m1.88 s[2m duration, [22m26.1 MB[2m peak memory, [22m1.02 kB[2m local, [22m21.1 MB[2m current, [22m2.30k[2m allocations[22m
+│ │ │ ├─╮ [2mprovekit_prover::[22mallocate_w1 [2mstart:[22m 10.8 MB[2m current, [22m218k[2m allocations[22m
+│ │ │ ├─╯ 367 μs[2m duration, [22m12.9 MB[2m peak memory, [22m2.10 MB[2m local, [22m12.9 MB[2m current, [22m19.0[2m allocations[22m
+│ │ │ ├─╮ [2mprovekit_prover::whir_r1cs::[22mcommit [2mstart:[22m 12.9 MB[2m current, [22m218k[2m allocations[22m
+│ │ │ │ ├─╮ [2mprovekit_common::utils::[22mpad_to_power_of_two [2mstart:[22m 12.9 MB[2m current, [22m218k[2m allocations[22m
+│ │ │ │ ├─╯ 169 μs[2m duration, [22m12.9 MB[2m peak memory, [22m280 B[2m local, [22m12.9 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::committer::[22mcommit [2mstart:[22m 12.9 MB[2m current, [22m218k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::whir::[22mcommit size=65536 [2mstart:[22m 16.2 MB[2m current, [22m218k[2m allocations[22m
+│ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×65536/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 16.2 MB[2m current, [22m218k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=8192 codeword_length=32768 mask_len=0 [2mstart:[22m 16.2 MB[2m current, [22m218k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ 10.1 ms[2m duration, [22m25.2 MB[2m peak memory, [22m9.02 MB[2m local, [22m25.2 MB[2m current, [22m240[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(32768 x 8) size=262144 [2mstart:[22m 25.2 MB[2m current, [22m218k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 32768) [2mstart:[22m 27.3 MB[2m current, [22m220k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 3.41 ms[2m duration, [22m27.3 MB[2m peak memory, [22m626 B[2m local, [22m27.3 MB[2m current, [22m9.00[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ [2mcommit: [22m11.0 ms[2m duration, [22m27.8 MB[2m peak memory, [22m2.56 MB[2m local, [22m27.3 MB[2m current, [22m1.30k[2m allocations[22m
+│ │ │ │ │ │ ├─╯ [2mcommit: [22m21.7 ms[2m duration, [22m27.8 MB[2m peak memory, [22m11.6 MB[2m local, [22m27.3 MB[2m current, [22m1.57k[2m allocations[22m
+│ │ │ │ │ ├─╯ [2mcommit: [22m21.7 ms[2m duration, [22m27.8 MB[2m peak memory, [22m11.6 MB[2m local, [22m27.3 MB[2m current, [22m1.57k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::whir::[22mcommit size=4096 [2mstart:[22m 29.5 MB[2m current, [22m220k[2m allocations[22m
+│ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 17×4096/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 29.5 MB[2m current, [22m220k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=136 message_len=512 codeword_length=2048 mask_len=0 [2mstart:[22m 29.5 MB[2m current, [22m220k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ 9.06 ms[2m duration, [22m38.5 MB[2m peak memory, [22m8.91 MB[2m local, [22m38.4 MB[2m current, [22m12.0[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(2048 x 136) size=278528 [2mstart:[22m 38.5 MB[2m current, [22m220k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 2048) [2mstart:[22m 38.6 MB[2m current, [22m221k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 640 μs[2m duration, [22m38.6 MB[2m peak memory, [22m486 B[2m local, [22m38.6 MB[2m current, [22m8.00[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ [2mcommit: [22m10.2 ms[2m duration, [22m39.5 MB[2m peak memory, [22m1.05 MB[2m local, [22m38.6 MB[2m current, [22m1.41k[2m allocations[22m
+│ │ │ │ │ │ ├─╯ [2mcommit: [22m21.2 ms[2m duration, [22m39.5 MB[2m peak memory, [22m9.97 MB[2m local, [22m38.6 MB[2m current, [22m1.51k[2m allocations[22m
+│ │ │ │ │ ├─╯ [2mcommit: [22m21.2 ms[2m duration, [22m39.5 MB[2m peak memory, [22m9.97 MB[2m local, [22m38.6 MB[2m current, [22m1.52k[2m allocations[22m
+│ │ │ │ ├─╯ [2mcommit: [22m46.2 ms[2m duration, [22m39.5 MB[2m peak memory, [22m26.6 MB[2m local, [22m38.6 MB[2m current, [22m3.15k[2m allocations[22m
+│ │ │ ├─╯ [2mcommit: [22m46.4 ms[2m duration, [22m39.5 MB[2m peak memory, [22m26.6 MB[2m local, [22m38.6 MB[2m current, [22m3.16k[2m allocations[22m
+│ │ │ ├─╮ [2mprovekit_prover::[22msolve_w2 [2mstart:[22m 48.9 MB[2m current, [22m316k[2m allocations[22m
+│ │ │ │ ├─╮ [2mprovekit_prover::r1cs::[22msolve_witness_vec [2mstart:[22m 48.9 MB[2m current, [22m316k[2m allocations[22m
+│ │ │ │ ├─╯ 2.41 s[2m duration, [22m50.1 MB[2m peak memory, [22m1.22 MB[2m local, [22m48.9 MB[2m current, [22m20.0[2m allocations[22m
+│ │ │ ├─╯ [2msolve_w2: [22m2.41 s[2m duration, [22m50.1 MB[2m peak memory, [22m1.22 MB[2m local, [22m34.4 MB[2m current, [22m25.0[2m allocations[22m
+│ │ │ ├─╮ [2mprovekit_prover::[22mallocate_w2 [2mstart:[22m 34.3 MB[2m current, [22m316k[2m allocations[22m
+│ │ │ ├─╯ 155 μs[2m duration, [22m36.4 MB[2m peak memory, [22m2.10 MB[2m local, [22m36.4 MB[2m current, [22m19.0[2m allocations[22m
+│ │ │ ├─╮ [2mprovekit_prover::whir_r1cs::[22mcommit [2mstart:[22m 36.4 MB[2m current, [22m316k[2m allocations[22m
+│ │ │ │ ├─╮ [2mprovekit_common::utils::[22mpad_to_power_of_two [2mstart:[22m 36.4 MB[2m current, [22m316k[2m allocations[22m
+│ │ │ │ ├─╯ 141 μs[2m duration, [22m36.4 MB[2m peak memory, [22m280 B[2m local, [22m36.4 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::committer::[22mcommit [2mstart:[22m 36.4 MB[2m current, [22m316k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::whir::[22mcommit size=65536 [2mstart:[22m 39.7 MB[2m current, [22m316k[2m allocations[22m
+│ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×65536/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 39.7 MB[2m current, [22m316k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=8192 codeword_length=32768 mask_len=0 [2mstart:[22m 39.7 MB[2m current, [22m316k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ 10.9 ms[2m duration, [22m48.1 MB[2m peak memory, [22m8.39 MB[2m local, [22m48.1 MB[2m current, [22m11.0[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(32768 x 8) size=262144 [2mstart:[22m 48.1 MB[2m current, [22m316k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 32768) [2mstart:[22m 50.2 MB[2m current, [22m317k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 3.40 ms[2m duration, [22m50.2 MB[2m peak memory, [22m486 B[2m local, [22m50.2 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ [2mcommit: [22m10.8 ms[2m duration, [22m50.7 MB[2m peak memory, [22m2.56 MB[2m local, [22m50.2 MB[2m current, [22m1.30k[2m allocations[22m
+│ │ │ │ │ │ ├─╯ [2mcommit: [22m22.1 ms[2m duration, [22m50.7 MB[2m peak memory, [22m10.9 MB[2m local, [22m50.2 MB[2m current, [22m1.33k[2m allocations[22m
+│ │ │ │ │ ├─╯ [2mcommit: [22m22.2 ms[2m duration, [22m50.7 MB[2m peak memory, [22m10.9 MB[2m local, [22m50.2 MB[2m current, [22m1.34k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::whir::[22mcommit size=4096 [2mstart:[22m 52.4 MB[2m current, [22m317k[2m allocations[22m
+│ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 17×4096/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 52.4 MB[2m current, [22m317k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=136 message_len=512 codeword_length=2048 mask_len=0 [2mstart:[22m 52.4 MB[2m current, [22m317k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ 8.91 ms[2m duration, [22m61.4 MB[2m peak memory, [22m8.91 MB[2m local, [22m61.4 MB[2m current, [22m12.0[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(2048 x 136) size=278528 [2mstart:[22m 61.4 MB[2m current, [22m317k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 2048) [2mstart:[22m 61.5 MB[2m current, [22m319k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 634 μs[2m duration, [22m61.5 MB[2m peak memory, [22m486 B[2m local, [22m61.5 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ [2mcommit: [22m9.24 ms[2m duration, [22m62.4 MB[2m peak memory, [22m1.05 MB[2m local, [22m61.5 MB[2m current, [22m1.41k[2m allocations[22m
+│ │ │ │ │ │ ├─╯ [2mcommit: [22m20.2 ms[2m duration, [22m62.4 MB[2m peak memory, [22m9.97 MB[2m local, [22m61.5 MB[2m current, [22m1.51k[2m allocations[22m
+│ │ │ │ │ ├─╯ [2mcommit: [22m20.3 ms[2m duration, [22m62.4 MB[2m peak memory, [22m9.97 MB[2m local, [22m61.5 MB[2m current, [22m1.52k[2m allocations[22m
+│ │ │ │ ├─╯ [2mcommit: [22m45.7 ms[2m duration, [22m62.4 MB[2m peak memory, [22m26.0 MB[2m local, [22m61.5 MB[2m current, [22m2.91k[2m allocations[22m
+│ │ │ ├─╯ [2mcommit: [22m45.9 ms[2m duration, [22m62.4 MB[2m peak memory, [22m26.0 MB[2m local, [22m61.5 MB[2m current, [22m2.92k[2m allocations[22m
+│ │ │ ├─╮ [2mprovekit_prover::whir_r1cs::[22mprove_noir [2mstart:[22m 70.4 MB[2m current, [22m319k[2m allocations[22m
+│ │ │ │ ├─╮ [2mprovekit_common::utils::sumcheck::[22mcalculate_witness_bounds [2mstart:[22m 70.4 MB[2m current, [22m319k[2m allocations[22m
+│ │ │ │ ├─╯ 3.12 ms[2m duration, [22m80.3 MB[2m peak memory, [22m9.91 MB[2m local, [22m80.3 MB[2m current, [22m9.00[2m allocations[22m
+│ │ │ │ ├─╮ [2mprovekit_prover::whir_r1cs::[22mrun_zk_sumcheck_prover [2mstart:[22m 76.1 MB[2m current, [22m319k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mprovekit_common::utils::sumcheck::[22mcalculate_evaluations_over_boolean_hypercube_for_eq [2mstart:[22m 76.1 MB[2m current, [22m319k[2m allocations[22m
+│ │ │ │ │ ├─╯ 514 μs[2m duration, [22m78.2 MB[2m peak memory, [22m2.10 MB[2m local, [22m78.2 MB[2m current, [22m5.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mrun_zk_sumcheck_prover: [22m5.09 ms[2m duration, [22m78.2 MB[2m peak memory, [22m2.10 MB[2m local, [22m66.2 MB[2m current, [22m344[2m allocations[22m
+│ │ │ │ ├─╮ [2mprovekit_common::utils::sumcheck::[22mtranspose_r1cs_matrices [2mstart:[22m 66.2 MB[2m current, [22m319k[2m allocations[22m
+│ │ │ │ ├─╯ 2.55 ms[2m duration, [22m81.8 MB[2m peak memory, [22m15.6 MB[2m local, [22m73.4 MB[2m current, [22m16.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mprovekit_common::utils::sumcheck::[22mmultiply_transposed_by_eq_alpha [2mstart:[22m 73.4 MB[2m current, [22m319k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mprovekit_common::utils::sumcheck::[22mcalculate_evaluations_over_boolean_hypercube_for_eq [2mstart:[22m 73.4 MB[2m current, [22m319k[2m allocations[22m
+│ │ │ │ │ ├─╯ 544 μs[2m duration, [22m75.3 MB[2m peak memory, [22m1.95 MB[2m local, [22m75.3 MB[2m current, [22m5.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mmultiply_transposed_by_eq_alpha: [22m2.40 ms[2m duration, [22m82.2 MB[2m peak memory, [22m8.78 MB[2m local, [22m80.2 MB[2m current, [22m13.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mprovekit_prover::whir_r1cs::[22mprove_from_alphas [2mstart:[22m 80.2 MB[2m current, [22m319k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::prover::[22mprove [2mstart:[22m 83.7 MB[2m current, [22m319k[2m allocations[22m
+│ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::prover::[22mzk_w_folded_compute [2mstart:[22m 83.7 MB[2m current, [22m319k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 83.7 MB[2m current, [22m319k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ 398 μs[2m duration, [22m88.9 MB[2m peak memory, [22m5.24 MB[2m local, [22m83.8 MB[2m current, [22m37.0[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 83.8 MB[2m current, [22m319k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ 1.32 ms[2m duration, [22m88.7 MB[2m peak memory, [22m4.85 MB[2m local, [22m84.0 MB[2m current, [22m37.0[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 84.0 MB[2m current, [22m320k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ 1.57 ms[2m duration, [22m89.2 MB[2m peak memory, [22m5.24 MB[2m local, [22m84.1 MB[2m current, [22m37.0[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 84.1 MB[2m current, [22m320k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ 1.32 ms[2m duration, [22m89.1 MB[2m peak memory, [22m4.98 MB[2m local, [22m84.2 MB[2m current, [22m37.0[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 84.2 MB[2m current, [22m320k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ 269 μs[2m duration, [22m89.5 MB[2m peak memory, [22m5.24 MB[2m local, [22m84.4 MB[2m current, [22m37.0[2m allocations[22m
+│ │ │ │ │ │ ├─╯ [2mzk_w_folded_compute: [22m12.4 ms[2m duration, [22m89.5 MB[2m peak memory, [22m5.77 MB[2m local, [22m84.4 MB[2m current, [22m197[2m allocations[22m
+│ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::prover::[22mopen_f_hat [2mstart:[22m 84.4 MB[2m current, [22m320k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×65536/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 84.4 MB[2m current, [22m320k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(32768 x 8) num_indices=127 [2mstart:[22m 84.5 MB[2m current, [22m320k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=127 [2mstart:[22m 84.5 MB[2m current, [22m320k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 78.6 μs[2m duration, [22m84.5 MB[2m peak memory, [22m35.2 kB[2m local, [22m84.5 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m113 μs[2m duration, [22m84.5 MB[2m peak memory, [22m35.5 kB[2m local, [22m84.5 MB[2m current, [22m34.0[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ [2mopen: [22m436 μs[2m duration, [22m84.5 MB[2m peak memory, [22m139 kB[2m local, [22m84.5 MB[2m current, [22m63.0[2m allocations[22m
+│ │ │ │ │ │ ├─╯ [2mopen_f_hat: [22m449 μs[2m duration, [22m84.5 MB[2m peak memory, [22m139 kB[2m local, [22m84.5 MB[2m current, [22m69.0[2m allocations[22m
+│ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::prover::[22mevaluate_gamma_block [2mstart:[22m 84.5 MB[2m current, [22m320k[2m allocations[22m
+│ │ │ │ │ │ ├─╯ 109 ms[2m duration, [22m87.9 MB[2m peak memory, [22m3.44 MB[2m local, [22m85.2 MB[2m current, [22m51.0[2m allocations[22m
+│ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::prover::[22minner_blinded_prove [2mstart:[22m 84.5 MB[2m current, [22m389k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir::prover::[22mprove [2mstart:[22m 84.5 MB[2m current, [22m389k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 79.8 MB[2m current, [22m389k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 79.8 MB[2m current, [22m389k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 20.5 μs[2m duration, [22m79.8 MB[2m peak memory, [22m280 B[2m local, [22m79.8 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 77.7 MB[2m current, [22m389k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 10.1 μs[2m duration, [22m77.7 MB[2m peak memory, [22m280 B[2m local, [22m77.7 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 76.6 MB[2m current, [22m389k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 17.8 μs[2m duration, [22m76.6 MB[2m peak memory, [22m280 B[2m local, [22m76.6 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m2.27 ms[2m duration, [22m79.8 MB[2m peak memory, [22m456 B[2m local, [22m76.1 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×8192/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 76.1 MB[2m current, [22m389k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=1024 codeword_length=16384 mask_len=0 [2mstart:[22m 76.1 MB[2m current, [22m389k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.16 ms[2m duration, [22m80.3 MB[2m peak memory, [22m4.20 MB[2m local, [22m80.3 MB[2m current, [22m12.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(16384 x 8) size=131072 [2mstart:[22m 80.3 MB[2m current, [22m389k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 16384) [2mstart:[22m 81.3 MB[2m current, [22m390k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 2.51 ms[2m duration, [22m81.3 MB[2m peak memory, [22m626 B[2m local, [22m81.3 MB[2m current, [22m8.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m6.26 ms[2m duration, [22m81.8 MB[2m peak memory, [22m1.51 MB[2m local, [22m81.3 MB[2m current, [22m667[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m10.7 ms[2m duration, [22m81.8 MB[2m peak memory, [22m5.70 MB[2m local, [22m81.3 MB[2m current, [22m701[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 81.3 MB[2m current, [22m390k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 198 μs[2m duration, [22m81.3 MB[2m peak memory, [22m15.8 kB[2m local, [22m81.3 MB[2m current, [22m36.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×65536/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 81.3 MB[2m current, [22m390k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(32768 x 8) num_indices=127 [2mstart:[22m 81.5 MB[2m current, [22m390k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=127 [2mstart:[22m 81.5 MB[2m current, [22m390k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 51.6 μs[2m duration, [22m81.5 MB[2m peak memory, [22m2.28 kB[2m local, [22m81.5 MB[2m current, [22m22.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m70.4 μs[2m duration, [22m81.5 MB[2m peak memory, [22m2.55 kB[2m local, [22m81.5 MB[2m current, [22m32.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m350 μs[2m duration, [22m81.5 MB[2m peak memory, [22m138 kB[2m local, [22m81.4 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 71.0 MB[2m current, [22m390k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 71.0 MB[2m current, [22m390k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 22.4 μs[2m duration, [22m71.0 MB[2m peak memory, [22m280 B[2m local, [22m71.0 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 70.7 MB[2m current, [22m390k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 13.2 μs[2m duration, [22m70.7 MB[2m peak memory, [22m280 B[2m local, [22m70.7 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 70.6 MB[2m current, [22m390k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 7.42 μs[2m duration, [22m70.6 MB[2m peak memory, [22m280 B[2m local, [22m70.6 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m898 μs[2m duration, [22m71.0 MB[2m peak memory, [22m456 B[2m local, [22m70.5 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×1024/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 70.5 MB[2m current, [22m390k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=128 codeword_length=8192 mask_len=0 [2mstart:[22m 70.5 MB[2m current, [22m390k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 998 μs[2m duration, [22m72.5 MB[2m peak memory, [22m2.10 MB[2m local, [22m72.5 MB[2m current, [22m11.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(8192 x 8) size=65536 [2mstart:[22m 72.5 MB[2m current, [22m390k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 8192) [2mstart:[22m 73.1 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 1.88 ms[2m duration, [22m73.1 MB[2m peak memory, [22m486 B[2m local, [22m73.1 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m4.07 ms[2m duration, [22m73.5 MB[2m peak memory, [22m951 kB[2m local, [22m73.1 MB[2m current, [22m342[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m5.13 ms[2m duration, [22m73.5 MB[2m peak memory, [22m3.05 MB[2m local, [22m73.1 MB[2m current, [22m375[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 73.1 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 258 μs[2m duration, [22m73.1 MB[2m peak memory, [22m11.1 kB[2m local, [22m73.1 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×8192/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 73.1 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(16384 x 8) num_indices=62 [2mstart:[22m 73.2 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=62 [2mstart:[22m 73.2 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 14.3 μs[2m duration, [22m73.2 MB[2m peak memory, [22m1.24 kB[2m local, [22m73.2 MB[2m current, [22m21.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m29.6 μs[2m duration, [22m73.2 MB[2m peak memory, [22m1.51 kB[2m local, [22m73.2 MB[2m current, [22m31.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m141 μs[2m duration, [22m73.2 MB[2m peak memory, [22m167 kB[2m local, [22m73.2 MB[2m current, [22m49.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 68.0 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 68.0 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 6.25 μs[2m duration, [22m68.0 MB[2m peak memory, [22m280 B[2m local, [22m68.0 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 68.0 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 11.6 μs[2m duration, [22m68.0 MB[2m peak memory, [22m280 B[2m local, [22m68.0 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 67.9 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 5.96 μs[2m duration, [22m67.9 MB[2m peak memory, [22m280 B[2m local, [22m67.9 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m224 μs[2m duration, [22m68.0 MB[2m peak memory, [22m456 B[2m local, [22m67.9 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×128/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 67.9 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=16 codeword_length=4096 mask_len=0 [2mstart:[22m 67.9 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 422 μs[2m duration, [22m69.0 MB[2m peak memory, [22m1.05 MB[2m local, [22m69.0 MB[2m current, [22m11.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(4096 x 8) size=32768 [2mstart:[22m 69.0 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 4096) [2mstart:[22m 69.2 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 1.19 ms[2m duration, [22m69.2 MB[2m peak memory, [22m486 B[2m local, [22m69.2 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m2.42 ms[2m duration, [22m69.6 MB[2m peak memory, [22m689 kB[2m local, [22m69.2 MB[2m current, [22m186[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m2.88 ms[2m duration, [22m69.6 MB[2m peak memory, [22m1.74 MB[2m local, [22m69.2 MB[2m current, [22m219[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 69.2 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 162 μs[2m duration, [22m69.2 MB[2m peak memory, [22m13.4 kB[2m local, [22m69.2 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×1024/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 69.2 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(8192 x 8) num_indices=41 [2mstart:[22m 69.2 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=41 [2mstart:[22m 69.2 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 15.3 μs[2m duration, [22m69.2 MB[2m peak memory, [22m904 B[2m local, [22m69.2 MB[2m current, [22m20.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m32.3 μs[2m duration, [22m69.2 MB[2m peak memory, [22m1.18 kB[2m local, [22m69.2 MB[2m current, [22m30.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m112 μs[2m duration, [22m69.2 MB[2m peak memory, [22m24.1 kB[2m local, [22m69.2 MB[2m current, [22m47.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 66.6 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 66.6 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.75 μs[2m duration, [22m66.6 MB[2m peak memory, [22m280 B[2m local, [22m66.6 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 66.6 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.38 μs[2m duration, [22m66.6 MB[2m peak memory, [22m280 B[2m local, [22m66.6 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 66.6 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.33 μs[2m duration, [22m66.6 MB[2m peak memory, [22m280 B[2m local, [22m66.6 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m76.7 μs[2m duration, [22m66.6 MB[2m peak memory, [22m456 B[2m local, [22m66.6 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×16/8 rate 2⁻10.00 samples 24 in- 1 out-domain [2mstart:[22m 66.6 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=2 codeword_length=2048 mask_len=0 [2mstart:[22m 66.6 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 246 μs[2m duration, [22m67.1 MB[2m peak memory, [22m525 kB[2m local, [22m67.1 MB[2m current, [22m11.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(2048 x 8) size=16384 [2mstart:[22m 67.1 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 2048) [2mstart:[22m 67.2 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 630 μs[2m duration, [22m67.2 MB[2m peak memory, [22m486 B[2m local, [22m67.2 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m1.77 ms[2m duration, [22m67.5 MB[2m peak memory, [22m361 kB[2m local, [22m67.2 MB[2m current, [22m102[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m2.04 ms[2m duration, [22m67.5 MB[2m peak memory, [22m886 kB[2m local, [22m67.2 MB[2m current, [22m135[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 67.2 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 161 μs[2m duration, [22m67.3 MB[2m peak memory, [22m8.70 kB[2m local, [22m67.2 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×128/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 67.2 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(4096 x 8) num_indices=31 [2mstart:[22m 67.3 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=31 [2mstart:[22m 67.3 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 12.2 μs[2m duration, [22m67.3 MB[2m peak memory, [22m736 B[2m local, [22m67.3 MB[2m current, [22m19.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m27.5 μs[2m duration, [22m67.3 MB[2m peak memory, [22m1.01 kB[2m local, [22m67.3 MB[2m current, [22m29.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m93.2 μs[2m duration, [22m67.3 MB[2m peak memory, [22m18.4 kB[2m local, [22m67.3 MB[2m current, [22m46.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 65.9 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 65.9 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.67 μs[2m duration, [22m65.9 MB[2m peak memory, [22m280 B[2m local, [22m65.9 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 65.9 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.88 μs[2m duration, [22m65.9 MB[2m peak memory, [22m280 B[2m local, [22m65.9 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 65.9 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.46 μs[2m duration, [22m65.9 MB[2m peak memory, [22m280 B[2m local, [22m65.9 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m63.8 μs[2m duration, [22m65.9 MB[2m peak memory, [22m456 B[2m local, [22m65.9 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 65.9 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 261 μs[2m duration, [22m65.9 MB[2m peak memory, [22m9.86 kB[2m local, [22m65.9 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×16/8 rate 2⁻10.00 samples 24 in- 1 out-domain [2mstart:[22m 65.9 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(2048 x 8) num_indices=24 [2mstart:[22m 65.9 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=24 [2mstart:[22m 65.9 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 12.5 μs[2m duration, [22m65.9 MB[2m peak memory, [22m632 B[2m local, [22m65.9 MB[2m current, [22m18.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m36.4 μs[2m duration, [22m65.9 MB[2m peak memory, [22m906 B[2m local, [22m65.9 MB[2m current, [22m28.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m116 μs[2m duration, [22m65.9 MB[2m peak memory, [22m14.5 kB[2m local, [22m65.9 MB[2m current, [22m44.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 65.3 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 65.3 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.83 μs[2m duration, [22m65.3 MB[2m peak memory, [22m280 B[2m local, [22m65.3 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m27.6 μs[2m duration, [22m65.3 MB[2m peak memory, [22m392 B[2m local, [22m65.3 MB[2m current, [22m20.0[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ [2mprove: [22m43.5 ms[2m duration, [22m86.6 MB[2m peak memory, [22m2.10 MB[2m local, [22m65.3 MB[2m current, [22m2.22k[2m allocations[22m
+│ │ │ │ │ │ ├─╯ [2minner_blinded_prove: [22m43.6 ms[2m duration, [22m86.6 MB[2m peak memory, [22m2.10 MB[2m local, [22m65.3 MB[2m current, [22m2.22k[2m allocations[22m
+│ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::prover::[22minner_blinding_prove [2mstart:[22m 65.3 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir::prover::[22mprove [2mstart:[22m 65.3 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 62.5 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 62.5 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 28.4 μs[2m duration, [22m62.5 MB[2m peak memory, [22m280 B[2m local, [22m62.5 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 62.4 MB[2m current, [22m391k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 7.58 μs[2m duration, [22m62.4 MB[2m peak memory, [22m280 B[2m local, [22m62.4 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 62.3 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 6.08 μs[2m duration, [22m62.3 MB[2m peak memory, [22m280 B[2m local, [22m62.3 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m602 μs[2m duration, [22m62.5 MB[2m peak memory, [22m456 B[2m local, [22m62.3 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×512/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 62.3 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=64 codeword_length=1024 mask_len=0 [2mstart:[22m 62.3 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 261 μs[2m duration, [22m62.6 MB[2m peak memory, [22m263 kB[2m local, [22m62.6 MB[2m current, [22m11.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(1024 x 8) size=8192 [2mstart:[22m 62.6 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 1024) [2mstart:[22m 62.6 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 319 μs[2m duration, [22m62.6 MB[2m peak memory, [22m486 B[2m local, [22m62.6 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m1.43 ms[2m duration, [22m62.7 MB[2m peak memory, [22m164 kB[2m local, [22m62.6 MB[2m current, [22m54.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m1.75 ms[2m duration, [22m62.7 MB[2m peak memory, [22m427 kB[2m local, [22m62.6 MB[2m current, [22m87.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 62.6 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 186 μs[2m duration, [22m62.6 MB[2m peak memory, [22m14.6 kB[2m local, [22m62.6 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 17×4096/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 62.6 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(2048 x 136) num_indices=127 [2mstart:[22m 64.5 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=127 [2mstart:[22m 64.5 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 17.2 μs[2m duration, [22m64.5 MB[2m peak memory, [22m2.26 kB[2m local, [22m64.5 MB[2m current, [22m18.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m29.2 μs[2m duration, [22m64.5 MB[2m peak memory, [22m2.53 kB[2m local, [22m64.5 MB[2m current, [22m28.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m595 μs[2m duration, [22m64.5 MB[2m peak memory, [22m1.90 MB[2m local, [22m64.0 MB[2m current, [22m47.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 54.9 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 54.9 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 6.92 μs[2m duration, [22m54.9 MB[2m peak memory, [22m280 B[2m local, [22m54.9 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 54.9 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 5.21 μs[2m duration, [22m54.9 MB[2m peak memory, [22m280 B[2m local, [22m54.9 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 54.9 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 5.88 μs[2m duration, [22m54.9 MB[2m peak memory, [22m280 B[2m local, [22m54.9 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m139 μs[2m duration, [22m54.9 MB[2m peak memory, [22m456 B[2m local, [22m54.9 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×64/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 54.3 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=8 codeword_length=512 mask_len=0 [2mstart:[22m 54.3 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 249 μs[2m duration, [22m54.5 MB[2m peak memory, [22m131 kB[2m local, [22m54.5 MB[2m current, [22m11.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(512 x 8) size=4096 [2mstart:[22m 54.5 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 512) [2mstart:[22m 54.5 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 163 μs[2m duration, [22m54.5 MB[2m peak memory, [22m486 B[2m local, [22m54.5 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m1.29 ms[2m duration, [22m54.5 MB[2m peak memory, [22m65.8 kB[2m local, [22m54.5 MB[2m current, [22m29.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m1.58 ms[2m duration, [22m54.5 MB[2m peak memory, [22m197 kB[2m local, [22m54.5 MB[2m current, [22m62.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 54.5 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 145 μs[2m duration, [22m54.5 MB[2m peak memory, [22m13.0 kB[2m local, [22m54.5 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×512/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 54.5 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(1024 x 8) num_indices=62 [2mstart:[22m 54.5 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=62 [2mstart:[22m 54.5 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 10.7 μs[2m duration, [22m54.5 MB[2m peak memory, [22m1.23 kB[2m local, [22m54.5 MB[2m current, [22m17.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m24.1 μs[2m duration, [22m54.5 MB[2m peak memory, [22m1.51 kB[2m local, [22m54.5 MB[2m current, [22m27.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m134 μs[2m duration, [22m54.5 MB[2m peak memory, [22m36.0 kB[2m local, [22m54.5 MB[2m current, [22m44.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 54.2 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 54.2 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.79 μs[2m duration, [22m54.2 MB[2m peak memory, [22m280 B[2m local, [22m54.2 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 54.2 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.46 μs[2m duration, [22m54.2 MB[2m peak memory, [22m280 B[2m local, [22m54.2 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 54.2 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.38 μs[2m duration, [22m54.2 MB[2m peak memory, [22m280 B[2m local, [22m54.2 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m95.8 μs[2m duration, [22m54.2 MB[2m peak memory, [22m456 B[2m local, [22m54.2 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×8/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 54.2 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=1 codeword_length=256 mask_len=0 [2mstart:[22m 54.2 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 194 μs[2m duration, [22m54.2 MB[2m peak memory, [22m65.9 kB[2m local, [22m54.2 MB[2m current, [22m11.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(256 x 8) size=2048 [2mstart:[22m 54.2 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 256) [2mstart:[22m 54.2 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 86.1 μs[2m duration, [22m54.2 MB[2m peak memory, [22m486 B[2m local, [22m54.2 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m621 μs[2m duration, [22m54.3 MB[2m peak memory, [22m49.4 kB[2m local, [22m54.2 MB[2m current, [22m29.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m855 μs[2m duration, [22m54.3 MB[2m peak memory, [22m115 kB[2m local, [22m54.2 MB[2m current, [22m62.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 54.2 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 168 μs[2m duration, [22m54.3 MB[2m peak memory, [22m13.4 kB[2m local, [22m54.2 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×64/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 54.2 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(512 x 8) num_indices=41 [2mstart:[22m 54.3 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=41 [2mstart:[22m 54.3 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 8.38 μs[2m duration, [22m54.3 MB[2m peak memory, [22m880 B[2m local, [22m54.3 MB[2m current, [22m16.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m21.7 μs[2m duration, [22m54.3 MB[2m peak memory, [22m1.15 kB[2m local, [22m54.3 MB[2m current, [22m26.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m89.7 μs[2m duration, [22m54.3 MB[2m peak memory, [22m24.1 kB[2m local, [22m54.3 MB[2m current, [22m43.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 54.1 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 54.1 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 11.0 μs[2m duration, [22m54.1 MB[2m peak memory, [22m280 B[2m local, [22m54.1 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 54.1 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.50 μs[2m duration, [22m54.1 MB[2m peak memory, [22m280 B[2m local, [22m54.1 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 54.1 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.96 μs[2m duration, [22m54.1 MB[2m peak memory, [22m280 B[2m local, [22m54.1 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m69.7 μs[2m duration, [22m54.1 MB[2m peak memory, [22m456 B[2m local, [22m54.1 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 54.1 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 133 μs[2m duration, [22m54.1 MB[2m peak memory, [22m7.28 kB[2m local, [22m54.1 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×8/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 54.1 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(256 x 8) num_indices=31 [2mstart:[22m 54.1 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=31 [2mstart:[22m 54.1 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 8.25 μs[2m duration, [22m54.1 MB[2m peak memory, [22m720 B[2m local, [22m54.1 MB[2m current, [22m15.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m21.8 μs[2m duration, [22m54.1 MB[2m peak memory, [22m994 B[2m local, [22m54.1 MB[2m current, [22m25.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m73.8 μs[2m duration, [22m54.1 MB[2m peak memory, [22m18.4 kB[2m local, [22m54.1 MB[2m current, [22m41.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 54.0 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 8.21 μs[2m duration, [22m54.0 MB[2m peak memory, [22m280 B[2m local, [22m54.0 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ [2mprove: [22m11.2 ms[2m duration, [22m65.3 MB[2m peak memory, [22m1.81 kB[2m local, [22m54.0 MB[2m current, [22m804[2m allocations[22m
+│ │ │ │ │ │ ├─╯ [2minner_blinding_prove: [22m11.2 ms[2m duration, [22m65.3 MB[2m peak memory, [22m5.39 kB[2m local, [22m54.0 MB[2m current, [22m818[2m allocations[22m
+│ │ │ │ │ ├─╯ [2mprove: [22m208 ms[2m duration, [22m89.5 MB[2m peak memory, [22m5.77 MB[2m local, [22m53.9 MB[2m current, [22m72.8k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::prover::[22mprove [2mstart:[22m 55.3 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::prover::[22mzk_w_folded_compute [2mstart:[22m 55.3 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 55.3 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ 1.29 ms[2m duration, [22m60.0 MB[2m peak memory, [22m4.72 MB[2m local, [22m55.5 MB[2m current, [22m37.0[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 55.5 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ 1.29 ms[2m duration, [22m60.3 MB[2m peak memory, [22m4.85 MB[2m local, [22m55.6 MB[2m current, [22m37.0[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 55.6 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ 1.30 ms[2m duration, [22m60.6 MB[2m peak memory, [22m4.98 MB[2m local, [22m55.7 MB[2m current, [22m37.0[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 55.7 MB[2m current, [22m392k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ 249 μs[2m duration, [22m60.6 MB[2m peak memory, [22m4.85 MB[2m local, [22m55.9 MB[2m current, [22m37.0[2m allocations[22m
+│ │ │ │ │ │ ├─╯ [2mzk_w_folded_compute: [22m10.4 ms[2m duration, [22m60.6 MB[2m peak memory, [22m5.25 MB[2m local, [22m55.9 MB[2m current, [22m159[2m allocations[22m
+│ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::prover::[22mopen_f_hat [2mstart:[22m 55.9 MB[2m current, [22m393k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×65536/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 55.9 MB[2m current, [22m393k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(32768 x 8) num_indices=127 [2mstart:[22m 55.9 MB[2m current, [22m393k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=127 [2mstart:[22m 55.9 MB[2m current, [22m393k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 21.0 μs[2m duration, [22m55.9 MB[2m peak memory, [22m2.28 kB[2m local, [22m55.9 MB[2m current, [22m22.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m40.1 μs[2m duration, [22m55.9 MB[2m peak memory, [22m2.55 kB[2m local, [22m55.9 MB[2m current, [22m32.0[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ [2mopen: [22m248 μs[2m duration, [22m55.9 MB[2m peak memory, [22m73.0 kB[2m local, [22m55.9 MB[2m current, [22m48.0[2m allocations[22m
+│ │ │ │ │ │ ├─╯ [2mopen_f_hat: [22m260 μs[2m duration, [22m55.9 MB[2m peak memory, [22m73.0 kB[2m local, [22m55.9 MB[2m current, [22m54.0[2m allocations[22m
+│ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::prover::[22mevaluate_gamma_block [2mstart:[22m 55.9 MB[2m current, [22m393k[2m allocations[22m
+│ │ │ │ │ │ ├─╯ 99.9 ms[2m duration, [22m59.4 MB[2m peak memory, [22m3.44 MB[2m local, [22m56.6 MB[2m current, [22m51.0[2m allocations[22m
+│ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::prover::[22minner_blinded_prove [2mstart:[22m 55.9 MB[2m current, [22m462k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir::prover::[22mprove [2mstart:[22m 55.9 MB[2m current, [22m462k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 51.0 MB[2m current, [22m462k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 51.0 MB[2m current, [22m462k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 36.3 μs[2m duration, [22m51.0 MB[2m peak memory, [22m280 B[2m local, [22m51.0 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 48.9 MB[2m current, [22m462k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 31.8 μs[2m duration, [22m48.9 MB[2m peak memory, [22m280 B[2m local, [22m48.9 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 47.9 MB[2m current, [22m462k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 12.3 μs[2m duration, [22m47.9 MB[2m peak memory, [22m280 B[2m local, [22m47.9 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m6.59 ms[2m duration, [22m51.0 MB[2m peak memory, [22m456 B[2m local, [22m47.4 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×8192/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 47.4 MB[2m current, [22m462k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=1024 codeword_length=16384 mask_len=0 [2mstart:[22m 47.4 MB[2m current, [22m462k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 5.06 ms[2m duration, [22m51.6 MB[2m peak memory, [22m4.20 MB[2m local, [22m51.6 MB[2m current, [22m12.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(16384 x 8) size=131072 [2mstart:[22m 51.6 MB[2m current, [22m462k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 16384) [2mstart:[22m 52.6 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 2.50 ms[2m duration, [22m52.6 MB[2m peak memory, [22m486 B[2m local, [22m52.6 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m6.16 ms[2m duration, [22m53.1 MB[2m peak memory, [22m1.51 MB[2m local, [22m52.6 MB[2m current, [22m666[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m11.5 ms[2m duration, [22m53.1 MB[2m peak memory, [22m5.70 MB[2m local, [22m52.6 MB[2m current, [22m700[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 52.6 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 212 μs[2m duration, [22m52.6 MB[2m peak memory, [22m7.55 kB[2m local, [22m52.6 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×65536/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 52.6 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(32768 x 8) num_indices=127 [2mstart:[22m 52.7 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=127 [2mstart:[22m 52.7 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 32.5 μs[2m duration, [22m52.7 MB[2m peak memory, [22m2.28 kB[2m local, [22m52.7 MB[2m current, [22m22.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m1.09 ms[2m duration, [22m52.7 MB[2m peak memory, [22m2.55 kB[2m local, [22m52.7 MB[2m current, [22m32.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m1.29 ms[2m duration, [22m52.7 MB[2m peak memory, [22m73.0 kB[2m local, [22m52.6 MB[2m current, [22m49.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 42.2 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 42.2 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 20.3 μs[2m duration, [22m42.2 MB[2m peak memory, [22m280 B[2m local, [22m42.2 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 41.9 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 25.6 μs[2m duration, [22m41.9 MB[2m peak memory, [22m280 B[2m local, [22m41.9 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 41.8 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 6.96 μs[2m duration, [22m41.8 MB[2m peak memory, [22m280 B[2m local, [22m41.8 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m978 μs[2m duration, [22m42.2 MB[2m peak memory, [22m456 B[2m local, [22m41.7 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×1024/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 41.7 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=128 codeword_length=8192 mask_len=0 [2mstart:[22m 41.7 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 845 μs[2m duration, [22m43.8 MB[2m peak memory, [22m2.10 MB[2m local, [22m43.8 MB[2m current, [22m11.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(8192 x 8) size=65536 [2mstart:[22m 43.8 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 8192) [2mstart:[22m 44.3 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 1.79 ms[2m duration, [22m44.3 MB[2m peak memory, [22m486 B[2m local, [22m44.3 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m4.14 ms[2m duration, [22m44.7 MB[2m peak memory, [22m984 kB[2m local, [22m44.3 MB[2m current, [22m342[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m5.07 ms[2m duration, [22m44.7 MB[2m peak memory, [22m3.08 MB[2m local, [22m44.3 MB[2m current, [22m375[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 44.3 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 182 μs[2m duration, [22m44.3 MB[2m peak memory, [22m6.13 kB[2m local, [22m44.3 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×8192/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 44.3 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(16384 x 8) num_indices=62 [2mstart:[22m 44.3 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=62 [2mstart:[22m 44.3 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 18.8 μs[2m duration, [22m44.3 MB[2m peak memory, [22m1.24 kB[2m local, [22m44.3 MB[2m current, [22m21.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m34.8 μs[2m duration, [22m44.3 MB[2m peak memory, [22m1.51 kB[2m local, [22m44.3 MB[2m current, [22m31.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m139 μs[2m duration, [22m44.3 MB[2m peak memory, [22m36.0 kB[2m local, [22m44.3 MB[2m current, [22m48.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 39.1 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 39.1 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 5.12 μs[2m duration, [22m39.1 MB[2m peak memory, [22m280 B[2m local, [22m39.1 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 39.0 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.79 μs[2m duration, [22m39.0 MB[2m peak memory, [22m280 B[2m local, [22m39.0 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 39.0 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.29 μs[2m duration, [22m39.0 MB[2m peak memory, [22m280 B[2m local, [22m39.0 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m180 μs[2m duration, [22m39.1 MB[2m peak memory, [22m456 B[2m local, [22m39.0 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×128/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 39.0 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=16 codeword_length=4096 mask_len=0 [2mstart:[22m 39.0 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 403 μs[2m duration, [22m40.0 MB[2m peak memory, [22m1.05 MB[2m local, [22m40.0 MB[2m current, [22m11.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(4096 x 8) size=32768 [2mstart:[22m 40.0 MB[2m current, [22m463k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 4096) [2mstart:[22m 40.3 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 1.17 ms[2m duration, [22m40.3 MB[2m peak memory, [22m486 B[2m local, [22m40.3 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m2.33 ms[2m duration, [22m40.6 MB[2m peak memory, [22m623 kB[2m local, [22m40.3 MB[2m current, [22m186[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m2.78 ms[2m duration, [22m40.6 MB[2m peak memory, [22m1.67 MB[2m local, [22m40.3 MB[2m current, [22m219[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 40.3 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 190 μs[2m duration, [22m40.3 MB[2m peak memory, [22m4.21 kB[2m local, [22m40.3 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×1024/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 40.3 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(8192 x 8) num_indices=41 [2mstart:[22m 40.3 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=41 [2mstart:[22m 40.3 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 15.0 μs[2m duration, [22m40.3 MB[2m peak memory, [22m904 B[2m local, [22m40.3 MB[2m current, [22m20.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m32.1 μs[2m duration, [22m40.3 MB[2m peak memory, [22m1.18 kB[2m local, [22m40.3 MB[2m current, [22m30.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m110 μs[2m duration, [22m40.3 MB[2m peak memory, [22m24.1 kB[2m local, [22m40.3 MB[2m current, [22m47.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 37.7 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 37.7 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.96 μs[2m duration, [22m37.7 MB[2m peak memory, [22m280 B[2m local, [22m37.7 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 37.7 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.29 μs[2m duration, [22m37.7 MB[2m peak memory, [22m280 B[2m local, [22m37.7 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 37.7 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.25 μs[2m duration, [22m37.7 MB[2m peak memory, [22m280 B[2m local, [22m37.7 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m89.8 μs[2m duration, [22m37.7 MB[2m peak memory, [22m456 B[2m local, [22m37.7 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×16/8 rate 2⁻10.00 samples 24 in- 1 out-domain [2mstart:[22m 37.7 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=2 codeword_length=2048 mask_len=0 [2mstart:[22m 37.7 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 267 μs[2m duration, [22m38.2 MB[2m peak memory, [22m525 kB[2m local, [22m38.2 MB[2m current, [22m11.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(2048 x 8) size=16384 [2mstart:[22m 38.2 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 2048) [2mstart:[22m 38.3 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 598 μs[2m duration, [22m38.3 MB[2m peak memory, [22m486 B[2m local, [22m38.3 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m1.71 ms[2m duration, [22m38.5 MB[2m peak memory, [22m361 kB[2m local, [22m38.3 MB[2m current, [22m102[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m2.02 ms[2m duration, [22m38.5 MB[2m peak memory, [22m886 kB[2m local, [22m38.3 MB[2m current, [22m135[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 38.3 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 227 μs[2m duration, [22m38.3 MB[2m peak memory, [22m7.66 kB[2m local, [22m38.3 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×128/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 38.3 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(4096 x 8) num_indices=31 [2mstart:[22m 38.3 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=31 [2mstart:[22m 38.3 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 12.5 μs[2m duration, [22m38.3 MB[2m peak memory, [22m744 B[2m local, [22m38.3 MB[2m current, [22m19.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m26.6 μs[2m duration, [22m38.3 MB[2m peak memory, [22m1.02 kB[2m local, [22m38.3 MB[2m current, [22m29.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m92.3 μs[2m duration, [22m38.3 MB[2m peak memory, [22m18.4 kB[2m local, [22m38.3 MB[2m current, [22m46.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 37.0 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 37.0 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 8.08 μs[2m duration, [22m37.0 MB[2m peak memory, [22m280 B[2m local, [22m37.0 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 37.0 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 5.00 μs[2m duration, [22m37.0 MB[2m peak memory, [22m280 B[2m local, [22m37.0 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 37.0 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.21 μs[2m duration, [22m37.0 MB[2m peak memory, [22m280 B[2m local, [22m37.0 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m73.2 μs[2m duration, [22m37.0 MB[2m peak memory, [22m456 B[2m local, [22m37.0 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 37.0 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 215 μs[2m duration, [22m37.0 MB[2m peak memory, [22m13.4 kB[2m local, [22m37.0 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×16/8 rate 2⁻10.00 samples 24 in- 1 out-domain [2mstart:[22m 37.0 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(2048 x 8) num_indices=24 [2mstart:[22m 37.0 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=24 [2mstart:[22m 37.0 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 8.38 μs[2m duration, [22m37.0 MB[2m peak memory, [22m632 B[2m local, [22m37.0 MB[2m current, [22m18.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m23.0 μs[2m duration, [22m37.0 MB[2m peak memory, [22m906 B[2m local, [22m37.0 MB[2m current, [22m28.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m78.4 μs[2m duration, [22m37.0 MB[2m peak memory, [22m14.5 kB[2m local, [22m37.0 MB[2m current, [22m44.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 36.3 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 36.3 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 5.12 μs[2m duration, [22m36.3 MB[2m peak memory, [22m280 B[2m local, [22m36.3 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m27.7 μs[2m duration, [22m36.3 MB[2m peak memory, [22m392 B[2m local, [22m36.3 MB[2m current, [22m20.0[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ [2mprove: [22m49.0 ms[2m duration, [22m58.0 MB[2m peak memory, [22m2.10 MB[2m local, [22m36.3 MB[2m current, [22m2.21k[2m allocations[22m
+│ │ │ │ │ │ ├─╯ [2minner_blinded_prove: [22m49.0 ms[2m duration, [22m58.0 MB[2m peak memory, [22m2.10 MB[2m local, [22m36.3 MB[2m current, [22m2.22k[2m allocations[22m
+│ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir_zk::prover::[22minner_blinding_prove [2mstart:[22m 36.3 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::whir::prover::[22mprove [2mstart:[22m 36.4 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 33.7 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 33.7 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 9.67 μs[2m duration, [22m33.7 MB[2m peak memory, [22m280 B[2m local, [22m33.7 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 33.6 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 6.58 μs[2m duration, [22m33.6 MB[2m peak memory, [22m280 B[2m local, [22m33.6 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 33.5 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 5.42 μs[2m duration, [22m33.5 MB[2m peak memory, [22m280 B[2m local, [22m33.5 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m519 μs[2m duration, [22m33.7 MB[2m peak memory, [22m456 B[2m local, [22m33.5 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×512/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 33.5 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=64 codeword_length=1024 mask_len=0 [2mstart:[22m 33.5 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 231 μs[2m duration, [22m33.8 MB[2m peak memory, [22m263 kB[2m local, [22m33.8 MB[2m current, [22m11.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(1024 x 8) size=8192 [2mstart:[22m 33.8 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 1024) [2mstart:[22m 33.8 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 312 μs[2m duration, [22m33.8 MB[2m peak memory, [22m486 B[2m local, [22m33.8 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m1.42 ms[2m duration, [22m33.9 MB[2m peak memory, [22m164 kB[2m local, [22m33.8 MB[2m current, [22m54.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m1.70 ms[2m duration, [22m33.9 MB[2m peak memory, [22m427 kB[2m local, [22m33.8 MB[2m current, [22m87.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 33.8 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 152 μs[2m duration, [22m33.8 MB[2m peak memory, [22m12.2 kB[2m local, [22m33.8 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 17×4096/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 33.8 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(2048 x 136) num_indices=127 [2mstart:[22m 36.0 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=127 [2mstart:[22m 36.0 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 14.8 μs[2m duration, [22m36.0 MB[2m peak memory, [22m2.25 kB[2m local, [22m36.0 MB[2m current, [22m18.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m30.4 μs[2m duration, [22m36.0 MB[2m peak memory, [22m2.52 kB[2m local, [22m36.0 MB[2m current, [22m28.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m478 μs[2m duration, [22m36.0 MB[2m peak memory, [22m2.16 MB[2m local, [22m35.4 MB[2m current, [22m46.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 26.4 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 26.4 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 5.50 μs[2m duration, [22m26.4 MB[2m peak memory, [22m280 B[2m local, [22m26.4 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 26.4 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.83 μs[2m duration, [22m26.4 MB[2m peak memory, [22m280 B[2m local, [22m26.4 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 26.4 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.58 μs[2m duration, [22m26.4 MB[2m peak memory, [22m280 B[2m local, [22m26.4 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m130 μs[2m duration, [22m26.4 MB[2m peak memory, [22m456 B[2m local, [22m26.4 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×64/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 25.8 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=8 codeword_length=512 mask_len=0 [2mstart:[22m 25.8 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 218 μs[2m duration, [22m25.9 MB[2m peak memory, [22m131 kB[2m local, [22m25.9 MB[2m current, [22m11.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(512 x 8) size=4096 [2mstart:[22m 25.9 MB[2m current, [22m464k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 512) [2mstart:[22m 26.0 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 158 μs[2m duration, [22m26.0 MB[2m peak memory, [22m486 B[2m local, [22m26.0 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m1.24 ms[2m duration, [22m26.0 MB[2m peak memory, [22m65.8 kB[2m local, [22m26.0 MB[2m current, [22m29.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m1.51 ms[2m duration, [22m26.0 MB[2m peak memory, [22m197 kB[2m local, [22m26.0 MB[2m current, [22m62.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 26.0 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 182 μs[2m duration, [22m26.0 MB[2m peak memory, [22m13.4 kB[2m local, [22m26.0 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×512/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 26.0 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(1024 x 8) num_indices=62 [2mstart:[22m 26.0 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=62 [2mstart:[22m 26.0 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 9.83 μs[2m duration, [22m26.0 MB[2m peak memory, [22m1.22 kB[2m local, [22m26.0 MB[2m current, [22m17.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m23.2 μs[2m duration, [22m26.0 MB[2m peak memory, [22m1.49 kB[2m local, [22m26.0 MB[2m current, [22m27.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m120 μs[2m duration, [22m26.0 MB[2m peak memory, [22m36.0 kB[2m local, [22m26.0 MB[2m current, [22m44.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 25.7 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 25.7 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.58 μs[2m duration, [22m25.7 MB[2m peak memory, [22m280 B[2m local, [22m25.7 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 25.7 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.33 μs[2m duration, [22m25.7 MB[2m peak memory, [22m280 B[2m local, [22m25.7 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 25.7 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.17 μs[2m duration, [22m25.7 MB[2m peak memory, [22m280 B[2m local, [22m25.7 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m72.6 μs[2m duration, [22m25.7 MB[2m peak memory, [22m456 B[2m local, [22m25.7 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mcommit self=size 1×8/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 25.6 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mprovekit_common::ntt::[22minterleaved_encode num_messages=8 message_len=1 codeword_length=256 mask_len=0 [2mstart:[22m 25.6 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 168 μs[2m duration, [22m25.7 MB[2m peak memory, [22m65.9 kB[2m local, [22m25.7 MB[2m current, [22m11.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mcommit self=MatrixCommit(256 x 8) size=2048 [2mstart:[22m 25.7 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mcommit self=MerkleTree(num_leaves: 256) [2mstart:[22m 25.7 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 82.9 μs[2m duration, [22m25.7 MB[2m peak memory, [22m486 B[2m local, [22m25.7 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m618 μs[2m duration, [22m25.7 MB[2m peak memory, [22m49.4 kB[2m local, [22m25.7 MB[2m current, [22m29.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mcommit: [22m813 μs[2m duration, [22m25.7 MB[2m peak memory, [22m115 kB[2m local, [22m25.7 MB[2m current, [22m62.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 25.7 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 208 μs[2m duration, [22m25.7 MB[2m peak memory, [22m13.4 kB[2m local, [22m25.7 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×64/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 25.7 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(512 x 8) num_indices=41 [2mstart:[22m 25.7 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=41 [2mstart:[22m 25.7 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 7.25 μs[2m duration, [22m25.7 MB[2m peak memory, [22m888 B[2m local, [22m25.7 MB[2m current, [22m16.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m21.0 μs[2m duration, [22m25.7 MB[2m peak memory, [22m1.16 kB[2m local, [22m25.7 MB[2m current, [22m26.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m89.2 μs[2m duration, [22m25.7 MB[2m peak memory, [22m24.1 kB[2m local, [22m25.7 MB[2m current, [22m43.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 25.6 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 25.6 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.38 μs[2m duration, [22m25.6 MB[2m peak memory, [22m280 B[2m local, [22m25.6 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 25.6 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.17 μs[2m duration, [22m25.6 MB[2m peak memory, [22m280 B[2m local, [22m25.6 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 25.6 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ 4.21 μs[2m duration, [22m25.6 MB[2m peak memory, [22m280 B[2m local, [22m25.6 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mprove: [22m60.1 μs[2m duration, [22m25.6 MB[2m peak memory, [22m456 B[2m local, [22m25.6 MB[2m current, [22m50.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::proof_of_work::[22mprove [2mstart:[22m 25.6 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 105 μs[2m duration, [22m25.6 MB[2m peak memory, [22m3.33 kB[2m local, [22m25.6 MB[2m current, [22m35.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mopen self=size 1×8/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 25.6 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mopen self=MatrixCommit(256 x 8) num_indices=31 [2mstart:[22m 25.6 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::merkle_tree::[22mopen num_indices=31 [2mstart:[22m 25.6 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ │ │ ├─╯ 7.25 μs[2m duration, [22m25.6 MB[2m peak memory, [22m736 B[2m local, [22m25.6 MB[2m current, [22m15.0[2m allocations[22m
+│ │ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m19.1 μs[2m duration, [22m25.6 MB[2m peak memory, [22m1.01 kB[2m local, [22m25.6 MB[2m current, [22m25.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ [2mopen: [22m69.3 μs[2m duration, [22m25.6 MB[2m peak memory, [22m18.4 kB[2m local, [22m25.6 MB[2m current, [22m42.0[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mprove [2mstart:[22m 25.5 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ │ │ │ │ │ ├─╯ 7.46 μs[2m duration, [22m25.5 MB[2m peak memory, [22m280 B[2m local, [22m25.5 MB[2m current, [22m4.00[2m allocations[22m
+│ │ │ │ │ │ │ ├─╯ [2mprove: [22m10.5 ms[2m duration, [22m36.4 MB[2m peak memory, [22m1.81 kB[2m local, [22m25.5 MB[2m current, [22m804[2m allocations[22m
+│ │ │ │ │ │ ├─╯ [2minner_blinding_prove: [22m10.5 ms[2m duration, [22m36.4 MB[2m peak memory, [22m4.83 kB[2m local, [22m25.5 MB[2m current, [22m817[2m allocations[22m
+│ │ │ │ │ ├─╯ [2mprove: [22m201 ms[2m duration, [22m60.6 MB[2m peak memory, [22m5.25 MB[2m local, [22m25.4 MB[2m current, [22m72.7k[2m allocations[22m
+│ │ │ │ ├─╯ [2mprove_from_alphas: [22m411 ms[2m duration, [22m89.5 MB[2m peak memory, [22m9.27 MB[2m local, [22m22.3 MB[2m current, [22m146k[2m allocations[22m
+│ │ │ ├─╯ [2mprove_noir: [22m425 ms[2m duration, [22m89.5 MB[2m peak memory, [22m19.1 MB[2m local, [22m15.1 MB[2m current, [22m146k[2m allocations[22m
+│ │ ├─╯ [2mprove_with_witness: [22m4.83 s[2m duration, [22m89.5 MB[2m peak memory, [22m61.7 MB[2m local, [22m3.90 MB[2m current, [22m340k[2m allocations[22m
+│ ├─╯ [2mprove: [22m4.83 s[2m duration, [22m89.5 MB[2m peak memory, [22m61.7 MB[2m local, [22m3.90 MB[2m current, [22m344k[2m allocations[22m
+├─╯ [2mprove_with_toml: [22m4.83 s[2m duration, [22m89.5 MB[2m peak memory, [22m61.7 MB[2m local, [22m3.90 MB[2m current, [22m345k[2m allocations[22m
+├─╮ [2mprovekit_common::file::io::[22mwrite path="proof.np" [2mstart:[22m 3.90 MB[2m current, [22m465k[2m allocations[22m
+│ ├─╮ [2mprovekit_common::file::io::bin::[22mwrite_bin path="proof.np" format=[78, 80, 83, 80, 114, 111, 111, 102] version=(1, 1) compression=Zstd hash_config=None [2mstart:[22m 3.90 MB[2m current, [22m465k[2m allocations[22m
+│ │ │ [2m7.29 ms [22m[1;32mINFO[0m Wrote 2.62 MB to "proof.np" path="proof.np" size=2619151
+│ ├─╯ 7.33 ms[2m duration, [22m13.7 MB[2m peak memory, [22m9.85 MB[2m local, [22m3.90 MB[2m current, [22m38.0[2m allocations[22m
+├─╯ [2mwrite: [22m7.35 ms[2m duration, [22m13.7 MB[2m peak memory, [22m9.85 MB[2m local, [22m3.90 MB[2m current, [22m46.0[2m allocations[22m
+╯ [2mrun: [22m4.92 s[2m duration, [22m89.5 MB[2m peak memory, [22m89.4 MB[2m local, [22m683 kB[2m current, [22m465k[2m allocations[22m
+╮ [2mprovekit_cli::cmd::verify::[22mrun [2mstart:[22m 39.2 kB[2m current, [22m29.0[2m allocations[22m
+╮ [2mprovekit_common::file::io::[22mread path="aac_vnet_provekit.pkv" [2mstart:[22m 153 kB[2m current, [22m254[2m allocations[22m
+╮ [2mprovekit_common::file::io::[22mread path="proof.np" [2mstart:[22m 158 kB[2m current, [22m265[2m allocations[22m
+├─╮ [2mprovekit_common::file::io::bin::[22mread_bin path="aac_vnet_provekit.pkv" format=[80, 114, 118, 75, 105, 116, 86, 114] major=1 minor=3 size=766576 [2mstart:[22m 159 kB[2m current, [22m289[2m allocations[22m
+├─╮ [2mprovekit_common::file::io::bin::[22mread_bin path="proof.np" format=[78, 80, 83, 80, 114, 111, 111, 102] major=1 minor=1 size=2619151 [2mstart:[22m 160 kB[2m current, [22m306[2m allocations[22m
+├─╯ 4.23 ms[2m duration, [22m16.6 MB[2m peak memory, [22m16.4 MB[2m local, [22m12.4 MB[2m current, [22m87.0[2m allocations[22m
+╯ [2mread: [22m4.31 ms[2m duration, [22m16.6 MB[2m peak memory, [22m16.4 MB[2m local, [22m12.4 MB[2m current, [22m121[2m allocations[22m
+├─╯ 7.12 ms[2m duration, [22m16.9 MB[2m peak memory, [22m16.8 MB[2m local, [22m12.3 MB[2m current, [22m410[2m allocations[22m
+╯ [2mread: [22m7.18 ms[2m duration, [22m16.9 MB[2m peak memory, [22m16.8 MB[2m local, [22m12.3 MB[2m current, [22m436[2m allocations[22m
+├─╮ [2mprovekit_verifier::[22mverify [2mstart:[22m 12.3 MB[2m current, [22m688[2m allocations[22m
+│ ├─╮ [2mprovekit_verifier::whir_r1cs::[22mverify [2mstart:[22m 12.3 MB[2m current, [22m792[2m allocations[22m
+│ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×65536/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 15.0 MB[2m current, [22m928[2m allocations[22m
+│ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(32768 x 8) [2mstart:[22m 15.1 MB[2m current, [22m936[2m allocations[22m
+│ │ │ ├─╯ 11.9 μs[2m duration, [22m15.1 MB[2m peak memory, [22m606 B[2m local, [22m15.1 MB[2m current, [22m9.00[2m allocations[22m
+│ │ ├─╯ [2mreceive_commitment: [22m123 μs[2m duration, [22m15.1 MB[2m peak memory, [22m1.11 kB[2m local, [22m15.0 MB[2m current, [22m27.0[2m allocations[22m
+│ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 17×4096/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 15.1 MB[2m current, [22m956[2m allocations[22m
+│ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(2048 x 136) [2mstart:[22m 15.1 MB[2m current, [22m963[2m allocations[22m
+│ │ │ ├─╯ 10.7 μs[2m duration, [22m15.1 MB[2m peak memory, [22m466 B[2m local, [22m15.1 MB[2m current, [22m7.00[2m allocations[22m
+│ │ ├─╯ [2mreceive_commitment: [22m67.5 μs[2m duration, [22m15.1 MB[2m peak memory, [22m1.46 kB[2m local, [22m15.1 MB[2m current, [22m59.0[2m allocations[22m
+│ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×65536/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 15.1 MB[2m current, [22m1.03k[2m allocations[22m
+│ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(32768 x 8) [2mstart:[22m 15.1 MB[2m current, [22m1.03k[2m allocations[22m
+│ │ │ ├─╯ 4.67 μs[2m duration, [22m15.1 MB[2m peak memory, [22m466 B[2m local, [22m15.1 MB[2m current, [22m7.00[2m allocations[22m
+│ │ ├─╯ [2mreceive_commitment: [22m23.3 μs[2m duration, [22m15.1 MB[2m peak memory, [22m770 B[2m local, [22m15.1 MB[2m current, [22m24.0[2m allocations[22m
+│ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 17×4096/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 15.1 MB[2m current, [22m1.05k[2m allocations[22m
+│ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(2048 x 136) [2mstart:[22m 15.1 MB[2m current, [22m1.06k[2m allocations[22m
+│ │ │ ├─╯ 6.00 μs[2m duration, [22m15.1 MB[2m peak memory, [22m466 B[2m local, [22m15.1 MB[2m current, [22m7.00[2m allocations[22m
+│ │ ├─╯ [2mreceive_commitment: [22m49.7 μs[2m duration, [22m15.1 MB[2m peak memory, [22m1.46 kB[2m local, [22m15.1 MB[2m current, [22m59.0[2m allocations[22m
+╮ [2mprovekit_common::utils::sumcheck::[22mtranspose_r1cs_matrices [2mstart:[22m 15.1 MB[2m current, [22m1.11k[2m allocations[22m
+╮ [2mprovekit_verifier::whir_r1cs::[22mrun_sumcheck_verifier [2mstart:[22m 15.1 MB[2m current, [22m1.12k[2m allocations[22m
+╯ 278 μs[2m duration, [22m23.5 MB[2m peak memory, [22m8.44 MB[2m local, [22m23.5 MB[2m current, [22m211[2m allocations[22m
+╯ 2.86 ms[2m duration, [22m30.7 MB[2m peak memory, [22m15.6 MB[2m local, [22m22.2 MB[2m current, [22m230[2m allocations[22m
+│ │ ├─╮ [2mprovekit_common::utils::sumcheck::[22mmultiply_transposed_by_eq_alpha [2mstart:[22m 22.2 MB[2m current, [22m1.35k[2m allocations[22m
+│ │ │ ├─╮ [2mprovekit_common::utils::sumcheck::[22mcalculate_evaluations_over_boolean_hypercube_for_eq [2mstart:[22m 22.2 MB[2m current, [22m1.35k[2m allocations[22m
+│ │ │ ├─╯ 520 μs[2m duration, [22m24.2 MB[2m peak memory, [22m1.95 MB[2m local, [22m24.2 MB[2m current, [22m5.00[2m allocations[22m
+│ │ ├─╯ [2mmultiply_transposed_by_eq_alpha: [22m1.84 ms[2m duration, [22m31.0 MB[2m peak memory, [22m8.78 MB[2m local, [22m29.1 MB[2m current, [22m13.0[2m allocations[22m
+│ │ ├─╮ [2mwhir::protocols::whir_zk::verifier::[22mwhir_zk::verify [2mstart:[22m 36.1 MB[2m current, [22m1.40k[2m allocations[22m
+│ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×65536/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 36.1 MB[2m current, [22m1.59k[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(32768 x 8) num_indices=127 [2mstart:[22m 36.1 MB[2m current, [22m1.60k[2m allocations[22m
+│ │ │ │ ├─╯ 631 μs[2m duration, [22m36.2 MB[2m peak memory, [22m37.3 kB[2m local, [22m36.1 MB[2m current, [22m33.0[2m allocations[22m
+│ │ │ ├─╯ [2mverify: [22m833 μs[2m duration, [22m36.2 MB[2m peak memory, [22m108 kB[2m local, [22m36.1 MB[2m current, [22m49.0[2m allocations[22m
+│ │ │ ├─╮ [2mwhir::protocols::whir::verifier::[22mwhir::verify [2mstart:[22m 36.1 MB[2m current, [22m36.2k[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.1 MB[2m current, [22m36.2k[2m allocations[22m
+│ │ │ │ ├─╯ 29.9 μs[2m duration, [22m36.1 MB[2m peak memory, [22m368 B[2m local, [22m36.1 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×8192/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 36.1 MB[2m current, [22m36.2k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(16384 x 8) [2mstart:[22m 36.1 MB[2m current, [22m36.2k[2m allocations[22m
+│ │ │ │ │ ├─╯ 7.21 μs[2m duration, [22m36.1 MB[2m peak memory, [22m606 B[2m local, [22m36.1 MB[2m current, [22m8.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mreceive_commitment: [22m35.9 μs[2m duration, [22m36.1 MB[2m peak memory, [22m910 B[2m local, [22m36.1 MB[2m current, [22m25.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×65536/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 36.1 MB[2m current, [22m36.3k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(32768 x 8) num_indices=127 [2mstart:[22m 36.2 MB[2m current, [22m36.3k[2m allocations[22m
+│ │ │ │ │ ├─╯ 611 μs[2m duration, [22m36.3 MB[2m peak memory, [22m37.1 kB[2m local, [22m36.2 MB[2m current, [22m32.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m805 μs[2m duration, [22m36.3 MB[2m peak memory, [22m108 kB[2m local, [22m36.2 MB[2m current, [22m48.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.2 MB[2m current, [22m36.3k[2m allocations[22m
+│ │ │ │ ├─╯ 47.3 μs[2m duration, [22m36.2 MB[2m peak memory, [22m368 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×1024/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m36.3k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(8192 x 8) [2mstart:[22m 36.2 MB[2m current, [22m36.4k[2m allocations[22m
+│ │ │ │ │ ├─╯ 6.00 μs[2m duration, [22m36.2 MB[2m peak memory, [22m466 B[2m local, [22m36.2 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mreceive_commitment: [22m29.1 μs[2m duration, [22m36.2 MB[2m peak memory, [22m770 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×8192/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m36.4k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(16384 x 8) num_indices=62 [2mstart:[22m 36.2 MB[2m current, [22m36.4k[2m allocations[22m
+│ │ │ │ │ ├─╯ 329 μs[2m duration, [22m36.2 MB[2m peak memory, [22m18.7 kB[2m local, [22m36.2 MB[2m current, [22m30.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m446 μs[2m duration, [22m36.2 MB[2m peak memory, [22m53.2 kB[2m local, [22m36.2 MB[2m current, [22m46.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.2 MB[2m current, [22m36.4k[2m allocations[22m
+│ │ │ │ ├─╯ 28.7 μs[2m duration, [22m36.2 MB[2m peak memory, [22m368 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×128/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m36.5k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(4096 x 8) [2mstart:[22m 36.2 MB[2m current, [22m36.5k[2m allocations[22m
+│ │ │ │ │ ├─╯ 4.50 μs[2m duration, [22m36.2 MB[2m peak memory, [22m466 B[2m local, [22m36.2 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mreceive_commitment: [22m20.2 μs[2m duration, [22m36.2 MB[2m peak memory, [22m770 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×1024/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m36.5k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(8192 x 8) num_indices=41 [2mstart:[22m 36.2 MB[2m current, [22m36.5k[2m allocations[22m
+│ │ │ │ │ ├─╯ 208 μs[2m duration, [22m36.2 MB[2m peak memory, [22m18.0 kB[2m local, [22m36.2 MB[2m current, [22m30.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m290 μs[2m duration, [22m36.2 MB[2m peak memory, [22m40.9 kB[2m local, [22m36.2 MB[2m current, [22m46.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.2 MB[2m current, [22m36.5k[2m allocations[22m
+│ │ │ │ ├─╯ 25.3 μs[2m duration, [22m36.2 MB[2m peak memory, [22m368 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×16/8 rate 2⁻10.00 samples 24 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m36.6k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(2048 x 8) [2mstart:[22m 36.2 MB[2m current, [22m36.6k[2m allocations[22m
+│ │ │ │ │ ├─╯ 4.33 μs[2m duration, [22m36.2 MB[2m peak memory, [22m466 B[2m local, [22m36.2 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mreceive_commitment: [22m19.5 μs[2m duration, [22m36.2 MB[2m peak memory, [22m770 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×128/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m36.6k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(4096 x 8) num_indices=31 [2mstart:[22m 36.2 MB[2m current, [22m36.6k[2m allocations[22m
+│ │ │ │ │ ├─╯ 152 μs[2m duration, [22m36.2 MB[2m peak memory, [22m9.48 kB[2m local, [22m36.2 MB[2m current, [22m28.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m211 μs[2m duration, [22m36.2 MB[2m peak memory, [22m26.9 kB[2m local, [22m36.2 MB[2m current, [22m44.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.2 MB[2m current, [22m36.6k[2m allocations[22m
+│ │ │ │ ├─╯ 27.9 μs[2m duration, [22m36.2 MB[2m peak memory, [22m368 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×16/8 rate 2⁻10.00 samples 24 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m36.7k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(2048 x 8) num_indices=24 [2mstart:[22m 36.2 MB[2m current, [22m36.7k[2m allocations[22m
+│ │ │ │ │ ├─╯ 116 μs[2m duration, [22m36.2 MB[2m peak memory, [22m9.26 kB[2m local, [22m36.2 MB[2m current, [22m28.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m168 μs[2m duration, [22m36.2 MB[2m peak memory, [22m22.8 kB[2m local, [22m36.2 MB[2m current, [22m44.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.2 MB[2m current, [22m36.7k[2m allocations[22m
+│ │ │ │ ├─╯ 11.2 μs[2m duration, [22m36.2 MB[2m peak memory, [22m304 B[2m local, [22m36.2 MB[2m current, [22m12.0[2m allocations[22m
+│ │ │ ├─╯ [2mwhir::verify: [22m2.97 ms[2m duration, [22m36.3 MB[2m peak memory, [22m109 kB[2m local, [22m36.1 MB[2m current, [22m535[2m allocations[22m
+╮ [2mwhir::protocols::whir_zk::utils::[22mconstruct_batched_eq_weights [2mstart:[22m 36.1 MB[2m current, [22m36.7k[2m allocations[22m
+╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 36.6 MB[2m current, [22m36.7k[2m allocations[22m
+╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 37.4 MB[2m current, [22m36.8k[2m allocations[22m
+╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 42.8 MB[2m current, [22m36.8k[2m allocations[22m
+╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 36.6 MB[2m current, [22m36.8k[2m allocations[22m
+╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 39.6 MB[2m current, [22m36.8k[2m allocations[22m
+╯ 722 μs[2m duration, [22m52.7 MB[2m peak memory, [22m9.96 MB[2m local, [22m50.0 MB[2m current, [22m70.0[2m allocations[22m
+╯ 1.53 ms[2m duration, [22m52.7 MB[2m peak memory, [22m16.3 MB[2m local, [22m49.3 MB[2m current, [22m188[2m allocations[22m
+╯ 2.44 ms[2m duration, [22m52.7 MB[2m peak memory, [22m15.3 MB[2m local, [22m49.7 MB[2m current, [22m295[2m allocations[22m
+╯ 2.49 ms[2m duration, [22m52.7 MB[2m peak memory, [22m13.1 MB[2m local, [22m47.7 MB[2m current, [22m294[2m allocations[22m
+╯ 3.33 ms[2m duration, [22m52.7 MB[2m peak memory, [22m16.1 MB[2m local, [22m47.5 MB[2m current, [22m405[2m allocations[22m
+╯ 23.6 ms[2m duration, [22m69.6 MB[2m peak memory, [22m33.5 MB[2m local, [22m37.0 MB[2m current, [22m2.63k[2m allocations[22m
+│ │ │ ├─╮ [2mwhir::protocols::whir::verifier::[22mwhir::verify [2mstart:[22m 37.0 MB[2m current, [22m39.4k[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 37.0 MB[2m current, [22m39.4k[2m allocations[22m
+│ │ │ │ ├─╯ 30.5 μs[2m duration, [22m37.0 MB[2m peak memory, [22m368 B[2m local, [22m37.0 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×512/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 37.0 MB[2m current, [22m39.4k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(1024 x 8) [2mstart:[22m 37.0 MB[2m current, [22m39.4k[2m allocations[22m
+│ │ │ │ │ ├─╯ 6.12 μs[2m duration, [22m37.0 MB[2m peak memory, [22m466 B[2m local, [22m37.0 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mreceive_commitment: [22m27.4 μs[2m duration, [22m37.0 MB[2m peak memory, [22m770 B[2m local, [22m37.0 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 17×4096/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 37.0 MB[2m current, [22m39.4k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(2048 x 136) num_indices=127 [2mstart:[22m 38.1 MB[2m current, [22m39.5k[2m allocations[22m
+│ │ │ │ │ ├─╯ 1.30 ms[2m duration, [22m38.5 MB[2m peak memory, [22m463 kB[2m local, [22m38.1 MB[2m current, [22m111[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m1.95 ms[2m duration, [22m38.5 MB[2m peak memory, [22m1.57 MB[2m local, [22m37.5 MB[2m current, [22m127[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 37.5 MB[2m current, [22m39.6k[2m allocations[22m
+│ │ │ │ ├─╯ 51.2 μs[2m duration, [22m37.5 MB[2m peak memory, [22m368 B[2m local, [22m37.5 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×64/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 37.0 MB[2m current, [22m39.6k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(512 x 8) [2mstart:[22m 37.0 MB[2m current, [22m39.6k[2m allocations[22m
+│ │ │ │ │ ├─╯ 6.38 μs[2m duration, [22m37.0 MB[2m peak memory, [22m466 B[2m local, [22m37.0 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mreceive_commitment: [22m34.9 μs[2m duration, [22m37.0 MB[2m peak memory, [22m770 B[2m local, [22m37.0 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×512/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 37.0 MB[2m current, [22m39.6k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(1024 x 8) num_indices=62 [2mstart:[22m 37.0 MB[2m current, [22m39.6k[2m allocations[22m
+│ │ │ │ │ ├─╯ 244 μs[2m duration, [22m37.0 MB[2m peak memory, [22m18.7 kB[2m local, [22m37.0 MB[2m current, [22m30.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m362 μs[2m duration, [22m37.0 MB[2m peak memory, [22m53.2 kB[2m local, [22m37.0 MB[2m current, [22m46.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 37.0 MB[2m current, [22m39.7k[2m allocations[22m
+│ │ │ │ ├─╯ 27.3 μs[2m duration, [22m37.0 MB[2m peak memory, [22m368 B[2m local, [22m37.0 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×8/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 37.0 MB[2m current, [22m39.7k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(256 x 8) [2mstart:[22m 37.0 MB[2m current, [22m39.7k[2m allocations[22m
+│ │ │ │ │ ├─╯ 4.54 μs[2m duration, [22m37.0 MB[2m peak memory, [22m466 B[2m local, [22m37.0 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mreceive_commitment: [22m20.6 μs[2m duration, [22m37.0 MB[2m peak memory, [22m770 B[2m local, [22m37.0 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×64/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 37.0 MB[2m current, [22m39.7k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(512 x 8) num_indices=41 [2mstart:[22m 37.0 MB[2m current, [22m39.7k[2m allocations[22m
+│ │ │ │ │ ├─╯ 151 μs[2m duration, [22m37.0 MB[2m peak memory, [22m18.0 kB[2m local, [22m37.0 MB[2m current, [22m30.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m224 μs[2m duration, [22m37.0 MB[2m peak memory, [22m40.9 kB[2m local, [22m37.0 MB[2m current, [22m46.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 37.0 MB[2m current, [22m39.8k[2m allocations[22m
+│ │ │ │ ├─╯ 27.8 μs[2m duration, [22m37.0 MB[2m peak memory, [22m368 B[2m local, [22m37.0 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×8/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 37.0 MB[2m current, [22m39.8k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(256 x 8) num_indices=31 [2mstart:[22m 37.0 MB[2m current, [22m39.8k[2m allocations[22m
+│ │ │ │ │ ├─╯ 109 μs[2m duration, [22m37.0 MB[2m peak memory, [22m9.48 kB[2m local, [22m37.0 MB[2m current, [22m28.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m164 μs[2m duration, [22m37.0 MB[2m peak memory, [22m26.9 kB[2m local, [22m37.0 MB[2m current, [22m43.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 37.0 MB[2m current, [22m39.9k[2m allocations[22m
+│ │ │ │ ├─╯ 4.83 μs[2m duration, [22m37.0 MB[2m peak memory, [22m280 B[2m local, [22m37.0 MB[2m current, [22m5.00[2m allocations[22m
+│ │ │ ├─╯ [2mwhir::verify: [22m4.04 ms[2m duration, [22m38.5 MB[2m peak memory, [22m1.58 MB[2m local, [22m37.0 MB[2m current, [22m503[2m allocations[22m
+│ │ ├─╯ [2mwhir_zk::verify: [22m66.9 ms[2m duration, [22m69.6 MB[2m peak memory, [22m33.6 MB[2m local, [22m36.1 MB[2m current, [22m38.5k[2m allocations[22m
+│ │ ├─╮ [2mwhir::protocols::whir_zk::verifier::[22mwhir_zk::verify [2mstart:[22m 36.1 MB[2m current, [22m39.9k[2m allocations[22m
+│ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×65536/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 36.1 MB[2m current, [22m40.0k[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(32768 x 8) num_indices=127 [2mstart:[22m 36.2 MB[2m current, [22m40.0k[2m allocations[22m
+│ │ │ │ ├─╯ 595 μs[2m duration, [22m36.2 MB[2m peak memory, [22m37.1 kB[2m local, [22m36.2 MB[2m current, [22m32.0[2m allocations[22m
+│ │ │ ├─╯ [2mverify: [22m790 μs[2m duration, [22m36.2 MB[2m peak memory, [22m108 kB[2m local, [22m36.1 MB[2m current, [22m48.0[2m allocations[22m
+│ │ │ ├─╮ [2mwhir::protocols::whir::verifier::[22mwhir::verify [2mstart:[22m 36.2 MB[2m current, [22m74.6k[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.2 MB[2m current, [22m74.6k[2m allocations[22m
+│ │ │ │ ├─╯ 28.4 μs[2m duration, [22m36.2 MB[2m peak memory, [22m368 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×8192/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m74.7k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(16384 x 8) [2mstart:[22m 36.2 MB[2m current, [22m74.7k[2m allocations[22m
+│ │ │ │ │ ├─╯ 5.33 μs[2m duration, [22m36.2 MB[2m peak memory, [22m466 B[2m local, [22m36.2 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mreceive_commitment: [22m24.0 μs[2m duration, [22m36.2 MB[2m peak memory, [22m770 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×65536/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m74.7k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(32768 x 8) num_indices=127 [2mstart:[22m 36.2 MB[2m current, [22m74.7k[2m allocations[22m
+│ │ │ │ │ ├─╯ 602 μs[2m duration, [22m36.3 MB[2m peak memory, [22m37.1 kB[2m local, [22m36.2 MB[2m current, [22m32.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m790 μs[2m duration, [22m36.3 MB[2m peak memory, [22m108 kB[2m local, [22m36.2 MB[2m current, [22m48.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.2 MB[2m current, [22m74.8k[2m allocations[22m
+│ │ │ │ ├─╯ 49.0 μs[2m duration, [22m36.2 MB[2m peak memory, [22m368 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×1024/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m74.8k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(8192 x 8) [2mstart:[22m 36.2 MB[2m current, [22m74.8k[2m allocations[22m
+│ │ │ │ │ ├─╯ 8.96 μs[2m duration, [22m36.2 MB[2m peak memory, [22m466 B[2m local, [22m36.2 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mreceive_commitment: [22m35.5 μs[2m duration, [22m36.2 MB[2m peak memory, [22m770 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×8192/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m74.8k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(16384 x 8) num_indices=62 [2mstart:[22m 36.2 MB[2m current, [22m74.8k[2m allocations[22m
+│ │ │ │ │ ├─╯ 314 μs[2m duration, [22m36.2 MB[2m peak memory, [22m18.7 kB[2m local, [22m36.2 MB[2m current, [22m30.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m430 μs[2m duration, [22m36.2 MB[2m peak memory, [22m53.2 kB[2m local, [22m36.2 MB[2m current, [22m46.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.2 MB[2m current, [22m74.9k[2m allocations[22m
+│ │ │ │ ├─╯ 25.5 μs[2m duration, [22m36.2 MB[2m peak memory, [22m368 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×128/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m74.9k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(4096 x 8) [2mstart:[22m 36.2 MB[2m current, [22m74.9k[2m allocations[22m
+│ │ │ │ │ ├─╯ 4.54 μs[2m duration, [22m36.2 MB[2m peak memory, [22m466 B[2m local, [22m36.2 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mreceive_commitment: [22m20.2 μs[2m duration, [22m36.2 MB[2m peak memory, [22m770 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×1024/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m74.9k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(8192 x 8) num_indices=41 [2mstart:[22m 36.2 MB[2m current, [22m74.9k[2m allocations[22m
+│ │ │ │ │ ├─╯ 207 μs[2m duration, [22m36.2 MB[2m peak memory, [22m18.0 kB[2m local, [22m36.2 MB[2m current, [22m30.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m287 μs[2m duration, [22m36.2 MB[2m peak memory, [22m40.9 kB[2m local, [22m36.2 MB[2m current, [22m46.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.2 MB[2m current, [22m75.0k[2m allocations[22m
+│ │ │ │ ├─╯ 24.7 μs[2m duration, [22m36.2 MB[2m peak memory, [22m368 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×16/8 rate 2⁻10.00 samples 24 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m75.0k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(2048 x 8) [2mstart:[22m 36.2 MB[2m current, [22m75.0k[2m allocations[22m
+│ │ │ │ │ ├─╯ 4.50 μs[2m duration, [22m36.2 MB[2m peak memory, [22m466 B[2m local, [22m36.2 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mreceive_commitment: [22m20.0 μs[2m duration, [22m36.2 MB[2m peak memory, [22m770 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×128/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m75.0k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(4096 x 8) num_indices=31 [2mstart:[22m 36.2 MB[2m current, [22m75.0k[2m allocations[22m
+│ │ │ │ │ ├─╯ 143 μs[2m duration, [22m36.2 MB[2m peak memory, [22m9.48 kB[2m local, [22m36.2 MB[2m current, [22m28.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m200 μs[2m duration, [22m36.2 MB[2m peak memory, [22m26.9 kB[2m local, [22m36.2 MB[2m current, [22m44.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.2 MB[2m current, [22m75.1k[2m allocations[22m
+│ │ │ │ ├─╯ 25.0 μs[2m duration, [22m36.2 MB[2m peak memory, [22m368 B[2m local, [22m36.2 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×16/8 rate 2⁻10.00 samples 24 in- 1 out-domain [2mstart:[22m 36.2 MB[2m current, [22m75.1k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(2048 x 8) num_indices=24 [2mstart:[22m 36.2 MB[2m current, [22m75.1k[2m allocations[22m
+│ │ │ │ │ ├─╯ 117 μs[2m duration, [22m36.2 MB[2m peak memory, [22m9.26 kB[2m local, [22m36.2 MB[2m current, [22m28.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m172 μs[2m duration, [22m36.2 MB[2m peak memory, [22m22.8 kB[2m local, [22m36.2 MB[2m current, [22m44.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.2 MB[2m current, [22m75.1k[2m allocations[22m
+│ │ │ │ ├─╯ 11.6 μs[2m duration, [22m36.2 MB[2m peak memory, [22m304 B[2m local, [22m36.2 MB[2m current, [22m12.0[2m allocations[22m
+│ │ │ ├─╯ [2mwhir::verify: [22m2.89 ms[2m duration, [22m36.3 MB[2m peak memory, [22m109 kB[2m local, [22m36.2 MB[2m current, [22m534[2m allocations[22m
+╮ [2mwhir::protocols::whir_zk::utils::[22mconstruct_batched_eq_weights [2mstart:[22m 36.2 MB[2m current, [22m75.2k[2m allocations[22m
+╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 36.2 MB[2m current, [22m75.2k[2m allocations[22m
+╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 36.2 MB[2m current, [22m75.2k[2m allocations[22m
+╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 36.2 MB[2m current, [22m75.2k[2m allocations[22m
+╯ 2.18 ms[2m duration, [22m53.5 MB[2m peak memory, [22m17.3 MB[2m local, [22m49.6 MB[2m current, [22m299[2m allocations[22m
+╮ [2mwhir::protocols::whir_zk::utils::[22mfold_weight_to_mask_size [2mstart:[22m 36.2 MB[2m current, [22m75.2k[2m allocations[22m
+╯ 2.30 ms[2m duration, [22m53.5 MB[2m peak memory, [22m17.3 MB[2m local, [22m50.1 MB[2m current, [22m315[2m allocations[22m
+╯ 3.66 ms[2m duration, [22m54.4 MB[2m peak memory, [22m18.3 MB[2m local, [22m51.7 MB[2m current, [22m491[2m allocations[22m
+╯ 13.7 ms[2m duration, [22m59.8 MB[2m peak memory, [22m23.6 MB[2m local, [22m54.8 MB[2m current, [22m1.50k[2m allocations[22m
+╯ 22.8 ms[2m duration, [22m69.8 MB[2m peak memory, [22m33.6 MB[2m local, [22m36.8 MB[2m current, [22m2.66k[2m allocations[22m
+│ │ │ ├─╮ [2mwhir::protocols::whir::verifier::[22mwhir::verify [2mstart:[22m 36.8 MB[2m current, [22m77.8k[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.8 MB[2m current, [22m77.9k[2m allocations[22m
+│ │ │ │ ├─╯ 28.0 μs[2m duration, [22m36.8 MB[2m peak memory, [22m368 B[2m local, [22m36.8 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×512/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 36.8 MB[2m current, [22m77.9k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(1024 x 8) [2mstart:[22m 36.8 MB[2m current, [22m77.9k[2m allocations[22m
+│ │ │ │ │ ├─╯ 5.29 μs[2m duration, [22m36.8 MB[2m peak memory, [22m466 B[2m local, [22m36.8 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mreceive_commitment: [22m25.0 μs[2m duration, [22m36.8 MB[2m peak memory, [22m770 B[2m local, [22m36.8 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 17×4096/8 rate 2⁻2.00 samples 127 in- 1 out-domain [2mstart:[22m 36.8 MB[2m current, [22m77.9k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(2048 x 136) num_indices=127 [2mstart:[22m 38.0 MB[2m current, [22m77.9k[2m allocations[22m
+│ │ │ │ │ ├─╯ 1.24 ms[2m duration, [22m38.4 MB[2m peak memory, [22m463 kB[2m local, [22m38.0 MB[2m current, [22m111[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m1.88 ms[2m duration, [22m38.4 MB[2m peak memory, [22m1.57 MB[2m local, [22m37.4 MB[2m current, [22m127[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 37.4 MB[2m current, [22m78.0k[2m allocations[22m
+│ │ │ │ ├─╯ 43.5 μs[2m duration, [22m37.4 MB[2m peak memory, [22m368 B[2m local, [22m37.4 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×64/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 36.9 MB[2m current, [22m78.1k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(512 x 8) [2mstart:[22m 36.9 MB[2m current, [22m78.1k[2m allocations[22m
+│ │ │ │ │ ├─╯ 6.00 μs[2m duration, [22m36.9 MB[2m peak memory, [22m466 B[2m local, [22m36.9 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mreceive_commitment: [22m27.2 μs[2m duration, [22m36.9 MB[2m peak memory, [22m770 B[2m local, [22m36.9 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×512/8 rate 2⁻4.00 samples 62 in- 1 out-domain [2mstart:[22m 36.9 MB[2m current, [22m78.1k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(1024 x 8) num_indices=62 [2mstart:[22m 36.9 MB[2m current, [22m78.1k[2m allocations[22m
+│ │ │ │ │ ├─╯ 251 μs[2m duration, [22m36.9 MB[2m peak memory, [22m18.7 kB[2m local, [22m36.9 MB[2m current, [22m30.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m352 μs[2m duration, [22m36.9 MB[2m peak memory, [22m53.2 kB[2m local, [22m36.9 MB[2m current, [22m46.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.9 MB[2m current, [22m78.2k[2m allocations[22m
+│ │ │ │ ├─╯ 25.4 μs[2m duration, [22m36.9 MB[2m peak memory, [22m368 B[2m local, [22m36.9 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mreceive_commitment self=size 1×8/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 36.9 MB[2m current, [22m78.2k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mreceive_commitment self=MatrixCommit(256 x 8) [2mstart:[22m 36.9 MB[2m current, [22m78.2k[2m allocations[22m
+│ │ │ │ │ ├─╯ 4.67 μs[2m duration, [22m36.9 MB[2m peak memory, [22m466 B[2m local, [22m36.9 MB[2m current, [22m7.00[2m allocations[22m
+│ │ │ │ ├─╯ [2mreceive_commitment: [22m23.8 μs[2m duration, [22m36.9 MB[2m peak memory, [22m770 B[2m local, [22m36.9 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×64/8 rate 2⁻6.00 samples 41 in- 1 out-domain [2mstart:[22m 36.9 MB[2m current, [22m78.2k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(512 x 8) num_indices=41 [2mstart:[22m 36.9 MB[2m current, [22m78.2k[2m allocations[22m
+│ │ │ │ │ ├─╯ 162 μs[2m duration, [22m36.9 MB[2m peak memory, [22m18.0 kB[2m local, [22m36.9 MB[2m current, [22m30.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m238 μs[2m duration, [22m36.9 MB[2m peak memory, [22m40.9 kB[2m local, [22m36.9 MB[2m current, [22m46.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.9 MB[2m current, [22m78.3k[2m allocations[22m
+│ │ │ │ ├─╯ 25.8 μs[2m duration, [22m36.9 MB[2m peak memory, [22m368 B[2m local, [22m36.9 MB[2m current, [22m24.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::irs_commit::[22mverify self=size 1×8/8 rate 2⁻8.00 samples 31 in- 1 out-domain [2mstart:[22m 36.9 MB[2m current, [22m78.3k[2m allocations[22m
+│ │ │ │ │ ├─╮ [2mwhir::protocols::matrix_commit::[22mverify self=MatrixCommit(256 x 8) num_indices=31 [2mstart:[22m 36.9 MB[2m current, [22m78.3k[2m allocations[22m
+│ │ │ │ │ ├─╯ 106 μs[2m duration, [22m36.9 MB[2m peak memory, [22m9.48 kB[2m local, [22m36.9 MB[2m current, [22m28.0[2m allocations[22m
+│ │ │ │ ├─╯ [2mverify: [22m157 μs[2m duration, [22m36.9 MB[2m peak memory, [22m26.9 kB[2m local, [22m36.9 MB[2m current, [22m43.0[2m allocations[22m
+│ │ │ │ ├─╮ [2mwhir::protocols::sumcheck::[22mverify [2mstart:[22m 36.9 MB[2m current, [22m78.3k[2m allocations[22m
+│ │ │ │ ├─╯ 4.38 μs[2m duration, [22m36.9 MB[2m peak memory, [22m280 B[2m local, [22m36.9 MB[2m current, [22m5.00[2m allocations[22m
+│ │ │ ├─╯ [2mwhir::verify: [22m4.16 ms[2m duration, [22m38.4 MB[2m peak memory, [22m1.58 MB[2m local, [22m36.8 MB[2m current, [22m503[2m allocations[22m
+│ │ ├─╯ [2mwhir_zk::verify: [22m65.8 ms[2m duration, [22m69.8 MB[2m peak memory, [22m33.7 MB[2m local, [22m36.1 MB[2m current, [22m38.5k[2m allocations[22m
+│ ├─╯ [2mverify: [22m149 ms[2m duration, [22m69.8 MB[2m peak memory, [22m57.5 MB[2m local, [22m12.4 MB[2m current, [22m77.6k[2m allocations[22m
+├─╯ [2mverify: [22m149 ms[2m duration, [22m69.8 MB[2m peak memory, [22m57.5 MB[2m local, [22m12.4 MB[2m current, [22m77.7k[2m allocations[22m
+╯ [2mrun: [22m156 ms[2m duration, [22m69.8 MB[2m peak memory, [22m69.7 MB[2m local, [22m216 kB[2m current, [22m78.3k[2m allocations[22m
